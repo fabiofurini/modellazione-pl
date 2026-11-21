@@ -86,11 +86,11 @@ Tre modelli LP del corso risolti all'ottimo nel browser: produzione e scorte, ri
 
 <div class="grid cards" markdown>
 
--   :material-pencil-box-multiple: **Esercizi con le soluzioni**
+-   :material-pencil-box-multiple: **Esercizi**
 
     ---
 
-    Esercizi per ogni capitolo, ciascuno con la soluzione svolta che si apre con un clic.
+    Esercizi di modellazione per ogni capitolo, di livello d'esame, sui casi del corso.
 
     [:octicons-arrow-right-24: Gli esercizi](esercizi/index.md)
 
