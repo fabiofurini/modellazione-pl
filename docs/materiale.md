@@ -42,8 +42,8 @@ Le slide delle lezioni, una per capitolo delle dispense (PDF).
 
     ---
 
-    - [Introduzione al laboratorio](pdf/slide-01-introduzione.pdf)
-    - [Richiami di teoria](pdf/slide-02-richiami.pdf)
+    - [Introduzione alla modellazione PL](pdf/slide-01-introduzione.pdf)
+    - [Richiami di programmazione lineare](pdf/slide-02-richiami.pdf)
     - [Il solver: costruire, risolvere, interpretare](pdf/slide-03-python-gurobi.pdf)
 
 -   :material-presentation: **Modelli deterministici**
@@ -51,13 +51,7 @@ Le slide delle lezioni, una per capitolo delle dispense (PDF).
     ---
 
     - [Produzione e scorte multiperiodali](pdf/slide-04-produzione.pdf)
-    - [Supply chain con congestione e sostenibilità](pdf/slide-05-supply-chain.pdf)
-    - [Portafoglio di Markowitz](pdf/slide-06-markowitz.pdf)
-    - [Pricing e revenue management](pdf/slide-07-pricing.pdf)
-    - [Allocazione del budget pubblicitario](pdf/slide-08-budget.pdf)
-    - [Localizzazione continua di un servizio](pdf/slide-09-localizzazione.pdf)
     - [Ricarica intelligente di veicoli elettrici](pdf/slide-05-ricarica-ev.pdf)
-    - [Capacità di servizio e tempi di attesa](pdf/slide-11-code.pdf)
     - [Data Envelopment Analysis](pdf/slide-06-dea.pdf)
 
 -   :material-presentation: **Decisioni sotto incertezza**
@@ -72,7 +66,6 @@ Le slide delle lezioni, una per capitolo delle dispense (PDF).
 
     ---
 
-    - [Support Vector Machine](pdf/slide-16-svm.pdf)
     - [Regressione robusta e quantile](pdf/slide-10-regressione.pdf)
 
 </div>

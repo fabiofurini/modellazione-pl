@@ -14,13 +14,13 @@ cella, con le figure che compaiono sotto le celle invece di finire in un file.
 
 | Capitolo | Classe | Notebook |
 |---|---|---|
-| [Produzione e scorte multiperiodali](produzione.md) | LP / QP convesso | [![Apri in Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/fabiofurini/modellazione-pl/blob/main/notebooks/lab04_produzione.ipynb) |
-| [Ricarica intelligente di veicoli elettrici](ricarica-ev.md) | LP / QP convesso | [![Apri in Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/fabiofurini/modellazione-pl/blob/main/notebooks/lab05_ricarica_ev.ipynb) |
+| [Produzione e scorte multiperiodali](produzione.md) | LP | [![Apri in Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/fabiofurini/modellazione-pl/blob/main/notebooks/lab04_produzione.ipynb) |
+| [Ricarica intelligente di veicoli elettrici](ricarica-ev.md) | LP | [![Apri in Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/fabiofurini/modellazione-pl/blob/main/notebooks/lab05_ricarica_ev.ipynb) |
 | [Data Envelopment Analysis](dea.md) | LP | [![Apri in Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/fabiofurini/modellazione-pl/blob/main/notebooks/lab06_dea.ipynb) |
 | [Il Newsvendor e le sue varianti](newsvendor.md) | convesso 1D / LP stocastico a scenari | [![Apri in Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/fabiofurini/modellazione-pl/blob/main/notebooks/lab07_newsvendor.ipynb) |
 | [VaR e CVaR: misurare e ottimizzare il rischio](var-cvar.md) | LP a scenari | [![Apri in Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/fabiofurini/modellazione-pl/blob/main/notebooks/lab08_var_cvar.ipynb) |
 | [Arbitraggio e prezzatura senza arbitraggio](arbitraggio.md) | LP | [![Apri in Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/fabiofurini/modellazione-pl/blob/main/notebooks/lab09_arbitraggio.ipynb) |
-| [Regressione robusta e quantile](regressione.md) | LP (confronto con QP) | [![Apri in Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/fabiofurini/modellazione-pl/blob/main/notebooks/lab10_regressione.ipynb) |
+| [Regressione robusta e quantile](regressione.md) | LP | [![Apri in Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/fabiofurini/modellazione-pl/blob/main/notebooks/lab10_regressione.ipynb) |
 
 ## Come sono fatti
 

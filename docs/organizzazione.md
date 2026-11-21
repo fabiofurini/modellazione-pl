@@ -61,4 +61,4 @@ python3 -m pip install gurobipy matplotlib pandas scipy   # scipy: solo funzioni
 python3 python/esegui_tutti.py       # rigenera dati, risultati e figure
 ```
 
-Le slide del corso e le soluzioni degli esercizi vengono distribuite a lezione.
+Le slide sono nella pagina del [materiale](materiale.md); le soluzioni degli esercizi vengono distribuite a lezione.

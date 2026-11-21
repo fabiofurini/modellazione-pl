@@ -27,6 +27,18 @@ Prerequisiti: [Programmazione lineare](https://fabiofurini.github.io/programmazi
 
 </div>
 
+<!-- collana-app -->
+## Provalo subito
+
+La frontiera di efficienza della DEA: dodici filiali bancarie, un LP per filiale, e il duale indica a chi ispirarsi. Apri il notebook in Colab, cambia i dati e rifai il calcolo con Gurobi, senza installare niente.
+
+[![](img/cap06_frontiera.png)](dea.md)
+
+[:simple-googlecolab: Apri il notebook in Colab](https://colab.research.google.com/github/fabiofurini/modellazione-pl/blob/main/notebooks/lab06_dea.ipynb){ .md-button .md-button--primary }
+[:material-book-open-variant: Il capitolo](dea.md){ .md-button }
+[:material-language-python: Tutti i notebook](notebook.md){ .md-button }
+<!-- /collana-app -->
+
 ## Le parti del corso
 
 <div class="grid cards" markdown>
@@ -114,7 +126,7 @@ Prerequisiti: [Programmazione lineare](https://fabiofurini.github.io/programmazi
 <!-- collana -->
 ## La collana
 
-Dieci corsi con la stessa impostazione: dispense online e in PDF, esercizi con le soluzioni, laboratorio interattivo e quiz di autovalutazione.
+Tutti i corsi della collana hanno la stessa impostazione: dispense online e in PDF, esercizi con le soluzioni, laboratorio interattivo e quiz di autovalutazione.
 
 <div class="grid cards" markdown>
 
@@ -146,15 +158,31 @@ Dieci corsi con la stessa impostazione: dispense online e in PDF, esercizi con l
 
     grafi, alberi ricoprenti, cammini minimi, flussi su reti, simplesso su reti e gestione dei progetti
 
--   :material-hexagon-multiple-outline: **[Ottimizzazione combinatoria](https://fabiofurini.github.io/ottimizzazione-combinatoria/)**
+-   :material-hexagon-multiple-outline: **[Problemi di ottimizzazione combinatoria](https://fabiofurini.github.io/ottimizzazione-combinatoria/)**
 
-    zaino, bin packing, colorazione, TSP, scheduling e lot sizing, risolti in tutti i modi
+    zaino, bin packing, colorazione, TSP, scheduling e lot sizing: i problemi, le formulazioni e gli algoritmi ad hoc
+
+-   :material-table-large: **[Programmazione dinamica](https://fabiofurini.github.io/programmazione-dinamica/)**
+
+    principi e algoritmi di PD per zaino, lot sizing, cambio monete e taglio delle aste
+
+-   :material-map-marker-path: **[Algoritmi euristici](https://fabiofurini.github.io/algoritmi-euristici/)**
+
+    euristiche costruttive, ricerca locale, metaeuristiche ed euristiche MIP per i problemi di ottimizzazione combinatoria
+
+-   :material-approximately-equal: **[Algoritmi di approssimazione](https://fabiofurini.github.io/algoritmi-di-approssimazione/)**
+
+    garanzie di prestazione, schemi di approssimazione e limiti dell'approssimazione per i problemi combinatori
 
 -   :material-vector-polygon: **[Modellazione MIP](https://fabiofurini.github.io/modellazione-mip/)**
 
     modelli di programmazione lineare a variabili intere, dalla formulazione alla soluzione con i solver
 
--   :material-chart-timeline-variant: **Laboratorio di Ricerca Operativa** · *questo corso*
+-   :material-chart-line: **Modellazione PL** · *questo corso*
+
+    modelli di programmazione lineare per problemi gestionali, risolti con Python e Gurobi
+
+-   :material-chart-timeline-variant: **[Laboratorio di Ricerca Operativa](https://fabiofurini.github.io/laboratorio-ricerca-operativa/)**
 
     modellazione e risoluzione di problemi di ottimizzazione con Python e i solver
 

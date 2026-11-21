@@ -6,7 +6,7 @@
   <a href="https://fabiofurini.github.io/">sito personale</a>
 </p>
 
-# Laboratorio di Ricerca Operativa
+# Modellazione PL
 
 > **L'autore.** Fabio Furini è professore associato al DIAG della Sapienza dal
 > settembre 2021. Dottorato in Automatica e Ricerca Operativa all'Università di
@@ -17,7 +17,7 @@
 > nel 2019. Nel 2020 ricercatore CNR presso l'IASI-CNR di Roma.
 > Sito personale: <https://fabiofurini.github.io/>
 
-Modelli continui di ottimizzazione — la dispensa del
+Modelli di programmazione lineare — la dispensa del
 corso in versione online, con codice Python/Gurobi, dati e casi di studio.
 
 **📖 Dispensa online: [fabiofurini.github.io/modellazione-pl](https://fabiofurini.github.io/modellazione-pl/)**
@@ -26,28 +26,23 @@ corso in versione online, con codice Python/Gurobi, dati e casi di studio.
 
 ## Scarica in PDF
 
-- [Dispensa completa](https://fabiofurini.github.io/modellazione-pl/pdf/dispensa-modellazione-pl.pdf) (126 pagine)
+- [Dispensa completa](https://fabiofurini.github.io/modellazione-pl/pdf/dispensa-modellazione-pl.pdf)
 - [Slide delle lezioni](https://fabiofurini.github.io/modellazione-pl/materiale/), una per capitolo, nella pagina del materiale
 
 ## Indice
 
+Prerequisito: [Programmazione lineare](https://fabiofurini.github.io/programmazione-lineare/) (dualità e analisi di sensitività).
+I modelli quadratici e non lineari sono in [Modellazione PNL](https://fabiofurini.github.io/modellazione-pnl/).
+
 **Strumenti**
 
-- [Teoria: programmazione lineare](https://fabiofurini.github.io/modellazione-pl/teoria-lp/) — dualità, scarti complementari, prezzi ombra e sensitività
-- [Teoria: ottimizzazione non lineare](https://fabiofurini.github.io/modellazione-pl/teoria-non-lineare/) — convessità, QP, condizioni KKT
+- [Teoria: programmazione lineare](https://fabiofurini.github.io/modellazione-pl/teoria-lp/) — dualità, scarti complementari, prezzi ombra, protocollo di sensitività
 - [Solver: modelli lineari](https://fabiofurini.github.io/modellazione-pl/solver-lp/) — costruire il modello, farlo girare, leggere e interpretare la soluzione
-- [Solver: modelli non lineari](https://fabiofurini.github.io/modellazione-pl/solver-non-lineare/) — vincoli funzionali, bilineari, tolleranze
 
 **Modelli deterministici**
 
-- [Produzione e scorte multiperiodali](https://fabiofurini.github.io/modellazione-pl/produzione/) — LP/QP
-- [Supply chain con congestione e CO₂](https://fabiofurini.github.io/modellazione-pl/supplychain/) — LP/NLP
-- [Portafoglio di Markowitz](https://fabiofurini.github.io/modellazione-pl/markowitz/) — QP
-- [Pricing e revenue management](https://fabiofurini.github.io/modellazione-pl/pricing/) — NLP
-- [Budget pubblicitario](https://fabiofurini.github.io/modellazione-pl/budget/) — NLP convesso
-- [Localizzazione continua](https://fabiofurini.github.io/modellazione-pl/localizzazione/) — NLP convesso
-- [Ricarica di veicoli elettrici](https://fabiofurini.github.io/modellazione-pl/ricarica-ev/) — LP/QP
-- [Code e capacità di servizio](https://fabiofurini.github.io/modellazione-pl/code/) — NLP convesso
+- [Produzione e scorte multiperiodali](https://fabiofurini.github.io/modellazione-pl/produzione/) — LP
+- [Ricarica di veicoli elettrici](https://fabiofurini.github.io/modellazione-pl/ricarica-ev/) — LP
 - [Data Envelopment Analysis](https://fabiofurini.github.io/modellazione-pl/dea/) — LP, l'efficienza relativa e il duale
 
 **Decisioni sotto incertezza**
@@ -58,16 +53,15 @@ corso in versione online, con codice Python/Gurobi, dati e casi di studio.
 
 **Ottimizzazione e machine learning**
 
-- [Support Vector Machine](https://fabiofurini.github.io/modellazione-pl/svm/) — QP
 - [Regressione robusta e quantile](https://fabiofurini.github.io/modellazione-pl/regressione/) — LP, stimare i parametri
 
 **Il corso**
 
-- [Organizzazione del laboratorio](https://fabiofurini.github.io/modellazione-pl/organizzazione/) — laboratori, consegne, valutazione
+- [Organizzazione del laboratorio](https://fabiofurini.github.io/modellazione-pl/organizzazione/) — laboratori ed errori da evitare
 
 ## Eseguire i modelli
 
-Ogni capitolo ha il suo script in [`python/`](python/) (`lab04`–`lab17`), con i dati
+Ogni capitolo ha il suo script in [`python/`](python/) (`lab04`–`lab10`), con i dati
 in [`dati/`](dati/):
 
 ```bash
@@ -97,7 +91,7 @@ vengono distribuite a lezione.
 
 ## English version
 
-The whole lab is also available in English:
+The whole course is also available in English:
 **[fabiofurini.github.io/lp-modelling](https://fabiofurini.github.io/lp-modelling/)**
 ([repository](https://github.com/fabiofurini/lp-modelling)).
 
