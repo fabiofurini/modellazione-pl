@@ -30,12 +30,12 @@ Prerequisiti: [Programmazione lineare](https://fabiofurini.github.io/programmazi
 <!-- collana-app -->
 ## Provalo subito
 
-La frontiera di efficienza della DEA: dodici filiali bancarie, un LP per filiale, e il duale indica a chi ispirarsi. Apri il notebook in Colab, cambia i dati e rifai il calcolo con Gurobi, senza installare niente.
+Il piano di produzione ottimo su sei mesi, calcolato da un modello di programmazione lineare: quanto produrre di ogni prodotto e quanto tenere in magazzino per seguire la domanda al costo minimo. Apri il notebook in Colab, cambia i dati e rifai il calcolo con Gurobi, senza installare niente.
 
-[![](img/cap06_frontiera.png)](dea.md)
+[![](img/cap04_piano_scorte.png)](produzione.md)
 
-[:simple-googlecolab: Apri il notebook in Colab](https://colab.research.google.com/github/fabiofurini/modellazione-pl/blob/main/notebooks/lab06_dea.ipynb){ .md-button .md-button--primary }
-[:material-book-open-variant: Il capitolo](dea.md){ .md-button }
+[:simple-googlecolab: Apri il notebook in Colab](https://colab.research.google.com/github/fabiofurini/modellazione-pl/blob/main/notebooks/lab04_produzione.ipynb){ .md-button .md-button--primary }
+[:material-book-open-variant: Il capitolo](produzione.md){ .md-button }
 [:material-language-python: Tutti i notebook](notebook.md){ .md-button }
 <!-- /collana-app -->
 
