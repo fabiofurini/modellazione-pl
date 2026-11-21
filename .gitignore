@@ -1,0 +1,34 @@
+# Su GitHub va solo ciò che serve agli studenti (REGOLE_MODULI_TEMATICI §0.5, §1):
+# docs/ (PDF in docs/pdf/), mkdocs.yml, README.md, licenze, CITATION.cff, .github/,
+# GUIDA_GUROBI.md, python/ (script per gli studenti), dati/, notebooks/.
+
+# materiale interno, non pubblicato (git locali in volumes/ e slides/)
+note/
+volumes/
+slides/
+*.tex
+materiale_sorgente/
+# ricalcola le soluzioni riservate ai docenti: privato
+python/soluzioni_calcoli.py
+# prodotti intermedi e sito costruito
+build/
+site/
+# LaTeX
+*.aux
+*.log
+*.out
+*.toc
+*.fls
+*.fdb_latexmk
+*.synctex.gz
+*.nav
+*.snm
+*.vrb
+# Python
+__pycache__/
+*.pyc
+# varie
+.DS_Store
+*conflicted copy*
+# i PDF pubblicati sul sito vanno invece versionati
+!docs/pdf/*.pdf
