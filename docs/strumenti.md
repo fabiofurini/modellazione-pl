@@ -1,7 +1,7 @@
 # Strumenti
 
 Gli strumenti che servono prima dei modelli: la teoria che permette di
-*interrogare* una soluzione (dualità, prezzi ombra, KKT) e il solver con cui si
+*interrogare* una soluzione (dualità, prezzi ombra, costi ridotti) e il solver con cui si
 costruiscono e si risolvono i modelli.
 
 <div class="grid cards" markdown>
@@ -11,18 +11,10 @@ costruiscono e si risolvono i modelli.
     ---
 
     Coppia primale-duale in forma generale, regole della dualità, teoremi debole e
-    forte, scarti complementari, prezzi ombra e analisi di sensitività.
+    forte, scarti complementari, prezzi ombra, analisi di sensitività e il
+    protocollo di sensitività usato in ogni capitolo.
 
     [:octicons-arrow-right-24: Vai alla pagina](teoria-lp.md)
-
--   :material-chart-bell-curve: **Teoria: ottimizzazione non lineare**
-
-    ---
-
-    Convessità, programmazione quadratica e condizioni KKT — l'estensione non
-    lineare della teoria degli LP. Chiude il protocollo di sensitività.
-
-    [:octicons-arrow-right-24: Vai alla pagina](teoria-non-lineare.md)
 
 -   :material-console: **Solver: modelli lineari**
 
@@ -33,32 +25,23 @@ costruiscono e si risolvono i modelli.
 
     [:octicons-arrow-right-24: Vai alla pagina](solver-lp.md)
 
--   :material-function: **Solver: modelli non lineari**
-
-    ---
-
-    Vincoli funzionali (`log`, `exp`, potenze), termini bilineari, tolleranze e
-    scalatura: un solo solver, ottimo globale certificato.
-
-    [:octicons-arrow-right-24: Vai alla pagina](solver-non-lineare.md)
-
 </div>
 
-## Notazione e classi di modelli
+## Modelli lineari e prerequisiti
 
-- **LP** (*Linear Programming*): obiettivo e vincoli lineari;
-- **QP** (*Quadratic Programming*): obiettivo quadratico, vincoli lineari;
-- **NLP** (*Nonlinear Programming*): obiettivo o vincoli non lineari generali.
-
-Un problema è **convesso** quando ogni minimo locale è anche globale: per gli LP è
-sempre vero; per QP e NLP dipende dalle funzioni.
+Tutti i modelli del corso sono **LP** (*Linear Programming*): obiettivo e vincoli
+lineari. Un LP è sempre convesso: ogni ottimo locale è globale e la dualità vale
+senza eccezioni. Il prerequisito è il modulo
+[Programmazione lineare](https://fabiofurini.github.io/programmazione-lineare/), in particolare la dualità e l'analisi di
+sensitività. I modelli con obiettivo quadratico o non lineare sono nel modulo
+[Modellazione PNL](https://fabiofurini.github.io/modellazione-pnl/).
 
 **Notazione usata in tutto il corso.** Scalari e indici minuscoli ($x_{it}$,
 $\lambda$); gli oggetti dei modelli (prodotti, canali, titoli, scenari…) sono
 **numerati** e gli indici corrono su insiemi enumerati esplicitamente,
 $i \in \{1, 2, \dots, n\}$; conteggi interi ($n \in \mathbb{Z}_{\ge 1}$), dati
 razionali ($\mathbb{Q}$); vettori minuscoli in grassetto ($\boldsymbol{x}$),
-matrici maiuscole in grassetto ($\boldsymbol{Q}$). Variabili duali $\pi_i$, costi
+matrici maiuscole in grassetto ($\boldsymbol{A}$). Variabili duali $\pi_i$, costi
 ridotti $\bar c_j$, scarti $\bar s_i$: la **barra** indica i valori di una
 soluzione ammissibile, la **tilde** quelli di una soluzione ottima
 ($\tilde x_j$, $\tilde z$). Nei modelli la dicitura è sempre «soggetto a», le

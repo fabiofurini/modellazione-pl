@@ -314,7 +314,7 @@ Lo stesso codice è disponibile come notebook — [`notebooks/lab06_dea.ipynb`](
 ??? example "Mostra lo script completo — `lab06_dea.py`"
 
     ```python
-    """Capitolo 12 — Data Envelopment Analysis (LP).
+    """Capitolo 6 — Data Envelopment Analysis (LP).
 
     Caso di studio: 12 filiali di una banca (filiali 1, 2, ..., 12) confrontate su
     2 input (personale in FTE, costi operativi in migliaia di €) e 2 output
@@ -648,7 +648,7 @@ Lo stesso codice è disponibile come notebook — [`notebooks/lab06_dea.ipynb`](
     ax.legend(fontsize=8, loc="upper center", ncol=2)
     salva_figura(fig, "cap06_efficienze")
 
-    print("\nFatto: capitolo 12.")
+    print("\nFatto: capitolo 6.")
     ```
 
 ## Esercizi

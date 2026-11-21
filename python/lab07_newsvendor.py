@@ -1,4 +1,4 @@
-"""Capitolo 13 — Il Newsvendor e le sue varianti (LP stocastico a scenari).
+"""Capitolo 7 — Il Newsvendor e le sue varianti (LP stocastico a scenari).
 
 Caso di studio: panetteria che decide quanti panettoni artigianali produrre.
 Prezzo p = 15 €, costo c = 6 €, recupero v = 2 € → Cu = 9, Co = 4.
@@ -212,4 +212,4 @@ ax.set_xlabel("CVaR$_{0.90}$ del costo (€)"); ax.set_ylabel("costo medio (€)
 ax.set_title("Frontiera costo medio - rischio di coda")
 salva_figura(fig, "cap07_frontiera")
 
-print("\nFatto: capitolo 13.")
+print("\nFatto: capitolo 7.")

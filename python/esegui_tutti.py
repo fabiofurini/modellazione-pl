@@ -1,4 +1,4 @@
-"""Esegue in sequenza tutti gli script del laboratorio.
+"""Esegue in sequenza tutti gli script del corso.
 
 Rigenera: dati (dati/*.csv) e, in FIG = volumes/lecture_notes/dispensa_1_modellazione_pl/figure/,
 i dati per le figure pgfplots (FIG/dat/*.csv), i diagrammi TikZ (FIG/*.tex), le anteprime
@@ -13,18 +13,11 @@ from pathlib import Path
 
 SCRIPT = [
     "lab04_produzione.py",
-    "lab05_supplychain.py",
-    "lab06_markowitz.py",
-    "lab07_pricing.py",
-    "lab08_budget.py",
-    "lab09_localizzazione.py",
     "lab05_ricarica_ev.py",
-    "lab11_code.py",
     "lab06_dea.py",
     "lab07_newsvendor.py",
     "lab08_var_cvar.py",
     "lab09_arbitraggio.py",
-    "lab16_svm.py",
     "lab10_regressione.py",
 ]
 

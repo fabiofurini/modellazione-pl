@@ -2,7 +2,7 @@
 
 [:material-file-pdf-box: Dispensa (PDF)](pdf/dispensa-modellazione-pl.pdf) · [:material-presentation: Slide del capitolo (PDF)](pdf/slide-04-produzione.pdf)
 
-**Classe:** LP / QP convesso · **Script:** `python/lab04_produzione.py`
+**Classe:** LP · **Script:** `python/lab04_produzione.py`
 
 [![Apri in Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/fabiofurini/modellazione-pl/blob/main/notebooks/lab04_produzione.ipynb)
 
@@ -112,17 +112,15 @@ di produrre $1/a_3$ unità del prodotto 3 *un mese più tardi*, risparmiando un 
 giacenza. La curva del valore della capacità è convessa e decrescente; sotto il 97%
 della capacità attuale il problema diventa **inammissibile**.
 
-![Effetto dello smoothing](img/cap04_smoothing.png)
-
-La variante QP aggiunge in obiettivo $\gamma \sum_{t=2}^{m} (v_t - v_{t-1})^2$ con
-$v_t = \sum_{i=1}^{n} x_{it}$: con $\gamma = 0{,}5$ il profilo produttivo diventa quasi
-piatto (variazione mensile massima da 81 a 1 unità) al costo di appena
-$33.003 - 32.889 = 114$ € (+0,35%).
-
 !!! tip "Take-away manageriale"
     Conviene comprare ore straordinarie nei mesi 5–6 fino a 3–3,8 €/ora sotto il
-    prezzo interno; il piano livellato costa lo 0,35% in più; sotto il 97% della
-    capacità il servizio completo non è garantibile.
+    prezzo interno; sotto il 97% della capacità il servizio completo non è
+    garantibile.
+
+Un piano *regolare*, che penalizza le variazioni della produzione da un mese
+all'altro, richiede un termine quadratico nell'obiettivo e non è più un LP: è la
+variante quadratica di questo modello, nel modulo *Modellazione PNL*, pagina
+[«Produzione e scorte: la variante quadratica»](https://fabiofurini.github.io/modellazione-pnl/produzione-quadratica/).
 
 
 ## Codice
@@ -136,7 +134,7 @@ Lo stesso codice è disponibile come notebook — [`notebooks/lab04_produzione.i
 ??? example "Mostra lo script completo — `lab04_produzione.py`"
 
     ```python
-    """Capitolo 4 — Produzione e scorte multiperiodali (LP / QP convesso).
+    """Capitolo 4 — Produzione e scorte multiperiodali (LP).
 
     Caso di studio: azienda che produce 3 componenti (prodotti 1, 2, 3) su un orizzonte
     di 6 mesi con una risorsa condivisa (ore macchina).
@@ -144,8 +142,7 @@ Lo stesso codice è disponibile come notebook — [`notebooks/lab04_produzione.i
     Contenuto:
       1. LP a costo minimo con servizio obbligatorio
       2. Prezzi ombra della capacità e analisi dei duali
-      3. Variante QP con piano di produzione regolare (smoothing)
-      4. Sensitività: costo ottimo al variare della capacità
+      3. Sensitività: costo ottimo al variare della capacità
     """
     import gurobipy as gp
     import numpy as np
@@ -243,25 +240,7 @@ Lo stesso codice è disponibile come notebook — [`notebooks/lab04_produzione.i
           f"(variazione {m2.ObjVal - m.ObjVal:+.3f} = prezzo ombra {pi_star:.3f})")
 
     # ----------------------------------------------------------------------
-    # 3. VARIANTE QP: piano regolare (smoothing della produzione totale)
-    # ----------------------------------------------------------------------
-    intestazione("Variante QP: piano regolare (penalità sulle variazioni)")
-    risultati_qp = {}
-    for gamma in [0.0, 0.5, 2.0]:
-        mq, xq, sq, _ = costruisci_lp()
-        mq.update()                       # necessario prima di getObjective()
-        tot = {t: gp.quicksum(xq[i, t] for i in prodotti) for t in mesi}
-        obj = mq.getObjective()
-        mq.setObjective(obj + gamma * gp.quicksum((tot[t] - tot[t - 1]) * (tot[t] - tot[t - 1])
-                                                  for t in mesi[1:]), GRB.MINIMIZE)
-        mq.optimize()
-        profilo = [sum(xq[i, t].X for i in prodotti) for t in mesi]
-        risultati_qp[gamma] = (mq.ObjVal, profilo)
-        var_max = max(abs(profilo[k] - profilo[k - 1]) for k in range(1, len(profilo)))
-        print(f"  gamma={gamma:4.1f}: costo {mq.ObjVal:10.2f} €, variazione mensile max {var_max:6.1f} unità")
-
-    # ----------------------------------------------------------------------
-    # 4. FIGURE (dati per pgfplots + anteprima matplotlib)
+    # 3. FIGURE (dati per pgfplots + anteprima matplotlib)
     # ----------------------------------------------------------------------
     salva_dat(pd.DataFrame({
         "mese": mesi,
@@ -269,12 +248,6 @@ Lo stesso codice è disponibile come notebook — [`notebooks/lab04_produzione.i
         **{f"s{i}": [s[i, t].X for t in mesi] for i in prodotti},
         "domtot": [sum(domanda[i, t] for i in prodotti) for t in mesi],
     }), "cap04_piano")
-    salva_dat(pd.DataFrame({
-        "mese": mesi,
-        "gzero": risultati_qp[0.0][1],
-        "gmezzo": risultati_qp[0.5][1],
-        "gdue": risultati_qp[2.0][1],
-    }), "cap04_smoothing")
 
     fig, (ax1, ax2) = plt.subplots(1, 2, figsize=(10.5, 4.0))
     larg = 0.26
@@ -292,15 +265,6 @@ Lo stesso codice è disponibile come notebook — [`notebooks/lab04_produzione.i
     ax2.set_title("Scorte di fine mese")
     ax2.legend(fontsize=8)
     salva_figura(fig, "cap04_piano_scorte")
-
-    fig, ax = plt.subplots()
-    for gamma, stile_linea in zip([0.0, 0.5, 2.0], ["-o", "-s", "-^"]):
-        ax.plot(mesi, risultati_qp[gamma][1], stile_linea,
-                label=f"$\\gamma$ = {gamma} (costo {risultati_qp[gamma][0]:,.0f} €)")
-    ax.set_xlabel("mese"); ax.set_ylabel("produzione totale (unità)")
-    ax.set_title("Effetto dello smoothing quadratico sul profilo produttivo")
-    ax.legend()
-    salva_figura(fig, "cap04_smoothing")
 
     # sensitività: costo ottimo al variare della capacità uniforme
     intestazione("Sensitività: costo ottimo al variare della capacità")

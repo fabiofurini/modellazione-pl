@@ -85,9 +85,9 @@ candidata $\eta$ (stesso trucco delle parti positive del Newsvendor). Minimizzar
 $\eta$ bilancia due spinte: alzare $\eta$ riduce gli eccessi ma sposta in su la
 soglia; il punto di equilibrio è esattamente il quantile $\alpha$.
 
-## Caso di studio 1: portafoglio mean-CVaR vs Markowitz
+## Caso di studio 1: portafoglio mean-CVaR
 
-Gli stessi otto titoli del capitolo su Markowitz, ma con $k = 220$ scenari mensili
+Otto titoli azionari settoriali (ENE, FIN, TEC, IND, SAN, CON, UTL, MAT) e $k = 220$ scenari mensili
 generati con **code grasse** (fattore di mercato $t$ di Student, 4 gradi di libertà).
 Perdita di scenario $\ell_s(\boldsymbol x) = -\sum_{i=1}^{n} r_{is}\, x_i$, dove
 $r_{is}$ è il rendimento del titolo $i$ nello scenario $s$; minimizziamo
@@ -96,19 +96,20 @@ $\mathrm{CVaR}_{0,90}$ con rendimento atteso $\ge 8\%$ annuo.
 ```text
             | perdita media | VaR90  | CVaR90   (perdite mensili)
   mean-CVaR |       -0,0067 | 0,0327 | 0,0489
-  Markowitz |       -0,0067 | 0,0329 | 0,0531
-Composizioni: mean-CVaR: ENE 9,9 FIN 1,9 TEC 10,5 SAN 8,6 UTL 46,5 MAT 22,5
-              Markowitz: ENE 18,4 FIN 6,4 TEC 6,5 SAN 13,6 UTL 40,4 MAT 14,6
+Composizione: ENE 9,9 FIN 1,9 TEC 10,5 SAN 8,6 UTL 46,5 MAT 22,5
 ```
 
 ![Distribuzione delle perdite e frontiera](img/cap08_perdite_frontiera.png)
 
-A parità di rendimento richiesto e di perdita media, il portafoglio mean-CVaR taglia
-la coda: CVaR₉₀ del 4,89% contro 5,31% di Markowitz (−8%). Lo fa riducendo i titoli
-ad alto beta (ENE dal 18% al 10%) a favore di UTL e di una quota di TEC che, pur
-mediocre in media, si muove in controtendenza negli scenari peggiori di questo
-campione. La varianza penalizza simmetricamente sopra e sotto la media; il CVaR
-guarda solo dove fa male.
+Con un rendimento atteso dell'8% annuo il portafoglio guadagna in media lo 0,67% al
+mese, ma nel 10% dei mesi peggiori perde in media il 4,89%: è il numero che la media
+nasconde. Il CVaR concentra il portafoglio su UTL e MAT e tiene una quota di TEC che,
+pur mediocre in media, si muove in controtendenza negli scenari peggiori di questo
+campione. Il CVaR guarda solo dove fa male: le perdite sopra il VaR.
+
+Misurare il rischio con la varianza invece che con il CVaR porta al portafoglio di
+Markowitz, un modello quadratico: è nel modulo *Modellazione PNL*, pagina
+[«Portafoglio di Markowitz»](https://fabiofurini.github.io/modellazione-pnl/markowitz/).
 
 ## Caso di studio 2: supply chain a due stadi
 
@@ -198,12 +199,12 @@ Lo stesso codice è disponibile come notebook — [`notebooks/lab08_var_cvar.ipy
 ??? example "Mostra lo script completo — `lab08_var_cvar.py`"
 
     ```python
-    """Capitolo 14 — VaR e CVaR: modelli lineari e applicazioni (LP a scenari).
+    """Capitolo 8 — VaR e CVaR: modelli lineari e applicazioni (LP a scenari).
 
     Contenuto:
       1. Esempio a 6 scenari: VaR = 12, CVaR = 18,67,
          verificato con la formulazione lineare di Rockafellar-Uryasev
-      2. Portafoglio mean-CVaR (LP) e confronto con Markowitz (QP)
+      2. Portafoglio mean-CVaR (LP)
       3. Frontiera rendimento-CVaR
       4. Supply chain a due stadi con scenari avversi: il costo della resilienza
     """
@@ -246,9 +247,9 @@ Lo stesso codice è disponibile come notebook — [`notebooks/lab08_var_cvar.ipy
           f"→ il CVaR racconta la coda, la media no.")
 
     # ----------------------------------------------------------------------
-    # 2. PORTAFOGLIO MEAN-CVaR vs MARKOWITZ
+    # 2. PORTAFOGLIO MEAN-CVaR
     # ----------------------------------------------------------------------
-    intestazione("Portafoglio mean-CVaR (LP) vs Markowitz (QP)")
+    intestazione("Portafoglio mean-CVaR (LP)")
     titoli = ["ENE", "FIN", "TEC", "IND", "SAN", "CON", "UTL", "MAT"]
     n = len(titoli)
     beta_f = np.array([1.1, 1.3, 1.5, 1.0, 0.6, 0.8, 0.4, 1.2])
@@ -261,7 +262,6 @@ Lo stesso codice è disponibile come notebook — [`notebooks/lab08_var_cvar.ipy
     salva_dati(pd.DataFrame(R, columns=titoli), "cvar_scenari_rendimenti")
 
     mu = R.mean(axis=0) * 12
-    Q = np.cov(R.T) * 12
     alpha_c = 0.90
 
 
@@ -285,23 +285,9 @@ Lo stesso codice è disponibile come notebook — [`notebooks/lab08_var_cvar.ipy
         return w, m.ObjVal
 
 
-    def porta_markowitz(r_min):
-        m = gp.Model("mk")
-        m.Params.OutputFlag = 0
-        x = m.addVars(n, name="x")
-        m.addConstr(x.sum() == 1)
-        m.addConstr(gp.quicksum(mu[i] * x[i] for i in range(n)) >= r_min)
-        m.setObjective(gp.quicksum(Q[i, j] * x[i] * x[j] for i in range(n) for j in range(n)),
-                       GRB.MINIMIZE)
-        m.optimize()
-        return np.array([x[i].X for i in range(n)])
-
-
     r_obb = 0.08
     w_cv, cvar_ott = porta_cvar(r_obb)
-    w_mk = porta_markowitz(r_obb)
     perd_cv = -R @ w_cv
-    perd_mk = -R @ w_mk
 
 
     def stat_perdite(perd):
@@ -312,11 +298,11 @@ Lo stesso codice è disponibile come notebook — [`notebooks/lab08_var_cvar.ipy
 
     print(f"Rendimento minimo richiesto: {r_obb:.0%} annuo, alpha = {alpha_c}")
     print(f"{'':>12} | {'perdita media':>13} | {'VaR90':>8} | {'CVaR90':>8}  (perdite mensili)")
-    for nome, perd in [("mean-CVaR", perd_cv), ("Markowitz", perd_mk)]:
+    for nome, perd in [("mean-CVaR", perd_cv)]:
         mm_, vv_, cc_ = stat_perdite(perd)
         print(f"{nome:>12} | {mm_:13.4f} | {vv_:8.4f} | {cc_:8.4f}")
     print("\nComposizioni (quote > 1%):")
-    for nome, w in [("mean-CVaR", w_cv), ("Markowitz", w_mk)]:
+    for nome, w in [("mean-CVaR", w_cv)]:
         print(f"  {nome:>10}: " + ", ".join(f"{titoli[i]} {w[i]:.1%}"
                                             for i in range(n) if w[i] > 0.01))
 
@@ -422,7 +408,7 @@ Lo stesso codice è disponibile come notebook — [`notebooks/lab08_var_cvar.ipy
     ax2.set_title("Frontiera rendimento-CVaR")
     salva_figura(fig, "cap08_perdite_frontiera")
 
-    print("\nFatto: capitolo 14.")
+    print("\nFatto: capitolo 8.")
     ```
 
 ## Esercizi

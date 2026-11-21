@@ -1,7 +1,7 @@
 site_name: Modellazione PL · Fabio Furini
 site_url: https://fabiofurini.github.io/modellazione-pl/
 site_description: >-
-  Modelli continui di ottimizzazione:
+  Modelli di programmazione lineare:
   dispensa, codice Python/Gurobi, dati e casi di studio.
 site_author: Fabio Furini
 repo_url: https://github.com/fabiofurini/modellazione-pl
@@ -79,6 +79,9 @@ extra:
     - icon: material/code-braces
       link: https://fabiofurini.github.io/algoritmi/
       name: Algoritmi
+    - icon: material/chart-bell-curve-cumulative
+      link: https://fabiofurini.github.io/modellazione-pnl/
+      name: Modellazione PNL
   alternate:
     - name: Italiano
       link: https://fabiofurini.github.io/modellazione-pl/
@@ -116,20 +119,12 @@ nav:
   - Strumenti:
       - strumenti.md
       - Teoria, programmazione lineare: teoria-lp.md
-      - Teoria, ottimizzazione non lineare: teoria-non-lineare.md
       - Solver, modelli lineari: solver-lp.md
-      - Solver, modelli non lineari: solver-non-lineare.md
       - Notebook in Colab: notebook.md
   - Modelli deterministici:
       - modelli-deterministici.md
       - Produzione e scorte: produzione.md
-      - Supply chain e CO2: supplychain.md
-      - Portafoglio di Markowitz: markowitz.md
-      - Pricing e revenue management: pricing.md
-      - Budget pubblicitario: budget.md
-      - Localizzazione continua: localizzazione.md
       - Ricarica di veicoli elettrici: ricarica-ev.md
-      - Code e capacità di servizio: code.md
       - Data Envelopment Analysis: dea.md
   - Decisioni sotto incertezza:
       - decisioni-incertezza.md
@@ -138,7 +133,6 @@ nav:
       - Arbitraggio e prezzatura: arbitraggio.md
   - Ottimizzazione e machine learning:
       - ottimizzazione-ml.md
-      - Support Vector Machine: svm.md
       - Regressione robusta e quantile: regressione.md
   - Quiz: autovalutazione.md
   - Materiale: materiale.md

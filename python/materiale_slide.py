@@ -16,19 +16,13 @@ RADICE = Path(__file__).resolve().parents[2]
 # (titolo del gruppo it, en), [(nome it, nome en, titolo it, titolo en)]
 GRUPPI = [
     (("Strumenti", "Tools"), [
-        ("slide-01-introduzione", "slides-01-introduction", "Introduzione al laboratorio", "Introduction to the laboratory"),
-        ("slide-02-richiami", "slides-02-background", "Richiami di teoria", "Theory background"),
+        ("slide-01-introduzione", "slides-01-introduction", "Introduzione alla modellazione PL", "Introduction to LP modelling"),
+        ("slide-02-richiami", "slides-02-background", "Richiami di programmazione lineare", "Linear programming background"),
         ("slide-03-python-gurobi", "slides-03-python-gurobi", "Il solver: costruire, risolvere, interpretare", "The solver: building, solving, interpreting"),
     ]),
     (("Modelli deterministici", "Deterministic models"), [
         ("slide-04-produzione", "slides-04-production", "Produzione e scorte multiperiodali", "Multi-period production and inventory"),
-        ("slide-05-supply-chain", "slides-05-supply-chain", "Supply chain con congestione e sostenibilità", "Supply chain with congestion and sustainability"),
-        ("slide-06-markowitz", "slides-06-markowitz", "Portafoglio di Markowitz", "The Markowitz portfolio"),
-        ("slide-07-pricing", "slides-07-pricing", "Pricing e revenue management", "Pricing and revenue management"),
-        ("slide-08-budget", "slides-08-budget", "Allocazione del budget pubblicitario", "Advertising budget allocation"),
-        ("slide-09-localizzazione", "slides-09-location", "Localizzazione continua di un servizio", "Continuous location of a service"),
         ("slide-05-ricarica-ev", "slides-05-ev-charging", "Ricarica intelligente di veicoli elettrici", "Smart charging of electric vehicles"),
-        ("slide-11-code", "slides-11-queues", "Capacità di servizio e tempi di attesa", "Service capacity and waiting times"),
         ("slide-06-dea", "slides-06-dea", "Data Envelopment Analysis", "Data Envelopment Analysis"),
     ]),
     (("Decisioni sotto incertezza", "Decisions under uncertainty"), [
@@ -37,7 +31,6 @@ GRUPPI = [
         ("slide-09-arbitraggio", "slides-09-arbitrage", "Arbitraggio e prezzatura", "Arbitrage and pricing"),
     ]),
     (("Ottimizzazione e machine learning", "Optimization and machine learning"), [
-        ("slide-16-svm", "slides-16-svm", "Support Vector Machine", "Support Vector Machine"),
         ("slide-10-regressione", "slides-10-regression", "Regressione robusta e quantile", "Robust and quantile regression"),
     ]),
 ]

@@ -122,7 +122,7 @@ Descrizione della funzione obiettivo e dei vincoli:
 
 Il **trucco delle parti positive**: l'obiettivo schiaccia $o_s$ e $u_s$ sui valori
 $\max\{q - d_s, 0\}$ e $\max\{d_s - q, 0\}$ senza variabili binarie — lo stesso
-meccanismo tornerà nel CVaR e nella SVM.
+meccanismo tornerà nel CVaR e nella regressione quantile.
 
 ```text
 LP con k = 600 scenari: q = 108,61
@@ -202,7 +202,7 @@ Lo stesso codice è disponibile come notebook — [`notebooks/lab07_newsvendor.i
 ??? example "Mostra lo script completo — `lab07_newsvendor.py`"
 
     ```python
-    """Capitolo 13 — Il Newsvendor e le sue varianti (LP stocastico a scenari).
+    """Capitolo 7 — Il Newsvendor e le sue varianti (LP stocastico a scenari).
 
     Caso di studio: panetteria che decide quanti panettoni artigianali produrre.
     Prezzo p = 15 €, costo c = 6 €, recupero v = 2 € → Cu = 9, Co = 4.
@@ -416,7 +416,7 @@ Lo stesso codice è disponibile come notebook — [`notebooks/lab07_newsvendor.i
     ax.set_title("Frontiera costo medio - rischio di coda")
     salva_figura(fig, "cap07_frontiera")
 
-    print("\nFatto: capitolo 13.")
+    print("\nFatto: capitolo 7.")
     ```
 
 ## Esercizi

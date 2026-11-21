@@ -4,8 +4,7 @@
 
 Come si costruisce un modello lineare con `gurobipy`, come si fa girare, come si
 recupera la soluzione e come si interpreta l'output. Tutti gli esempi sono
-copia-incollabili in un terminale Python. I modelli non lineari sono nella
-[pagina gemella](solver-non-lineare.md).
+copia-incollabili in un terminale Python.
 
 ---
 
@@ -44,7 +43,7 @@ x2 = m.addVar(lb=0, name="x2")
 Punti importanti:
 - il **default** è variabile continua con `lb=0` e `ub=+inf`: per variabili non negative basta `m.addVar(name=...)`;
 - `vtype=GRB.CONTINUOUS` è il default; in questo laboratorio **non usiamo mai** `GRB.BINARY`/`GRB.INTEGER`;
-- per una variabile libera (anche negativa, es. l'intercetta `b` della SVM o la soglia `η` del CVaR): `m.addVar(lb=-GRB.INFINITY)`.
+- per una variabile libera (anche negativa, es. l'intercetta `b` della regressione o la soglia `η` del CVaR): `m.addVar(lb=-GRB.INFINITY)`.
 
 Per **famiglie di variabili indicizzate** (il caso normale nei modelli veri):
 
@@ -80,13 +79,7 @@ m.addConstrs((x.sum(i, "*") <= b[i] for i in I), name="cap")
 m.setObjective(30*x1 + 50*x2, GRB.MAXIMIZE)
 ```
 
-Il secondo argomento è `GRB.MAXIMIZE` o `GRB.MINIMIZE`. Obiettivi **quadratici** (Markowitz,
-SVM, smoothing) si scrivono in modo naturale:
-
-```python
-m.setObjective(x @ Q @ x, GRB.MINIMIZE)                  # forma matriciale (numpy)
-m.setObjective(gp.quicksum(q[i,j]*x[i]*x[j] for i in I for j in I), GRB.MINIMIZE)
-```
+Il secondo argomento è `GRB.MAXIMIZE` o `GRB.MINIMIZE`.
 
 ### Passo 5 — (facoltativo) controllare quello che abbiamo scritto
 
@@ -137,8 +130,7 @@ Valore ottimo: 1900.0
 ```
 
 La sezione 4 spiega come leggere ciascuno di questi numeri; l'esempio «tutti i
-casi» (sezione 4.3 bis) copre anche vincoli `=`/`≥` e variabili libere o `≤ 0`;
-per i modelli non lineari c'è la [pagina gemella](solver-non-lineare.md).
+casi» (sezione 4.3 bis) copre anche vincoli `=`/`≥` e variabili libere o `≤ 0`.
 
 
 ---
@@ -154,7 +146,6 @@ Tutto qui. Parametri utili da impostare **prima** di `optimize()`:
 ```python
 m.Params.OutputFlag = 0      # 1 = log a video (default), 0 = silenzioso
 m.Params.TimeLimit  = 60     # secondi massimi
-m.Params.NonConvex  = 2      # consente QP non convessi (es. pricing p*q)
 ```
 
 ### Il log spiegato
@@ -224,9 +215,7 @@ sol = pd.DataFrame([(i, t, x[i, t].X) for i in I for t in T],
 
 ### 4.1 L'esito
 
-- **OPTIMAL** — soluzione ottima certificata. Nei modelli convessi di questo laboratorio
-  l'ottimo è **globale**; anche in un QP dichiarato non convesso (`NonConvex=2`) e nei
-  modelli con vincoli non lineari (`FuncNonlinear=1`) Gurobi certifica il globale.
+- **OPTIMAL** — soluzione ottima certificata. Un LP è convesso: l'ottimo è **globale**.
 - **INFEASIBLE** — i vincoli si contraddicono. Diagnosi:
   `m.computeIIS(); m.write("conflitto.ilp")` — il file elenca un sottoinsieme minimale di
   vincoli in conflitto tra loro. Errore tipico: domanda totale > capacità totale senza
@@ -357,7 +346,7 @@ perturbazione: `b_2 = 101 → 626` (+6), `b_3 = -19 → 619` (−1), `x3` forzat
 | ottimo = 0, tutte variabili nulle | obiettivo non impostato o verso sbagliato | controllare `setObjective(..., GRB.MAXIMIZE)` |
 | `INFEASIBLE` inatteso | vincolo scritto con verso sbagliato, dati incoerenti | `computeIIS()` + leggere il `.ilp` |
 | `UNBOUNDED` | manca un bound o un vincolo di capacità | scrivere il `.lp` e cercare la variabile libera |
-| valori attesi ma `Pi` non disponibile | il modello è QP/MIP, i duali LP non esistono | per QP usare `m.Params.QCPDual = 1` o verifica per perturbazione |
+| valori attesi ma `Pi` non disponibile | il modello contiene variabili intere, i duali LP non esistono | tenere solo variabili continue, o verificare per perturbazione |
 | numeri "quasi zero" tipo `1e-13` | normale tolleranza numerica | filtrare con `> 1e-6` nelle stampe |
 | `Model too large for size-limited license` | superati i limiti della licenza pip | attivare la licenza accademica (vedi la home) |
 

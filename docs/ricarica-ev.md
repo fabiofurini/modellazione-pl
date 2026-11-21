@@ -2,7 +2,7 @@
 
 [:material-file-pdf-box: Dispensa (PDF)](pdf/dispensa-modellazione-pl.pdf) · [:material-presentation: Slide del capitolo (PDF)](pdf/slide-05-ricarica-ev.pdf)
 
-**Classe:** LP / QP convesso · **Script:** `python/lab05_ricarica_ev.py`
+**Classe:** LP · **Script:** `python/lab05_ricarica_ev.py`
 
 [![Apri in Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/fabiofurini/modellazione-pl/blob/main/notebooks/lab05_ricarica_ev.ipynb)
 
@@ -68,8 +68,7 @@ Descrizione della funzione obiettivo e dei vincoli:
 - i vincoli di non negatività su $x_{vt}$ definiscono le variabili del modello.
 
 Varianti: peak shaving ($\min z$ con $\sum_{v=1}^{n} x_{vt} + b_t \le z$ per ogni
-$t \in \{1, 2, \dots, m\}$); profilo regolare (QP con
-$\gamma \sum_{t=2}^{m} (z_t - z_{t-1})^2$); multiobiettivo costo $+\,\rho\,z$.
+$t \in \{1, 2, \dots, m\}$); multiobiettivo costo $+\,\rho\,z$.
 Il vincolo di energia è scritto come $\ge$ perché caricare più del necessario è
 ammesso ma mai conveniente (il prezzo è positivo): all'ottimo vale con uguaglianza.
 
@@ -127,6 +126,11 @@ ottimizzare un solo obiettivo quando ce ne sono due.
     sospettare del proprio codice prima che del modello.
 
 
+Un profilo di prelievo *regolare*, che penalizza le variazioni del prelievo da
+un'ora all'altra, richiede un termine quadratico nell'obiettivo e non è più un LP: è
+la variante quadratica di questo modello, nel modulo *Modellazione PNL*, pagina
+[«Ricarica di veicoli elettrici: la variante quadratica»](https://fabiofurini.github.io/modellazione-pnl/ricarica-ev-quadratica/).
+
 ## Codice
 
 Lo script completo del capitolo — dati, modello, soluzione, sensitività e figure —
@@ -138,7 +142,7 @@ Lo stesso codice è disponibile come notebook — [`notebooks/lab05_ricarica_ev.
 ??? example "Mostra lo script completo — `lab05_ricarica_ev.py`"
 
     ```python
-    """Capitolo 10 — Ricarica intelligente di veicoli elettrici (LP / QP convesso).
+    """Capitolo 5 — Ricarica intelligente di veicoli elettrici (LP).
 
     Caso di studio: deposito aziendale con 6 furgoni elettrici da ricaricare
     durante la notte; prezzi orari dell'energia; carico di base dell'edificio.
@@ -146,7 +150,7 @@ Lo stesso codice è disponibile come notebook — [`notebooks/lab05_ricarica_ev.
     Contenuto:
       1. LP a costo minimo: la ricarica insegue le ore economiche
       2. Peak shaving: minimizzare il picco di prelievo (minimax)
-      3. Profilo regolare (QP) e confronto multiobiettivo costo-picco
+      3. Confronto multiobiettivo costo-picco
       4. Prezzi ombra: capacità di rete e fabbisogno energetico
     """
     import gurobipy as gp
@@ -223,7 +227,7 @@ Lo stesso codice è disponibile come notebook — [`notebooks/lab05_ricarica_ev.
         print(f"  {v}: {v_ene[v].Pi:.4f} €/kWh")
 
     # ----------------------------------------------------------------------
-    # 3. PEAK SHAVING (minimax) e PROFILO REGOLARE (QP)
+    # 3. PEAK SHAVING (minimax) e COMPROMESSO COSTO-PICCO
     # ----------------------------------------------------------------------
     intestazione("Peak shaving: minimizzare il picco di prelievo")
     mp, xp, _, _ = costruisci()
@@ -300,13 +304,12 @@ Lo stesso codice è disponibile come notebook — [`notebooks/lab05_ricarica_ev.
     ax.set_title("Frontiera costo-picco: ridurre il picco costa poco all'inizio")
     salva_figura(fig, "cap05_frontiera")
 
-    print("\nFatto: capitolo 10.")
+    print("\nFatto: capitolo 5.")
     ```
 
 ## Esercizi
 
 1. $e_1: 46 \to 47$ kWh: costo $+0{,}0947 = 0{,}09/0{,}95$ (verificato).
 2. V3 arriva alle 23: come cambiano costo e picco?
-3. Profilo regolare QP con $\gamma \sum_t (z_t - z_{t-1})^2$.
-4. Frontiera costo-emissioni con intensità carbonica oraria $g_t$.
-5. Capacità minima ammissibile per bisezione: $\tilde k = 68$ kW.
+3. Frontiera costo-emissioni con intensità carbonica oraria $g_t$.
+4. Capacità minima ammissibile per bisezione: $\tilde k = 68$ kW.

@@ -1,4 +1,4 @@
-"""Capitolo 10 — Ricarica intelligente di veicoli elettrici (LP / QP convesso).
+"""Capitolo 5 — Ricarica intelligente di veicoli elettrici (LP).
 
 Caso di studio: deposito aziendale con 6 furgoni elettrici da ricaricare
 durante la notte; prezzi orari dell'energia; carico di base dell'edificio.
@@ -6,7 +6,7 @@ durante la notte; prezzi orari dell'energia; carico di base dell'edificio.
 Contenuto:
   1. LP a costo minimo: la ricarica insegue le ore economiche
   2. Peak shaving: minimizzare il picco di prelievo (minimax)
-  3. Profilo regolare (QP) e confronto multiobiettivo costo-picco
+  3. Confronto multiobiettivo costo-picco
   4. Prezzi ombra: capacità di rete e fabbisogno energetico
 """
 import gurobipy as gp
@@ -83,7 +83,7 @@ for v in veicoli:
     print(f"  {v}: {v_ene[v].Pi:.4f} €/kWh")
 
 # ----------------------------------------------------------------------
-# 3. PEAK SHAVING (minimax) e PROFILO REGOLARE (QP)
+# 3. PEAK SHAVING (minimax) e COMPROMESSO COSTO-PICCO
 # ----------------------------------------------------------------------
 intestazione("Peak shaving: minimizzare il picco di prelievo")
 mp, xp, _, _ = costruisci()
@@ -160,4 +160,4 @@ ax.set_ylabel("costo di ricarica (€)")
 ax.set_title("Frontiera costo-picco: ridurre il picco costa poco all'inizio")
 salva_figura(fig, "cap05_frontiera")
 
-print("\nFatto: capitolo 10.")
+print("\nFatto: capitolo 5.")

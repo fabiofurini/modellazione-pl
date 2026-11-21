@@ -1,12 +1,12 @@
-"""Capitolo 17 — Regressione robusta e quantile (LP).
+"""Capitolo 10 — Regressione robusta e quantile (LP).
 
-Caso di studio: la panetteria del capitolo 13. Sessanta giorni di storico
+Caso di studio: la panetteria del capitolo 7. Sessanta giorni di storico
 (domanda, temperatura, prezzo, weekend) piu' tre giorni di sciopero dei
 trasporti che fanno crollare la domanda.
 
 Contenuto:
   1. Senza attributi il modello restituisce il quantile empirico (esempio a mano)
-  2. Scarti assoluti (LP) contro minimi quadrati (QP): robustezza agli anomali
+  2. Scarti assoluti (LP): robustezza ai giorni anomali
   3. Lettura duale: pi_i, scarti complementari, punti di appoggio
   4. Regressione quantile: la scorta di sicurezza del newsvendor dai dati
   5. Selezione delle caratteristiche con un budget sui coefficienti
@@ -19,7 +19,7 @@ from gurobipy import GRB
 from stile import (ARANCIO, BLU, GRIGIO, ROSSO, TEAL, VERDE, intestazione, plt,
                    salva_dat, salva_dati, salva_figura)
 
-TAU_NV = 9 / 13                                # frattile critico del capitolo 13
+TAU_NV = 9 / 13                                # frattile critico del capitolo 7
 
 
 # ----------------------------------------------------------------------
@@ -56,22 +56,6 @@ def regressione_quantile(X, y, tau=0.5, budget=None):
     return m, coef, b.X, duali, vincolo_budget
 
 
-def minimi_quadrati(X, y):
-    """min sum_i r_i^2  con  X w + b + r = y  (QP convesso, stesso solver)."""
-    n, p = X.shape
-    m = gp.Model("minimi_quadrati")
-    m.Params.OutputFlag = 0
-    w = m.addVars(p, lb=-GRB.INFINITY, name="w")
-    b = m.addVar(lb=-GRB.INFINITY, name="b")
-    r = m.addVars(n, lb=-GRB.INFINITY, name="r")
-    m.addConstrs((gp.quicksum(X[i, j] * w[j] for j in range(p)) + b + r[i] == y[i]
-                  for i in range(n)), name="residuo")
-    m.setObjective(gp.quicksum(r[i] * r[i] for i in range(n)), GRB.MINIMIZE)
-    m.optimize()
-    assert m.Status == GRB.OPTIMAL
-    return np.array([w[j].X for j in range(p)]), b.X
-
-
 def scarto_medio(X, y, coef, b):
     return float(np.abs(y - (X @ coef + b)).mean())
 
@@ -84,7 +68,7 @@ y7 = np.array([88.0, 96.0, 104.0, 112.0, 120.0, 132.0, 148.0])
 X0 = np.zeros((len(y7), 0))
 m0, _, b0, pi0, _ = regressione_quantile(X0, y7, tau=TAU_NV)
 print(f"Sette giorni: {y7.astype(int)}")
-print(f"tau = alpha* = 9/13 = {TAU_NV:.4f}  (panetteria del capitolo 13: cu=9, co=4)")
+print(f"tau = alpha* = 9/13 = {TAU_NV:.4f}  (panetteria del capitolo 7: cu=9, co=4)")
 print(f"Intercetta ottima b = {b0:.4f}  -> e' il 5o valore ordinato, il quantile 69,23%")
 print(f"Valore ottimo = {m0.ObjVal:.4f} = 680/13")
 print(f"Duali pi = {np.round(pi0, 4)}  (limiti: -(1-tau) = {-(1 - TAU_NV):.4f}, "
@@ -137,23 +121,19 @@ print(f"Domanda: min {domanda.min():.0f}, media {domanda.mean():.1f}, "
       f"max {domanda.max():.0f}   giorni di sciopero: {giorni_sciopero}")
 
 # ----------------------------------------------------------------------
-# 3. SCARTI ASSOLUTI (LP) CONTRO MINIMI QUADRATI (QP)
+# 3. SCARTI ASSOLUTI (LP): ROBUSTEZZA AI GIORNI ANOMALI
 # ----------------------------------------------------------------------
-intestazione("Scarti assoluti (LP) contro minimi quadrati (QP)")
+intestazione("Scarti assoluti (LP): robustezza ai giorni anomali")
 Xt = temperatura.reshape(-1, 1)
 m_lad, w_lad, b_lad, pi_lad, _ = regressione_quantile(Xt, domanda, tau=0.5)
-w_ols, b_ols = minimi_quadrati(Xt, domanda)
 buoni = anomalo == 0
-print(f"LP  (mediana)        : domanda = {b_lad:.2f} {w_lad[0]:+.2f} * temperatura")
-print(f"QP  (minimi quadrati): domanda = {b_ols:.2f} {w_ols[0]:+.2f} * temperatura")
+_, w_pul, b_pul, _, _ = regressione_quantile(Xt[buoni], domanda[buoni], tau=0.5)
+print(f"LP sui 60 giorni               : domanda = {b_lad:.2f} {w_lad[0]:+.2f} * temperatura")
+print(f"LP senza i 5 giorni di sciopero: domanda = {b_pul:.2f} {w_pul[0]:+.2f} * temperatura")
 print(f"Scarto assoluto medio sui 55 giorni normali: "
-      f"LP {scarto_medio(Xt[buoni], domanda[buoni], w_lad, b_lad):.2f} pezzi, "
-      f"QP {scarto_medio(Xt[buoni], domanda[buoni], w_ols, b_ols):.2f} pezzi")
-w_pul, b_pul = minimi_quadrati(Xt[buoni], domanda[buoni])
-print(f"QP senza i 5 giorni di sciopero: domanda = {b_pul:.2f} "
-      f"{w_pul[0]:+.2f} * temperatura  (l'LP ci arriva senza togliere nulla)")
-print(f"Distanza dall'intercetta 'pulita' {b_pul:.2f}: "
-      f"LP {abs(b_lad - b_pul):.2f} pezzi, QP {abs(b_ols - b_pul):.2f} pezzi")
+      f"{scarto_medio(Xt[buoni], domanda[buoni], w_lad, b_lad):.2f} pezzi")
+print(f"Distanza fra le due intercette: {abs(b_lad - b_pul):.2f} pezzi "
+      f"(gli scioperi spostano appena la retta)")
 
 # ----------------------------------------------------------------------
 # 4. LETTURA DUALE: PUNTI DI APPOGGIO E PROPRIETA' DEL QUANTILE
@@ -220,7 +200,7 @@ print(f"  domanda mediana prevista        {prev_med:6.1f} pezzi")
 print(f"  quantile {TAU_NV:.4f} previsto        {prev_nv:6.1f} pezzi  <- quantita' da produrre")
 print(f"  scorta di sicurezza             {prev_nv - prev_med:6.1f} pezzi")
 print(f"  quantile {TAU_NV:.4f} senza attributi {q_incond:6.1f} pezzi  "
-      f"(capitolo 13: stessa regola, nessun attributo)")
+      f"(capitolo 7: stessa regola, nessun attributo)")
 
 # ----------------------------------------------------------------------
 # 6. SELEZIONE DELLE CARATTERISTICHE CON UN BUDGET SUI COEFFICIENTI
@@ -289,11 +269,9 @@ ax.scatter(temperatura[appoggio], domanda[appoggio], s=95, facecolors="none",
            edgecolors=VERDE, linewidths=1.6, label="punti di appoggio")
 gr = np.linspace(9, 35, 2)
 ax.plot(gr, b_lad + w_lad[0] * gr, color=BLU, lw=2, label="scarti assoluti (LP)")
-ax.plot(gr, b_ols + w_ols[0] * gr, color=ARANCIO, lw=2, ls="--",
-        label="minimi quadrati (QP)")
 ax.set_xlabel("temperatura massima (gradi)")
 ax.set_ylabel("domanda (pezzi)")
-ax.set_title("Cinque giorni di sciopero spostano i minimi quadrati, non l'LP")
+ax.set_title("Cinque giorni di sciopero non spostano la retta dell'LP")
 ax.legend(loc="upper right", fontsize=8)
 salva_figura(fig, "cap10_regressione_robusta")
 
@@ -331,4 +309,4 @@ ax.set_ylabel("scarto assoluto medio (pezzi)")
 ax.set_title("Il prezzo della complessità: errore contro budget")
 salva_figura(fig, "cap10_budget")
 
-print("\nFatto: capitolo 17 (regressione robusta e quantile).")
+print("\nFatto: capitolo 10 (regressione robusta e quantile).")

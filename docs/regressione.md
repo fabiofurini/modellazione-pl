@@ -2,12 +2,12 @@
 
 [:material-file-pdf-box: Dispensa (PDF)](pdf/dispensa-modellazione-pl.pdf) · [:material-presentation: Slide del capitolo (PDF)](pdf/slide-10-regressione.pdf)
 
-**Classe: LP** (confronto con QP) · Script: `python/lab10_regressione.py`
+**Classe: LP** · Script: `python/lab10_regressione.py`
 
 [![Apri in Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/fabiofurini/modellazione-pl/blob/main/notebooks/lab10_regressione.ipynb)
 
-Tutti i modelli del laboratorio partono da parametri noti: la curva di domanda
-del [pricing](pricing.md), i costi della [produzione](produzione.md), gli scenari
+Tutti i modelli del corso partono da parametri noti: i costi della
+[produzione](produzione.md), i prezzi orari della [ricarica](ricarica-ev.md), gli scenari
 del [newsvendor](newsvendor.md). Quei numeri qualcuno li deve stimare, e la
 stima è essa stessa un problema di ottimizzazione. Minimizzando gli scarti
 **assoluti** invece che quadratici il problema resta un LP, la stima non si
@@ -43,7 +43,7 @@ stessa quantità lascerebbe soddisfatto il vincolo e farebbe scendere l'obiettiv
 
 !!! example "Senza caratteristiche: torna il quantile empirico"
     Con $p = 0$ resta la sola intercetta. Sette giorni di vendite: 88, 96, 104,
-    112, 120, 132, 148 pezzi; la panetteria del capitolo 13 ha $c_u = 9$ e
+    112, 120, 132, 148 pezzi; la panetteria del capitolo 7 ha $c_u = 9$ e
     $c_o = 4$, quindi $\tau = \alpha^* = 9/13 = 0{,}6923$.
 
     L'ottimo è $\tilde b = 120$, la quinta osservazione in ordine crescente
@@ -64,23 +64,25 @@ stessa quantità lascerebbe soddisfatto il vincolo e farebbe scendere l'obiettiv
 
 Sessanta giorni di vendite (domanda, temperatura, prezzo, weekend) in
 `dati/panetteria_storico.csv`; cinque cadono durante due scioperi dei trasporti,
-con le vendite crollate a una ventina di pezzi. Con la sola temperatura:
+con le vendite crollate a una ventina di pezzi. Con la sola temperatura, l'LP
+($\tau = 1/2$) sui 60 giorni e sui soli 55 giorni normali:
 
 ```text
-LP  (mediana)        : domanda = 209,77 - 3,63 * temperatura
-QP  (minimi quadrati): domanda = 202,34 - 3,61 * temperatura
-Scarto assoluto medio sui 55 giorni normali: LP 13,08 pezzi, QP 14,81 pezzi
-QP senza i 5 giorni di sciopero: domanda = 213,58 - 3,72 * temperatura
-Distanza dall'intercetta "pulita" 213,58: LP 3,81 pezzi, QP 11,24 pezzi
+LP sui 60 giorni               : domanda = 209,77 - 3,63 * temperatura
+LP senza i 5 giorni di sciopero: domanda = 210,49 - 3,58 * temperatura
+Scarto assoluto medio sui 55 giorni normali: 13,08 pezzi
+Distanza fra le due intercette: 0,72 pezzi
 ```
 
-![Scarti assoluti contro minimi quadrati](img/cap10_regressione_robusta.png)
+![La retta dell'LP non si sposta](img/cap10_regressione_robusta.png)
 
-I minimi quadrati pagano lo scarto **al quadrato**: uno scarto di 100 pesa come
-diecimila scarti di uno, e cinque giorni su sessanta bastano a spostare
-l'intercetta di 11 pezzi. L'LP paga lo scarto una volta sola e arriva da solo
-alla retta che il QP trova soltanto dopo che qualcuno ha ripulito a mano lo
-storico.
+L'LP paga ogni scarto una volta sola, in proporzione alla sua grandezza: i cinque
+giorni di sciopero spostano l'intercetta di appena 0,72 pezzi, e il modello arriva
+da solo alla retta che si avrebbe ripulendo a mano lo storico.
+
+Minimizzare invece la somma degli scarti *al quadrato* porta alla regressione ai
+minimi quadrati, un modello quadratico: il confronto con l'LP è nel modulo
+*Modellazione PNL*, pagina [«Minimi quadrati»](https://fabiofurini.github.io/modellazione-pnl/minimi-quadrati/).
 
 ## La lettura duale: i punti di appoggio
 
@@ -105,9 +107,7 @@ Gli scarti complementari dicono dove sta ciascun duale:
 | sulla stima (interpolata) | $\tilde u_i = \tilde v_i = 0$ | $-(1-\tau) < \tilde\pi_i < \tau$ |
 
 Le osservazioni interpolate sono i **punti di appoggio**: sono $p + 1$, tante
-quante le variabili libere, e sono le sole che determinano la stima. Sono per la
-regressione quello che i support vector della [SVM](svm.md) sono per la
-classificazione.
+quante le variabili libere, e sono le sole che determinano la stima.
 
 ```text
 Osservazioni sopra la retta: 29, sotto: 29, interpolate: 2  <- p + 1 = 2
@@ -148,7 +148,7 @@ scorta di sicurezza                     5,8 pezzi
 quantile 0,6923 senza caratteristiche 148,0 pezzi
 ```
 
-La regola del quantile resta quella del capitolo 13, ma il numero a cui si
+La regola del quantile resta quella del capitolo 7, ma il numero a cui si
 applica cambia: il quantile su tutto lo storico dice 148 pezzi, quello
 *condizionato* alle condizioni del giorno ne chiede 132. Sedici pezzi al giorno
 di invenduto in meno, senza toccare i costi. La differenza fra stima mediana e
@@ -206,15 +206,15 @@ Lo stesso codice è disponibile come notebook — [`notebooks/lab10_regressione.
 
 ??? example "Mostra lo script completo — `lab10_regressione.py`"
     ```python
-    """Capitolo 17 — Regressione robusta e quantile (LP).
+    """Capitolo 10 — Regressione robusta e quantile (LP).
 
-    Caso di studio: la panetteria del capitolo 13. Sessanta giorni di storico
+    Caso di studio: la panetteria del capitolo 7. Sessanta giorni di storico
     (domanda, temperatura, prezzo, weekend) piu' tre giorni di sciopero dei
     trasporti che fanno crollare la domanda.
 
     Contenuto:
       1. Senza attributi il modello restituisce il quantile empirico (esempio a mano)
-      2. Scarti assoluti (LP) contro minimi quadrati (QP): robustezza agli anomali
+      2. Scarti assoluti (LP): robustezza ai giorni anomali
       3. Lettura duale: pi_i, scarti complementari, punti di appoggio
       4. Regressione quantile: la scorta di sicurezza del newsvendor dai dati
       5. Selezione delle caratteristiche con un budget sui coefficienti
@@ -227,7 +227,7 @@ Lo stesso codice è disponibile come notebook — [`notebooks/lab10_regressione.
     from stile import (ARANCIO, BLU, GRIGIO, ROSSO, TEAL, VERDE, intestazione, plt,
                        salva_dat, salva_dati, salva_figura)
 
-    TAU_NV = 9 / 13                                # frattile critico del capitolo 13
+    TAU_NV = 9 / 13                                # frattile critico del capitolo 7
 
 
     # ----------------------------------------------------------------------
@@ -264,22 +264,6 @@ Lo stesso codice è disponibile come notebook — [`notebooks/lab10_regressione.
         return m, coef, b.X, duali, vincolo_budget
 
 
-    def minimi_quadrati(X, y):
-        """min sum_i r_i^2  con  X w + b + r = y  (QP convesso, stesso solver)."""
-        n, p = X.shape
-        m = gp.Model("minimi_quadrati")
-        m.Params.OutputFlag = 0
-        w = m.addVars(p, lb=-GRB.INFINITY, name="w")
-        b = m.addVar(lb=-GRB.INFINITY, name="b")
-        r = m.addVars(n, lb=-GRB.INFINITY, name="r")
-        m.addConstrs((gp.quicksum(X[i, j] * w[j] for j in range(p)) + b + r[i] == y[i]
-                      for i in range(n)), name="residuo")
-        m.setObjective(gp.quicksum(r[i] * r[i] for i in range(n)), GRB.MINIMIZE)
-        m.optimize()
-        assert m.Status == GRB.OPTIMAL
-        return np.array([w[j].X for j in range(p)]), b.X
-
-
     def scarto_medio(X, y, coef, b):
         return float(np.abs(y - (X @ coef + b)).mean())
 
@@ -292,7 +276,7 @@ Lo stesso codice è disponibile come notebook — [`notebooks/lab10_regressione.
     X0 = np.zeros((len(y7), 0))
     m0, _, b0, pi0, _ = regressione_quantile(X0, y7, tau=TAU_NV)
     print(f"Sette giorni: {y7.astype(int)}")
-    print(f"tau = alpha* = 9/13 = {TAU_NV:.4f}  (panetteria del capitolo 13: cu=9, co=4)")
+    print(f"tau = alpha* = 9/13 = {TAU_NV:.4f}  (panetteria del capitolo 7: cu=9, co=4)")
     print(f"Intercetta ottima b = {b0:.4f}  -> e' il 5o valore ordinato, il quantile 69,23%")
     print(f"Valore ottimo = {m0.ObjVal:.4f} = 680/13")
     print(f"Duali pi = {np.round(pi0, 4)}  (limiti: -(1-tau) = {-(1 - TAU_NV):.4f}, "
@@ -345,23 +329,19 @@ Lo stesso codice è disponibile come notebook — [`notebooks/lab10_regressione.
           f"max {domanda.max():.0f}   giorni di sciopero: {giorni_sciopero}")
 
     # ----------------------------------------------------------------------
-    # 3. SCARTI ASSOLUTI (LP) CONTRO MINIMI QUADRATI (QP)
+    # 3. SCARTI ASSOLUTI (LP): ROBUSTEZZA AI GIORNI ANOMALI
     # ----------------------------------------------------------------------
-    intestazione("Scarti assoluti (LP) contro minimi quadrati (QP)")
+    intestazione("Scarti assoluti (LP): robustezza ai giorni anomali")
     Xt = temperatura.reshape(-1, 1)
     m_lad, w_lad, b_lad, pi_lad, _ = regressione_quantile(Xt, domanda, tau=0.5)
-    w_ols, b_ols = minimi_quadrati(Xt, domanda)
     buoni = anomalo == 0
-    print(f"LP  (mediana)        : domanda = {b_lad:.2f} {w_lad[0]:+.2f} * temperatura")
-    print(f"QP  (minimi quadrati): domanda = {b_ols:.2f} {w_ols[0]:+.2f} * temperatura")
+    _, w_pul, b_pul, _, _ = regressione_quantile(Xt[buoni], domanda[buoni], tau=0.5)
+    print(f"LP sui 60 giorni               : domanda = {b_lad:.2f} {w_lad[0]:+.2f} * temperatura")
+    print(f"LP senza i 5 giorni di sciopero: domanda = {b_pul:.2f} {w_pul[0]:+.2f} * temperatura")
     print(f"Scarto assoluto medio sui 55 giorni normali: "
-          f"LP {scarto_medio(Xt[buoni], domanda[buoni], w_lad, b_lad):.2f} pezzi, "
-          f"QP {scarto_medio(Xt[buoni], domanda[buoni], w_ols, b_ols):.2f} pezzi")
-    w_pul, b_pul = minimi_quadrati(Xt[buoni], domanda[buoni])
-    print(f"QP senza i 5 giorni di sciopero: domanda = {b_pul:.2f} "
-          f"{w_pul[0]:+.2f} * temperatura  (l'LP ci arriva senza togliere nulla)")
-    print(f"Distanza dall'intercetta 'pulita' {b_pul:.2f}: "
-          f"LP {abs(b_lad - b_pul):.2f} pezzi, QP {abs(b_ols - b_pul):.2f} pezzi")
+          f"{scarto_medio(Xt[buoni], domanda[buoni], w_lad, b_lad):.2f} pezzi")
+    print(f"Distanza fra le due intercette: {abs(b_lad - b_pul):.2f} pezzi "
+          f"(gli scioperi spostano appena la retta)")
 
     # ----------------------------------------------------------------------
     # 4. LETTURA DUALE: PUNTI DI APPOGGIO E PROPRIETA' DEL QUANTILE
@@ -428,7 +408,7 @@ Lo stesso codice è disponibile come notebook — [`notebooks/lab10_regressione.
     print(f"  quantile {TAU_NV:.4f} previsto        {prev_nv:6.1f} pezzi  <- quantita' da produrre")
     print(f"  scorta di sicurezza             {prev_nv - prev_med:6.1f} pezzi")
     print(f"  quantile {TAU_NV:.4f} senza attributi {q_incond:6.1f} pezzi  "
-          f"(capitolo 13: stessa regola, nessun attributo)")
+          f"(capitolo 7: stessa regola, nessun attributo)")
 
     # ----------------------------------------------------------------------
     # 6. SELEZIONE DELLE CARATTERISTICHE CON UN BUDGET SUI COEFFICIENTI
@@ -497,11 +477,9 @@ Lo stesso codice è disponibile come notebook — [`notebooks/lab10_regressione.
                edgecolors=VERDE, linewidths=1.6, label="punti di appoggio")
     gr = np.linspace(9, 35, 2)
     ax.plot(gr, b_lad + w_lad[0] * gr, color=BLU, lw=2, label="scarti assoluti (LP)")
-    ax.plot(gr, b_ols + w_ols[0] * gr, color=ARANCIO, lw=2, ls="--",
-            label="minimi quadrati (QP)")
     ax.set_xlabel("temperatura massima (gradi)")
     ax.set_ylabel("domanda (pezzi)")
-    ax.set_title("Cinque giorni di sciopero spostano i minimi quadrati, non l'LP")
+    ax.set_title("Cinque giorni di sciopero non spostano la retta dell'LP")
     ax.legend(loc="upper right", fontsize=8)
     salva_figura(fig, "cap10_regressione_robusta")
 
@@ -539,7 +517,7 @@ Lo stesso codice è disponibile come notebook — [`notebooks/lab10_regressione.
     ax.set_title("Il prezzo della complessità: errore contro budget")
     salva_figura(fig, "cap10_budget")
 
-    print("\nFatto: capitolo 17 (regressione robusta e quantile).")
+    print("\nFatto: capitolo 10 (regressione robusta e quantile).")
     ```
 
 ## Esercizi

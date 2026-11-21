@@ -2,9 +2,11 @@
 
 [:material-file-pdf-box: Dispensa (PDF)](pdf/dispensa-modellazione-pl.pdf) · [:material-presentation: Slide del capitolo (PDF)](pdf/slide-02-richiami.pdf)
 
-Il primo sottocapitolo dei richiami: dualità, condizioni di ottimalità e analisi
-di sensitività degli LP. L'estensione non lineare (convessità, QP, KKT) è nella
-[pagina gemella](teoria-non-lineare.md).
+I richiami di programmazione lineare usati in tutto il corso: dualità, condizioni
+di ottimalità, analisi di sensitività e il protocollo di sensitività di ogni
+capitolo. La teoria completa, con le dimostrazioni, è nel modulo *Programmazione
+lineare*: [«Teoria della dualità»](https://fabiofurini.github.io/programmazione-lineare/dualita/09-dualita/)
+e [«Analisi di sensitività»](https://fabiofurini.github.io/programmazione-lineare/metodi-avanzati/14-sensitivita/).
 
 ## Programmazione lineare e dualità
 
@@ -271,3 +273,13 @@ Insieme alla soluzione arrivano gratis quattro numeri per ogni vincolo e variabi
     il coefficiente deve salire almeno a 22. Controprova con $c_3 = 23$: la
     soluzione cambia in $(0, 5, 75)$, valore 1975.
 
+## Il protocollo di sensitività (usato in ogni capitolo)
+
+1. **Scenario base**: risolvere, verificare, identificare i vincoli attivi.
+2. **One-at-a-time**: variare un parametro chiave su una griglia.
+3. **Prezzi ombra e costi ridotti**: confrontare il duale con una ri-ottimizzazione
+   perturbata; leggere $\bar c_j$ di ogni variabile a zero (la sua soglia di
+   convenienza).
+4. **Scenari**: pessimistico, centrale, ottimistico.
+5. **Trade-off**: costruire una frontiera (costo-servizio, rischio-rendimento…).
+6. **Stabilità**: dati ±5% → la raccomandazione regge?

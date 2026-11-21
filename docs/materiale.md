@@ -1,6 +1,6 @@
 # Materiale scaricabile
 
-Tutto il materiale del laboratorio, in PDF, aggiornato a ogni pubblicazione del sito.
+Tutto il materiale del corso, in PDF, aggiornato a ogni pubblicazione del sito.
 Testi, figure e dati sono sotto licenza
 [CC BY 4.0](https://creativecommons.org/licenses/by/4.0/deed.it); gli script
 Python sotto licenza
@@ -10,7 +10,7 @@ Python sotto licenza
 
 <div class="grid cards" markdown>
 
--   :material-book-open-variant: **Dispensa del laboratorio**
+-   :material-book-open-variant: **Dispensa del corso**
 
     ---
 

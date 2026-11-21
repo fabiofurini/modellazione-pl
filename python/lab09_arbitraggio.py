@@ -1,4 +1,4 @@
-"""Capitolo 15 — Arbitraggio e prezzatura senza arbitraggio (LP).
+"""Capitolo 9 — Arbitraggio e prezzatura senza arbitraggio (LP).
 
 Caso di studio: un mercato a uno stadio con 3 stati del mondo, un titolo privo
 di rischio (rendimento lordo R = 1,04) e 2 titoli rischiosi.
@@ -155,4 +155,4 @@ ax.set_ylabel("valore ottimo dell'LP normalizzato")
 ax.set_title("Fuori dall'intervallo di prezzo coerente compare l'arbitraggio")
 salva_figura(fig, "cap09_arbitraggio_curva")
 
-print("\nFatto: capitolo 15 (arbitraggio).")
+print("\nFatto: capitolo 9 (arbitraggio).")

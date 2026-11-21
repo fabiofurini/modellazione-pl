@@ -6,7 +6,7 @@ hide:
 
 <div class="hero" markdown>
 
-# Laboratorio di Ricerca Operativa
+# Modellazione PL
 
 <!-- collana-riga -->
 <p class="collana-riga" markdown>Un corso della collana <b>Ricerca Operativa e Matematica</b> · [tutti i corsi](#la-collana)</p>
@@ -15,29 +15,17 @@ hide:
 Materiale didattico ideato e sviluppato da **[Fabio Furini](https://fabiofurini.github.io/)**, professore
 associato al [DIAG](https://www.diag.uniroma1.it/), Sapienza Università di Roma.
 
-**Modelli continui di ottimizzazione** — la dispensa
+**Modelli di programmazione lineare** — la dispensa
 del corso in versione online, con codice Python/Gurobi, dati e casi di studio
 riproducibili.
 
-Prerequisiti: [Programmazione lineare](https://fabiofurini.github.io/programmazione-lineare/) e [Ottimizzazione convessa](https://fabiofurini.github.io/ottimizzazione-convessa/).
+Prerequisiti: [Programmazione lineare](https://fabiofurini.github.io/programmazione-lineare/) (dualità e analisi di sensitività).
 
 [Comincia :material-arrow-right:](strumenti.md){ .md-button .md-button--primary }
 [:material-clipboard-check-outline: Quiz](autovalutazione.md){ .md-button }
 [:material-download: Materiale](materiale.md){ .md-button }
 
 </div>
-
-<!-- collana-app -->
-## Provalo subito
-
-La frontiera efficiente di Markowitz: ogni punto è un portafoglio ottimo per un livello di rischio. Apri il notebook in Colab, cambia i dati e rifai il calcolo con Gurobi, senza installare niente.
-
-[![](img/cap06_frontiera.png)](markowitz.md)
-
-[:simple-googlecolab: Apri il notebook in Colab](https://colab.research.google.com/github/fabiofurini/modellazione-pl/blob/main/notebooks/lab06_markowitz.ipynb){ .md-button .md-button--primary }
-[:material-book-open-variant: Il capitolo](markowitz.md){ .md-button }
-[:material-language-python: Tutti i notebook](notebook.md){ .md-button }
-<!-- /collana-app -->
 
 ## Le parti del corso
 
@@ -50,17 +38,16 @@ La frontiera efficiente di Markowitz: ogni punto è un portafoglio ottimo per un
     Come si costruisce un modello, come si fa girare, come si leggono soluzione,
     prezzi ombra e costi ridotti: la teoria e il solver.
 
-    [:octicons-arrow-right-24: I quattro capitoli](strumenti.md)
+    [:octicons-arrow-right-24: I tre capitoli](strumenti.md)
 
 -   :material-factory: **Modelli deterministici**
 
     ---
 
-    Produzione, supply chain, portafoglio, prezzi, budget, localizzazione,
-    ricarica dei veicoli elettrici, code, efficienza delle filiali: tutti i dati
-    sono noti.
+    Produzione e scorte, ricarica dei veicoli elettrici, efficienza delle
+    filiali: tutti i dati sono noti.
 
-    [:octicons-arrow-right-24: I nove problemi](modelli-deterministici.md)
+    [:octicons-arrow-right-24: I tre problemi](modelli-deterministici.md)
 
 -   :material-dice-multiple: **Decisioni sotto incertezza**
 
@@ -75,10 +62,10 @@ La frontiera efficiente di Markowitz: ogni punto è un portafoglio ottimo per un
 
     ---
 
-    La SVM come QP convesso e la regressione robusta come LP: margine, duale,
-    support vector e punti di appoggio — senza librerie di ML.
+    La regressione robusta e quantile come LP: scarti assoluti, punti di
+    appoggio dai duali e il quantile che serve al newsvendor.
 
-    [:octicons-arrow-right-24: I due problemi](ottimizzazione-ml.md)
+    [:octicons-arrow-right-24: Il problema](ottimizzazione-ml.md)
 
 </div>
 

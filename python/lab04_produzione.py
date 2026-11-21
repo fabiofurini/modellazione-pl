@@ -1,4 +1,4 @@
-"""Capitolo 4 — Produzione e scorte multiperiodali (LP / QP convesso).
+"""Capitolo 4 — Produzione e scorte multiperiodali (LP).
 
 Caso di studio: azienda che produce 3 componenti (prodotti 1, 2, 3) su un orizzonte
 di 6 mesi con una risorsa condivisa (ore macchina).
@@ -6,8 +6,7 @@ di 6 mesi con una risorsa condivisa (ore macchina).
 Contenuto:
   1. LP a costo minimo con servizio obbligatorio
   2. Prezzi ombra della capacità e analisi dei duali
-  3. Variante QP con piano di produzione regolare (smoothing)
-  4. Sensitività: costo ottimo al variare della capacità
+  3. Sensitività: costo ottimo al variare della capacità
 """
 import gurobipy as gp
 import numpy as np
@@ -105,25 +104,7 @@ print(f"\nVerifica: +1 ora nel mese {t_star} → costo passa da {m.ObjVal:.2f} a
       f"(variazione {m2.ObjVal - m.ObjVal:+.3f} = prezzo ombra {pi_star:.3f})")
 
 # ----------------------------------------------------------------------
-# 3. VARIANTE QP: piano regolare (smoothing della produzione totale)
-# ----------------------------------------------------------------------
-intestazione("Variante QP: piano regolare (penalità sulle variazioni)")
-risultati_qp = {}
-for gamma in [0.0, 0.5, 2.0]:
-    mq, xq, sq, _ = costruisci_lp()
-    mq.update()                       # necessario prima di getObjective()
-    tot = {t: gp.quicksum(xq[i, t] for i in prodotti) for t in mesi}
-    obj = mq.getObjective()
-    mq.setObjective(obj + gamma * gp.quicksum((tot[t] - tot[t - 1]) * (tot[t] - tot[t - 1])
-                                              for t in mesi[1:]), GRB.MINIMIZE)
-    mq.optimize()
-    profilo = [sum(xq[i, t].X for i in prodotti) for t in mesi]
-    risultati_qp[gamma] = (mq.ObjVal, profilo)
-    var_max = max(abs(profilo[k] - profilo[k - 1]) for k in range(1, len(profilo)))
-    print(f"  gamma={gamma:4.1f}: costo {mq.ObjVal:10.2f} €, variazione mensile max {var_max:6.1f} unità")
-
-# ----------------------------------------------------------------------
-# 4. FIGURE (dati per pgfplots + anteprima matplotlib)
+# 3. FIGURE (dati per pgfplots + anteprima matplotlib)
 # ----------------------------------------------------------------------
 salva_dat(pd.DataFrame({
     "mese": mesi,
@@ -131,12 +112,6 @@ salva_dat(pd.DataFrame({
     **{f"s{i}": [s[i, t].X for t in mesi] for i in prodotti},
     "domtot": [sum(domanda[i, t] for i in prodotti) for t in mesi],
 }), "cap04_piano")
-salva_dat(pd.DataFrame({
-    "mese": mesi,
-    "gzero": risultati_qp[0.0][1],
-    "gmezzo": risultati_qp[0.5][1],
-    "gdue": risultati_qp[2.0][1],
-}), "cap04_smoothing")
 
 fig, (ax1, ax2) = plt.subplots(1, 2, figsize=(10.5, 4.0))
 larg = 0.26
@@ -154,15 +129,6 @@ ax2.set_xlabel("mese"); ax2.set_ylabel("unità a scorta")
 ax2.set_title("Scorte di fine mese")
 ax2.legend(fontsize=8)
 salva_figura(fig, "cap04_piano_scorte")
-
-fig, ax = plt.subplots()
-for gamma, stile_linea in zip([0.0, 0.5, 2.0], ["-o", "-s", "-^"]):
-    ax.plot(mesi, risultati_qp[gamma][1], stile_linea,
-            label=f"$\\gamma$ = {gamma} (costo {risultati_qp[gamma][0]:,.0f} €)")
-ax.set_xlabel("mese"); ax.set_ylabel("produzione totale (unità)")
-ax.set_title("Effetto dello smoothing quadratico sul profilo produttivo")
-ax.legend()
-salva_figura(fig, "cap04_smoothing")
 
 # sensitività: costo ottimo al variare della capacità uniforme
 intestazione("Sensitività: costo ottimo al variare della capacità")
