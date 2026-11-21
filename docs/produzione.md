@@ -120,7 +120,7 @@ della capacità attuale il problema diventa **inammissibile**.
 Un piano *regolare*, che penalizza le variazioni della produzione da un mese
 all'altro, richiede un termine quadratico nell'obiettivo e non è più un LP: è la
 variante quadratica di questo modello, nel modulo *Modellazione PNL*, pagina
-[«Produzione e scorte: la variante quadratica»](https://fabiofurini.github.io/modellazione-pnl/produzione-quadratica/).
+[«Produzione con smoothing quadratico»](https://fabiofurini.github.io/modellazione-pnl/produzione-quadratica/).
 
 
 ## Codice

@@ -66,7 +66,7 @@ x2 = m.addVar(lb=0, name="x2")
 Punti importanti:
 - il **default** è variabile continua con `lb=0` e `ub=+inf`: per variabili non negative basta `m.addVar(name=...)`;
 - `vtype=GRB.CONTINUOUS` è il default; in questo laboratorio **non usiamo mai** `GRB.BINARY`/`GRB.INTEGER`;
-- per una variabile libera (anche negativa, es. l'intercetta `b` della SVM o la soglia `η` del CVaR): `m.addVar(lb=-GRB.INFINITY)`.
+- per una variabile libera (anche negativa, es. l'intercetta `b` della regressione o la soglia `η` del CVaR): `m.addVar(lb=-GRB.INFINITY)`.
 
 Per **famiglie di variabili indicizzate** (il caso normale nei modelli veri):
 
@@ -102,13 +102,7 @@ m.addConstrs((x.sum(i, "*") <= b[i] for i in I), name="cap")
 m.setObjective(30*x1 + 50*x2, GRB.MAXIMIZE)
 ```
 
-Il secondo argomento è `GRB.MAXIMIZE` o `GRB.MINIMIZE`. Obiettivi **quadratici** (Markowitz,
-SVM, smoothing) si scrivono in modo naturale:
-
-```python
-m.setObjective(x @ Q @ x, GRB.MINIMIZE)                  # forma matriciale (numpy)
-m.setObjective(gp.quicksum(q[i,j]*x[i]*x[j] for i in I for j in I), GRB.MINIMIZE)
-```
+Il secondo argomento è `GRB.MAXIMIZE` o `GRB.MINIMIZE`.
 
 ### Passo 5 — (facoltativo) controllare quello che abbiamo scritto
 
@@ -175,7 +169,6 @@ Tutto qui. Parametri utili da impostare **prima** di `optimize()`:
 ```python
 m.Params.OutputFlag = 0      # 1 = log a video (default), 0 = silenzioso
 m.Params.TimeLimit  = 60     # secondi massimi
-m.Params.NonConvex  = 2      # consente QP non convessi (es. pricing p*q)
 ```
 
 ### Il log spiegato
@@ -245,9 +238,7 @@ sol = pd.DataFrame([(i, t, x[i, t].X) for i in I for t in T],
 
 ### 5.1 L'esito
 
-- **OPTIMAL** — soluzione ottima certificata. Nei modelli convessi di questo laboratorio
-  l'ottimo è **globale**; anche in un QP dichiarato non convesso (`NonConvex=2`) e nei
-  modelli con vincoli non lineari (`FuncNonlinear=1`) Gurobi certifica il globale.
+- **OPTIMAL** — soluzione ottima certificata. Un LP è convesso: l'ottimo è **globale**.
 - **INFEASIBLE** — i vincoli si contraddicono. Diagnosi:
   `m.computeIIS(); m.write("conflitto.ilp")` — il file elenca un sottoinsieme minimale di
   vincoli in conflitto tra loro. Errore tipico: domanda totale > capacità totale senza
@@ -357,14 +348,7 @@ complementarietà); uguaglianza → duale libera, qui `+6`; `≤` in un minimo �
 perturbazione: `b_2 = 101 → 626` (+6), `b_3 = -19 → 619` (−1), `x3` forzata a
 −1 → `623` (+3).
 
-### 5.4 Nei modelli non lineari
-
-Per QP/NLP convessi i moltiplicatori (`Pi` sui vincoli lineari, condizioni KKT in generale)
-hanno la stessa lettura marginale dei prezzi ombra. Verifica numerica consigliata nel
-laboratorio: perturbare il termine noto di ε e ricontrollare che
-`nuovo_ottimo ≈ vecchio_ottimo + Pi·ε`.
-
-### 5.5 Checklist di interpretazione (da usare in ogni esercitazione)
+### 5.4 Checklist di interpretazione (da usare in ogni esercitazione)
 
 1. Lo stato è `OPTIMAL`? Se no, fermarsi e diagnosticare.
 2. Il valore ottimo ha l'ordine di grandezza atteso?
@@ -385,7 +369,7 @@ laboratorio: perturbare il termine noto di ε e ricontrollare che
 | ottimo = 0, tutte variabili nulle | obiettivo non impostato o verso sbagliato | controllare `setObjective(..., GRB.MAXIMIZE)` |
 | `INFEASIBLE` inatteso | vincolo scritto con verso sbagliato, dati incoerenti | `computeIIS()` + leggere il `.ilp` |
 | `UNBOUNDED` | manca un bound o un vincolo di capacità | scrivere il `.lp` e cercare la variabile libera |
-| valori attesi ma `Pi` non disponibile | il modello è QP/MIP, i duali LP non esistono | per QP usare `m.Params.QCPDual = 1` o verifica per perturbazione |
+| valori attesi ma `Pi` non disponibile | il modello contiene variabili intere, i duali LP non esistono | tenere solo variabili continue, o verificare per perturbazione |
 | numeri "quasi zero" tipo `1e-13` | normale tolleranza numerica | filtrare con `> 1e-6` nelle stampe |
 | `Model too large for size-limited license` | superati i limiti della licenza pip | attivare la licenza accademica (sez. 1) |
 
@@ -419,12 +403,4 @@ assert m.Status == GRB.OPTIMAL, f"stato inatteso: {m.Status}"
 # ciclo su un parametro chiave, ri-ottimizzare, salvare figure
 ```
 
-**Un solver solo: anche gli NLP generali si risolvono con Gurobi** (dalla versione 12).
-Funzioni non lineari come vincoli funzionali su variabili ausiliarie — `addGenConstrLog`,
-`addGenConstrExp`, `addGenConstrPow` con `m.Params.FuncNonlinear = 1` — e termini bilineari
-con `m.Params.NonConvex = 2`: l'ottimo resta **globale certificato**. Esempi nel laboratorio:
-budget pubblicitario (`log`), pricing a elasticità costante (`Pow` + bilineare), code M/M/1
-(vincolo bilineare `w·(mu - lam) = 1`), Weber (vincoli conici `dx² + dy² ≤ d²`, un QCP
-convesso). Per le analisi marginali stringere `MIPGap`, `FeasibilityTol` e `OptimalityTol`
-a `1e-9`; riformulare per evitare quantità minuscole (es. `q·p^eps ≤ A` invece di
-`q ≤ A·p^(-eps)`).
+I comandi per i modelli quadratici e non lineari (obiettivi quadratici, vincoli funzionali e bilineari, tolleranze) sono nel modulo *Modellazione PNL*, pagina [«Implementazione: modelli non lineari»](https://fabiofurini.github.io/modellazione-pnl/solver-non-lineare/).

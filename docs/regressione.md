@@ -82,7 +82,7 @@ da solo alla retta che si avrebbe ripulendo a mano lo storico.
 
 Minimizzare invece la somma degli scarti *al quadrato* porta alla regressione ai
 minimi quadrati, un modello quadratico: il confronto con l'LP è nel modulo
-*Modellazione PNL*, pagina [«Minimi quadrati»](https://fabiofurini.github.io/modellazione-pnl/minimi-quadrati/).
+*Modellazione PNL*, pagina [«Regressione ai minimi quadrati»](https://fabiofurini.github.io/modellazione-pnl/minimi-quadrati/).
 
 ## La lettura duale: i punti di appoggio
 

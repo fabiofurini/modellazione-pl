@@ -9963,6 +9963,906 @@
   },
   {
    "id": "lpm-f-333",
+   "livello": "facile",
+   "capitolo": "introduction",
+   "link": {
+    "it": "https://fabiofurini.github.io/modellazione-pl/strumenti/#modelli-lineari-e-prerequisiti",
+    "en": "https://fabiofurini.github.io/lp-modelling/tools/#linear-models-and-prerequisites"
+   },
+   "corretta": 0,
+   "it": {
+    "testo": "Nella notazione della dispensa di Modellazione PL, come si scrive l'insieme degli indici dei prodotti $1, \\dots, n$?",
+    "opzioni": [
+     "$\\{1, 2, \\dots, n\\}$",
+     "$\\{1, \\dots, n\\}$",
+     "$\\{0, 1, \\dots, n\\}$",
+     "$\\{i : 1 \\le i\\}$"
+    ],
+    "spiegazione": "Gli insiemi enumerati si scrivono sempre con i primi due valori, i puntini e l'ultimo: $\\{1, 2, \\dots, n\\}$."
+   },
+   "en": {
+    "testo": "In the notation of the LP Modelling notes, how is the set of product indices $1, \\dots, n$ written?",
+    "opzioni": [
+     "$\\{1, 2, \\dots, n\\}$",
+     "$\\{1, \\dots, n\\}$",
+     "$\\{0, 1, \\dots, n\\}$",
+     "$\\{i : 1 \\le i\\}$"
+    ],
+    "spiegazione": "Enumerated sets are always written with the first two values, the dots and the last one: $\\{1, 2, \\dots, n\\}$."
+   }
+  },
+  {
+   "id": "lpm-f-334",
+   "livello": "facile",
+   "capitolo": "introduction",
+   "link": {
+    "it": "https://fabiofurini.github.io/modellazione-pl/strumenti/#modelli-lineari-e-prerequisiti",
+    "en": "https://fabiofurini.github.io/lp-modelling/tools/#linear-models-and-prerequisites"
+   },
+   "corretta": 2,
+   "it": {
+    "testo": "Nella notazione della dispensa di Modellazione PL, che cosa indica la barra in $\\bar x_j$?",
+    "opzioni": [
+     "Il valore in una soluzione ottima",
+     "La media dei valori di $x_j$",
+     "Il valore in una soluzione ammissibile",
+     "Il limite superiore di $x_j$"
+    ],
+    "spiegazione": "La barra indica i valori di una soluzione ammissibile, la tilde quelli di una soluzione ottima ($\\tilde x_j$)."
+   },
+   "en": {
+    "testo": "In the notation of the LP Modelling notes, what does the bar in $\\bar x_j$ denote?",
+    "opzioni": [
+     "The value in an optimal solution",
+     "The mean of the values of $x_j$",
+     "The value in a feasible solution",
+     "The upper bound of $x_j$"
+    ],
+    "spiegazione": "The bar marks the values of a feasible solution, the tilde those of an optimal solution ($\\tilde x_j$)."
+   }
+  },
+  {
+   "id": "lpm-f-335",
+   "livello": "facile",
+   "capitolo": "introduction",
+   "link": {
+    "it": "https://fabiofurini.github.io/modellazione-pl/strumenti/#modelli-lineari-e-prerequisiti",
+    "en": "https://fabiofurini.github.io/lp-modelling/tools/#linear-models-and-prerequisites"
+   },
+   "corretta": 3,
+   "it": {
+    "testo": "Nella dispensa di Modellazione PL gli indici corrono su insiemi enumerati. Qual è l'unico caso di insieme non enumerato?",
+    "opzioni": [
+     "Gli scenari di un modello stocastico",
+     "I prodotti di un piano di produzione",
+     "I mesi dell'orizzonte",
+     "I nodi e gli archi di un grafo $G = (N, A)$"
+    ],
+    "spiegazione": "Solo i grafi $G = (N, A)$, per loro natura, usano insiemi non enumerati; prodotti, mesi e scenari sono numerati."
+   },
+   "en": {
+    "testo": "In the LP Modelling notes indices run over enumerated sets. What is the only case of a non-enumerated set?",
+    "opzioni": [
+     "The scenarios of a stochastic model",
+     "The products of a production plan",
+     "The months of the horizon",
+     "The nodes and arcs of a graph $G = (N, A)$"
+    ],
+    "spiegazione": "Only graphs $G = (N, A)$, by their nature, use non-enumerated sets; products, months and scenarios are numbered."
+   }
+  },
+  {
+   "id": "lpm-f-336",
+   "livello": "facile",
+   "capitolo": "introduction",
+   "link": {
+    "it": "https://fabiofurini.github.io/modellazione-pl/strumenti/#modelli-lineari-e-prerequisiti",
+    "en": "https://fabiofurini.github.io/lp-modelling/tools/#linear-models-and-prerequisites"
+   },
+   "corretta": 1,
+   "it": {
+    "testo": "Nella dispensa di Modellazione PL, a quale insieme appartiene un conteggio come il numero $n$ di prodotti?",
+    "opzioni": [
+     "$\\mathbb{Q}_{>0}$",
+     "$\\mathbb{Z}_{\\ge 1}$",
+     "$\\mathbb{R}$",
+     "$\\{0, 1\\}$"
+    ],
+    "spiegazione": "I conteggi sono interi positivi, $n \\in \\mathbb{Z}_{\\ge 1}$; i dati numerici sono invece razionali ($\\mathbb{Q}_{\\ge 0}$ o $\\mathbb{Q}_{>0}$)."
+   },
+   "en": {
+    "testo": "In the LP Modelling notes, which set does a count such as the number $n$ of products belong to?",
+    "opzioni": [
+     "$\\mathbb{Q}_{>0}$",
+     "$\\mathbb{Z}_{\\ge 1}$",
+     "$\\mathbb{R}$",
+     "$\\{0, 1\\}$"
+    ],
+    "spiegazione": "Counts are positive integers, $n \\in \\mathbb{Z}_{\\ge 1}$; numerical data are rational instead ($\\mathbb{Q}_{\\ge 0}$ or $\\mathbb{Q}_{>0}$)."
+   }
+  },
+  {
+   "id": "lpm-f-337",
+   "livello": "facile",
+   "capitolo": "introduction",
+   "link": {
+    "it": "https://fabiofurini.github.io/modellazione-pl/programma/",
+    "en": "https://fabiofurini.github.io/lp-modelling/syllabus/"
+   },
+   "corretta": 0,
+   "it": {
+    "testo": "Ogni capitolo applicativo della dispensa di Modellazione PL segue otto passi. Quale passo viene subito dopo la «Motivazione gestionale»?",
+    "opzioni": [
+     "La costruzione guidata del modello",
+     "Il caso di studio con i dati reali",
+     "L'analisi di sensitività completa",
+     "Gli esercizi di fine capitolo"
+    ],
+    "spiegazione": "L'ordine: motivazione, costruzione guidata del modello, esempio svolto a mano, caso di studio, implementazione, risultati, sensitività, esercizi."
+   },
+   "en": {
+    "testo": "Every application chapter of the LP Modelling notes follows eight steps. Which step comes right after the «Managerial motivation»?",
+    "opzioni": [
+     "The guided construction of the model",
+     "The case study with the real data",
+     "The complete sensitivity analysis",
+     "The end-of-chapter exercises"
+    ],
+    "spiegazione": "The order: motivation, guided construction of the model, worked example, case study, implementation, results, sensitivity, exercises."
+   }
+  },
+  {
+   "id": "lpm-f-338",
+   "livello": "facile",
+   "capitolo": "introduction",
+   "link": {
+    "it": "https://fabiofurini.github.io/modellazione-pl/programma/",
+    "en": "https://fabiofurini.github.io/lp-modelling/syllabus/"
+   },
+   "corretta": 3,
+   "it": {
+    "testo": "Nella scaletta in otto passi dei capitoli di Modellazione PL, che cosa contiene il passo «Analisi di sensitività»?",
+    "opzioni": [
+     "Il codice completo dello script",
+     "I dati in formato CSV",
+     "La motivazione gestionale",
+     "Prezzi ombra, scenari e trade-off"
+    ],
+    "spiegazione": "Il passo di sensitività segue il protocollo: prezzi ombra verificati, variazioni dei dati, scenari e trade-off."
+   },
+   "en": {
+    "testo": "In the eight-step outline of the LP Modelling chapters, what does the «Sensitivity analysis» step contain?",
+    "opzioni": [
+     "The complete code of the chapter script",
+     "The case study data in CSV format",
+     "The managerial motivation of the case",
+     "Shadow prices, scenarios, trade-offs"
+    ],
+    "spiegazione": "The sensitivity step follows the protocol: checked shadow prices, data variations, scenarios and trade-offs."
+   }
+  },
+  {
+   "id": "lpm-f-339",
+   "livello": "facile",
+   "capitolo": "introduction",
+   "link": {
+    "it": "https://fabiofurini.github.io/modellazione-pl/programma/",
+    "en": "https://fabiofurini.github.io/lp-modelling/syllabus/"
+   },
+   "corretta": 2,
+   "it": {
+    "testo": "Nella scaletta dei capitoli di Modellazione PL, che cosa si fa nel passo «Esempio svolto a mano»?",
+    "opzioni": [
+     "Si scrive il codice Python",
+     "Si leggono i dati dai CSV",
+     "Si risolve a mano un'istanza minima",
+     "Si confrontano più scenari"
+    ],
+    "spiegazione": "Un'istanza minima si risolve con tutti i passaggi per capire il meccanismo prima di accendere il solver."
+   },
+   "en": {
+    "testo": "In the outline of the LP Modelling chapters, what is done in the «Worked example» step?",
+    "opzioni": [
+     "The Python code is written",
+     "The data are read from CSV files",
+     "A minimal instance is solved by hand",
+     "Several scenarios are compared"
+    ],
+    "spiegazione": "A minimal instance is solved with all the steps to understand the mechanism before switching on the solver."
+   }
+  },
+  {
+   "id": "lpm-f-340",
+   "livello": "facile",
+   "capitolo": "organization",
+   "link": {
+    "it": "https://fabiofurini.github.io/modellazione-pl/organizzazione/#riproducibilita",
+    "en": "https://fabiofurini.github.io/lp-modelling/organization/#reproducibility"
+   },
+   "corretta": 1,
+   "it": {
+    "testo": "Che cosa contiene la cartella `python/` del corso Modellazione PL?",
+    "opzioni": [
+     "Le soluzioni riservate ai docenti",
+     "Uno script per ogni capitolo con modello",
+     "I sorgenti LaTeX delle slide",
+     "La dispensa in formato modificabile"
+    ],
+    "spiegazione": "Uno script per ogni capitolo con modello (lab04–lab10), con la palette comune e i generatori dei notebook."
+   },
+   "en": {
+    "testo": "What does the `python/` folder of the course LP Modelling contain?",
+    "opzioni": [
+     "The solutions reserved to instructors",
+     "One script per chapter with a model",
+     "The LaTeX sources of the slides",
+     "The notes in editable form"
+    ],
+    "spiegazione": "One script per chapter with a model (lab04–lab10), with the common palette and the notebook generators."
+   }
+  },
+  {
+   "id": "lpm-f-341",
+   "livello": "facile",
+   "capitolo": "organization",
+   "link": {
+    "it": "https://fabiofurini.github.io/modellazione-pl/materiale/",
+    "en": "https://fabiofurini.github.io/lp-modelling/downloads/"
+   },
+   "corretta": 2,
+   "it": {
+    "testo": "Dove si scarica la dispensa del corso Modellazione PL in PDF?",
+    "opzioni": [
+     "Solo a lezione, su chiavetta",
+     "Nel repository, come sorgente LaTeX",
+     "Nella pagina Materiale del sito",
+     "Dentro ogni notebook Colab"
+    ],
+    "spiegazione": "La dispensa e le slide sono in PDF nella pagina «Materiale» (in inglese «Downloads»); i sorgenti LaTeX restano privati."
+   },
+   "en": {
+    "testo": "Where is the PDF of the lecture notes of the course LP Modelling downloaded from?",
+    "opzioni": [
+     "Only in class, on a USB stick",
+     "In the repository, as LaTeX source",
+     "The Downloads page of the site",
+     "Inside every Colab notebook"
+    ],
+    "spiegazione": "The notes and the slides are PDFs on the «Downloads» page (in Italian «Materiale»); the LaTeX sources stay private."
+   }
+  },
+  {
+   "id": "lpm-f-342",
+   "livello": "facile",
+   "capitolo": "organization",
+   "link": {
+    "it": "https://fabiofurini.github.io/modellazione-pl/organizzazione/#gli-errori-piu-comuni",
+    "en": "https://fabiofurini.github.io/lp-modelling/organization/#the-most-common-mistakes"
+   },
+   "corretta": 0,
+   "it": {
+    "testo": "In un LP di **minimo** risolto con gurobipy, che segno ha l'attributo `Pi` di un vincolo $\\ge$ di domanda?",
+    "opzioni": [
+     "$\\texttt{Pi} \\ge 0$",
+     "$\\texttt{Pi} \\le 0$",
+     "$\\texttt{Pi} = 0$ sempre",
+     "Un segno qualsiasi"
+    ],
+    "spiegazione": "Aumentare la domanda restringe la regione e in un minimo il costo ottimo non scende: il prezzo ombra di un vincolo $\\ge$ è non negativo."
+   },
+   "en": {
+    "testo": "In a **minimization** LP solved with gurobipy, what is the sign of the attribute `Pi` of a demand constraint $\\ge$?",
+    "opzioni": [
+     "$\\texttt{Pi} \\ge 0$",
+     "$\\texttt{Pi} \\le 0$",
+     "$\\texttt{Pi} = 0$ always",
+     "Any sign"
+    ],
+    "spiegazione": "Increasing the demand shrinks the region and in a minimization the optimal cost cannot decrease: the shadow price of a $\\ge$ constraint is non-negative."
+   }
+  },
+  {
+   "id": "lpm-f-343",
+   "livello": "facile",
+   "capitolo": "organization",
+   "link": {
+    "it": "https://fabiofurini.github.io/modellazione-pl/organizzazione/#riproducibilita",
+    "en": "https://fabiofurini.github.io/lp-modelling/organization/#reproducibility"
+   },
+   "corretta": 3,
+   "it": {
+    "testo": "Nel corso Modellazione PL, come si cambia un notebook Colab di un capitolo?",
+    "opzioni": [
+     "Lo si modifica a mano in Colab e lo si salva",
+     "Si cambia il file CSV dei dati del caso",
+     "Si cambia la pagina del capitolo sul sito",
+     "Si cambia lo script e si rigenera il notebook"
+    ],
+    "spiegazione": "I notebook si generano dagli script: si modifica `python/labNN_*.py` e si rigenera, così il codice resta uno solo."
+   },
+   "en": {
+    "testo": "In the course LP Modelling, how is the Colab notebook of a chapter changed?",
+    "opzioni": [
+     "It is edited by hand in Colab and saved",
+     "The CSV data file of the case is changed",
+     "The chapter page on the site is changed",
+     "One edits the script and regenerates it"
+    ],
+    "spiegazione": "The notebooks are generated from the scripts: one edits `python/labNN_*.py` and regenerates, so the code stays one."
+   }
+  },
+  {
+   "id": "lpm-f-344",
+   "livello": "facile",
+   "capitolo": "organization",
+   "link": {
+    "it": "https://fabiofurini.github.io/modellazione-pl/organizzazione/#percorso-essenziale-in-quattro-laboratori",
+    "en": "https://fabiofurini.github.io/lp-modelling/organization/#essential-path-in-four-lab-sessions"
+   },
+   "corretta": 1,
+   "it": {
+    "testo": "Nel laboratorio sulla DEA del corso Modellazione PL, che cosa indica la forma di inviluppo per un'unità inefficiente?",
+    "opzioni": [
+     "Il prezzo ombra di ciascuno dei suoi input",
+     "I peer da imitare e i target da raggiungere",
+     "La sua quota di mercato fra le filiali",
+     "Il numero di dipendenti da trasferire"
+    ],
+    "spiegazione": "La forma di inviluppo (il duale) dice a quali unità efficienti ispirarsi (peer) e quali livelli di input e output raggiungere (target)."
+   },
+   "en": {
+    "testo": "In the DEA session of the course LP Modelling, what does the envelopment form indicate for an inefficient unit?",
+    "opzioni": [
+     "The shadow price of each of its inputs",
+     "The peers to imitate and the targets to reach",
+     "Its market share among the branches",
+     "The number of employees to transfer"
+    ],
+    "spiegazione": "The envelopment form (the dual) tells which efficient units to learn from (peers) and which input and output levels to reach (targets)."
+   }
+  },
+  {
+   "id": "lpm-f-345",
+   "livello": "facile",
+   "capitolo": "regression",
+   "link": {
+    "it": "https://fabiofurini.github.io/modellazione-pl/regressione/#il-modello",
+    "en": "https://fabiofurini.github.io/lp-modelling/regression/#the-model"
+   },
+   "corretta": 2,
+   "it": {
+    "testo": "Nell'LP di regressione quantile del corso Modellazione PL, che segno hanno i coefficienti $w_j$ e l'intercetta $b$?",
+    "opzioni": [
+     "Non negativi, $\\ge 0$",
+     "Non positivi, $\\le 0$",
+     "Liberi, $\\gtreqless 0$",
+     "Binari, in $\\{0, 1\\}$"
+    ],
+    "spiegazione": "Coefficienti e intercetta possono avere qualsiasi segno: sono variabili libere. Sono non negativi solo gli scostamenti $u_i$ e $v_i$."
+   },
+   "en": {
+    "testo": "In the quantile regression LP of the course LP Modelling, what is the sign of the coefficients $w_j$ and of the intercept $b$?",
+    "opzioni": [
+     "Non-negative, $\\ge 0$",
+     "Non-positive, $\\le 0$",
+     "Free, $\\gtreqless 0$",
+     "Binary, in $\\{0, 1\\}$"
+    ],
+    "spiegazione": "Coefficients and intercept may have any sign: they are free variables. Only the deviations $u_i$ and $v_i$ are non-negative."
+   }
+  },
+  {
+   "id": "lpm-f-346",
+   "livello": "facile",
+   "capitolo": "regression",
+   "link": {
+    "it": "https://fabiofurini.github.io/modellazione-pl/regressione/#il-modello",
+    "en": "https://fabiofurini.github.io/lp-modelling/regression/#the-model"
+   },
+   "corretta": 0,
+   "it": {
+    "testo": "Nell'LP di regressione quantile ($u_i$ scostamento in eccesso, $v_i$ in difetto), con quali pesi entrano $u_i$ e $v_i$ nell'obiettivo?",
+    "opzioni": [
+     "$\\tau$ e $1 - \\tau$",
+     "$1$ e $1$",
+     "$1 - \\tau$ e $\\tau$",
+     "$\\tau$ e $\\tau$"
+    ],
+    "spiegazione": "L'obiettivo è $\\sum_i (\\tau\\, u_i + (1 - \\tau)\\, v_i)$; con $\\tau = 1/2$ è, a meno di un fattore, la somma degli scarti assoluti."
+   },
+   "en": {
+    "testo": "In the quantile regression LP ($u_i$ deviation above, $v_i$ below), with which weights do $u_i$ and $v_i$ enter the objective?",
+    "opzioni": [
+     "$\\tau$ and $1 - \\tau$",
+     "$1$ and $1$",
+     "$1 - \\tau$ and $\\tau$",
+     "$\\tau$ and $\\tau$"
+    ],
+    "spiegazione": "The objective is $\\sum_i (\\tau\\, u_i + (1 - \\tau)\\, v_i)$; with $\\tau = 1/2$ it is, up to a factor, the sum of the absolute deviations."
+   }
+  },
+  {
+   "id": "lpm-f-347",
+   "livello": "facile",
+   "capitolo": "regression",
+   "link": {
+    "it": "https://fabiofurini.github.io/modellazione-pl/regressione/#regressione-quantile-e-scorta-di-sicurezza",
+    "en": "https://fabiofurini.github.io/lp-modelling/regression/#quantile-regression-and-safety-stock"
+   },
+   "corretta": 3,
+   "it": {
+    "testo": "Regressione quantile con $\\tau = 0{,}90$ sui 55 giorni normali della panetteria: circa quale frazione delle osservazioni cade sotto la stima?",
+    "opzioni": [
+     "Circa il $10\\%$",
+     "Circa il $50\\%$",
+     "Tutte le osservazioni",
+     "Circa il $90\\%$"
+    ],
+    "spiegazione": "È la proprietà del quantile: a meno dei punti di appoggio, la stima lascia sotto di sé una frazione $\\tau$ delle osservazioni."
+   },
+   "en": {
+    "testo": "Quantile regression with $\\tau = 0.90$ on the 55 normal days of the bakery: about which fraction of the observations falls below the estimate?",
+    "opzioni": [
+     "About $10\\%$",
+     "About $50\\%$",
+     "All the observations",
+     "About $90\\%$"
+    ],
+    "spiegazione": "It is the quantile property: up to the support points, the estimate leaves below itself a fraction $\\tau$ of the observations."
+   }
+  },
+  {
+   "id": "lpm-f-348",
+   "livello": "facile",
+   "capitolo": "regression",
+   "link": {
+    "it": "https://fabiofurini.github.io/modellazione-pl/regressione/#la-lettura-duale-i-punti-di-appoggio",
+    "en": "https://fabiofurini.github.io/lp-modelling/regression/#the-dual-reading-the-support-points"
+   },
+   "corretta": 1,
+   "it": {
+    "testo": "All'ottimo dell'LP di regressione quantile, quanto vale la somma dei duali $\\tilde\\pi_i$ dei vincoli di scostamento?",
+    "opzioni": [
+     "$\\tau$",
+     "$0$",
+     "$n\\,\\tau$",
+     "$1 - \\tau$"
+    ],
+    "spiegazione": "$\\sum_i \\tilde\\pi_i = 0$ è il vincolo duale dell'intercetta libera: è la proprietà del quantile in forma algebrica."
+   },
+   "en": {
+    "testo": "At the optimum of the quantile regression LP, what is the sum of the duals $\\tilde\\pi_i$ of the deviation constraints?",
+    "opzioni": [
+     "$\\tau$",
+     "$0$",
+     "$n\\,\\tau$",
+     "$1 - \\tau$"
+    ],
+    "spiegazione": "$\\sum_i \\tilde\\pi_i = 0$ is the dual constraint of the free intercept: it is the quantile property in algebraic form."
+   }
+  },
+  {
+   "id": "lpm-f-349",
+   "livello": "facile",
+   "capitolo": "regression",
+   "link": {
+    "it": "https://fabiofurini.github.io/modellazione-pl/regressione/#selezione-delle-caratteristiche-con-un-budget",
+    "en": "https://fabiofurini.github.io/lp-modelling/regression/#feature-selection-with-a-budget"
+   },
+   "corretta": 2,
+   "it": {
+    "testo": "Selezione delle caratteristiche con un budget sui coefficienti: che cosa rappresenta la variabile ausiliaria $z_j$, con $-z_j \\le w_j \\le z_j$?",
+    "opzioni": [
+     "Il segno del coefficiente $w_j$",
+     "Lo scarto dell'osservazione $j$",
+     "Il valore assoluto del coefficiente $w_j$",
+     "Il duale del vincolo di budget"
+    ],
+    "spiegazione": "I due vincoli forzano $z_j \\ge |w_j|$ e, con il budget $\\sum_j z_j \\le t$, all'ottimo $z_j = |w_j|$: un vincolo sulla somma dei valori assoluti scritto in forma lineare."
+   },
+   "en": {
+    "testo": "Feature selection with a budget on the coefficients: what does the auxiliary variable $z_j$, with $-z_j \\le w_j \\le z_j$, represent?",
+    "opzioni": [
+     "The sign of the coefficient $w_j$",
+     "The deviation of observation $j$",
+     "The absolute value of the coefficient $w_j$",
+     "The dual of the budget constraint"
+    ],
+    "spiegazione": "The two constraints force $z_j \\ge |w_j|$ and, with the budget $\\sum_j z_j \\le t$, at the optimum $z_j = |w_j|$: a constraint on the sum of absolute values written in linear form."
+   }
+  },
+  {
+   "id": "lpm-f-350",
+   "livello": "facile",
+   "capitolo": "regression",
+   "link": {
+    "it": "https://fabiofurini.github.io/modellazione-pl/regressione/#selezione-delle-caratteristiche-con-un-budget",
+    "en": "https://fabiofurini.github.io/lp-modelling/regression/#feature-selection-with-a-budget"
+   },
+   "corretta": 0,
+   "it": {
+    "testo": "Selezione delle caratteristiche della panetteria: quali caratteristiche restano sotto i 2 pezzi per deviazione standard anche con budget alto?",
+    "opzioni": [
+     "Follower, pioggia e indice di borsa",
+     "Temperatura, prezzo e follower",
+     "Prezzo, weekend e pioggia",
+     "Temperatura, weekend e borsa"
+    ],
+    "spiegazione": "Entrano temperatura, prezzo, weekend e, solo con budget eccessivo, il giorno del mese; follower, pioggia e indice di borsa restano fuori."
+   },
+   "en": {
+    "testo": "Feature selection for the bakery: which features stay below 2 pieces per standard deviation even with a large budget?",
+    "opzioni": [
+     "Followers, rain and stock index",
+     "Temperature, price and followers",
+     "Price, weekend and rain",
+     "Temperature, weekend and stocks"
+    ],
+    "spiegazione": "Temperature, price, weekend and, only with an excessive budget, the day of the month enter; followers, rain and stock index stay out."
+   }
+  },
+  {
+   "id": "lpm-f-351",
+   "livello": "facile",
+   "capitolo": "regression",
+   "link": {
+    "it": "https://fabiofurini.github.io/modellazione-pl/regressione/#selezione-delle-caratteristiche-con-un-budget",
+    "en": "https://fabiofurini.github.io/lp-modelling/regression/#feature-selection-with-a-budget"
+   },
+   "corretta": 3,
+   "it": {
+    "testo": "Perché nella selezione delle caratteristiche le caratteristiche si standardizzano prima di imporre il budget sui coefficienti?",
+    "opzioni": [
+     "Per rendere intere le variabili del modello",
+     "Per eliminare l'intercetta dalla stima",
+     "Per ridurre il numero di giorni di storico",
+     "Il budget somma coefficienti di unità diverse"
+    ],
+    "spiegazione": "Un budget sulla somma dei $|w_j|$ ha senso solo se i coefficienti sono confrontabili: standardizzando, ognuno misura i pezzi per deviazione standard."
+   },
+   "en": {
+    "testo": "Why, in feature selection, are the features standardized before imposing the budget on the coefficients?",
+    "opzioni": [
+     "To make the variables of the model integer",
+     "To remove the intercept from the estimate",
+     "To reduce the number of days of history",
+     "The budget adds coefficients in different units"
+    ],
+    "spiegazione": "A budget on the sum of the $|w_j|$ makes sense only if the coefficients are comparable: after standardizing, each one measures pieces per standard deviation."
+   }
+  },
+  {
+   "id": "lpm-f-352",
+   "livello": "facile",
+   "capitolo": "organization",
+   "link": {
+    "it": "https://fabiofurini.github.io/modellazione-pl/organizzazione/#percorso-essenziale-in-quattro-laboratori",
+    "en": "https://fabiofurini.github.io/lp-modelling/organization/#essential-path-in-four-lab-sessions"
+   },
+   "corretta": 2,
+   "it": {
+    "testo": "Da quanti laboratori è formato il percorso essenziale del corso Modellazione PL?",
+    "opzioni": [
+     "Tre",
+     "Cinque",
+     "Quattro",
+     "Undici"
+    ],
+    "spiegazione": "Quattro: produzione e scorte, DEA, decisioni a scenari (Newsvendor o CVaR) e un progetto a scelta."
+   },
+   "en": {
+    "testo": "How many lab sessions make up the essential path of the course LP Modelling?",
+    "opzioni": [
+     "Three",
+     "Five",
+     "Four",
+     "Eleven"
+    ],
+    "spiegazione": "Four: production and inventory, DEA, scenario decisions (newsvendor or CVaR) and a project of your choice."
+   }
+  },
+  {
+   "id": "lpm-f-353",
+   "livello": "facile",
+   "capitolo": "organization",
+   "link": {
+    "it": "https://fabiofurini.github.io/modellazione-pl/organizzazione/#gli-errori-piu-comuni",
+    "en": "https://fabiofurini.github.io/lp-modelling/organization/#the-most-common-mistakes"
+   },
+   "corretta": 1,
+   "it": {
+    "testo": "Il prezzo ombra della capacità di un mese vale $-3{,}81$ €/ora nell'intervallo $[330, 431]$ ore. La capacità passa da $420$ a $600$ ore. Che cosa raccomanda la checklist?",
+    "opzioni": [
+     "Prevedere il costo con $-3{,}81 \\cdot 180$",
+     "Riottimizzare: si è usciti dall'intervallo",
+     "Raddoppiare il prezzo ombra",
+     "Considerare il modello inammissibile"
+    ],
+    "spiegazione": "Il prezzo ombra vale solo dentro il suo intervallo di validità; $600$ è oltre $431$, quindi la previsione lineare non vale e si riottimizza."
+   },
+   "en": {
+    "testo": "The shadow price of the capacity of a month is $-3.81$ €/hour in the range $[330, 431]$ hours. The capacity goes from $420$ to $600$ hours. What does the checklist recommend?",
+    "opzioni": [
+     "Predict the cost with $-3.81 \\cdot 180$",
+     "Re-optimize: we left the range",
+     "Double the shadow price",
+     "Consider the model infeasible"
+    ],
+    "spiegazione": "The shadow price holds only within its validity range; $600$ is beyond $431$, so the linear prediction does not hold and one re-optimizes."
+   }
+  },
+  {
+   "id": "lpm-f-354",
+   "livello": "facile",
+   "capitolo": "organization",
+   "link": {
+    "it": "https://fabiofurini.github.io/modellazione-pl/organizzazione/#gli-errori-piu-comuni",
+    "en": "https://fabiofurini.github.io/lp-modelling/organization/#the-most-common-mistakes"
+   },
+   "corretta": 3,
+   "it": {
+    "testo": "Nel modello CVaR si dimentica `lb=-GRB.INFINITY` sulla soglia $\\eta$. Che cosa succede?",
+    "opzioni": [
+     "Gurobi segnala un errore di sintassi",
+     "Il modello diventa a variabili intere",
+     "Nessun effetto: Gurobi lo capisce da sé",
+     "$\\eta$ è forzata $\\ge 0$ e l'ottimo può essere sbagliato"
+    ],
+    "spiegazione": "In gurobipy il limite inferiore predefinito è $0$: se il VaR ottimo fosse negativo, il modello restituirebbe un CVaR sbagliato senza segnalare nulla."
+   },
+   "en": {
+    "testo": "In the CVaR model one forgets `lb=-GRB.INFINITY` on the threshold $\\eta$. What happens?",
+    "opzioni": [
+     "Gurobi reports a syntax error",
+     "The model becomes an integer one",
+     "No effect: Gurobi works it out",
+     "$\\eta$ is forced $\\ge 0$ and the optimum may be wrong"
+    ],
+    "spiegazione": "In gurobipy the default lower bound is $0$: if the optimal VaR were negative, the model would return a wrong CVaR without any warning."
+   }
+  },
+  {
+   "id": "lpm-f-355",
+   "livello": "facile",
+   "capitolo": "organization",
+   "link": {
+    "it": "https://fabiofurini.github.io/modellazione-pl/materiale/",
+    "en": "https://fabiofurini.github.io/lp-modelling/downloads/"
+   },
+   "corretta": 0,
+   "it": {
+    "testo": "Con quale licenza sono distribuiti testi, figure e dati del corso Modellazione PL?",
+    "opzioni": [
+     "CC BY 4.0",
+     "MIT",
+     "GPL 3.0",
+     "Nessuna licenza"
+    ],
+    "spiegazione": "Testi, figure e dati sono CC BY 4.0 (riuso libero citando l'autore); il codice Python è MIT."
+   },
+   "en": {
+    "testo": "Under which licence are the texts, figures and data of the course LP Modelling distributed?",
+    "opzioni": [
+     "CC BY 4.0",
+     "MIT",
+     "GPL 3.0",
+     "No licence"
+    ],
+    "spiegazione": "Texts, figures and data are CC BY 4.0 (free reuse with attribution); the Python code is MIT."
+   }
+  },
+  {
+   "id": "lpm-f-356",
+   "livello": "facile",
+   "capitolo": "organization",
+   "link": {
+    "it": "https://fabiofurini.github.io/modellazione-pl/materiale/",
+    "en": "https://fabiofurini.github.io/lp-modelling/downloads/"
+   },
+   "corretta": 1,
+   "it": {
+    "testo": "Con quale licenza è distribuito il codice Python del corso Modellazione PL?",
+    "opzioni": [
+     "CC BY 4.0",
+     "MIT",
+     "GPL 3.0",
+     "Proprietaria"
+    ],
+    "spiegazione": "Il codice è MIT, la licenza usuale per il software; testi, figure e dati sono CC BY 4.0."
+   },
+   "en": {
+    "testo": "Under which licence is the Python code of the course LP Modelling distributed?",
+    "opzioni": [
+     "CC BY 4.0",
+     "MIT",
+     "GPL 3.0",
+     "Proprietary"
+    ],
+    "spiegazione": "The code is MIT, the usual software licence; texts, figures and data are CC BY 4.0."
+   }
+  },
+  {
+   "id": "lpm-f-357",
+   "livello": "facile",
+   "capitolo": "organization",
+   "link": {
+    "it": "https://fabiofurini.github.io/modellazione-pl/organizzazione/#percorso-essenziale-in-quattro-laboratori",
+    "en": "https://fabiofurini.github.io/lp-modelling/organization/#essential-path-in-four-lab-sessions"
+   },
+   "corretta": 0,
+   "it": {
+    "testo": "Nel laboratorio 1 del corso Modellazione PL, come si verifica un prezzo ombra?",
+    "opzioni": [
+     "Per perturbazione: termine noto $+1$, poi si riottimizza",
+     "Con la media dei duali di tutti i vincoli del modello",
+     "Leggendo l'attributo `X` del vincolo dopo l'ottimo",
+     "Confrontandolo con il costo ridotto della variabile"
+    ],
+    "spiegazione": "Si aumenta di un'unità il termine noto, si riottimizza e si confronta la variazione dell'ottimo con `Pi`."
+   },
+   "en": {
+    "testo": "In session 1 of the course LP Modelling, how is a shadow price checked?",
+    "opzioni": [
+     "By perturbation: right-hand side $+1$, then re-optimize",
+     "With the mean of the duals of all constraints",
+     "By reading the attribute `X` of the constraint",
+     "By comparing it with the reduced cost"
+    ],
+    "spiegazione": "One raises the right-hand side by one unit, re-optimizes and compares the change of the optimum with `Pi`."
+   }
+  },
+  {
+   "id": "lpm-f-358",
+   "livello": "facile",
+   "capitolo": "regression",
+   "link": {
+    "it": "https://fabiofurini.github.io/modellazione-pl/regressione/#caso-di-studio-lo-storico-della-panetteria",
+    "en": "https://fabiofurini.github.io/lp-modelling/regression/#case-study-the-bakery-history"
+   },
+   "corretta": 0,
+   "it": {
+    "testo": "Panetteria, modello dei minimi scarti assoluti con tre caratteristiche sui 60 giorni: domanda $= 276{,}46 - 3{,}97\\,t - 23{,}12\\,p + 28{,}51\\,w$ ($w = 1$ nel weekend). Di quanto cresce la domanda prevista nel weekend?",
+    "opzioni": [
+     "$28{,}51$ pezzi",
+     "$23{,}12$ pezzi",
+     "$3{,}97$ pezzi",
+     "$276{,}46$ pezzi"
+    ],
+    "spiegazione": "Il coefficiente di $w$ è $28{,}51$: a parità di temperatura e prezzo, nel weekend la stima sale di $28{,}51$ pezzi."
+   },
+   "en": {
+    "testo": "Bakery, least absolute deviations model with three features on the 60 days: demand $= 276.46 - 3.97\\,t - 23.12\\,p + 28.51\\,w$ ($w = 1$ at weekends). By how much does the predicted demand grow at weekends?",
+    "opzioni": [
+     "$28.51$ pieces",
+     "$23.12$ pieces",
+     "$3.97$ pieces",
+     "$276.46$ pieces"
+    ],
+    "spiegazione": "The coefficient of $w$ is $28.51$: for the same temperature and price, at weekends the estimate rises by $28.51$ pieces."
+   }
+  },
+  {
+   "id": "lpm-f-359",
+   "livello": "facile",
+   "capitolo": "regression",
+   "link": {
+    "it": "https://fabiofurini.github.io/modellazione-pl/regressione/#caso-di-studio-lo-storico-della-panetteria",
+    "en": "https://fabiofurini.github.io/lp-modelling/regression/#case-study-the-bakery-history"
+   },
+   "corretta": 2,
+   "it": {
+    "testo": "Panetteria, modello a tre caratteristiche: domanda $= 276{,}46 - 3{,}97\\,t - 23{,}12\\,p + 28{,}51\\,w$. Che effetto ha un euro in più sul prezzo $p$?",
+    "opzioni": [
+     "$+23{,}12$ pezzi",
+     "$-3{,}97$ pezzi",
+     "$-23{,}12$ pezzi",
+     "$+28{,}51$ pezzi"
+    ],
+    "spiegazione": "Il coefficiente del prezzo è $-23{,}12$: un euro in più fa scendere la domanda stimata di $23{,}12$ pezzi."
+   },
+   "en": {
+    "testo": "Bakery, three-feature model: demand $= 276.46 - 3.97\\,t - 23.12\\,p + 28.51\\,w$. What is the effect of one more euro on the price $p$?",
+    "opzioni": [
+     "$+23.12$ pieces",
+     "$-3.97$ pieces",
+     "$-23.12$ pieces",
+     "$+28.51$ pieces"
+    ],
+    "spiegazione": "The coefficient of the price is $-23.12$: one more euro lowers the estimated demand by $23.12$ pieces."
+   }
+  },
+  {
+   "id": "lpm-f-360",
+   "livello": "facile",
+   "capitolo": "regression",
+   "link": {
+    "it": "https://fabiofurini.github.io/modellazione-pl/regressione/#regressione-quantile-e-scorta-di-sicurezza",
+    "en": "https://fabiofurini.github.io/lp-modelling/regression/#quantile-regression-and-safety-stock"
+   },
+   "corretta": 1,
+   "it": {
+    "testo": "La panetteria del newsvendor ha costo di underage $c_u = 9$ e di overage $c_o = 4$. Quale $\\tau$ usa la regressione quantile per la quantità da produrre?",
+    "opzioni": [
+     "$4/13$",
+     "$9/13$",
+     "$9/4$",
+     "$1/2$"
+    ],
+    "spiegazione": "Il frattile critico è $c_u/(c_u + c_o) = 9/13$: la regressione quantile con $\\tau = 9/13$ dà il quantile da produrre."
+   },
+   "en": {
+    "testo": "The newsvendor bakery has underage cost $c_u = 9$ and overage cost $c_o = 4$. Which $\\tau$ does quantile regression use for the quantity to produce?",
+    "opzioni": [
+     "$4/13$",
+     "$9/13$",
+     "$9/4$",
+     "$1/2$"
+    ],
+    "spiegazione": "The critical fractile is $c_u/(c_u + c_o) = 9/13$: quantile regression with $\\tau = 9/13$ gives the quantile to produce."
+   }
+  },
+  {
+   "id": "lpm-f-361",
+   "livello": "facile",
+   "capitolo": "regression",
+   "link": {
+    "it": "https://fabiofurini.github.io/modellazione-pl/regressione/#la-lettura-duale-i-punti-di-appoggio",
+    "en": "https://fabiofurini.github.io/lp-modelling/regression/#the-dual-reading-the-support-points"
+   },
+   "corretta": 3,
+   "it": {
+    "testo": "LP di regressione quantile con $p$ caratteristiche e un'intercetta. Quanti sono, in generale, i punti di appoggio (le osservazioni interpolate)?",
+    "opzioni": [
+     "$p - 1$",
+     "$2\\,p$",
+     "$n - p$",
+     "$p + 1$"
+    ],
+    "spiegazione": "Tanti quante le variabili libere del modello: i $p$ coefficienti più l'intercetta, cioè $p + 1$."
+   },
+   "en": {
+    "testo": "Quantile regression LP with $p$ features and an intercept. How many support points (interpolated observations) are there in general?",
+    "opzioni": [
+     "$p - 1$",
+     "$2\\,p$",
+     "$n - p$",
+     "$p + 1$"
+    ],
+    "spiegazione": "As many as the free variables of the model: the $p$ coefficients plus the intercept, that is $p + 1$."
+   }
+  },
+  {
+   "id": "lpm-f-362",
+   "livello": "facile",
+   "capitolo": "regression",
+   "link": {
+    "it": "https://fabiofurini.github.io/modellazione-pl/regressione/#regressione-robusta-e-quantile",
+    "en": "https://fabiofurini.github.io/lp-modelling/regression/#robust-and-quantile-regression"
+   },
+   "corretta": 2,
+   "it": {
+    "testo": "Che cosa stima, per il newsvendor, il capitolo sulla regressione robusta e quantile?",
+    "opzioni": [
+     "La media della domanda giornaliera",
+     "La varianza della domanda giornaliera",
+     "Il quantile condizionato della domanda",
+     "Il prezzo di vendita ottimo del pane"
+    ],
+    "spiegazione": "Pesando in modo asimmetrico gli scarti, la regressione stima il quantile della domanda condizionato alle condizioni del giorno."
+   },
+   "en": {
+    "testo": "What does the chapter on robust and quantile regression estimate for the newsvendor?",
+    "opzioni": [
+     "The mean of the daily demand",
+     "The variance of the daily demand",
+     "The conditional quantile of the demand",
+     "The optimal selling price of bread"
+    ],
+    "spiegazione": "By weighting deviations asymmetrically, the regression estimates the quantile of demand conditional on the conditions of the day."
+   }
+  },
+  {
+   "id": "lpm-f-363",
    "livello": "teorema",
    "capitolo": "background",
    "link": {
@@ -9992,7 +10892,7 @@
    }
   },
   {
-   "id": "lpm-f-334",
+   "id": "lpm-f-364",
    "livello": "teorema",
    "capitolo": "background",
    "link": {
@@ -10022,7 +10922,7 @@
    }
   },
   {
-   "id": "lpm-f-335",
+   "id": "lpm-f-365",
    "livello": "teorema",
    "capitolo": "background",
    "link": {
@@ -10052,7 +10952,7 @@
    }
   },
   {
-   "id": "lpm-f-336",
+   "id": "lpm-f-366",
    "livello": "teorema",
    "capitolo": "background",
    "link": {
@@ -10079,6 +10979,96 @@
      "(D) is infeasible too"
     ],
     "spiegazione": "If (D) had an optimum, by strong duality so would (P), which is infeasible instead: a feasible dual with no optimum is unbounded."
+   }
+  },
+  {
+   "id": "lpm-f-367",
+   "livello": "teorema",
+   "capitolo": "background",
+   "link": {
+    "it": "https://fabiofurini.github.io/modellazione-pl/teoria-lp/#le-condizioni-di-ottimalita-delllp-gli-scarti-complementari",
+    "en": "https://fabiofurini.github.io/lp-modelling/theory-lp/#the-optimality-conditions-of-lp-complementary-slackness"
+   },
+   "corretta": 0,
+   "it": {
+    "testo": "Coppia primale di massimo e duale; all'ottimo il duale $\\tilde\\pi_i$ del vincolo $i$ è strettamente positivo. Che cosa dicono gli scarti complementari sul vincolo $i$?",
+    "opzioni": [
+     "È attivo: $\\bar s_i = 0$",
+     "Ha scarto positivo",
+     "Si può togliere",
+     "Il duale è illimitato"
+    ],
+    "spiegazione": "Da $\\tilde\\pi_i \\bar s_i = 0$ e $\\tilde\\pi_i > 0$ segue $\\bar s_i = 0$: il vincolo è attivo all'ottimo."
+   },
+   "en": {
+    "testo": "Maximization primal and its dual; at the optimum the dual $\\tilde\\pi_i$ of constraint $i$ is strictly positive. What does complementary slackness say about constraint $i$?",
+    "opzioni": [
+     "It is active: $\\bar s_i = 0$",
+     "It has positive slack",
+     "It can be removed",
+     "The dual is unbounded"
+    ],
+    "spiegazione": "From $\\tilde\\pi_i \\bar s_i = 0$ and $\\tilde\\pi_i > 0$ it follows $\\bar s_i = 0$: the constraint is active at the optimum."
+   }
+  },
+  {
+   "id": "lpm-f-368",
+   "livello": "teorema",
+   "capitolo": "background",
+   "link": {
+    "it": "https://fabiofurini.github.io/modellazione-pl/teoria-lp/#programmazione-lineare-e-dualita",
+    "en": "https://fabiofurini.github.io/lp-modelling/theory-lp/#linear-programming-and-duality"
+   },
+   "corretta": 2,
+   "it": {
+    "testo": "(P) è un LP di massimo e (D) il suo duale. Che cosa dice la dualità debole del valore di una soluzione ammissibile di (D)?",
+    "opzioni": [
+     "È al più il valore ottimo di (P)",
+     "Coincide con il valore ottimo di (P)",
+     "È almeno il valore ottimo di (P)",
+     "Non ha legami con (P)"
+    ],
+    "spiegazione": "Ogni soluzione ammissibile del duale di minimo dà un limite superiore: $\\sum_j c_j \\bar x_j \\le \\sum_i b_i \\bar\\pi_i$ per ogni coppia ammissibile."
+   },
+   "en": {
+    "testo": "(P) is a maximization LP and (D) its dual. What does weak duality say about the value of a feasible solution of (D)?",
+    "opzioni": [
+     "It is at most the optimal value of (P)",
+     "It equals the optimal value of (P)",
+     "It is at least the optimal value of (P)",
+     "It has no link with (P)"
+    ],
+    "spiegazione": "Every feasible solution of the minimization dual gives an upper bound: $\\sum_j c_j \\bar x_j \\le \\sum_i b_i \\bar\\pi_i$ for every feasible pair."
+   }
+  },
+  {
+   "id": "lpm-f-369",
+   "livello": "teorema",
+   "capitolo": "background",
+   "link": {
+    "it": "https://fabiofurini.github.io/modellazione-pl/teoria-lp/#lanalisi-di-sensitivita-negli-lp",
+    "en": "https://fabiofurini.github.io/lp-modelling/theory-lp/#sensitivity-analysis-in-lps"
+   },
+   "corretta": 1,
+   "it": {
+    "testo": "LP di massimo: la variabile $x_j$ vale $0$ all'ottimo, con costo ridotto $\\bar c_j = -2$. Di quanto deve crescere il suo coefficiente $c_j$ perché convenga attivarla?",
+    "opzioni": [
+     "Di almeno $1$",
+     "Di almeno $2$",
+     "Di almeno $4$",
+     "Di qualunque quantità positiva"
+    ],
+    "spiegazione": "Il costo ridotto è la distanza dalla convenienza: con $\\bar c_j = -2$ il coefficiente deve salire di almeno $2$ (la soglia $c_j^{\\max}$)."
+   },
+   "en": {
+    "testo": "Maximization LP: the variable $x_j$ is $0$ at the optimum, with reduced cost $\\bar c_j = -2$. By how much must its coefficient $c_j$ grow for activating it to pay off?",
+    "opzioni": [
+     "By at least $1$",
+     "By at least $2$",
+     "By at least $4$",
+     "By any positive amount"
+    ],
+    "spiegazione": "The reduced cost is the distance from convenience: with $\\bar c_j = -2$ the coefficient must rise by at least $2$ (the threshold $c_j^{\\max}$)."
    }
   }
  ]

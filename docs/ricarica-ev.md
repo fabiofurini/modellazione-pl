@@ -129,7 +129,7 @@ ottimizzare un solo obiettivo quando ce ne sono due.
 Un profilo di prelievo *regolare*, che penalizza le variazioni del prelievo da
 un'ora all'altra, richiede un termine quadratico nell'obiettivo e non è più un LP: è
 la variante quadratica di questo modello, nel modulo *Modellazione PNL*, pagina
-[«Ricarica di veicoli elettrici: la variante quadratica»](https://fabiofurini.github.io/modellazione-pnl/ricarica-ev-quadratica/).
+[«Ricarica di veicoli elettrici con profilo regolare»](https://fabiofurini.github.io/modellazione-pnl/ricarica-ev-quadratica/).
 
 ## Codice
 
