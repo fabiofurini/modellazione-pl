@@ -6,6 +6,24 @@
 
 [![Apri in Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/fabiofurini/modellazione-pl/blob/main/notebooks/lab06_dea.ipynb)
 
+!!! nota "Prerequisiti"
+
+    - Dal modulo *Programmazione lineare*, [Capitolo 9 «Teoria della dualità»](https://fabiofurini.github.io/programmazione-lineare/dualita/09-dualita/): il duale di un LP e la dualità forte, da cui viene la forma di inviluppo.
+
+    - Da questo modulo, [Capitolo 2 «Richiami: programmazione lineare e analisi di sensitività»](https://fabiofurini.github.io/modellazione-pl/teoria-lp/): i prezzi ombra e la loro verifica per perturbazione.
+
+!!! chiave "Obiettivi"
+
+    Alla fine di questo capitolo sarai in grado di:
+
+    - definire l'efficienza relativa come rapporto pesato fra output e input;
+
+    - trasformare il modello frazionario in un LP e scriverne il duale;
+
+    - leggere nel duale le unità di riferimento e gli obiettivi di miglioramento;
+
+    - separare l'inefficienza tecnica da quella di scala.
+
 Una banca ha dodici filiali: usano personale e costi operativi e producono prestiti e
 depositi. Quali lavorano bene, e di quanto dovrebbero ridurre le risorse le altre? Gli
 output non hanno un prezzo comune, e una filiale grande non è inefficiente solo perché
@@ -302,6 +320,18 @@ Senza la filiale 7: 5 filiali cambiano efficienza; nuove efficienti: [3, 8]
     Una sola DMU sulla frontiera può cambiare il giudizio su molte altre. Prima di agire
     sui target conviene controllare i dati dei peer più citati e ripetere l'analisi
     senza di essi.
+
+## In sintesi
+
+!!! chiave "In sintesi"
+
+    - L'efficienza è il rapporto pesato output/input con i pesi più favorevoli; fissare a $1$ l'input pesato dà un LP.
+
+    - Il duale, la forma di inviluppo, cerca un'unità virtuale che fa almeno altrettanto con meno: $\tilde\theta = \tilde h_o$, e le $\tilde\lambda_j > 0$ sono i peer.
+
+    - Il BCC aggiunge $\sum_{j=1}^{n} \lambda_j = 1$; l'efficienza di scala è $\tilde\theta^{\rm CCR}/\tilde\theta^{\rm BCC}$.
+
+    - L'efficienza è relativa alle unità osservate: la frontiera e i peer più citati vanno controllati.
 
 ## Codice
 

@@ -6,6 +6,24 @@
 
 [![Apri in Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/fabiofurini/modellazione-pl/blob/main/notebooks/lab08_var_cvar.ipynb)
 
+!!! nota "Prerequisiti"
+
+    - Da questo modulo, [Capitolo 7 «Il Newsvendor e le sue varianti»](https://fabiofurini.github.io/modellazione-pl/newsvendor/): l'LP a scenari, il trucco della parte positiva e l'obiettivo mean-CVaR.
+
+    - Da questo modulo, [Capitolo 2 «Richiami: programmazione lineare e analisi di sensitività»](https://fabiofurini.github.io/modellazione-pl/teoria-lp/): i prezzi ombra e il protocollo di sensitività.
+
+!!! chiave "Obiettivi"
+
+    Alla fine di questo capitolo sarai in grado di:
+
+    - definire e calcolare VaR e CVaR su una distribuzione discreta;
+
+    - usare la formulazione lineare di Rockafellar–Uryasev;
+
+    - costruire portafogli e piani logistici protetti dagli scenari peggiori;
+
+    - riconoscere i limiti statistici delle stime delle code.
+
 Ottimizzare il valore medio può nascondere perdite rare e molto elevate. Il **VaR**
 (*Value-at-Risk*) risponde a "qual è una soglia di perdita elevata?"; il **CVaR**
 (*Conditional Value-at-Risk*) anche a "quanto perdiamo *in media* quando la soglia
@@ -187,6 +205,18 @@ la capacità migra verso il fornitore affidabile: **+79 € di costo medio compr
     essere unico ($\tilde\eta$ è *un* VaR): confrontare sempre $\tilde\eta$ con il
     quantile empirico.
 
+
+## In sintesi
+
+!!! chiave "In sintesi"
+
+    - Il VaR è una soglia di perdita alta, il quantile $\alpha$; il CVaR è la perdita media nella coda oltre la soglia.
+
+    - Il CVaR è convesso, subadditivo e sensibile alla gravità della coda; il VaR no.
+
+    - L'LP di Rockafellar–Uryasev usa una soglia libera $\eta$ e gli eccessi $\xi_s \ge 0$: all'ottimo $\eta^*$ è un VaR e il valore è il CVaR.
+
+    - Le code estreme stimate da pochi scenari sono rumorose: servono decine di scenari oltre il quantile.
 
 ## Codice
 

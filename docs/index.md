@@ -22,6 +22,7 @@ riproducibili.
 Prerequisiti: [Programmazione lineare](https://fabiofurini.github.io/programmazione-lineare/) (dualità e analisi di sensitività).
 
 [Comincia :material-arrow-right:](strumenti.md){ .md-button .md-button--primary }
+[:material-pencil: Esercizi](esercizi/index.md){ .md-button }
 [:material-gesture-tap: Laboratorio](laboratorio/index.md){ .md-button }
 [:material-clipboard-check-outline: Quiz](autovalutazione.md){ .md-button }
 [:material-download: Materiale](materiale.md){ .md-button }
@@ -84,6 +85,14 @@ Tre modelli LP del corso risolti all'ottimo nel browser: produzione e scorte, ri
 ## Da non perdere
 
 <div class="grid cards" markdown>
+
+-   :material-pencil-box-multiple: **Esercizi con le soluzioni**
+
+    ---
+
+    Esercizi per ogni capitolo, ciascuno con la soluzione svolta che si apre con un clic.
+
+    [:octicons-arrow-right-24: Gli esercizi](esercizi/index.md)
 
 -   :material-clipboard-check-outline: **Quiz di autovalutazione**
 

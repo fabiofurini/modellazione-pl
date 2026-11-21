@@ -2,6 +2,26 @@
 
 [:material-file-pdf-box: Dispensa (PDF)](pdf/dispensa-modellazione-pl.pdf) · [:material-presentation: Slide del capitolo (PDF)](pdf/slide-02-richiami.pdf)
 
+!!! nota "Prerequisiti"
+
+    - Dal modulo *Programmazione lineare*, [Capitolo 9 «Teoria della dualità»](https://fabiofurini.github.io/programmazione-lineare/dualita/09-dualita/): il duale di un problema di programmazione lineare, la dualità debole e forte, gli scarti complementari.
+
+    - Dal modulo *Programmazione lineare*, [Capitolo 14 «Analisi di sensitività»](https://fabiofurini.github.io/programmazione-lineare/metodi-avanzati/14-sensitivita/): prezzi ombra, costi ridotti e i loro intervalli di validità.
+
+!!! chiave "Obiettivi"
+
+    Alla fine di questo capitolo sarai in grado di:
+
+    - scrivere il duale di un LP in forma generale con le regole di conversione;
+
+    - verificare l'ottimalità con gli scarti complementari;
+
+    - dedurre il segno di un prezzo ombra dal verso del vincolo e dal verso dell'obiettivo;
+
+    - leggere un prezzo ombra e un costo ridotto insieme ai loro intervalli di validità;
+
+    - applicare i sei passi del protocollo di sensitività.
+
 I richiami di programmazione lineare usati in tutto il corso: dualità, condizioni
 di ottimalità, analisi di sensitività e il protocollo di sensitività di ogni
 capitolo. La teoria completa, con le dimostrazioni, è nel modulo *Programmazione
@@ -283,3 +303,17 @@ Insieme alla soluzione arrivano gratis quattro numeri per ogni vincolo e variabi
 4. **Scenari**: pessimistico, centrale, ottimistico.
 5. **Trade-off**: costruire una frontiera (costo-servizio, rischio-rendimento…).
 6. **Stabilità**: dati ±5% → la raccomandazione regge?
+
+## In sintesi
+
+!!! chiave "In sintesi"
+
+    - Ogni vincolo genera una variabile duale e ogni variabile un vincolo duale; la dualità debole dà un bound, quella forte valori uguali all'ottimo.
+
+    - Scarti complementari: un vincolo non attivo ha duale nullo, una variabile non nulla ha costo ridotto nullo.
+
+    - Il prezzo ombra $\tilde\pi_i = \partial \tilde z / \partial b_i$ vale solo dentro il suo intervallo; un numero si riporta sempre con il suo intervallo.
+
+    - Il costo ridotto dice di quanto deve migliorare $c_j$ perché convenga usare una variabile ferma a zero.
+
+    - Il protocollo: caso base, one-at-a-time, prezzi ombra verificati per perturbazione, scenari, trade-off, stabilità.

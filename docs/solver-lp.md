@@ -2,6 +2,24 @@
 
 [:material-file-pdf-box: Dispensa (PDF)](pdf/dispensa-modellazione-pl.pdf) · [:material-presentation: Slide del capitolo (PDF)](pdf/slide-03-python-gurobi.pdf)
 
+!!! nota "Prerequisiti"
+
+    - Da questo modulo, [Capitolo 2 «Richiami: programmazione lineare e analisi di sensitività»](https://fabiofurini.github.io/modellazione-pl/teoria-lp/): duali, costi ridotti, scarti e intervalli di validità, che il solver restituisce come attributi.
+
+!!! chiave "Obiettivi"
+
+    Alla fine di questo capitolo sarai in grado di:
+
+    - costruire un LP in `gurobipy` in cinque passi;
+
+    - dichiarare le variabili libere, ricordando il lower bound predefinito $0$;
+
+    - controllare `Status` prima di leggere `ObjVal`, `X` e `Slack`;
+
+    - leggere `Pi`, `RC`, `SARHS` e `SAObj` come le grandezze del capitolo dei richiami;
+
+    - riconoscere gli errori tipici, dal modello non ammissibile al termine noto che contiene costanti.
+
 Come si costruisce un modello lineare con `gurobipy`, come si fa girare, come si
 recupera la soluzione e come si interpreta l'output. Tutti gli esempi sono
 copia-incollabili in un terminale Python.
@@ -380,3 +398,16 @@ assert m.Status == GRB.OPTIMAL, f"stato inatteso: {m.Status}"
 # ciclo su un parametro chiave, ri-ottimizzare, salvare figure
 ```
 
+## In sintesi
+
+!!! chiave "In sintesi"
+
+    - Cinque passi: `Model`, `addVar(s)`, `addConstr(s)`, `setObjective`, `write`.
+
+    - Le variabili sono $\ge 0$ per default: una variabile libera richiede `lb=-GRB.INFINITY`.
+
+    - Prima di tutto `Status`; solo dopo `ObjVal`, `X` e `Slack`.
+
+    - `Pi`, `RC`, `Slack`, `SARHS` e `SAObj` sono le grandezze teoriche dei richiami; il termine noto memorizzato include le costanti portate dal membro sinistro.
+
+    - $`RC` = 0$ non basta per dire che una variabile è usata: la degenerazione è sempre possibile.

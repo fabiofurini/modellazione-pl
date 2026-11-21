@@ -6,6 +6,24 @@
 
 [![Apri in Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/fabiofurini/modellazione-pl/blob/main/notebooks/lab09_arbitraggio.ipynb)
 
+!!! nota "Prerequisiti"
+
+    - Da questo modulo, [Capitolo 2 «Richiami: programmazione lineare e analisi di sensitività»](https://fabiofurini.github.io/modellazione-pl/teoria-lp/): la dualità, gli scarti complementari e la dualità forte.
+
+    - Da questo modulo, [Capitolo 3 «Il solver: costruire, risolvere, interpretare»](https://fabiofurini.github.io/modellazione-pl/solver-lp/): le variabili libere in `gurobipy` e la lettura di `Pi`.
+
+!!! chiave "Obiettivi"
+
+    Alla fine di questo capitolo sarai in grado di:
+
+    - formulare la ricerca di un arbitraggio come LP;
+
+    - leggere le probabilità neutrali al rischio nei duali dei vincoli;
+
+    - calcolare l'intervallo dei prezzi coerenti di un titolo;
+
+    - prezzare un titolo nuovo (un'opzione) in un mercato completo o incompleto.
+
 Un **arbitraggio** è una strategia che crea denaro dal nulla: incassa oggi senza
 alcun rischio di perdita domani (tipo A), oppure non costa nulla oggi e può solo
 guadagnare (tipo B). Rilevarlo è un LP; la dualità — prezzi ombra, scarti
@@ -264,6 +282,18 @@ Lo stesso codice è disponibile come notebook — [`notebooks/lab09_arbitraggio.
 
     print("\nFatto: capitolo 9 (arbitraggio).")
     ```
+
+## In sintesi
+
+!!! chiave "In sintesi"
+
+    - Scoprire un arbitraggio è un LP con posizioni libere e un vincolo per stato: payoff $\ge 0$.
+
+    - Ottimo $<0$ è un arbitraggio di tipo A, la normalizzazione (costo $\ge -1$) evita l'illimitatezza; ottimo $0$ con un vincolo di stato non attivo è il tipo B.
+
+    - I duali, moltiplicati per $R$, sono probabilità neutrali al rischio: niente arbitraggio se e solo se esiste $q$ con $q_j > 0$ per ogni stato.
+
+    - Due LP danno l'intervallo dei prezzi coerenti: un prezzo unico in un mercato completo, un intervallo in uno incompleto.
 
 ## Esercizi
 

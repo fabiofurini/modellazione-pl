@@ -6,6 +6,24 @@
 
 [![Apri in Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/fabiofurini/modellazione-pl/blob/main/notebooks/lab04_produzione.ipynb)
 
+!!! nota "Prerequisiti"
+
+    - Da questo modulo, [Capitolo 2 «Richiami: programmazione lineare e analisi di sensitività»](https://fabiofurini.github.io/modellazione-pl/teoria-lp/): i prezzi ombra, i loro intervalli di validità e il protocollo di sensitività.
+
+    - Da questo modulo, [Capitolo 3 «Il solver: costruire, risolvere, interpretare»](https://fabiofurini.github.io/modellazione-pl/solver-lp/): la costruzione di un LP in `gurobipy` e la lettura di `Pi` e `SARHS`.
+
+!!! chiave "Obiettivi"
+
+    Alla fine di questo capitolo sarai in grado di:
+
+    - formulare un LP multiperiodale con vincoli di bilancio delle scorte;
+
+    - leggere e verificare i prezzi ombra della capacità e i loro intervalli di validità;
+
+    - costruire la curva del valore della capacità;
+
+    - spiegare come le scorte spostano capacità dai mesi scarichi ai mesi di picco.
+
 Un'azienda decide quanto produrre oggi e quanto conservare a scorta per la domanda
 futura. Produrre in anticipo costa giacenza; produrre all'ultimo momento rischia di
 sbattere contro il limite di capacità proprio nei mesi di picco.
@@ -122,6 +140,18 @@ all'altro, richiede un termine quadratico nell'obiettivo e non è più un LP: è
 variante quadratica di questo modello, nel modulo *Modellazione PNL*, pagina
 [«Produzione con smoothing quadratico»](https://fabiofurini.github.io/modellazione-pnl/produzione-quadratica/).
 
+
+## In sintesi
+
+!!! chiave "In sintesi"
+
+    - Il bilancio delle scorte lega i mesi: il problema non si risolve un mese alla volta.
+
+    - Le scorte spostano capacità dai mesi scarichi ai mesi di picco; svuotare il magazzino alla fine è sempre ottimo.
+
+    - Il prezzo ombra di una capacità si verifica aggiungendo un'ora e riottimizzando; una capacità non attiva ha prezzo ombra nullo.
+
+    - Un'ora di capacità in più vale la giacenza che fa risparmiare; la curva del valore della capacità è convessa e decrescente.
 
 ## Codice
 

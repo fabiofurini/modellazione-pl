@@ -6,6 +6,24 @@
 
 [![Apri in Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/fabiofurini/modellazione-pl/blob/main/notebooks/lab07_newsvendor.ipynb)
 
+!!! nota "Prerequisiti"
+
+    - Da questo modulo, [Capitolo 2 «Richiami: programmazione lineare e analisi di sensitività»](https://fabiofurini.github.io/modellazione-pl/teoria-lp/): i prezzi ombra e i loro intervalli di validità.
+
+    - Da questo modulo, [Capitolo 3 «Il solver: costruire, risolvere, interpretare»](https://fabiofurini.github.io/modellazione-pl/solver-lp/): la costruzione e la soluzione di un LP in `gurobipy`.
+
+!!! chiave "Obiettivi"
+
+    Alla fine di questo capitolo sarai in grado di:
+
+    - ricavare e applicare la regola del quantile;
+
+    - trasformare un problema stocastico in un LP a scenari con il trucco della parte positiva;
+
+    - quantificare il valore di modellare l'incertezza (VSS);
+
+    - incorporare livelli di servizio e avversione al rischio.
+
 Scegliere una quantità **prima** di osservare la domanda: moda e stagionali,
 freschi, farmaci, capacità alberghiera. È la porta d'ingresso dell'ottimizzazione
 stocastica, con un risultato netto: **la quantità ottima non è la domanda media**.
@@ -190,6 +208,18 @@ atteso di 0,55 €: un rendimento del 55% che giustificherebbe quasi qualunque
 finanziamento. La correlazione alta, inoltre, toglie il beneficio di
 diversificazione: i tre prodotti falliscono insieme.
 
+
+## In sintesi
+
+!!! chiave "In sintesi"
+
+    - La quantità si sceglie prima di osservare la domanda, e l'ottimo è il quantile $q^* = F^{-1}\bigl(c_u/(c_u+c_o)\bigr)$, non la media.
+
+    - Con $k$ scenari il newsvendor diventa un LP con $2k+1$ variabili: le parti positive si linearizzano senza variabili binarie.
+
+    - Il VSS misura il guadagno di modellare l'incertezza; le decisioni stimate da pochi scenari sono instabili.
+
+    - Livello di servizio di ciclo e fill rate sono misure diverse; con il mean-CVaR un po' di avversione al rischio dà molta protezione.
 
 ## Codice
 

@@ -150,6 +150,7 @@ nav:
   - Ottimizzazione e machine learning:
       - ottimizzazione-ml.md
       - Regressione robusta e quantile: regressione.md
+  - Esercizi: esercizi/index.md
   - Quiz: autovalutazione.md
   - Laboratorio: laboratorio/index.md
   - Materiale: materiale.md

@@ -6,6 +6,24 @@
 
 [![Apri in Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/fabiofurini/modellazione-pl/blob/main/notebooks/lab10_regressione.ipynb)
 
+!!! nota "Prerequisiti"
+
+    - Da questo modulo, [Capitolo 7 «Il Newsvendor e le sue varianti»](https://fabiofurini.github.io/modellazione-pl/newsvendor/): la regola del quantile e il frattile critico.
+
+    - Da questo modulo, [Capitolo 2 «Richiami: programmazione lineare e analisi di sensitività»](https://fabiofurini.github.io/modellazione-pl/teoria-lp/): il duale di un LP e i prezzi ombra.
+
+!!! chiave "Obiettivi"
+
+    Alla fine di questo capitolo sarai in grado di:
+
+    - formulare la regressione con scarti assoluti come LP;
+
+    - leggerne il duale, riconoscendo i punti di appoggio della stima e la proprietà del quantile;
+
+    - stimare la quantità da produrre condizionata alle condizioni del giorno;
+
+    - selezionare le variabili esplicative rilevanti con un budget sui coefficienti, leggendone il prezzo ombra.
+
 Tutti i modelli del corso partono da parametri noti: i costi della
 [produzione](produzione.md), i prezzi orari della [ricarica](ricarica-ev.md), gli scenari
 del [newsvendor](newsvendor.md). Quei numeri qualcuno li deve stimare, e la
@@ -519,6 +537,18 @@ Lo stesso codice è disponibile come notebook — [`notebooks/lab10_regressione.
 
     print("\nFatto: capitolo 10 (regressione robusta e quantile).")
     ```
+
+## In sintesi
+
+!!! chiave "In sintesi"
+
+    - Con gli scarti assoluti la regressione è un LP: scarto $= u_i - v_i$ con $u_i, v_i \ge 0$, e la retta resta dove stanno i dati normali.
+
+    - Pagare $\tau$ sopra e $1-\tau$ sotto dà il quantile di livello $\tau$; con $\tau$ pari al frattile critico dà la quantità da produrre.
+
+    - Ogni duale sta in $[-(1-\tau),\, \tau]$; le osservazioni interpolate sono i punti di appoggio che determinano la stima.
+
+    - Un budget su $\sum_j |w_j|$ seleziona le variabili esplicative e resta un LP; il suo prezzo ombra è il prezzo della complessità.
 
 ## Esercizi
 

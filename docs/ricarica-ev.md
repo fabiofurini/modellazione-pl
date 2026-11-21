@@ -6,6 +6,24 @@
 
 [![Apri in Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/fabiofurini/modellazione-pl/blob/main/notebooks/lab05_ricarica_ev.ipynb)
 
+!!! nota "Prerequisiti"
+
+    - Da questo modulo, [Capitolo 2 «Richiami: programmazione lineare e analisi di sensitività»](https://fabiofurini.github.io/modellazione-pl/teoria-lp/): i prezzi ombra e il protocollo di sensitività.
+
+    - Da questo modulo, [Capitolo 3 «Il solver: costruire, risolvere, interpretare»](https://fabiofurini.github.io/modellazione-pl/solver-lp/): i bound delle variabili in `gurobipy` e il termine noto memorizzato dal solver.
+
+!!! chiave "Obiettivi"
+
+    Alla fine di questo capitolo sarai in grado di:
+
+    - modellare decisioni su un orizzonte orario con finestre di disponibilità;
+
+    - leggere i duali come prezzi delle ore marginali;
+
+    - gestire il compromesso costo-picco con un obiettivo pesato;
+
+    - diagnosticare una vera insidia dell'analisi di sensitività: il termine noto con le costanti.
+
 Una flotta deve arrivare carica al mattino sfruttando le ore economiche — ma se
 tutti caricano insieme, il picco di prelievo esplode. Un problema che *sembra*
 richiedere variabili di accensione/spegnimento e invece è un LP puro: la decisione
@@ -130,6 +148,18 @@ Un profilo di prelievo *regolare*, che penalizza le variazioni del prelievo da
 un'ora all'altra, richiede un termine quadratico nell'obiettivo e non è più un LP: è
 la variante quadratica di questo modello, nel modulo *Modellazione PNL*, pagina
 [«Ricarica di veicoli elettrici con profilo regolare»](https://fabiofurini.github.io/modellazione-pnl/ricarica-ev-quadratica/).
+
+## In sintesi
+
+!!! chiave "In sintesi"
+
+    - La ricarica intelligente è un LP puro: si decide quanta potenza, e la disponibilità è un dato, non una variabile binaria.
+
+    - Le ore economiche si riempiono per prime; il prezzo ombra del fabbisogno di energia è il prezzo dell'ora marginale diviso per $\eta$.
+
+    - Costo $+\,\rho\,$picco traccia la frontiera costo-picco: il picco scende molto per un piccolo aumento di costo.
+
+    - Le costanti dei vincoli finiscono nel termine noto: se un'analisi di sensitività non cambia nulla, si controlla prima il codice.
 
 ## Codice
 
