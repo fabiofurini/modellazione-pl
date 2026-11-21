@@ -93,6 +93,9 @@ extra:
 extra_css:
   - stylesheets/collana.css
   - stylesheets/extra.css
+  # laboratorio interattivo (genera_laboratorio.py)
+  - https://cdn.jsdelivr.net/npm/jsxgraph@1.10.1/distrib/jsxgraph.css
+  - stylesheets/interattivi.css?v=c22e1a0e82
   - stylesheets/quiz.css?v=9e3792b41c
 
 markdown_extensions:
@@ -112,7 +115,20 @@ extra_javascript:
   - javascripts/cloudflare-analytics.js
   - javascripts/mathjax.js
   - https://unpkg.com/mathjax@3/es5/tex-mml-chtml.js
+  # laboratorio interattivo (genera_laboratorio.py): JSXGraph, il motore, gli helper comuni, i dati, poi le ricette
+  - https://cdn.jsdelivr.net/npm/jsxgraph@1.10.1/distrib/jsxgraphcore.js
+  - javascripts/interattivi.js?v=a6cfeda578
+  - javascripts/gi-comune.js?v=74d7bb93a0
+  - javascripts/gi-ott.js?v=4e022c9162
+  - javascripts/gi-pl-dati.js?v=3bb3aa7015
+  - javascripts/gi-pl-modelli.js?v=15fa2bd78d
+  - javascripts/gi-pl-app.js?v=45442110e5
   - javascripts/quiz.js?v=be7fae2b85
+
+# le pagine delle singole app non stanno nel menu: il laboratorio è una voce sola
+not_in_nav: |
+  /laboratorio/*.md
+  !/laboratorio/index.md
 
 nav:
   - Home: index.md
@@ -135,6 +151,7 @@ nav:
       - ottimizzazione-ml.md
       - Regressione robusta e quantile: regressione.md
   - Quiz: autovalutazione.md
+  - Laboratorio: laboratorio/index.md
   - Materiale: materiale.md
   - Indice:
       - Programma: programma.md

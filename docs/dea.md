@@ -1,6 +1,6 @@
 # Data Envelopment Analysis
 
-[:material-file-pdf-box: Dispensa (PDF)](pdf/dispensa-modellazione-pl.pdf) · [:material-presentation: Slide del capitolo (PDF)](pdf/slide-06-dea.pdf)
+[:material-file-pdf-box: Dispensa (PDF)](pdf/dispensa-modellazione-pl.pdf) · [:material-presentation: Slide del capitolo (PDF)](pdf/slide-06-dea.pdf) · [:material-gesture-tap: App: DEA: efficienza e peer di una filiale](laboratorio/dea-efficienza.md)
 
 **Classe:** LP · **Script:** `python/lab06_dea.py`
 

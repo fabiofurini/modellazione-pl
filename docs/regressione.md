@@ -1,6 +1,6 @@
 # Regressione robusta e quantile
 
-[:material-file-pdf-box: Dispensa (PDF)](pdf/dispensa-modellazione-pl.pdf) · [:material-presentation: Slide del capitolo (PDF)](pdf/slide-10-regressione.pdf)
+[:material-file-pdf-box: Dispensa (PDF)](pdf/dispensa-modellazione-pl.pdf) · [:material-presentation: Slide del capitolo (PDF)](pdf/slide-10-regressione.pdf) · [:material-gesture-tap: App: Regressione con gli scarti assoluti e quantile](laboratorio/regressione-quantile.md)
 
 **Classe: LP** · Script: `python/lab10_regressione.py`
 

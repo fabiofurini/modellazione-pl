@@ -22,6 +22,7 @@ riproducibili.
 Prerequisiti: [Programmazione lineare](https://fabiofurini.github.io/programmazione-lineare/) (dualità e analisi di sensitività).
 
 [Comincia :material-arrow-right:](strumenti.md){ .md-button .md-button--primary }
+[:material-gesture-tap: Laboratorio](laboratorio/index.md){ .md-button }
 [:material-clipboard-check-outline: Quiz](autovalutazione.md){ .md-button }
 [:material-download: Materiale](materiale.md){ .md-button }
 
@@ -30,13 +31,11 @@ Prerequisiti: [Programmazione lineare](https://fabiofurini.github.io/programmazi
 <!-- collana-app -->
 ## Provalo subito
 
-Il piano di produzione ottimo su sei mesi, calcolato da un modello di programmazione lineare: quanto produrre di ogni prodotto e quanto tenere in magazzino per seguire la domanda al costo minimo. Apri il notebook in Colab, cambia i dati e rifai il calcolo con Gurobi, senza installare niente.
+Tre modelli LP del corso risolti all'ottimo nel browser: produzione e scorte, ricarica di veicoli elettrici e newsvendor a scenari. Scegli il modello in alto a destra, cambia domanda, capacità, costi o prezzi con i cursori e il simplesso ricalcola il piano ottimo, il costo e i prezzi ombra.
 
-[![](img/cap04_piano_scorte.png)](produzione.md)
+<div class="gi" data-grafico="pl-modelli"></div>
 
-[:simple-googlecolab: Apri il notebook in Colab](https://colab.research.google.com/github/fabiofurini/modellazione-pl/blob/main/notebooks/lab04_produzione.ipynb){ .md-button .md-button--primary }
-[:material-book-open-variant: Il capitolo](produzione.md){ .md-button }
-[:material-language-python: Tutti i notebook](notebook.md){ .md-button }
+[:material-gesture-tap: Altre app nel laboratorio](laboratorio/index.md){ .md-button }
 <!-- /collana-app -->
 
 ## Le parti del corso
@@ -93,6 +92,14 @@ Il piano di produzione ottimo su sei mesi, calcolato da un modello di programmaz
     Un facsimile d'esame nuovo a ogni avvio: 13 domande, 33 punti, con la soluzione e il link alle dispense. In Materiale c'è anche la banca completa delle domande.
 
     [:octicons-arrow-right-24: Mettiti alla prova](autovalutazione.md)
+
+-   :material-gesture-tap: **Laboratorio interattivo**
+
+    ---
+
+    App che girano nel browser: muovi i parametri e guarda le idee del corso lavorare, un passo alla volta.
+
+    [:octicons-arrow-right-24: Il laboratorio](laboratorio/index.md)
 
 -   :material-download: **Dispense in PDF**
 

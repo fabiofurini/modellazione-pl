@@ -1,6 +1,6 @@
 # Ricarica intelligente di veicoli elettrici
 
-[:material-file-pdf-box: Dispensa (PDF)](pdf/dispensa-modellazione-pl.pdf) · [:material-presentation: Slide del capitolo (PDF)](pdf/slide-05-ricarica-ev.pdf)
+[:material-file-pdf-box: Dispensa (PDF)](pdf/dispensa-modellazione-pl.pdf) · [:material-presentation: Slide del capitolo (PDF)](pdf/slide-05-ricarica-ev.pdf) · [:material-gesture-tap: App: Ricarica notturna a costo minimo](laboratorio/ricarica-ev.md)
 
 **Classe:** LP · **Script:** `python/lab05_ricarica_ev.py`
 

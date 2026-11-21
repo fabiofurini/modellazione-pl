@@ -1,6 +1,6 @@
 # Il Newsvendor e le sue varianti
 
-[:material-file-pdf-box: Dispensa (PDF)](pdf/dispensa-modellazione-pl.pdf) · [:material-presentation: Slide del capitolo (PDF)](pdf/slide-07-newsvendor.pdf)
+[:material-file-pdf-box: Dispensa (PDF)](pdf/dispensa-modellazione-pl.pdf) · [:material-presentation: Slide del capitolo (PDF)](pdf/slide-07-newsvendor.pdf) · [:material-gesture-tap: App: Newsvendor: ordine ottimo sui 600 scenari](laboratorio/newsvendor-scenari.md)
 
 **Classe:** convesso 1D / LP stocastico a scenari · **Script:** `python/lab07_newsvendor.py`
 
