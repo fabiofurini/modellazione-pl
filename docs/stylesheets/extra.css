@@ -56,3 +56,10 @@
 .md-typeset .admonition.nota, .md-typeset details.nota { border-color: var(--c-nota); background: color-mix(in srgb, var(--c-nota) 5%, transparent); }
 .md-typeset .nota > .admonition-title, .md-typeset .nota > summary { background: color-mix(in srgb, var(--c-nota) 12%, transparent); }
 .md-typeset .nota > .admonition-title::before, .md-typeset .nota > summary::before { background-color: var(--c-nota); -webkit-mask-image: var(--md-admonition-icon--note); mask-image: var(--md-admonition-icon--note); }
+
+/* soluzioni svolte degli esercizi del cap. 4 (blocco richiudibile «??? soluzione», come nella PLI) */
+:root { --c-soluzione: #0e7490; }
+[data-md-color-scheme="slate"] { --c-soluzione: #3bc9db; }
+.md-typeset .admonition.soluzione, .md-typeset details.soluzione { border-width: 0 0 0 4px; border-color: var(--c-soluzione); background: color-mix(in srgb, var(--c-soluzione) 5%, transparent); }
+.md-typeset .soluzione > .admonition-title, .md-typeset .soluzione > summary { background: color-mix(in srgb, var(--c-soluzione) 13%, transparent); font-weight: 600; }
+.md-typeset .soluzione > .admonition-title::before, .md-typeset .soluzione > summary::before { background-color: var(--c-soluzione); -webkit-mask-image: var(--md-admonition-icon--success); mask-image: var(--md-admonition-icon--success); }

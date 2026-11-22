@@ -68,14 +68,13 @@ in [`dati/`](dati/):
 
 ```bash
 python3 -m pip install gurobipy matplotlib pandas scipy
-python3 python/esegui_tutti.py     # tutti i modelli: dati, risultati e figure
+python3 python/lab05_produzione.py   # ogni script si esegue da solo
 ```
 
 Senza installare niente, ogni capitolo ha il suo notebook in
 [`notebooks/`](notebooks/): si apre in Colab dal badge in cima alla pagina del
 capitolo (l'elenco completo è [sul sito](https://fabiofurini.github.io/modellazione-pl/notebook/))
-e gira nel browser. I notebook si generano dagli script — `python3 python/genera_notebook.py` —
-quindi il codice del corso resta uno solo.
+e gira nel browser. Notebook e script del capitolo contengono lo stesso codice.
 
 La licenza `gurobipy` inclusa nel pacchetto pip basta per tutti i modelli del corso;
 la licenza accademica gratuita si attiva da [portal.gurobi.com](https://portal.gurobi.com).

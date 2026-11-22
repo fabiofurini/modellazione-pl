@@ -37,3 +37,7 @@ python/genera_laboratorio.py
 python/test_laboratorio.py
 python/genera_esercizi.py
 python/genera_modelli.py
+# pipeline private (Fabio, 21/11/2026): generano notebook e materiali, non servono agli studenti
+python/genera_notebook.py
+python/esegui_tutti.py
+python/materiale_slide.py

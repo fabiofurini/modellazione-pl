@@ -3641,24 +3641,24 @@
    },
    "corretta": 1,
    "it": {
-    "testo": "Tutti i risultati del laboratorio sono riproducibili dagli script Python del corso. Che cosa fa lo script che li esegue tutti (`esegui_tutti.py` nell'edizione italiana, `run_all.py` in quella inglese)?",
+    "testo": "Tutti i risultati del laboratorio sono riproducibili dagli script Python del corso. Che cosa fa uno script di capitolo (per esempio `lab05_produzione.py`) lanciato da solo?",
     "opzioni": [
      "Installa Gurobi e attiva la licenza",
-     "Rigenera dati, risultati e figure",
+     "Rifà dati, risultati e figure del capitolo",
      "Compila soltanto le slide",
      "Carica i risultati sul sito del corso"
     ],
-    "spiegazione": "Un solo comando rigenera tutto ciò che la dispensa mostra; installare le dipendenze è un `pip install` separato."
+    "spiegazione": "Ogni script si esegue da solo e rifà ciò che il suo capitolo mostra; installare le dipendenze è un `pip install` separato."
    },
    "en": {
-    "testo": "All the results of the lab are reproducible from the Python scripts of the course. What does the script that runs them all (`run_all.py` in the English edition, `esegui_tutti.py` in the Italian one) do?",
+    "testo": "All the results of the lab are reproducible from the Python scripts of the course. What does a chapter script (for instance `lab05_production.py`) do when run on its own?",
     "opzioni": [
      "It installs Gurobi and activates the licence",
-     "It regenerates data, results and figures",
-     "It compiles the slides only",
+     "It redoes the data, results and figures of the chapter",
+     "It compiles only the slides",
      "It uploads the results to the course website"
     ],
-    "spiegazione": "One command regenerates everything the notes show; installing the dependencies is a separate `pip install`."
+    "spiegazione": "Every script runs on its own and redoes what its chapter shows; installing the dependencies is a separate `pip install`."
    }
   },
   {
@@ -9131,24 +9131,24 @@
    },
    "corretta": 1,
    "it": {
-    "testo": "Nel corso Modellazione PL, quale script rigenera in un colpo dati, tabelle e figure (nella versione italiana)?",
+    "testo": "Nel corso Modellazione PL, come si rifanno in locale dati, tabelle e figure del capitolo sulla produzione?",
     "opzioni": [
-     "`python/genera_notebook.py`",
-     "`python/esegui_tutti.py`",
-     "`python/stile.py`",
-     "`python/lab05_produzione.py`"
+     "Si lancia `python/stile.py`",
+     "Si lancia `python/lab05_produzione.py`",
+     "Si apre il PDF in `docs/pdf/`",
+     "Si ricarica la pagina del sito"
     ],
-    "spiegazione": "`esegui_tutti.py` esegue tutti gli script dei capitoli e poi rigenera i notebook; `stile.py` contiene solo la palette e le funzioni di salvataggio."
+    "spiegazione": "Ogni script dei capitoli si esegue da solo e rifà dati, tabelle e figure del suo capitolo; `stile.py` contiene solo la palette e le funzioni di salvataggio."
    },
    "en": {
-    "testo": "In the course LP Modelling, which script regenerates data, tables and figures in one go (in the English version)?",
+    "testo": "In the course LP Modelling, how do you redo locally the data, tables and figures of the production chapter?",
     "opzioni": [
-     "`python/make_notebooks.py`",
-     "`python/run_all.py`",
-     "`python/stile.py`",
-     "`python/lab05_production.py`"
+     "You run `python/stile.py`",
+     "You run `python/lab05_production.py`",
+     "You open the PDF in `docs/pdf/`",
+     "You reload the website page"
     ],
-    "spiegazione": "`run_all.py` runs all the chapter scripts and then regenerates the notebooks; `stile.py` only contains the palette and the saving functions."
+    "spiegazione": "Every chapter script runs on its own and redoes the data, tables and figures of its chapter; `stile.py` only contains the palette and the saving functions."
    }
   },
   {

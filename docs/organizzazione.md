@@ -58,7 +58,7 @@ pagina.
 
 ```bash
 python3 -m pip install gurobipy matplotlib pandas scipy   # scipy: solo funzioni statistiche
-python3 python/esegui_tutti.py       # rigenera dati, risultati e figure
+python3 python/lab05_produzione.py   # ogni script si esegue da solo
 ```
 
-Le slide sono nella pagina del [materiale](materiale.md); le soluzioni degli esercizi vengono distribuite a lezione.
+Le slide sono nella pagina del [materiale](materiale.md); le soluzioni degli esercizi dei casi vengono distribuite a lezione, quelle delle [tecniche di modellazione](tecniche.md#esercizi) si aprono sotto ogni esercizio.

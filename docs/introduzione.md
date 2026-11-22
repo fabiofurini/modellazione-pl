@@ -100,8 +100,8 @@ Ogni capitolo applicativo segue la stessa scaletta in otto passi:
 
 !!! warning "I numeri vengono dagli script"
     I numeri di ogni capitolo sono generati dagli script della cartella `python/`:
-    `python3 esegui_tutti.py` rigenera dati, tabelle e figure. Se si modificano i dati, i
-    numeri vanno rigenerati.
+    ogni script si esegue da solo (per esempio `python3 lab05_produzione.py`). Se si
+    modificano i dati, basta rilanciare lo script del capitolo.
 
 Il percorso essenziale prevede quattro laboratori, descritti in
 [Come si lavora con il corso](organizzazione.md).
