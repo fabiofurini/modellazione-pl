@@ -1,4 +1,4 @@
-"""Capitolo 5 — Ricarica intelligente di veicoli elettrici (LP).
+"""Capitolo 6 — Ricarica intelligente di veicoli elettrici (LP).
 
 Caso di studio: deposito aziendale con 6 furgoni elettrici da ricaricare
 durante la notte; prezzi orari dell'energia; carico di base dell'edificio.
@@ -132,8 +132,8 @@ for CC in [60, 65, 70, 80, 90, 120]:
 # ----------------------------------------------------------------------
 salva_dat(pd.DataFrame({"ora": ore, "prezzo_cent": prezzo * 100, "base": base,
                         "totcosto": base + prof_costo, "totpicco": base + prof_picco}),
-          "cap05_profili")
-salva_dat(pd.DataFrame(compromessi, columns=["rho", "costo", "picco"]), "cap05_frontiera")
+          "cap06_profili")
+salva_dat(pd.DataFrame(compromessi, columns=["rho", "costo", "picco"]), "cap06_frontiera")
 
 fig, (ax1, ax2) = plt.subplots(2, 1, figsize=(8.2, 6.4), sharex=True)
 ax1.bar(ore, prezzo * 100, color=GRIGIO, alpha=0.6)
@@ -148,7 +148,7 @@ ax2.axhline(C_rete, color=ROSSO, ls=":", label=f"limite rete {C_rete:.0f} kW")
 ax2.set_xlabel("ora del giorno"); ax2.set_ylabel("prelievo totale (kW)")
 ax2.set_title("Profilo di prelievo: inseguire i prezzi crea un picco notturno")
 ax2.legend(fontsize=8, ncol=2)
-salva_figura(fig, "cap05_profili")
+salva_figura(fig, "cap06_profili")
 
 comp = pd.DataFrame(compromessi, columns=["rho", "costo", "picco"])
 fig, ax = plt.subplots()
@@ -158,6 +158,6 @@ for _, r in comp.iterrows():
 ax.set_xlabel("picco di prelievo (kW)")
 ax.set_ylabel("costo di ricarica (€)")
 ax.set_title("Frontiera costo-picco: ridurre il picco costa poco all'inizio")
-salva_figura(fig, "cap05_frontiera")
+salva_figura(fig, "cap06_frontiera")
 
-print("\nFatto: capitolo 5.")
+print("\nFatto: capitolo 6.")

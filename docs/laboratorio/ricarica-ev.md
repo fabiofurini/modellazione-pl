@@ -5,7 +5,7 @@ hide:
 title: "Ricarica notturna a costo minimo"
 ---
 
-[← Laboratorio](index.md) · Capitolo: [5. Ricarica di veicoli elettrici](../ricarica-ev.md)
+[← Laboratorio](index.md) · Capitolo: [6. Ricarica di veicoli elettrici](../ricarica-ev.md)
 
 # Ricarica notturna a costo minimo
 

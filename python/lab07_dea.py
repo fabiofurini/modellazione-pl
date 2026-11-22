@@ -1,4 +1,4 @@
-"""Capitolo 6 — Data Envelopment Analysis (LP).
+"""Capitolo 7 — Data Envelopment Analysis (LP).
 
 Caso di studio: 12 filiali di una banca (filiali 1, 2, ..., 12) confrontate su
 2 input (personale in FTE, costi operativi in migliaia di €) e 2 output
@@ -276,7 +276,7 @@ print(f"Senza la filiale {j_peer + 1}: {sum(1 for c in cambi if c[2] - c[1] > 1e
 # ----------------------------------------------------------------------
 # 8. FIGURE (dati per pgfplots + anteprima matplotlib)
 # ----------------------------------------------------------------------
-salva_dat(eff[["filiale", "ccr", "bcc"]], "cap06_efficienze")
+salva_dat(eff[["filiale", "ccr", "bcc"]], "cap07_efficienze")
 
 # vista a un input e un output: personale -> prestiti
 Xp, Yp = X[[0], :], Y[[0], :]
@@ -296,10 +296,10 @@ x_max = 32.0
 vrs = [(frontiera[0][0], 0.0)] + frontiera + [(x_max, frontiera[-1][1])]
 salva_dat(pd.DataFrame({"filiale": filiali, "personale": Xp[0], "prestiti": Yp[0],
                         "ccr": np.round(ccr_p, 6), "bcc": np.round([b[0] for b in bcc_p], 6)}),
-          "cap06_frontiera_punti")
-salva_dat(pd.DataFrame(vrs, columns=["personale", "prestiti"]), "cap06_frontiera_vrs")
+          "cap07_frontiera_punti")
+salva_dat(pd.DataFrame(vrs, columns=["personale", "prestiti"]), "cap07_frontiera_vrs")
 salva_dat(pd.DataFrame({"personale": [0.0, x_max], "prestiti": [0.0, pend * x_max]}),
-          "cap06_frontiera_crs")
+          "cap07_frontiera_crs")
 intestazione("Vista a un input e un output: personale -> prestiti")
 print(f"Pendenza della frontiera CCR (prestiti per FTE): {pend:.4f}")
 print("Efficienze nella vista (CCR/BCC): "
@@ -318,7 +318,7 @@ ax.set_xlim(0, x_max); ax.set_ylim(0, 75)
 ax.set_xlabel("personale (FTE)"); ax.set_ylabel("prestiti (M€)")
 ax.set_title("Frontiere efficienti CCR e BCC: personale e prestiti")
 ax.legend(fontsize=8)
-salva_figura(fig, "cap06_frontiera")
+salva_figura(fig, "cap07_frontiera")
 
 fig, ax = plt.subplots()
 larg = 0.38
@@ -330,6 +330,6 @@ ax.set_ylim(0.6, 1.12)
 ax.set_xlabel("filiale"); ax.set_ylabel("efficienza")
 ax.set_title("Efficienze CCR e BCC delle 12 filiali")
 ax.legend(fontsize=8, loc="upper center", ncol=2)
-salva_figura(fig, "cap06_efficienze")
+salva_figura(fig, "cap07_efficienze")
 
-print("\nFatto: capitolo 6.")
+print("\nFatto: capitolo 7.")

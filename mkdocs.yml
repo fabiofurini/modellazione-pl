@@ -47,6 +47,7 @@ plugins:
   - search
   - redirects:
       redirect_maps:
+        strumenti.md: modellazione.md
         richiami.md: teoria-lp.md
         guida-gurobi.md: solver-lp.md
 
@@ -151,11 +152,22 @@ not_in_nav: |
 
 nav:
   - Home: index.md
-  - Strumenti:
-      - strumenti.md
-      - Teoria, programmazione lineare: teoria-lp.md
-      - Solver, modelli lineari: solver-lp.md
-      - Notebook in Colab: notebook.md
+  - Modellazione:
+      - modellazione.md
+      - 1. Introduzione alla modellazione PL: introduzione.md
+      - "2. Richiami: PL e analisi di sensitività": teoria-lp.md
+      - "3. Il solver: costruire, risolvere, interpretare": solver-lp.md
+      - 4. Tecniche di modellazione:
+          - Panoramica: tecniche.md
+          - 4.1 Dalla descrizione al modello: tecniche-01.md
+          - 4.2 Pianificazione della produzione: tecniche-02.md
+          - 4.3 Miscelazione: tecniche-03.md
+          - 4.4 Trasporto: tecniche-04.md
+          - 4.5 Pianificazione su più periodi: tecniche-05.md
+          - 4.6 Min-max e max-min: tecniche-06.md
+          - 4.7 Valori assoluti: tecniche-07.md
+          - 4.8 Rapporti e percentuali: tecniche-08.md
+          - 4.9 Che cosa non si può modellare: tecniche-09.md
   - Modelli deterministici:
       - modelli-deterministici.md
       - Produzione e scorte: produzione.md
@@ -176,3 +188,4 @@ nav:
   - Indice:
       - Programma: programma.md
       - Come si lavora con il corso: organizzazione.md
+      - Notebook in Colab: notebook.md

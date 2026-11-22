@@ -1,4 +1,4 @@
-# Implementazione: modelli lineari
+# 3. Il solver: costruire, risolvere, interpretare
 
 [:material-file-pdf-box: Dispensa (PDF)](pdf/dispensa-modellazione-pl.pdf) · [:material-presentation: Slide del capitolo (PDF)](pdf/slide-03-python-gurobi.pdf)
 

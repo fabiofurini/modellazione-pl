@@ -3,7 +3,7 @@
 <!-- collana-dalla-home -->
 ## Il laboratorio in breve
 
-**7 capitoli applicativi · 3 capitoli di strumenti · solo modelli LP · un notebook
+**4 capitoli di modellazione · 7 capitoli applicativi · solo modelli LP · un notebook
 Colab per capitolo · codice Python/Gurobi riproducibile.** L'elenco completo,
 capitolo per capitolo, sta nel [programma](programma.md).
 

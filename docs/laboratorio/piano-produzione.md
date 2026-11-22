@@ -5,7 +5,7 @@ hide:
 title: "Piano di produzione e prezzi ombra"
 ---
 
-[← Laboratorio](index.md) · Capitolo: [4. Produzione e scorte](../produzione.md)
+[← Laboratorio](index.md) · Capitolo: [5. Produzione e scorte](../produzione.md)
 
 # Piano di produzione e prezzi ombra
 

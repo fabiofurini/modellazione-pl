@@ -1,14 +1,16 @@
 # Produzione e scorte multiperiodali
 
-[:material-file-pdf-box: Dispensa (PDF)](pdf/dispensa-modellazione-pl.pdf) · [:material-presentation: Slide del capitolo (PDF)](pdf/slide-04-produzione.pdf) · [:material-gesture-tap: App: Piano di produzione e prezzi ombra](laboratorio/piano-produzione.md)
+[:material-file-pdf-box: Dispensa (PDF)](pdf/dispensa-modellazione-pl.pdf) · [:material-presentation: Slide del capitolo (PDF)](pdf/slide-05-produzione.pdf) · [:material-gesture-tap: App: Piano di produzione e prezzi ombra](laboratorio/piano-produzione.md)
 
-**Classe:** LP · **Script:** `python/lab04_produzione.py`
+**Classe:** LP · **Script:** `python/lab05_produzione.py`
 
-[![Apri in Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/fabiofurini/modellazione-pl/blob/main/notebooks/lab04_produzione.ipynb)
+[![Apri in Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/fabiofurini/modellazione-pl/blob/main/notebooks/lab05_produzione.ipynb)
 
 !!! nota "Prerequisiti"
 
     - Da questo modulo, [Capitolo 2 «Richiami: programmazione lineare e analisi di sensitività»](https://fabiofurini.github.io/modellazione-pl/teoria-lp/): i prezzi ombra, i loro intervalli di validità e il protocollo di sensitività.
+
+    - Da questo modulo, [Capitolo 4 «Tecniche di modellazione»](https://fabiofurini.github.io/modellazione-pl/tecniche/): il bilancio delle scorte della pianificazione su più periodi.
 
     - Da questo modulo, [Capitolo 3 «Il solver: costruire, risolvere, interpretare»](https://fabiofurini.github.io/modellazione-pl/solver-lp/): la costruzione di un LP in `gurobipy` e la lettura di `Pi` e `SARHS`.
 
@@ -75,10 +77,9 @@ Descrizione della funzione obiettivo e dei vincoli:
 - la funzione obiettivo lineare minimizza il costo totale del piano, somma dei costi
   di produzione $c_{it}\, x_{it}$ e di giacenza $h_{it}\, s_{it}$ su tutti i prodotti
   e i mesi;
-- i vincoli lineari di **bilancio** delle scorte impongono che, per ogni prodotto e
-  ogni mese, ciò che entra (scorta precedente più produzione) sia uguale a ciò che
-  esce (domanda servita più scorta successiva); per $t = 1$ si usa la scorta iniziale
-  $s_{i0}$ ($n\,m$ vincoli lineari);
+- i vincoli lineari di **bilancio** delle scorte sono quelli della tecnica
+  [4.5 Pianificazione su più periodi](tecniche-05.md), uno per prodotto e mese; per
+  $t = 1$ si usa la scorta iniziale $s_{i0}$ ($n\,m$ vincoli lineari);
 - i vincoli lineari di **capacità** assicurano che, in ogni mese, le ore macchina
   usate da tutti i prodotti non superino quelle disponibili ($m$ vincoli lineari);
 - i vincoli di non negatività su $x_{it}$ e $s_{it}$ definiscono le variabili del
@@ -106,7 +107,7 @@ prod.2  50.0   80.0  110.0  140.0  150.0  100.0
 prod.3  89.5   91.0   81.4   44.3   29.0   64.8     (scorte fino a 107 unità)
 ```
 
-![Piano di produzione e scorte](img/cap04_piano_scorte.png)
+![Piano di produzione e scorte](img/cap05_piano_scorte.png)
 
 Il solver scopre da solo il **pre-build**: il prodotto 3 (2,1 ore/unità) viene
 prodotto in anticipo e accumulato per liberare capacità nei mesi di picco; le scorte
@@ -156,15 +157,15 @@ variante quadratica di questo modello, nel modulo *Modellazione PNL*, pagina
 ## Codice
 
 Lo script completo del capitolo — dati, modello, soluzione, sensitività e figure —
-è [`python/lab04_produzione.py`](https://github.com/fabiofurini/modellazione-pl/blob/main/python/lab04_produzione.py)
-(riproducibile con `python3 python/lab04_produzione.py` dalla cartella `python/`).
+è [`python/lab05_produzione.py`](https://github.com/fabiofurini/modellazione-pl/blob/main/python/lab05_produzione.py)
+(riproducibile con `python3 python/lab05_produzione.py` dalla cartella `python/`).
 
-Lo stesso codice è disponibile come notebook — [`notebooks/lab04_produzione.ipynb`](https://github.com/fabiofurini/modellazione-pl/blob/main/notebooks/lab04_produzione.ipynb) — che si apre in Colab dal badge in cima alla pagina e gira nel browser, senza installare niente.
+Lo stesso codice è disponibile come notebook — [`notebooks/lab05_produzione.ipynb`](https://github.com/fabiofurini/modellazione-pl/blob/main/notebooks/lab05_produzione.ipynb) — che si apre in Colab dal badge in cima alla pagina e gira nel browser, senza installare niente.
 
-??? example "Mostra lo script completo — `lab04_produzione.py`"
+??? example "Mostra lo script completo — `lab05_produzione.py`"
 
     ```python
-    """Capitolo 4 — Produzione e scorte multiperiodali (LP).
+    """Capitolo 5 — Produzione e scorte multiperiodali (LP).
 
     Caso di studio: azienda che produce 3 componenti (prodotti 1, 2, 3) su un orizzonte
     di 6 mesi con una risorsa condivisa (ore macchina).
@@ -277,7 +278,7 @@ Lo stesso codice è disponibile come notebook — [`notebooks/lab04_produzione.i
         **{f"x{i}": [x[i, t].X for t in mesi] for i in prodotti},
         **{f"s{i}": [s[i, t].X for t in mesi] for i in prodotti},
         "domtot": [sum(domanda[i, t] for i in prodotti) for t in mesi],
-    }), "cap04_piano")
+    }), "cap05_piano")
 
     fig, (ax1, ax2) = plt.subplots(1, 2, figsize=(10.5, 4.0))
     larg = 0.26
@@ -294,7 +295,7 @@ Lo stesso codice è disponibile come notebook — [`notebooks/lab04_produzione.i
     ax2.set_xlabel("mese"); ax2.set_ylabel("unità a scorta")
     ax2.set_title("Scorte di fine mese")
     ax2.legend(fontsize=8)
-    salva_figura(fig, "cap04_piano_scorte")
+    salva_figura(fig, "cap05_piano_scorte")
 
     # sensitività: costo ottimo al variare della capacità uniforme
     intestazione("Sensitività: costo ottimo al variare della capacità")
@@ -309,7 +310,7 @@ Lo stesso codice è disponibile come notebook — [`notebooks/lab04_produzione.i
         print(f"  capacità x{f:4.2f}: costo {costi[-1]:10.2f} €")
 
     tab_cap = pd.DataFrame({"percento": fattori * 100, "costo": costi}).dropna()
-    salva_dat(tab_cap, "cap04_capacita")
+    salva_dat(tab_cap, "cap05_capacita")
 
     fig, ax = plt.subplots()
     ax.plot(fattori * 100, costi, "-o", color=TEAL)
@@ -318,9 +319,9 @@ Lo stesso codice è disponibile come notebook — [`notebooks/lab04_produzione.i
     ax.set_ylabel("costo totale ottimo (€)")
     ax.set_title("Curva valore della capacità: convessa e decrescente")
     ax.legend()
-    salva_figura(fig, "cap04_valore_capacita")
+    salva_figura(fig, "cap05_valore_capacita")
 
-    print("\nFatto: capitolo 4.")
+    print("\nFatto: capitolo 5.")
     ```
 
 ## Esercizi

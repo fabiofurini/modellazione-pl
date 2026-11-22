@@ -34,10 +34,12 @@ corso in versione online, con codice Python/Gurobi, dati e casi di studio.
 Prerequisito: [Programmazione lineare](https://fabiofurini.github.io/programmazione-lineare/) (dualità e analisi di sensitività).
 I modelli quadratici e non lineari sono in [Modellazione PNL](https://fabiofurini.github.io/modellazione-pnl/).
 
-**Strumenti**
+**Modellazione**
 
-- [Teoria: programmazione lineare](https://fabiofurini.github.io/modellazione-pl/teoria-lp/) — dualità, scarti complementari, prezzi ombra, protocollo di sensitività
-- [Solver: modelli lineari](https://fabiofurini.github.io/modellazione-pl/solver-lp/) — costruire il modello, farlo girare, leggere e interpretare la soluzione
+- [Introduzione alla modellazione PL](https://fabiofurini.github.io/modellazione-pl/introduzione/) — che cosa faremo, notazione, struttura dei capitoli
+- [Richiami: programmazione lineare](https://fabiofurini.github.io/modellazione-pl/teoria-lp/) — dualità, prezzi ombra, protocollo di sensitività
+- [Il solver: modelli lineari](https://fabiofurini.github.io/modellazione-pl/solver-lp/) — costruire il modello, farlo girare, leggere e interpretare la soluzione
+- [Tecniche di modellazione](https://fabiofurini.github.io/modellazione-pl/tecniche/) — produzione, miscelazione, trasporto, più periodi, linearizzazioni
 
 **Modelli deterministici**
 
@@ -61,7 +63,7 @@ I modelli quadratici e non lineari sono in [Modellazione PNL](https://fabiofurin
 
 ## Eseguire i modelli
 
-Ogni capitolo ha il suo script in [`python/`](python/) (`lab04`–`lab10`), con i dati
+Ogni capitolo ha il suo script in [`python/`](python/) (`lab05`–`lab11`), con i dati
 in [`dati/`](dati/):
 
 ```bash

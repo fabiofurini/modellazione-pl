@@ -21,33 +21,36 @@ L'elenco completo dei capitoli, nell'ordine in cui si affrontano. Ogni capitolo
 ha la sua pagina, il suo script Python e il suo
 [notebook che si apre in Colab](notebook.md).
 
-**[Strumenti](strumenti.md)**
+**[Modellazione](modellazione.md)**
 
-1. Introduzione alla modellazione PL — questa pagina e la [prima pagina](index.md)
-2. [Teoria: programmazione lineare](teoria-lp.md) — dualità, prezzi ombra,
-   protocollo di sensitività
-3. [Solver, modelli lineari](solver-lp.md) — costruire il modello, farlo girare,
-   recuperare la soluzione, interpretare l'output
+1. [Introduzione alla modellazione PL](introduzione.md) — che cosa faremo, notazione,
+   struttura dei capitoli
+2. [Richiami: programmazione lineare e analisi di sensitività](teoria-lp.md) — dualità,
+   prezzi ombra, protocollo di sensitività
+3. [Il solver: costruire, risolvere, interpretare](solver-lp.md) — costruire il modello,
+   farlo girare, recuperare la soluzione, interpretare l'output
+4. [Tecniche di modellazione](tecniche.md) — dalla descrizione al modello, produzione,
+   miscelazione, trasporto, più periodi, linearizzazioni
 
 **[Modelli deterministici](modelli-deterministici.md)**
 
-4. [Produzione e scorte multiperiodali](produzione.md) — LP
-5. [Ricarica di veicoli elettrici](ricarica-ev.md) — LP
-6. [Data Envelopment Analysis](dea.md) — LP e dualità
+5. [Produzione e scorte multiperiodali](produzione.md) — LP
+6. [Ricarica di veicoli elettrici](ricarica-ev.md) — LP
+7. [Data Envelopment Analysis](dea.md) — LP e dualità
 
 **[Decisioni sotto incertezza](decisioni-incertezza.md)**
 
-7. [Il Newsvendor e le sue varianti](newsvendor.md) — LP stocastico
-8. [VaR e CVaR](var-cvar.md) — LP a scenari
-9. [Arbitraggio e prezzatura](arbitraggio.md) — LP e dualità che prezza
+8. [Il Newsvendor e le sue varianti](newsvendor.md) — LP stocastico
+9. [VaR e CVaR](var-cvar.md) — LP a scenari
+10. [Arbitraggio e prezzatura](arbitraggio.md) — LP e dualità che prezza
 
 **[Ottimizzazione e machine learning](ottimizzazione-ml.md)**
 
-10. [Regressione robusta e quantile](regressione.md) — LP
+11. [Regressione robusta e quantile](regressione.md) — LP
 
 **Il corso**
 
-11. [Organizzazione del laboratorio](organizzazione.md) — laboratori ed errori da
+12. [Organizzazione del laboratorio](organizzazione.md) — laboratori ed errori da
     evitare
 
 Prerequisito: il modulo [Programmazione lineare](https://fabiofurini.github.io/programmazione-lineare/), in particolare

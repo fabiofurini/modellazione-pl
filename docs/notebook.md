@@ -14,13 +14,13 @@ cella, con le figure che compaiono sotto le celle invece di finire in un file.
 
 | Capitolo | Classe | Notebook |
 |---|---|---|
-| [Produzione e scorte multiperiodali](produzione.md) | LP | [![Apri in Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/fabiofurini/modellazione-pl/blob/main/notebooks/lab04_produzione.ipynb) |
-| [Ricarica intelligente di veicoli elettrici](ricarica-ev.md) | LP | [![Apri in Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/fabiofurini/modellazione-pl/blob/main/notebooks/lab05_ricarica_ev.ipynb) |
-| [Data Envelopment Analysis](dea.md) | LP | [![Apri in Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/fabiofurini/modellazione-pl/blob/main/notebooks/lab06_dea.ipynb) |
-| [Il Newsvendor e le sue varianti](newsvendor.md) | convesso 1D / LP stocastico a scenari | [![Apri in Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/fabiofurini/modellazione-pl/blob/main/notebooks/lab07_newsvendor.ipynb) |
-| [VaR e CVaR: misurare e ottimizzare il rischio](var-cvar.md) | LP a scenari | [![Apri in Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/fabiofurini/modellazione-pl/blob/main/notebooks/lab08_var_cvar.ipynb) |
-| [Arbitraggio e prezzatura senza arbitraggio](arbitraggio.md) | LP | [![Apri in Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/fabiofurini/modellazione-pl/blob/main/notebooks/lab09_arbitraggio.ipynb) |
-| [Regressione robusta e quantile](regressione.md) | LP | [![Apri in Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/fabiofurini/modellazione-pl/blob/main/notebooks/lab10_regressione.ipynb) |
+| [Produzione e scorte multiperiodali](produzione.md) | LP | [![Apri in Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/fabiofurini/modellazione-pl/blob/main/notebooks/lab05_produzione.ipynb) |
+| [Ricarica intelligente di veicoli elettrici](ricarica-ev.md) | LP | [![Apri in Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/fabiofurini/modellazione-pl/blob/main/notebooks/lab06_ricarica_ev.ipynb) |
+| [Data Envelopment Analysis](dea.md) | LP | [![Apri in Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/fabiofurini/modellazione-pl/blob/main/notebooks/lab07_dea.ipynb) |
+| [Il Newsvendor e le sue varianti](newsvendor.md) | convesso 1D / LP stocastico a scenari | [![Apri in Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/fabiofurini/modellazione-pl/blob/main/notebooks/lab08_newsvendor.ipynb) |
+| [VaR e CVaR: misurare e ottimizzare il rischio](var-cvar.md) | LP a scenari | [![Apri in Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/fabiofurini/modellazione-pl/blob/main/notebooks/lab09_var_cvar.ipynb) |
+| [Arbitraggio e prezzatura senza arbitraggio](arbitraggio.md) | LP | [![Apri in Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/fabiofurini/modellazione-pl/blob/main/notebooks/lab10_arbitraggio.ipynb) |
+| [Regressione robusta e quantile](regressione.md) | LP | [![Apri in Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/fabiofurini/modellazione-pl/blob/main/notebooks/lab11_regressione.ipynb) |
 
 ## Come sono fatti
 
@@ -35,7 +35,7 @@ docstring, sezioni e commenti — e chi preferisce la riga di comando continua a
 lanciare, dalla cartella `python/`:
 
 ```bash
-python3 lab06_markowitz.py
+python3 lab05_produzione.py
 ```
 
 ## Installazione e licenza
@@ -68,7 +68,7 @@ print(gp.gurobi.version())        # es. (13, 0, 3)
 
 ```bash
 python3 -m pip install gurobipy matplotlib pandas scipy   # scipy: solo funzioni statistiche
-python3 python/run_all.py             # rigenera dati, risultati e figure
+python3 python/esegui_tutti.py          # rigenera dati, risultati e figure
 ```
 
 Nel [repository](https://github.com/fabiofurini/modellazione-pl)

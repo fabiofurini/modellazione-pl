@@ -5,7 +5,7 @@ hide:
 title: "Newsvendor: ordine ottimo sui 600 scenari"
 ---
 
-[← Laboratorio](index.md) · Capitolo: [7. Il Newsvendor](../newsvendor.md)
+[← Laboratorio](index.md) · Capitolo: [8. Il Newsvendor](../newsvendor.md)
 
 # Newsvendor: ordine ottimo sui 600 scenari
 

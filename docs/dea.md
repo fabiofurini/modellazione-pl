@@ -1,10 +1,10 @@
 # Data Envelopment Analysis
 
-[:material-file-pdf-box: Dispensa (PDF)](pdf/dispensa-modellazione-pl.pdf) · [:material-presentation: Slide del capitolo (PDF)](pdf/slide-06-dea.pdf) · [:material-gesture-tap: App: DEA: efficienza e peer di una filiale](laboratorio/dea-efficienza.md)
+[:material-file-pdf-box: Dispensa (PDF)](pdf/dispensa-modellazione-pl.pdf) · [:material-presentation: Slide del capitolo (PDF)](pdf/slide-07-dea.pdf) · [:material-gesture-tap: App: DEA: efficienza e peer di una filiale](laboratorio/dea-efficienza.md)
 
-**Classe:** LP · **Script:** `python/lab06_dea.py`
+**Classe:** LP · **Script:** `python/lab07_dea.py`
 
-[![Apri in Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/fabiofurini/modellazione-pl/blob/main/notebooks/lab06_dea.ipynb)
+[![Apri in Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/fabiofurini/modellazione-pl/blob/main/notebooks/lab07_dea.ipynb)
 
 !!! nota "Prerequisiti"
 
@@ -261,7 +261,7 @@ Filiali BCC-efficienti: [2, 3, 6, 7, 8, 9, 10, 12]
 Per tutte le filiali il valore ottimo della forma di inviluppo coincide con quello della
 forma dei moltiplicatori: la dualità forte verificata numericamente.
 
-![Efficienze CCR e BCC](img/cap06_efficienze.png)
+![Efficienze CCR e BCC](img/cap07_efficienze.png)
 
 **Peer e target degli input** (CCR, dopo la seconda fase; `dati/dea_target.csv`):
 
@@ -283,7 +283,7 @@ forma dei moltiplicatori: la dualità forte verificata numericamente.
     BCC ($0{,}90$), e ha uno scarto di $116{,}8$ k€ sui costi: target $463{,}2$ k€
     contro $720$.
 
-![Frontiere efficienti: personale e prestiti](img/cap06_frontiera.png)
+![Frontiere efficienti: personale e prestiti](img/cap07_frontiera.png)
 
 Nella vista a un input e un output (personale e prestiti) la frontiera CCR è la
 semiretta con la pendenza migliore, $2{,}4333$ M€ per FTE della filiale 9; la frontiera
@@ -336,15 +336,15 @@ Senza la filiale 7: 5 filiali cambiano efficienza; nuove efficienti: [3, 8]
 ## Codice
 
 Lo script completo del capitolo — dati, modelli, dualità, sensitività e figure —
-è [`python/lab06_dea.py`](https://github.com/fabiofurini/modellazione-pl/blob/main/python/lab06_dea.py)
-(riproducibile con `python3 python/lab06_dea.py` dalla cartella `python/`).
+è [`python/lab07_dea.py`](https://github.com/fabiofurini/modellazione-pl/blob/main/python/lab07_dea.py)
+(riproducibile con `python3 python/lab07_dea.py` dalla cartella `python/`).
 
-Lo stesso codice è disponibile come notebook — [`notebooks/lab06_dea.ipynb`](https://github.com/fabiofurini/modellazione-pl/blob/main/notebooks/lab06_dea.ipynb) — che si apre in Colab dal badge in cima alla pagina e gira nel browser, senza installare niente.
+Lo stesso codice è disponibile come notebook — [`notebooks/lab07_dea.ipynb`](https://github.com/fabiofurini/modellazione-pl/blob/main/notebooks/lab07_dea.ipynb) — che si apre in Colab dal badge in cima alla pagina e gira nel browser, senza installare niente.
 
-??? example "Mostra lo script completo — `lab06_dea.py`"
+??? example "Mostra lo script completo — `lab07_dea.py`"
 
     ```python
-    """Capitolo 6 — Data Envelopment Analysis (LP).
+    """Capitolo 7 — Data Envelopment Analysis (LP).
 
     Caso di studio: 12 filiali di una banca (filiali 1, 2, ..., 12) confrontate su
     2 input (personale in FTE, costi operativi in migliaia di €) e 2 output
@@ -622,7 +622,7 @@ Lo stesso codice è disponibile come notebook — [`notebooks/lab06_dea.ipynb`](
     # ----------------------------------------------------------------------
     # 8. FIGURE (dati per pgfplots + anteprima matplotlib)
     # ----------------------------------------------------------------------
-    salva_dat(eff[["filiale", "ccr", "bcc"]], "cap06_efficienze")
+    salva_dat(eff[["filiale", "ccr", "bcc"]], "cap07_efficienze")
 
     # vista a un input e un output: personale -> prestiti
     Xp, Yp = X[[0], :], Y[[0], :]
@@ -642,10 +642,10 @@ Lo stesso codice è disponibile come notebook — [`notebooks/lab06_dea.ipynb`](
     vrs = [(frontiera[0][0], 0.0)] + frontiera + [(x_max, frontiera[-1][1])]
     salva_dat(pd.DataFrame({"filiale": filiali, "personale": Xp[0], "prestiti": Yp[0],
                             "ccr": np.round(ccr_p, 6), "bcc": np.round([b[0] for b in bcc_p], 6)}),
-              "cap06_frontiera_punti")
-    salva_dat(pd.DataFrame(vrs, columns=["personale", "prestiti"]), "cap06_frontiera_vrs")
+              "cap07_frontiera_punti")
+    salva_dat(pd.DataFrame(vrs, columns=["personale", "prestiti"]), "cap07_frontiera_vrs")
     salva_dat(pd.DataFrame({"personale": [0.0, x_max], "prestiti": [0.0, pend * x_max]}),
-              "cap06_frontiera_crs")
+              "cap07_frontiera_crs")
     intestazione("Vista a un input e un output: personale -> prestiti")
     print(f"Pendenza della frontiera CCR (prestiti per FTE): {pend:.4f}")
     print("Efficienze nella vista (CCR/BCC): "
@@ -664,7 +664,7 @@ Lo stesso codice è disponibile come notebook — [`notebooks/lab06_dea.ipynb`](
     ax.set_xlabel("personale (FTE)"); ax.set_ylabel("prestiti (M€)")
     ax.set_title("Frontiere efficienti CCR e BCC: personale e prestiti")
     ax.legend(fontsize=8)
-    salva_figura(fig, "cap06_frontiera")
+    salva_figura(fig, "cap07_frontiera")
 
     fig, ax = plt.subplots()
     larg = 0.38
@@ -676,9 +676,9 @@ Lo stesso codice è disponibile come notebook — [`notebooks/lab06_dea.ipynb`](
     ax.set_xlabel("filiale"); ax.set_ylabel("efficienza")
     ax.set_title("Efficienze CCR e BCC delle 12 filiali")
     ax.legend(fontsize=8, loc="upper center", ncol=2)
-    salva_figura(fig, "cap06_efficienze")
+    salva_figura(fig, "cap07_efficienze")
 
-    print("\nFatto: capitolo 6.")
+    print("\nFatto: capitolo 7.")
     ```
 
 ## Esercizi

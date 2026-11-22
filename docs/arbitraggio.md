@@ -1,10 +1,10 @@
 # Arbitraggio e prezzatura senza arbitraggio
 
-[:material-file-pdf-box: Dispensa (PDF)](pdf/dispensa-modellazione-pl.pdf) · [:material-presentation: Slide del capitolo (PDF)](pdf/slide-09-arbitraggio.pdf)
+[:material-file-pdf-box: Dispensa (PDF)](pdf/dispensa-modellazione-pl.pdf) · [:material-presentation: Slide del capitolo (PDF)](pdf/slide-10-arbitraggio.pdf)
 
-**Classe: LP** · Script: `python/lab09_arbitraggio.py`
+**Classe: LP** · Script: `python/lab10_arbitraggio.py`
 
-[![Apri in Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/fabiofurini/modellazione-pl/blob/main/notebooks/lab09_arbitraggio.ipynb)
+[![Apri in Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/fabiofurini/modellazione-pl/blob/main/notebooks/lab10_arbitraggio.ipynb)
 
 !!! nota "Prerequisiti"
 
@@ -105,7 +105,7 @@ $$
 s^0_2 \in [18{,}69,\; 21{,}54] .
 $$
 
-![Guadagno da arbitraggio al variare del prezzo del titolo 2](img/cap09_arbitraggio_curva.png)
+![Guadagno da arbitraggio al variare del prezzo del titolo 2](img/cap10_arbitraggio_curva.png)
 
 Dentro l'intervallo il valore dell'LP normalizzato è 0 (prezzi coerenti); fuori
 scende a −1: esiste un arbitraggio, in una direzione o nell'altra.
@@ -119,11 +119,11 @@ $(0, 3, 1)$:
   $[1{,}4615,\; 2{,}0308]$ — fuori da quell'intervallo chiunque costruirebbe un
   arbitraggio combinando call e titoli quotati.
 
-Lo stesso codice è disponibile come notebook — [`notebooks/lab09_arbitraggio.ipynb`](https://github.com/fabiofurini/modellazione-pl/blob/main/notebooks/lab09_arbitraggio.ipynb) — che si apre in Colab dal badge in cima alla pagina e gira nel browser, senza installare niente.
+Lo stesso codice è disponibile come notebook — [`notebooks/lab10_arbitraggio.ipynb`](https://github.com/fabiofurini/modellazione-pl/blob/main/notebooks/lab10_arbitraggio.ipynb) — che si apre in Colab dal badge in cima alla pagina e gira nel browser, senza installare niente.
 
-??? example "Mostra lo script completo — `lab09_arbitraggio.py`"
+??? example "Mostra lo script completo — `lab10_arbitraggio.py`"
     ```python
-    """Capitolo 9 — Arbitraggio e prezzatura senza arbitraggio (LP).
+    """Capitolo 10 — Arbitraggio e prezzatura senza arbitraggio (LP).
 
     Caso di studio: un mercato a uno stadio con 3 stati del mondo, un titolo privo
     di rischio (rendimento lordo R = 1,04) e 2 titoli rischiosi.
@@ -243,7 +243,7 @@ Lo stesso codice è disponibile come notebook — [`notebooks/lab09_arbitraggio.
         valori.append(mg.ObjVal)
     curva = pd.DataFrame({"prezzo_titolo2": griglia, "valore_lp": valori})
     salva_dati(curva, "arbitraggio_curva_prezzo")
-    salva_dat(curva, "cap09_arbitraggio_curva")
+    salva_dat(curva, "cap10_arbitraggio_curva")
     print(f"Griglia {griglia[0]:.0f}..{griglia[-1]:.0f}: valore LP = 0 solo dentro "
           f"l'intervallo, negativo fuori (arbitraggio)")
 
@@ -278,9 +278,9 @@ Lo stesso codice è disponibile come notebook — [`notebooks/lab09_arbitraggio.
     ax.set_xlabel("prezzo del titolo 2")
     ax.set_ylabel("valore ottimo dell'LP normalizzato")
     ax.set_title("Fuori dall'intervallo di prezzo coerente compare l'arbitraggio")
-    salva_figura(fig, "cap09_arbitraggio_curva")
+    salva_figura(fig, "cap10_arbitraggio_curva")
 
-    print("\nFatto: capitolo 9 (arbitraggio).")
+    print("\nFatto: capitolo 10 (arbitraggio).")
     ```
 
 ## In sintesi

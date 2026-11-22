@@ -5,7 +5,7 @@ hide:
 title: "Tre modelli LP risolti all'ottimo"
 ---
 
-[← Laboratorio](index.md) · Capitoli: [4. Produzione e scorte](../produzione.md) · [5. Ricarica di veicoli elettrici](../ricarica-ev.md) · [7. Il Newsvendor](../newsvendor.md)
+[← Laboratorio](index.md) · Capitoli: [5. Produzione e scorte](../produzione.md) · [6. Ricarica di veicoli elettrici](../ricarica-ev.md) · [8. Il Newsvendor](../newsvendor.md)
 
 # Tre modelli LP risolti all'ottimo
 

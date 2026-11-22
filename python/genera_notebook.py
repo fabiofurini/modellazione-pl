@@ -102,7 +102,7 @@ docstring, sezioni e commenti — e chi preferisce la riga di comando continua a
 lanciare, dalla cartella `python/`:
 
 ```bash
-python3 lab06_markowitz.py
+python3 lab05_produzione.py
 ```
 
 ## Installazione e licenza
@@ -135,7 +135,7 @@ print(gp.gurobi.version())        # es. (13, 0, 3)
 
 ```bash
 python3 -m pip install gurobipy matplotlib pandas scipy   # scipy: solo funzioni statistiche
-python3 python/run_all.py             # rigenera dati, risultati e figure
+python3 python/esegui_tutti.py          # rigenera dati, risultati e figure
 ```
 
 Nel [repository](https://github.com/fabiofurini/modellazione-pl)

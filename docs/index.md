@@ -21,7 +21,7 @@ riproducibili.
 
 Prerequisiti: [Programmazione lineare](https://fabiofurini.github.io/programmazione-lineare/) (dualità e analisi di sensitività).
 
-[Comincia :material-arrow-right:](strumenti.md){ .md-button .md-button--primary }
+[Comincia :material-arrow-right:](modellazione.md){ .md-button .md-button--primary }
 [:material-pencil: Esercizi](esercizi/index.md){ .md-button }
 [:material-gesture-tap: Laboratorio](laboratorio/index.md){ .md-button }
 [:material-clipboard-check-outline: Quiz](autovalutazione.md){ .md-button }
@@ -43,14 +43,14 @@ Tre modelli LP del corso risolti all'ottimo nel browser: produzione e scorte, ri
 
 <div class="grid cards" markdown>
 
--   :material-hammer-wrench: **Strumenti**
+-   :material-vector-polygon: **Modellazione**
 
     ---
 
-    Come si costruisce un modello, come si fa girare, come si leggono soluzione,
-    prezzi ombra e costi ridotti: la teoria e il solver.
+    Dalla descrizione al modello: le tecniche (produzione, miscelazione, trasporto,
+    più periodi, linearizzazioni), la dualità per interrogare la soluzione, il solver.
 
-    [:octicons-arrow-right-24: I tre capitoli](strumenti.md)
+    [:octicons-arrow-right-24: I quattro capitoli](modellazione.md)
 
 -   :material-factory: **Modelli deterministici**
 

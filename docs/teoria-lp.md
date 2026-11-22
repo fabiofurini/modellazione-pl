@@ -1,4 +1,4 @@
-# Teoria: programmazione lineare
+# 2. Richiami: programmazione lineare e analisi di sensitività
 
 [:material-file-pdf-box: Dispensa (PDF)](pdf/dispensa-modellazione-pl.pdf) · [:material-presentation: Slide del capitolo (PDF)](pdf/slide-02-richiami.pdf)
 
@@ -34,27 +34,12 @@ I *dati* sono i costi $c_j$, i coefficienti $a_{ij}$ e i termini noti $b_i$, con
 $i \in M = \{1, 2, \dots, m\}$ e $j \in N = \{1, 2, \dots, n\}$. Gli insiemi
 $M_{\le}, M_{=}, M_{\ge}$ ripartiscono $M$ secondo il verso del vincolo; gli
 insiemi $N_{\ge 0}, N_{\gtreqless 0}, N_{\le 0}$ ripartiscono $N$ secondo il segno
-della variabile (non negative, libere, non positive). Le *variabili* sono le $x_j$
-del primale e, nel duale, una $\pi_i$ per ciascun vincolo del primale.
+della variabile (non negative, libere, non positive).
 
-$$
-\begin{aligned}
-\text{(P)} \qquad \max ~ \sum_{j \in N} c_j x_j & & \\
-\text{soggetto a} \quad \sum_{j \in N} a_{ij} x_j &\le b_i, & \forall i \in M_{\le}, \\
-\sum_{j \in N} a_{ij} x_j &= b_i, & \forall i \in M_{=}, \\
-\sum_{j \in N} a_{ij} x_j &\ge b_i, & \forall i \in M_{\ge}, \\
-x_j &\ge 0, & \forall j \in N_{\ge 0}, \\
-x_j &\gtreqless 0, & \forall j \in N_{\gtreqless 0}, \\
-x_j &\le 0, & \forall j \in N_{\le 0}; \\[1ex]
-\text{(D)} \qquad \min ~ \sum_{i \in M} b_i \pi_i & & \\
-\text{soggetto a} \quad \sum_{i \in M} a_{ij} \pi_i &\ge c_j, & \forall j \in N_{\ge 0}, \\
-\sum_{i \in M} a_{ij} \pi_i &= c_j, & \forall j \in N_{\gtreqless 0}, \\
-\sum_{i \in M} a_{ij} \pi_i &\le c_j, & \forall j \in N_{\le 0}, \\
-\pi_i &\ge 0, & \forall i \in M_{\le}, \\
-\pi_i &\gtreqless 0, & \forall i \in M_{=}, \\
-\pi_i &\le 0, & \forall i \in M_{\ge}.
-\end{aligned}
-$$
+Le *variabili* sono le $x_j$ del primale (P), un problema di massimo in forma generale, e,
+nel duale (D) di minimo, una $\pi_i$ per ciascun vincolo del primale. I due modelli completi
+sono nel capitolo [«Teoria della dualità»](https://fabiofurini.github.io/programmazione-lineare/dualita/09-dualita/)
+di *Programmazione lineare*.
 
 **Le regole della dualità** — ogni vincolo del primale genera una variabile duale,
 ogni variabile un vincolo duale:
@@ -86,72 +71,10 @@ $$
 \sum_{j \in N} c_j \tilde x_j \;=\; \sum_{i \in M} b_i \tilde\pi_i .
 $$
 
-La dualità debole dice che ogni soluzione ammissibile del duale è un *limite
-superiore* per il primale di massimo: se due soluzioni ammissibili hanno lo stesso
-valore, sono entrambe ottime. La dualità forte garantisce che all'ottimo il
-divario si chiude sempre (gli ottimi possono essere più d'uno, i valori ottimi
-coincidono).
-
-!!! example "Costruire il duale con le regole: l'LP 2×2"
-    L'LP 2×2 è proprio nella forma canonica di massimo (vincoli ≤, variabili non
-    negative):
-
-    $$
-    \begin{array}{r r@{\;}c@{\;}r c r l}
-    \max & 30\,x_1 & + & 50\,x_2 & & & \\
-    \text{soggetto a} & x_1 & + & 3\,x_2 & \le & 90 & \\
-     & 2\,x_1 & + & x_2 & \le & 80 & \\
-     & x_1, & & x_2 & \ge & 0 &
-    \end{array}
-    $$
-
-    Ogni vincolo genera una variabile duale ($\le$ in un massimo ⇒
-    $\pi_1, \pi_2 \ge 0$); ogni variabile genera un vincolo duale, con i
-    coefficienti presi per **colonna** e i costi come termini noti; l'obiettivo
-    scambia i ruoli:
-
-    $$
-    \begin{array}{r r@{\;}c@{\;}r c r l}
-    \min & 90\,\pi_1 & + & 80\,\pi_2 & & & \\
-    \text{soggetto a} & \pi_1 & + & 2\,\pi_2 & \ge & 30 & \\
-     & 3\,\pi_1 & + & \pi_2 & \ge & 50 & \\
-     & \pi_1, & & \pi_2 & \ge & 0 &
-    \end{array}
-    $$
-
-!!! example "Costruire il duale con le regole: tutti i casi in un solo LP"
-    Un LP di **minimo** con tutti i casi della tabella (tre versi, tre segni; la
-    tabella si legge da destra a sinistra):
-
-    $$
-    \begin{array}{r r@{\;}c@{\;}r@{\;}c@{\;}r c r}
-    \min & 5\,x_1 & + & 8\,x_2 & - & 9\,x_3 & & \\
-    \text{soggetto a} & x_1 & + & x_2 & & & \ge & 30 \\
-     & x_1 & + & x_2 & - & x_3 & = & 100 \\
-     & x_1 & - & 2\,x_2 & & & \le & -20 \\
-     & x_1 & & & & & \ge & 0 \\
-     & & & x_2 & & & \gtreqless & 0, \\
-     & & & & & x_3 & \le & 0 
-    \end{array}
-    $$
-
-    Variabili duali: $\pi_1 \ge 0$ (vincolo $\ge$ in un minimo),
-    $\pi_2 \gtreqless 0$ (uguaglianza), $\pi_3 \le 0$ (vincolo $\le$).
-    Vincoli duali per colonna: da $x_1 \ge 0$ nasce
-    $\pi_1 + \pi_2 + \pi_3 \le 5$; da $x_2 \gtreqless 0$ nasce
-    $\pi_1 + \pi_2 - 2\pi_3 = 8$; da $x_3 \le 0$ nasce $-\pi_2 \ge -9$:
-
-    $$
-    \begin{array}{r r@{\;}c@{\;}r@{\;}c@{\;}r c r}
-    \max & 30\,\pi_1 & + & 100\,\pi_2 & - & 20\,\pi_3 & & \\
-    \text{soggetto a} & \pi_1 & + & \pi_2 & + & \pi_3 & \le & 5 \\
-     & \pi_1 & + & \pi_2 & - & 2\,\pi_3 & = & 8 \\
-     & & - & \pi_2 & & & \ge & -9 \\
-     & \pi_1 & & & & & \ge & 0 \\
-     & & & \pi_2 & & & \gtreqless & 0, \\
-     & & & & & \pi_3 & \le & 0 
-    \end{array}
-    $$
+Se due soluzioni ammissibili, del primale e del duale, hanno lo stesso valore, sono entrambe
+ottime. Le dimostrazioni e gli esempi di costruzione del duale sono nel capitolo
+[«Teoria della dualità»](https://fabiofurini.github.io/programmazione-lineare/dualita/09-dualita/)
+di *Programmazione lineare*.
 
 ## Le condizioni di ottimalità dell'LP: gli scarti complementari
 
@@ -209,6 +132,10 @@ $\le$, la restringe con $\ge$); *una regione più ampia come cambia l'ottimo?*
 Un vincolo **non attivo** ha sempre $\tilde\pi_i = 0$ (complementarietà).
 
 !!! example "Dualità sull'LP 2×2, svolta per intero"
+    L'LP 2×2 usato in tutto il corso è $\max 30x_1 + 50x_2$ con $x_1 + 3x_2 \le 90$,
+    $2x_1 + x_2 \le 80$ e $x_1, x_2 \ge 0$; il suo duale è $\min 90\pi_1 + 80\pi_2$ con
+    $\pi_1 + 2\pi_2 \ge 30$, $3\pi_1 + \pi_2 \ge 50$ e $\pi_1, \pi_2 \ge 0$.
+
     **Risolvendo si ottiene**: $(\tilde x_1, \tilde x_2) = (30, 20)$,
     $\tilde z = 1900$, $(\tilde\pi_1, \tilde\pi_2) = (14, 8)$,
     $(\bar c_1, \bar c_2) = (0, 0)$, con intervalli di validità
@@ -223,34 +150,6 @@ Un vincolo **non attivo** ha sempre $\tilde\pi_i = 0$ (complementarietà).
     14 + 16 = 30 = c_1, \qquad 42 + 8 = 50 = c_2,
     \qquad 90 \cdot 14 + 80 \cdot 8 = 1900 = \tilde z . \quad ✓
     $$
-
-!!! example "Tutti i casi in un solo LP: verifica delle condizioni"
-    **Risolvendo si ottiene**: $(\tilde x_1, \tilde x_2, \tilde x_3) = (60, 40, 0)$,
-    $\tilde z = 620$, $(\tilde\pi_1, \tilde\pi_2, \tilde\pi_3) = (0, 6, -1)$,
-    $(\bar c_1, \bar c_2, \bar c_3) = (0, 0, -3)$, con intervalli di validità dei termini
-    noti $(-\infty, 100]$, $[30, +\infty)$, $[-200, +\infty)$ e dei coefficienti
-    $(-\infty, 8]$, $[5, 17]$, $(-\infty, -6]$.
-
-    **Verifiche con le regole**: $\tilde\pi_1 = 0$ per complementarietà (vincolo
-    lasco: $60 + 40 = 100 > 30$); $\tilde\pi_2 = 6$ (uguaglianza → duale libera);
-    $\tilde\pi_3 = -1 \le 0$ ($\le$ in un minimo). Vincoli duali di $x_1, x_2$
-    attivi e dualità forte:
-
-    $$
-    0 + 6 - 1 = 5 = c_1, \qquad 0 + 6 - 2 \cdot (-1) = 8 = c_2,
-    \qquad 30 \cdot 0 + 100 \cdot 6 + (-20)(-1) = 620 = \tilde z . \quad ✓
-    $$
-
-    **Costi ridotti, uno per segno**: $\bar c_1 = 5 - 5 = 0$,
-    $\bar c_2 = 8 - 8 = 0$; $x_3$ è ferma al suo **bound superiore** (zero):
-
-    $$
-    \bar c_3 = -9 - (-1) \cdot 6 = -3 ,
-    $$
-
-    e si attiverebbe solo con coefficiente $\ge -6$ ($= c_3^{\max}$). Per
-    perturbazione: $b_2 = 101 → 626$ ($+6$), $b_3 = -19 → 619$ ($-1$),
-    $x_3$ forzata a $-1 → 623$ ($+3$) ✓.
 
 ## L'analisi di sensitività negli LP
 

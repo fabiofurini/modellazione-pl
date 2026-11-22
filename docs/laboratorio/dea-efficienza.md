@@ -5,7 +5,7 @@ hide:
 title: "DEA: efficienza e peer di una filiale"
 ---
 
-[← Laboratorio](index.md) · Capitolo: [6. Data Envelopment Analysis](../dea.md)
+[← Laboratorio](index.md) · Capitolo: [7. Data Envelopment Analysis](../dea.md)
 
 # DEA: efficienza e peer di una filiale
 

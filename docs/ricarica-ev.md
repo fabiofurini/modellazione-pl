@@ -1,10 +1,10 @@
 # Ricarica intelligente di veicoli elettrici
 
-[:material-file-pdf-box: Dispensa (PDF)](pdf/dispensa-modellazione-pl.pdf) · [:material-presentation: Slide del capitolo (PDF)](pdf/slide-05-ricarica-ev.pdf) · [:material-gesture-tap: App: Ricarica notturna a costo minimo](laboratorio/ricarica-ev.md)
+[:material-file-pdf-box: Dispensa (PDF)](pdf/dispensa-modellazione-pl.pdf) · [:material-presentation: Slide del capitolo (PDF)](pdf/slide-06-ricarica-ev.pdf) · [:material-gesture-tap: App: Ricarica notturna a costo minimo](laboratorio/ricarica-ev.md)
 
-**Classe:** LP · **Script:** `python/lab05_ricarica_ev.py`
+**Classe:** LP · **Script:** `python/lab06_ricarica_ev.py`
 
-[![Apri in Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/fabiofurini/modellazione-pl/blob/main/notebooks/lab05_ricarica_ev.ipynb)
+[![Apri in Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/fabiofurini/modellazione-pl/blob/main/notebooks/lab06_ricarica_ev.ipynb)
 
 !!! nota "Prerequisiti"
 
@@ -109,7 +109,7 @@ Prezzi ombra del fabbisogno (EUR/kWh):
   V1 0,0947   V2 0,0842   V3 0,0842   V4 0,0947   V5 0,0947   V6 0,0842
 ```
 
-![Profili di prelievo](img/cap05_profili.png)
+![Profili di prelievo](img/cap06_profili.png)
 
 I prezzi ombra del fabbisogno valgono $0{,}0842 = 0{,}08/\eta$ oppure
 $0{,}0947 = 0{,}09/\eta$: sono i prezzi delle **ore marginali** di ciascun veicolo
@@ -120,7 +120,7 @@ costa quindi 8,4–9,5 centesimi a seconda del veicolo.
 
 ## Sensitività
 
-![Frontiera costo-picco](img/cap05_frontiera.png)
+![Frontiera costo-picco](img/cap06_frontiera.png)
 
 ```text
 Compromesso costo + rho*picco:
@@ -164,15 +164,15 @@ la variante quadratica di questo modello, nel modulo *Modellazione PNL*, pagina
 ## Codice
 
 Lo script completo del capitolo — dati, modello, soluzione, sensitività e figure —
-è [`python/lab05_ricarica_ev.py`](https://github.com/fabiofurini/modellazione-pl/blob/main/python/lab05_ricarica_ev.py)
-(riproducibile con `python3 python/lab05_ricarica_ev.py` dalla cartella `python/`).
+è [`python/lab06_ricarica_ev.py`](https://github.com/fabiofurini/modellazione-pl/blob/main/python/lab06_ricarica_ev.py)
+(riproducibile con `python3 python/lab06_ricarica_ev.py` dalla cartella `python/`).
 
-Lo stesso codice è disponibile come notebook — [`notebooks/lab05_ricarica_ev.ipynb`](https://github.com/fabiofurini/modellazione-pl/blob/main/notebooks/lab05_ricarica_ev.ipynb) — che si apre in Colab dal badge in cima alla pagina e gira nel browser, senza installare niente.
+Lo stesso codice è disponibile come notebook — [`notebooks/lab06_ricarica_ev.ipynb`](https://github.com/fabiofurini/modellazione-pl/blob/main/notebooks/lab06_ricarica_ev.ipynb) — che si apre in Colab dal badge in cima alla pagina e gira nel browser, senza installare niente.
 
-??? example "Mostra lo script completo — `lab05_ricarica_ev.py`"
+??? example "Mostra lo script completo — `lab06_ricarica_ev.py`"
 
     ```python
-    """Capitolo 5 — Ricarica intelligente di veicoli elettrici (LP).
+    """Capitolo 6 — Ricarica intelligente di veicoli elettrici (LP).
 
     Caso di studio: deposito aziendale con 6 furgoni elettrici da ricaricare
     durante la notte; prezzi orari dell'energia; carico di base dell'edificio.
@@ -306,8 +306,8 @@ Lo stesso codice è disponibile come notebook — [`notebooks/lab05_ricarica_ev.
     # ----------------------------------------------------------------------
     salva_dat(pd.DataFrame({"ora": ore, "prezzo_cent": prezzo * 100, "base": base,
                             "totcosto": base + prof_costo, "totpicco": base + prof_picco}),
-              "cap05_profili")
-    salva_dat(pd.DataFrame(compromessi, columns=["rho", "costo", "picco"]), "cap05_frontiera")
+              "cap06_profili")
+    salva_dat(pd.DataFrame(compromessi, columns=["rho", "costo", "picco"]), "cap06_frontiera")
 
     fig, (ax1, ax2) = plt.subplots(2, 1, figsize=(8.2, 6.4), sharex=True)
     ax1.bar(ore, prezzo * 100, color=GRIGIO, alpha=0.6)
@@ -322,7 +322,7 @@ Lo stesso codice è disponibile come notebook — [`notebooks/lab05_ricarica_ev.
     ax2.set_xlabel("ora del giorno"); ax2.set_ylabel("prelievo totale (kW)")
     ax2.set_title("Profilo di prelievo: inseguire i prezzi crea un picco notturno")
     ax2.legend(fontsize=8, ncol=2)
-    salva_figura(fig, "cap05_profili")
+    salva_figura(fig, "cap06_profili")
 
     comp = pd.DataFrame(compromessi, columns=["rho", "costo", "picco"])
     fig, ax = plt.subplots()
@@ -332,9 +332,9 @@ Lo stesso codice è disponibile come notebook — [`notebooks/lab05_ricarica_ev.
     ax.set_xlabel("picco di prelievo (kW)")
     ax.set_ylabel("costo di ricarica (€)")
     ax.set_title("Frontiera costo-picco: ridurre il picco costa poco all'inizio")
-    salva_figura(fig, "cap05_frontiera")
+    salva_figura(fig, "cap06_frontiera")
 
-    print("\nFatto: capitolo 5.")
+    print("\nFatto: capitolo 6.")
     ```
 
 ## Esercizi

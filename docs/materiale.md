@@ -14,8 +14,8 @@ Python sotto licenza
 
     ---
 
-    Modelli, esempi svolti, casi di studio e analisi di sensitività: gli
-    strumenti, i modelli deterministici, le decisioni sotto incertezza,
+    Modelli, esempi svolti, casi di studio e analisi di sensitività: la
+    modellazione, i modelli deterministici, le decisioni sotto incertezza,
     ottimizzazione e machine learning.
 
     [:octicons-download-24: dispensa-modellazione-pl.pdf](pdf/dispensa-modellazione-pl.pdf)
@@ -38,35 +38,36 @@ Le slide delle lezioni, una per capitolo delle dispense (PDF).
 
 <div class="grid cards" markdown>
 
--   :material-presentation: **Strumenti**
+-   :material-presentation: **Modellazione**
 
     ---
 
     - [Introduzione alla modellazione PL](pdf/slide-01-introduzione.pdf)
     - [Richiami di programmazione lineare](pdf/slide-02-richiami.pdf)
     - [Il solver: costruire, risolvere, interpretare](pdf/slide-03-python-gurobi.pdf)
+    - [Tecniche di modellazione](pdf/slide-04-tecniche.pdf)
 
 -   :material-presentation: **Modelli deterministici**
 
     ---
 
-    - [Produzione e scorte multiperiodali](pdf/slide-04-produzione.pdf)
-    - [Ricarica intelligente di veicoli elettrici](pdf/slide-05-ricarica-ev.pdf)
-    - [Data Envelopment Analysis](pdf/slide-06-dea.pdf)
+    - [Produzione e scorte multiperiodali](pdf/slide-05-produzione.pdf)
+    - [Ricarica intelligente di veicoli elettrici](pdf/slide-06-ricarica-ev.pdf)
+    - [Data Envelopment Analysis](pdf/slide-07-dea.pdf)
 
 -   :material-presentation: **Decisioni sotto incertezza**
 
     ---
 
-    - [Il Newsvendor e le sue varianti](pdf/slide-07-newsvendor.pdf)
-    - [VaR e CVaR](pdf/slide-08-var-cvar.pdf)
-    - [Arbitraggio e prezzatura](pdf/slide-09-arbitraggio.pdf)
+    - [Il Newsvendor e le sue varianti](pdf/slide-08-newsvendor.pdf)
+    - [VaR e CVaR](pdf/slide-09-var-cvar.pdf)
+    - [Arbitraggio e prezzatura](pdf/slide-10-arbitraggio.pdf)
 
 -   :material-presentation: **Ottimizzazione e machine learning**
 
     ---
 
-    - [Regressione robusta e quantile](pdf/slide-10-regressione.pdf)
+    - [Regressione robusta e quantile](pdf/slide-11-regressione.pdf)
 
 </div>
 

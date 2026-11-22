@@ -1,14 +1,14 @@
 # Regressione robusta e quantile
 
-[:material-file-pdf-box: Dispensa (PDF)](pdf/dispensa-modellazione-pl.pdf) · [:material-presentation: Slide del capitolo (PDF)](pdf/slide-10-regressione.pdf) · [:material-gesture-tap: App: Regressione con gli scarti assoluti e quantile](laboratorio/regressione-quantile.md)
+[:material-file-pdf-box: Dispensa (PDF)](pdf/dispensa-modellazione-pl.pdf) · [:material-presentation: Slide del capitolo (PDF)](pdf/slide-11-regressione.pdf) · [:material-gesture-tap: App: Regressione con gli scarti assoluti e quantile](laboratorio/regressione-quantile.md)
 
-**Classe: LP** · Script: `python/lab10_regressione.py`
+**Classe: LP** · Script: `python/lab11_regressione.py`
 
-[![Apri in Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/fabiofurini/modellazione-pl/blob/main/notebooks/lab10_regressione.ipynb)
+[![Apri in Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/fabiofurini/modellazione-pl/blob/main/notebooks/lab11_regressione.ipynb)
 
 !!! nota "Prerequisiti"
 
-    - Da questo modulo, [Capitolo 7 «Il Newsvendor e le sue varianti»](https://fabiofurini.github.io/modellazione-pl/newsvendor/): la regola del quantile e il frattile critico.
+    - Da questo modulo, [Capitolo 8 «Il Newsvendor e le sue varianti»](https://fabiofurini.github.io/modellazione-pl/newsvendor/): la regola del quantile e il frattile critico.
 
     - Da questo modulo, [Capitolo 2 «Richiami: programmazione lineare e analisi di sensitività»](https://fabiofurini.github.io/modellazione-pl/teoria-lp/): il duale di un LP e i prezzi ombra.
 
@@ -61,7 +61,7 @@ stessa quantità lascerebbe soddisfatto il vincolo e farebbe scendere l'obiettiv
 
 !!! example "Senza caratteristiche: torna il quantile empirico"
     Con $p = 0$ resta la sola intercetta. Sette giorni di vendite: 88, 96, 104,
-    112, 120, 132, 148 pezzi; la panetteria del capitolo 7 ha $c_u = 9$ e
+    112, 120, 132, 148 pezzi; la panetteria del capitolo 8 ha $c_u = 9$ e
     $c_o = 4$, quindi $\tau = \alpha^* = 9/13 = 0{,}6923$.
 
     L'ottimo è $\tilde b = 120$, la quinta osservazione in ordine crescente
@@ -92,7 +92,7 @@ Scarto assoluto medio sui 55 giorni normali: 13,08 pezzi
 Distanza fra le due intercette: 0,72 pezzi
 ```
 
-![La retta dell'LP non si sposta](img/cap10_regressione_robusta.png)
+![La retta dell'LP non si sposta](img/cap11_regressione_robusta.png)
 
 L'LP paga ogni scarto una volta sola, in proporzione alla sua grandezza: i cinque
 giorni di sciopero spostano l'intercetta di appena 0,72 pezzi, e il modello arriva
@@ -155,7 +155,7 @@ l'ultima colonna verifica la proprietà del quantile.
 | 9/13 = 0,6923 | 281,19 | −3,96 | −23,21 | +31,47 | 0,673 |
 | 0,90 | 287,49 | −3,57 | −25,69 | +27,98 | 0,873 |
 
-![Il ventaglio dei quantili](img/cap10_quantili.png)
+![Il ventaglio dei quantili](img/cap11_quantili.png)
 
 Per un giorno caldo di weekend a prezzo pieno (28 gradi, prezzo 3,00):
 
@@ -166,7 +166,7 @@ scorta di sicurezza                     5,8 pezzi
 quantile 0,6923 senza caratteristiche 148,0 pezzi
 ```
 
-La regola del quantile resta quella del capitolo 7, ma il numero a cui si
+La regola del quantile resta quella del capitolo 8, ma il numero a cui si
 applica cambia: il quantile su tutto lo storico dice 148 pezzi, quello
 *condizionato* alle condizioni del giorno ne chiede 132. Sedici pezzi al giorno
 di invenduto in meno, senza toccare i costi. La differenza fra stima mediana e
@@ -209,7 +209,7 @@ budget 30: scarto medio 10,63 pezzi, prezzo ombra  -7,271 pezzi per unita'
 budget 45: scarto medio  7,19 pezzi, prezzo ombra  -4,197 pezzi per unita'
 ```
 
-![Errore contro budget sui coefficienti](img/cap10_budget.png)
+![Errore contro budget sui coefficienti](img/cap11_budget.png)
 
 Il prezzo ombra del vincolo di budget è il **prezzo della complessità**: quanti
 pezzi di errore si risparmiano per ogni unità di budget in più. Vale −19,95 con
@@ -220,13 +220,13 @@ pezzi per deviazione standard finché il budget non diventa palesemente
 eccessivo. Il budget da scegliere non è quello che minimizza l'errore storico,
 ma quello oltre il quale il prezzo ombra diventa trascurabile.
 
-Lo stesso codice è disponibile come notebook — [`notebooks/lab10_regressione.ipynb`](https://github.com/fabiofurini/modellazione-pl/blob/main/notebooks/lab10_regressione.ipynb) — che si apre in Colab dal badge in cima alla pagina e gira nel browser, senza installare niente.
+Lo stesso codice è disponibile come notebook — [`notebooks/lab11_regressione.ipynb`](https://github.com/fabiofurini/modellazione-pl/blob/main/notebooks/lab11_regressione.ipynb) — che si apre in Colab dal badge in cima alla pagina e gira nel browser, senza installare niente.
 
-??? example "Mostra lo script completo — `lab10_regressione.py`"
+??? example "Mostra lo script completo — `lab11_regressione.py`"
     ```python
-    """Capitolo 10 — Regressione robusta e quantile (LP).
+    """Capitolo 11 — Regressione robusta e quantile (LP).
 
-    Caso di studio: la panetteria del capitolo 7. Sessanta giorni di storico
+    Caso di studio: la panetteria del capitolo 8. Sessanta giorni di storico
     (domanda, temperatura, prezzo, weekend) piu' tre giorni di sciopero dei
     trasporti che fanno crollare la domanda.
 
@@ -245,7 +245,7 @@ Lo stesso codice è disponibile come notebook — [`notebooks/lab10_regressione.
     from stile import (ARANCIO, BLU, GRIGIO, ROSSO, TEAL, VERDE, intestazione, plt,
                        salva_dat, salva_dati, salva_figura)
 
-    TAU_NV = 9 / 13                                # frattile critico del capitolo 7
+    TAU_NV = 9 / 13                                # frattile critico del capitolo 8
 
 
     # ----------------------------------------------------------------------
@@ -294,7 +294,7 @@ Lo stesso codice è disponibile come notebook — [`notebooks/lab10_regressione.
     X0 = np.zeros((len(y7), 0))
     m0, _, b0, pi0, _ = regressione_quantile(X0, y7, tau=TAU_NV)
     print(f"Sette giorni: {y7.astype(int)}")
-    print(f"tau = alpha* = 9/13 = {TAU_NV:.4f}  (panetteria del capitolo 7: cu=9, co=4)")
+    print(f"tau = alpha* = 9/13 = {TAU_NV:.4f}  (panetteria del capitolo 8: cu=9, co=4)")
     print(f"Intercetta ottima b = {b0:.4f}  -> e' il 5o valore ordinato, il quantile 69,23%")
     print(f"Valore ottimo = {m0.ObjVal:.4f} = 680/13")
     print(f"Duali pi = {np.round(pi0, 4)}  (limiti: -(1-tau) = {-(1 - TAU_NV):.4f}, "
@@ -426,7 +426,7 @@ Lo stesso codice è disponibile come notebook — [`notebooks/lab10_regressione.
     print(f"  quantile {TAU_NV:.4f} previsto        {prev_nv:6.1f} pezzi  <- quantita' da produrre")
     print(f"  scorta di sicurezza             {prev_nv - prev_med:6.1f} pezzi")
     print(f"  quantile {TAU_NV:.4f} senza attributi {q_incond:6.1f} pezzi  "
-          f"(capitolo 7: stessa regola, nessun attributo)")
+          f"(capitolo 8: stessa regola, nessun attributo)")
 
     # ----------------------------------------------------------------------
     # 6. SELEZIONE DELLE CARATTERISTICHE CON UN BUDGET SUI COEFFICIENTI
@@ -458,7 +458,7 @@ Lo stesso codice è disponibile come notebook — [`notebooks/lab10_regressione.
                 entrate[nome] = t
     curva = pd.DataFrame(curva)
     salva_dati(curva, "regressione_budget")
-    salva_dat(curva[["budget", "scarto_medio", "prezzo_ombra"]], "cap10_budget")
+    salva_dat(curva[["budget", "scarto_medio", "prezzo_ombra"]], "cap11_budget")
 
     print(f"\nOrdine di ingresso (coefficiente oltre {SOGLIA:.0f} pezzi per "
           f"deviazione standard):")
@@ -484,7 +484,7 @@ Lo stesso codice è disponibile come notebook — [`notebooks/lab10_regressione.
     punti = pd.DataFrame({"temperatura": temperatura, "domanda": domanda,
                           "sciopero": anomalo.astype(int),
                           "appoggio": appoggio.astype(int)})
-    salva_dat(punti, "cap10_panetteria")
+    salva_dat(punti, "cap11_panetteria")
 
     fig, ax = plt.subplots()
     ax.scatter(temperatura[buoni], domanda[buoni], s=18, color=TEAL,
@@ -499,14 +499,14 @@ Lo stesso codice è disponibile come notebook — [`notebooks/lab10_regressione.
     ax.set_ylabel("domanda (pezzi)")
     ax.set_title("Cinque giorni di sciopero non spostano la retta dell'LP")
     ax.legend(loc="upper right", fontsize=8)
-    salva_figura(fig, "cap10_regressione_robusta")
+    salva_figura(fig, "cap11_regressione_robusta")
 
     rette = []
     for tau in (0.10, 0.50, TAU_NV):
         _, w_t, b_t, _, _ = regressione_quantile(Xt[puliti], domanda[puliti], tau=tau)
         rette.append({"tau": tau, "intercetta": b_t, "pendenza": w_t[0]})
     rette = pd.DataFrame(rette)
-    salva_dat(rette, "cap10_rette_quantili")
+    salva_dat(rette, "cap11_rette_quantili")
 
     fig, ax = plt.subplots()
     ax.scatter(temperatura[puliti], domanda[puliti], s=16, color=GRIGIO, alpha=0.7,
@@ -521,7 +521,7 @@ Lo stesso codice è disponibile come notebook — [`notebooks/lab10_regressione.
     ax.set_ylabel("domanda (pezzi)")
     ax.set_title("Una retta per ogni quantile: il ventaglio della domanda")
     ax.legend(loc="upper right", fontsize=8)
-    salva_figura(fig, "cap10_quantili")
+    salva_figura(fig, "cap11_quantili")
 
     fig, ax = plt.subplots()
     ax.plot(curva["budget"], curva["scarto_medio"], color=TEAL, lw=2)
@@ -533,9 +533,9 @@ Lo stesso codice è disponibile come notebook — [`notebooks/lab10_regressione.
     ax.set_xlabel("budget sui coefficienti")
     ax.set_ylabel("scarto assoluto medio (pezzi)")
     ax.set_title("Il prezzo della complessità: errore contro budget")
-    salva_figura(fig, "cap10_budget")
+    salva_figura(fig, "cap11_budget")
 
-    print("\nFatto: capitolo 10 (regressione robusta e quantile).")
+    print("\nFatto: capitolo 11 (regressione robusta e quantile).")
     ```
 
 ## In sintesi

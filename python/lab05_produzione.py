@@ -1,4 +1,4 @@
-"""Capitolo 4 — Produzione e scorte multiperiodali (LP).
+"""Capitolo 5 — Produzione e scorte multiperiodali (LP).
 
 Caso di studio: azienda che produce 3 componenti (prodotti 1, 2, 3) su un orizzonte
 di 6 mesi con una risorsa condivisa (ore macchina).
@@ -111,7 +111,7 @@ salva_dat(pd.DataFrame({
     **{f"x{i}": [x[i, t].X for t in mesi] for i in prodotti},
     **{f"s{i}": [s[i, t].X for t in mesi] for i in prodotti},
     "domtot": [sum(domanda[i, t] for i in prodotti) for t in mesi],
-}), "cap04_piano")
+}), "cap05_piano")
 
 fig, (ax1, ax2) = plt.subplots(1, 2, figsize=(10.5, 4.0))
 larg = 0.26
@@ -128,7 +128,7 @@ for i in prodotti:
 ax2.set_xlabel("mese"); ax2.set_ylabel("unità a scorta")
 ax2.set_title("Scorte di fine mese")
 ax2.legend(fontsize=8)
-salva_figura(fig, "cap04_piano_scorte")
+salva_figura(fig, "cap05_piano_scorte")
 
 # sensitività: costo ottimo al variare della capacità uniforme
 intestazione("Sensitività: costo ottimo al variare della capacità")
@@ -143,7 +143,7 @@ for f in fattori:
     print(f"  capacità x{f:4.2f}: costo {costi[-1]:10.2f} €")
 
 tab_cap = pd.DataFrame({"percento": fattori * 100, "costo": costi}).dropna()
-salva_dat(tab_cap, "cap04_capacita")
+salva_dat(tab_cap, "cap05_capacita")
 
 fig, ax = plt.subplots()
 ax.plot(fattori * 100, costi, "-o", color=TEAL)
@@ -152,6 +152,6 @@ ax.set_xlabel("capacità disponibile (% dell'attuale)")
 ax.set_ylabel("costo totale ottimo (€)")
 ax.set_title("Curva valore della capacità: convessa e decrescente")
 ax.legend()
-salva_figura(fig, "cap04_valore_capacita")
+salva_figura(fig, "cap05_valore_capacita")
 
-print("\nFatto: capitolo 4.")
+print("\nFatto: capitolo 5.")

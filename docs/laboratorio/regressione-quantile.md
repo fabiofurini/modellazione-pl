@@ -5,7 +5,7 @@ hide:
 title: "Regressione con gli scarti assoluti e quantile"
 ---
 
-[← Laboratorio](index.md) · Capitolo: [10. Regressione robusta e quantile](../regressione.md)
+[← Laboratorio](index.md) · Capitolo: [11. Regressione robusta e quantile](../regressione.md)
 
 # Regressione con gli scarti assoluti e quantile
 
