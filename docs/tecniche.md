@@ -2,7 +2,7 @@
 
 [:material-file-pdf-box: Dispensa (PDF)](pdf/dispensa-modellazione-pl.pdf) · [:material-presentation: Slide del capitolo (PDF)](pdf/slide-04-tecniche.pdf)
 
-**Classe:** LP · tecniche di modellazione · **Esempi:** tre istanze risolte e nove modelli svolti nella dispensa
+**Classe:** LP · tecniche di modellazione · **Esempi:** tre istanze risolte e [nove modelli svolti](#modelli-svolti)
 
 !!! nota "Prerequisiti"
 
@@ -130,16 +130,27 @@ dicono»).
 | [4.7 valore assoluto](tecniche-07.md) | $w_i \ge \pm \sum_j a_{ij} x_j$, oppure $w_i^{+} - w_i^{-}$ |
 | [4.8 rapporto](tecniche-08.md) | $\sum_j (a_j - \gamma\, e_j)\, x_j \le 0$ |
 
-## Modelli svolti nella dispensa
+<!-- modelli-svolti:inizio -->
+## Modelli svolti
 
-La [dispensa](pdf/dispensa-modellazione-pl.pdf) chiude il capitolo con nove modelli svolti,
-ciascuno con l'enunciato e la soluzione completa:
+Nove modelli svolti, come nella dispensa: l'enunciato, le domande e lo svolgimento completo.
 
-- **modelli simbolici**: produzione in orario ordinario e in straordinario; trasporto dai
-  magazzini ai clienti; pianificazione della dieta, anche per più classi; produzione su più
-  periodi con acquisti e stoccaggio;
-- **modelli numerici**: scelta dei dolci; produzione e stoccaggio di torte di frutta;
-  miscelazione di petrolio greggio in una raffineria; produzione di tre farmaci.
+**Modelli simbolici**
+
+- [Esempio 4.4 — Produzione in orario ordinario e in straordinario](tecniche-modelli-01.md)
+- [Esempio 4.5 — Trasporto dai magazzini ai clienti](tecniche-modelli-02.md)
+- [Esempio 4.6 — Pianificazione della dieta](tecniche-modelli-03.md)
+- [Esempio 4.7 — Pianificazione della dieta per più classi](tecniche-modelli-04.md)
+- [Esempio 4.8 — Produzione su più periodi con acquisti e stoccaggio](tecniche-modelli-05.md)
+
+**Modelli numerici**
+
+- [Esempio 4.9 — Scelta dei dolci](tecniche-modelli-06.md)
+- [Esempio 4.10 — Produzione e stoccaggio di torte di frutta](tecniche-modelli-07.md)
+- [Esempio 4.11 — Miscelazione di petrolio greggio in una raffineria](tecniche-modelli-08.md)
+- [Esempio 4.12 — Produzione di tre farmaci](tecniche-modelli-09.md)
+
+<!-- modelli-svolti:fine -->
 
 ## In sintesi
 

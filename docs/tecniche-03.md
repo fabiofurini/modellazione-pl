@@ -80,3 +80,7 @@ La regola generale è nella tecnica [4.8 Rapporti e percentuali](tecniche-08.md)
     $$
     z(\mathit{LP}) = 0{,}80 \cdot 20 + 0{,}50 \cdot 64 + 0{,}30 \cdot 16 = 52{,}80 \text{ euro} .
     $$
+
+<!-- modelli:inizio -->
+**Modelli svolti che usano questa tecnica:** [Esempio 4.6 — Pianificazione della dieta](tecniche-modelli-03.md) · [Esempio 4.7 — Pianificazione della dieta per più classi](tecniche-modelli-04.md) · [Esempio 4.11 — Miscelazione di petrolio greggio in una raffineria](tecniche-modelli-08.md)
+<!-- modelli:fine -->

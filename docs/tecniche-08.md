@@ -31,3 +31,7 @@ non è lineare.
 - La stessa tecnica si applica ai requisiti percentuali dei modelli di [miscelazione](tecniche-03.md).
 - È corretta solo quando il denominatore è *sicuramente positivo* per ogni soluzione ammissibile.
 - Altrimenti moltiplicare per esso cambierebbe il verso della disuguaglianza.
+
+<!-- modelli:inizio -->
+**Modelli svolti che usano questa tecnica:** [Esempio 4.11 — Miscelazione di petrolio greggio in una raffineria](tecniche-modelli-08.md)
+<!-- modelli:fine -->

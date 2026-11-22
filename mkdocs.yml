@@ -168,6 +168,16 @@ nav:
           - 4.7 Valori assoluti: tecniche-07.md
           - 4.8 Rapporti e percentuali: tecniche-08.md
           - 4.9 Che cosa non si può modellare: tecniche-09.md
+          - Modelli svolti:
+              - "Esempio 4.4 — Produzione in orario ordinario e in straordinario": tecniche-modelli-01.md
+              - "Esempio 4.5 — Trasporto dai magazzini ai clienti": tecniche-modelli-02.md
+              - "Esempio 4.6 — Pianificazione della dieta": tecniche-modelli-03.md
+              - "Esempio 4.7 — Pianificazione della dieta per più classi": tecniche-modelli-04.md
+              - "Esempio 4.8 — Produzione su più periodi con acquisti e stoccaggio": tecniche-modelli-05.md
+              - "Esempio 4.9 — Scelta dei dolci": tecniche-modelli-06.md
+              - "Esempio 4.10 — Produzione e stoccaggio di torte di frutta": tecniche-modelli-07.md
+              - "Esempio 4.11 — Miscelazione di petrolio greggio in una raffineria": tecniche-modelli-08.md
+              - "Esempio 4.12 — Produzione di tre farmaci": tecniche-modelli-09.md
   - Modelli deterministici:
       - modelli-deterministici.md
       - Produzione e scorte: produzione.md

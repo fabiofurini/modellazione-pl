@@ -54,3 +54,7 @@ $$
 Il capitolo [5. Produzione e scorte multiperiodali](produzione.md) usa questo schema con più
 prodotti e capacità in ore macchina condivise. Lì ci sono i dati, il codice, i prezzi ombra
 della capacità e l'analisi di sensitività.
+
+<!-- modelli:inizio -->
+**Modelli svolti che usano questa tecnica:** [Esempio 4.8 — Produzione su più periodi con acquisti e stoccaggio](tecniche-modelli-05.md) · [Esempio 4.10 — Produzione e stoccaggio di torte di frutta](tecniche-modelli-07.md)
+<!-- modelli:fine -->

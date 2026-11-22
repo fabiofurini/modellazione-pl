@@ -36,3 +36,4 @@ __pycache__/
 python/genera_laboratorio.py
 python/test_laboratorio.py
 python/genera_esercizi.py
+python/genera_modelli.py
