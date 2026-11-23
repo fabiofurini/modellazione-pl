@@ -6,7 +6,7 @@ Testi, figure e dati sono sotto licenza
 Python sotto licenza
 [MIT](https://github.com/fabiofurini/modellazione-pl/blob/main/LICENSE-CODE).
 
-## La dispensa
+## Dispense
 
 <div class="grid cards" markdown>
 
@@ -20,6 +20,42 @@ Python sotto licenza
 
     [:octicons-download-24: dispensa-modellazione-pl.pdf](pdf/dispensa-modellazione-pl.pdf)
 
+</div>
+
+<!-- slide:inizio -->
+## Slide
+
+Le slide delle lezioni, una per capitolo delle dispense (PDF).
+
+### Modellazione
+
+- :material-presentation: [Introduzione alla modellazione PL](pdf/slide-01-introduzione.pdf)
+- :material-presentation: [Richiami di programmazione lineare](pdf/slide-02-richiami.pdf)
+- :material-presentation: [Il solver: costruire, risolvere, interpretare](pdf/slide-03-python-gurobi.pdf)
+- :material-presentation: [Tecniche di modellazione](pdf/slide-04-tecniche.pdf)
+
+### Modelli deterministici
+
+- :material-presentation: [Produzione e scorte multiperiodali](pdf/slide-05-produzione.pdf)
+- :material-presentation: [Ricarica intelligente di veicoli elettrici](pdf/slide-06-ricarica-ev.pdf)
+- :material-presentation: [Data Envelopment Analysis](pdf/slide-07-dea.pdf)
+
+### Decisioni sotto incertezza
+
+- :material-presentation: [Il Newsvendor e le sue varianti](pdf/slide-08-newsvendor.pdf)
+- :material-presentation: [VaR e CVaR](pdf/slide-09-var-cvar.pdf)
+- :material-presentation: [Arbitraggio e prezzatura](pdf/slide-10-arbitraggio.pdf)
+
+### Ottimizzazione e machine learning
+
+- :material-presentation: [Regressione robusta e quantile](pdf/slide-11-regressione.pdf)
+
+<!-- slide:fine -->
+
+## Altri documenti
+
+<div class="grid cards" markdown>
+
 -   :material-language-python: **Il codice**
 
     ---
@@ -31,50 +67,8 @@ Python sotto licenza
 
 </div>
 
-<!-- slide:inizio -->
-## Le slide
-
-Le slide delle lezioni, una per capitolo delle dispense (PDF).
-
-<div class="grid cards" markdown>
-
--   :material-presentation: **Modellazione**
-
-    ---
-
-    - [Introduzione alla modellazione PL](pdf/slide-01-introduzione.pdf)
-    - [Richiami di programmazione lineare](pdf/slide-02-richiami.pdf)
-    - [Il solver: costruire, risolvere, interpretare](pdf/slide-03-python-gurobi.pdf)
-    - [Tecniche di modellazione](pdf/slide-04-tecniche.pdf)
-
--   :material-presentation: **Modelli deterministici**
-
-    ---
-
-    - [Produzione e scorte multiperiodali](pdf/slide-05-produzione.pdf)
-    - [Ricarica intelligente di veicoli elettrici](pdf/slide-06-ricarica-ev.pdf)
-    - [Data Envelopment Analysis](pdf/slide-07-dea.pdf)
-
--   :material-presentation: **Decisioni sotto incertezza**
-
-    ---
-
-    - [Il Newsvendor e le sue varianti](pdf/slide-08-newsvendor.pdf)
-    - [VaR e CVaR](pdf/slide-09-var-cvar.pdf)
-    - [Arbitraggio e prezzatura](pdf/slide-10-arbitraggio.pdf)
-
--   :material-presentation: **Ottimizzazione e machine learning**
-
-    ---
-
-    - [Regressione robusta e quantile](pdf/slide-11-regressione.pdf)
-
-</div>
-
-<!-- slide:fine -->
-
 <!-- banca-domande -->
-## Banca delle domande del quiz
+## Banca delle domande
 
 Tutte le domande dell'autovalutazione, divise per parte e capitolo, con la risposta corretta e la spiegazione; per le domande generate, che cambiano i numeri a ogni avvio, alcuni esempi.
 
