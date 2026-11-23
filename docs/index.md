@@ -15,9 +15,10 @@ hide:
 Materiale didattico ideato e sviluppato da **[Fabio Furini](https://fabiofurini.github.io/)**, professore
 associato al [DIAG](https://www.diag.uniroma1.it/), Sapienza Università di Roma.
 
-**Modelli di programmazione lineare** — la dispensa
-del corso in versione online, con codice Python/Gurobi, dati e casi di studio
-riproducibili.
+Il corso presenta la modellazione con la programmazione lineare: come si costruisce un modello, il
+solver e l'interpretazione della soluzione, le tecniche di modellazione, e i modelli di produzione e
+scorte, ricarica di veicoli elettrici, Data Envelopment Analysis, newsvendor, VaR e CVaR, arbitraggio
+e regressione robusta, con il codice Python/Gurobi.
 
 Prerequisiti: [Programmazione lineare](https://fabiofurini.github.io/programmazione-lineare/) (dualità e analisi di sensitività).
 
