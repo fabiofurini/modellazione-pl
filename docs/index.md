@@ -33,9 +33,9 @@ Prerequisiti: [Programmazione lineare](https://fabiofurini.github.io/programmazi
 <!-- collana-app -->
 ## Provalo subito
 
-Tre modelli LP del corso risolti all'ottimo nel browser: produzione e scorte, ricarica di veicoli elettrici e newsvendor a scenari. Scegli il modello in alto a destra, cambia domanda, capacità, costi o prezzi con i cursori e il simplesso ricalcola il piano ottimo, il costo e i prezzi ombra.
+Il piano di produzione e scorte su sei mesi, risolto all'ottimo nel browser: cambia la domanda, la capacità e il costo di giacenza con i cursori e il simplesso ricalcola il piano ottimo, il costo e i prezzi ombra delle ore macchina.
 
-<div class="gi" data-grafico="pl-modelli"></div>
+<div class="gi" data-grafico="pl-produzione"></div>
 
 [:material-gesture-tap: Altre app nel laboratorio](laboratorio/index.md){ .md-button }
 <!-- /collana-app -->
