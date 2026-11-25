@@ -100,3 +100,6 @@
   .gi.gi-capitolo .gi-board { aspect-ratio: auto !important; height: 600px !important; }
   .gi.gi-capitolo .gi-corpo > div:last-child { display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: .4em 1.2em; align-items: start; }
 }
+
+/* pl-legenda-sotto: le app di Modellazione PL hanno la legenda dentro ogni grafico; quella ripetuta sotto non serve (Fabio, 25/11/2026) */
+.gi[data-grafico^="pl-"] .gi-legenda { display: none; }
