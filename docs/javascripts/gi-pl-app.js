@@ -200,7 +200,8 @@
     const pezzi = P.pezzi || [tutte], avv = pezzi.length > 1;   // un solo pezzo: solo l'ordine delle colonne
     const Q = Math.max(...pezzi.map((g) => g.length));
     const nz = (a) => a && Math.abs(a) > 1e-12;
-    const rhsTex = (r, c) => (typeof r === "number" ? n(r, c ?? 2) : r ?? "");
+    const fmt = P.fmt || n;   // P.fmt: formattatore dei numeri (FR.tex per le frazioni), di default GI.num
+    const rhsTex = (r, c) => (typeof r === "number" ? fmt(r, c ?? 2) : r ?? "");
     const righe = [{ lab: P.senso === "max" ? "\\max" : "\\min", c: P.c, cifre: P.cifreObj ?? P.cifre ?? 3 }];
     // con P.limiti i limiti semplici x_j <= u (una sola variabile, coefficiente 1) si scrivono come la riga del dominio:
     // una riga per valore di u, le variabili nelle loro colonne separate da virgole («x_{11}, ..., x_{16} <= 11»)
@@ -231,7 +232,7 @@
             if (r.dominio) t = P.vars[j] + (j === ultimoDom ? "" : ",");
             else {
               const a = r.c[j];
-              t = (Math.abs(Math.abs(a) - 1) < 1e-12 ? "" : n(Math.abs(a), r.cifre) + "\\,") + P.vars[j];
+              t = (Math.abs(Math.abs(a) - 1) < 1e-12 ? "" : fmt(Math.abs(a), r.cifre) + "\\,") + P.vars[j];
               s = a < 0 ? "-" : visto ? "+" : "";
               visto = true;
             }
@@ -370,6 +371,48 @@
   };
   window.GI_PL_DV = DV;
 
+  // ================================================================ numeri non interi come frazioni
+  /* Fabio, 25/11/2026: «non usare numeri con la virgola ma frazioni». Un valore (anche in virgola mobile, dal
+   * simplesso) diventa la frazione p/q delle frazioni continue con q <= 12 e |p/q - x| < 1e-9; se non ce n'è una,
+   * resta il numero com'è. Nel TeX \frac{p}{q}, nel testo semplice (celle, cursori, grafici) «6/5».
+   * Per ora lo usa l'app della produzione (cap. 5). */
+  const razionale = (x, maxDen = 12, tol = 1e-9) => {
+    if (!isFinite(x)) return null;
+    const segno = x < 0 ? -1 : 1, a0 = Math.abs(x);
+    let h1 = 1, h2 = 0, k1 = 0, k2 = 1, v = a0;
+    for (let i = 0; i < 40; i++) {
+      const a = Math.floor(v), h = a * h1 + h2, k = a * k1 + k2;
+      if (k > maxDen) break;
+      if (Math.abs(h / k - a0) < tol) return [segno * h, k];
+      h2 = h1; h1 = h; k2 = k1; k1 = k;
+      if (v - a < 1e-15) break;
+      v = 1 / (v - a);
+    }
+    return null;
+  };
+  const FR = {
+    razionale,
+    /** per il TeX: intero, \frac{p}{q} o, senza una frazione semplice, il numero con c cifre (DV.f) */
+    tex(x, c = 2) {
+      const r = razionale(x);
+      if (!r) return DV.f(x, c);
+      if (r[1] === 1) return DV.f(r[0], 0);
+      return `${r[0] < 0 ? "-" : ""}\\frac{${Math.abs(r[0])}}{${r[1]}}`;
+    },
+    /** per il testo semplice: «6/5», «−3/5», «340» */
+    txt(x, c = 2) {
+      const r = razionale(x);
+      if (!r) return GI.numTxt(x, c);
+      if (r[1] === 1) return GI.numTxt(r[0], 0);
+      return `${r[0] < 0 ? "−" : ""}${Math.abs(r[0])}/${r[1]}`;
+    },
+    /** lista per il TeX, come DV.L */
+    L: (a, c = 2) => a.map((x) => FR.tex(x, c)).join(GI.EN ? ",\\ " : ";\\ "),
+    /** valore di una variabile nelle tabelle della soluzione: «—» se è nullo */
+    z: (x, c = 1) => (Math.abs(x) < 0.5 * Math.pow(10, -c) ? "—" : FR.txt(x, c)),
+  };
+  window.GI_PL_FR = FR;
+
   // ================================================================ produzione (cap. 5)
   /** riga evidenziata sotto il problema: quantità continue, non oggetti da contare */
   const CONTINUE = ["", ""];   // la nota sulle unità continue sta solo nella pagina del capitolo (Fabio, 25/11/2026)
@@ -378,14 +421,14 @@
     etichetta: T("Produzione e scorte", "Production and inventory"),
     cursori: [
       { nome: T("\\text{domanda}\\ d_{it}", "\\text{demand}\\ d_{it}"), min: 75, max: 110, step: 1, val: 100,
-        fmt: (x) => `${mig(somma2(DD().produzione.domanda) * x / 100)} ${T("unità", "units")} (${per(x)})`,
+        fmt: (x) => `${mig(somma2(DD().produzione.domanda) * x / 100)} ${T("unità", "units")} (${pct(x)})`,
         descr: T("moltiplica per lo stesso fattore le 9 domande \\(d_{it}\\) (3 prodotti × 3 mesi)", "multiplies the 9 demands \\(d_{it}\\) (3 products × 3 months) by the same factor") },
       { nome: T("\\text{capacità totale}", "\\text{total capacity}"), min: 90, max: 130, step: 1, val: 100,
-        fmt: (x) => `${mig(somma2(DD().produzione.cap) * x / 100)} ${T("ore", "hours")} (${per(x)})`,
+        fmt: (x) => `${mig(somma2(DD().produzione.cap) * x / 100)} ${T("ore", "hours")} (${pct(x)})`,
         descr: T("moltiplica per lo stesso fattore le 3 capacità mensili \\(b_t\\) (400 ore macchina ciascuna)", "multiplies the 3 monthly capacities \\(b_t\\) (400 machine hours each) by the same factor") },
       { nome: T("\\text{giacenza}\\ h_{3t}", "\\text{holding}\\ h_{3t}"), min: 25, max: 300, step: 25, val: 100,
-        fmt: (x) => `${nt(DD().produzione.ch[2] * x / 100, 2)} €`,
-        descr: T("costo di giacenza del prodotto 3 per unità e mese (prodotti 1 e 2: 1 e 1,2 €)", "holding cost of product 3 per unit and month (products 1 and 2: 1 and 1.2 €)") },
+        fmt: (x) => `${FR.txt(DD().produzione.ch[2] * x / 100)} €`,
+        descr: T("costo di giacenza del prodotto 3 per unità e mese (prodotti 1 e 2: 1 e 6/5 €)", "holding cost of product 3 per unit and month (products 1 and 2: 1 and 6/5 €)") },
     ],
     calcola: (v) => PL().produzione(v[1] / 100, v[0] / 100, [1, 1, v[2] / 100]),
     formula(R, v, st) {
@@ -406,19 +449,19 @@
       for (let i = 0; i < nI; i++) for (let t = 0; t < nT; t++) { vars[kx(i, t)] = `x_{${i + 1}${t + 1}}`; px.push(kx(i, t)); }
       for (let i = 0; i < nI; i++) for (let t = 0; t < nS; t++) { vars[ks(i, t)] = `s_{${i + 1}${t + 1}}`; ps.push(ks(i, t)); }
       const pezzi = [[...px, ...ps]];
-      const num = numLP({ senso: "min", vars, c: lp.c, cifre: 2, pezzi,
+      const num = numLP({ senso: "min", vars, c: lp.c, cifre: 2, pezzi, fmt: FR.tex,
         righe: lp.A.map((a, k) => ({ a, rel: lp.rel[k], rhs: lp.b[k], cifre: k < nI * nT ? 2 : 1 })) });
       const hI = P.ch.map((h, i) => h * (i === 2 ? fH : 1));
       const TABS = DV.tabelle(DV.tab(T("Domanda \\(d_{it}\\) (unità): prodotto \\(i\\) per riga, mese \\(t\\) per colonna", "Demand \\(d_{it}\\) (units): product \\(i\\) by row, month \\(t\\) by column"),
-        ["\\(i \\backslash t\\)", ...P.mesi.map(String)], P.domanda.map((r, i) => [String(i + 1), ...r.map((x) => DV.t(x * fD, 1))])));
+        ["\\(i \\backslash t\\)", ...P.mesi.map(String)], P.domanda.map((r, i) => [String(i + 1), ...r.map((x) => FR.txt(x * fD, 1))])));
       return modelloDi("produzione")(T(`<b>Il problema.</b> Decidiamo quante unità di ogni prodotto produrre in ogni mese e quante tenerne a scorta. ` +
         "L'obiettivo è minimizzare il costo di produzione e di giacenza. I vincoli: bilancio di magazzino mese per mese, con la domanda servita per intero, e ore macchina disponibili in ogni mese." + CONTINUE[0] +
         "<br><b>Variabili:</b> \\(x_{it}\\): unità del prodotto \\(i\\) prodotte nel mese \\(t\\); \\(s_{it}\\): unità del prodotto \\(i\\) a scorta alla fine del mese \\(t\\), per \\(t \\le m-1\\) (a fine orizzonte la scorta è il dato \\(r_{im}\\))." +
-        `<br><b>Dati:</b> \\(n = ${nI}\\): numero di prodotti; \\(m = ${nT}\\): numero di mesi; \\(c_{it}\\): costo di produzione di un'unità di \\(i\\), uguale in tutti i mesi: \\(${DV.L(P.cp)}\\) € (prodotti 1, 2, 3); \\(h_{it}\\): costo di giacenza di un'unità di \\(i\\) per un mese, uguale in tutti i mesi: \\(${DV.L(hI)}\\) €; \\(d_{it}\\): domanda del prodotto \\(i\\) nel mese \\(t\\) (unità, tabella qui sotto); \\(a_i\\): ore macchina per produrre un'unità di \\(i\\): \\(${DV.L(P.ore)}\\); \\(b_t\\): ore macchina disponibili nel mese \\(t\\): \\(${DV.L(P.cap.map((x) => x * fC), 1)}\\); \\(r_{i0}\\): scorta iniziale del prodotto \\(i\\): \\(${DV.L(P.r0)}\\) unità; \\(r_{im}\\): scorta finale richiesta del prodotto \\(i\\): \\(${DV.L(P.rm)}\\) unità.` + TABS,
+        `<br><b>Dati:</b> \\(n = ${nI}\\): numero di prodotti; \\(m = ${nT}\\): numero di mesi; \\(c_{it}\\): costo di produzione di un'unità di \\(i\\), uguale in tutti i mesi: \\(${FR.L(P.cp)}\\) € (prodotti 1, 2, 3); \\(h_{it}\\): costo di giacenza di un'unità di \\(i\\) per un mese, uguale in tutti i mesi: \\(${FR.L(hI)}\\) €; \\(d_{it}\\): domanda del prodotto \\(i\\) nel mese \\(t\\) (unità, tabella qui sotto); \\(a_i\\): ore macchina per produrre un'unità di \\(i\\): \\(${FR.L(P.ore)}\\); \\(b_t\\): ore macchina disponibili nel mese \\(t\\): \\(${FR.L(P.cap.map((x) => x * fC), 1)}\\); \\(r_{i0}\\): scorta iniziale del prodotto \\(i\\): \\(${FR.L(P.r0)}\\) unità; \\(r_{im}\\): scorta finale richiesta del prodotto \\(i\\): \\(${FR.L(P.rm)}\\) unità.` + TABS,
       `<b>The problem.</b> We decide how many units of each product to produce in each month and how many to keep in inventory. ` +
         "The objective is to minimize production and holding cost. The constraints: inventory balance month by month, with demand served in full, and the machine hours available in each month." + CONTINUE[1] +
         "<br><b>Variables:</b> \\(x_{it}\\): units of product \\(i\\) produced in month \\(t\\); \\(s_{it}\\): units of product \\(i\\) in inventory at the end of month \\(t\\), for \\(t \\le m-1\\) (at the end of the horizon the inventory is the datum \\(r_{im}\\))." +
-        `<br><b>Data:</b> \\(n = ${nI}\\): number of products; \\(m = ${nT}\\): number of months; \\(c_{it}\\): production cost of one unit of \\(i\\), the same in every month: \\(${DV.L(P.cp)}\\) € (products 1, 2, 3); \\(h_{it}\\): holding cost of one unit of \\(i\\) for one month, the same in every month: \\(${DV.L(hI)}\\) €; \\(d_{it}\\): demand for product \\(i\\) in month \\(t\\) (units, table below); \\(a_i\\): machine hours to produce one unit of \\(i\\): \\(${DV.L(P.ore)}\\); \\(b_t\\): machine hours available in month \\(t\\): \\(${DV.L(P.cap.map((x) => x * fC), 1)}\\); \\(r_{i0}\\): initial inventory of product \\(i\\): \\(${DV.L(P.r0)}\\) units; \\(r_{im}\\): required final inventory of product \\(i\\): \\(${DV.L(P.rm)}\\) units.` + TABS),
+        `<br><b>Data:</b> \\(n = ${nI}\\): number of products; \\(m = ${nT}\\): number of months; \\(c_{it}\\): production cost of one unit of \\(i\\), the same in every month: \\(${FR.L(P.cp)}\\) € (products 1, 2, 3); \\(h_{it}\\): holding cost of one unit of \\(i\\) for one month, the same in every month: \\(${FR.L(hI)}\\) €; \\(d_{it}\\): demand for product \\(i\\) in month \\(t\\) (units, table below); \\(a_i\\): machine hours to produce one unit of \\(i\\): \\(${FR.L(P.ore)}\\); \\(b_t\\): machine hours available in month \\(t\\): \\(${FR.L(P.cap.map((x) => x * fC), 1)}\\); \\(r_{i0}\\): initial inventory of product \\(i\\): \\(${FR.L(P.r0)}\\) units; \\(r_{im}\\): required final inventory of product \\(i\\): \\(${FR.L(P.rm)}\\) units.` + TABS),
       sim, num);
     },
     disegna(crea, R, v, C, S) {
@@ -486,13 +529,13 @@
       if (R.stato !== "ottimo") return M.tinta(C.rosso, T("Inammissibile.", "Infeasible.")) + " " +
         T("Con questa capacità la domanda non si può servire per intero: il simplesso si ferma alla fase 1.",
           "With this capacity demand cannot be served in full: the simplex stops in phase 1.");
-      const righe = R.ombra.map((y, t) => [String(t + 1), `${nt(R.ore[t], 0)}/${nt(R.cap[t], 0)}`, tx(n(y, 3)),
-        `[${nt(R.lo[t], 0)}, ${isFinite(R.up[t]) ? nt(R.up[t], 0) : "∞"}]`]);
+      const righe = R.ombra.map((y, t) => [String(t + 1), `${FR.txt(R.ore[t], 1)}\u00a0${T("su", "of")}\u00a0${FR.txt(R.cap[t], 1)}`, tx(FR.tex(y, 3)),
+        `[${FR.txt(R.lo[t], 1)}, ${isFinite(R.up[t]) ? FR.txt(R.up[t], 1) : "∞"}]`]);
       const att = R.ombra.map((y, t) => (Math.abs(y) > 1e-9 ? t : -1)).filter((t) => t >= 0);
       return `<div>${T("Prezzi ombra della capacità \\(b_t\\) (€ per ora)", "Shadow prices of the capacity \\(b_t\\) (€ per hour)")}</div>` +
-        M.tab([T("mese", "month"), T("ore", "hours"), T("prezzo ombra", "shadow price"), T("valido per \\(b_t\\) in", "valid for \\(b_t\\) in")], righe, att.length ? att[att.length - 1] : -1, C.rosso) +
+        M.tab([T("mese", "month"), T("ore usate", "hours used"), T("prezzo ombra", "shadow price"), T("valido per \\(b_t\\) in", "valid for \\(b_t\\) in")], righe, att.length ? att[att.length - 1] : -1, C.rosso) +
         `<div style="margin-top:.3em">${T("Un'ora in più nel mese", "One more hour in month")} ${att.length ? att[att.length - 1] + 1 : "—"} ` +
-        `${T("fa risparmiare", "saves")} ${att.length ? euro(-R.ombra[att[att.length - 1]], 3) : "0 €"}: ` +
+        `${T("fa risparmiare", "saves")} ${att.length ? FR.txt(-R.ombra[att[att.length - 1]], 3) + " €" : "0 €"}: ` +
         T("i prezzi ombra crescono verso la fine, perché un'ora tardi evita giacenze accumulate prima.",
           "the shadow prices grow towards the end, because a late hour avoids inventory built up earlier.") + "</div>" +
         `<div style="margin-top:.3em">${T("Le scorte \\(s_{it}\\) si accumulano nei mesi precedenti per coprire la domanda dei mesi in cui la capacità è satura; costano \\(h_{it}\\) per unità e mese.",
@@ -502,15 +545,14 @@
       if (R.stato !== "ottimo") return "";
       const Pd = DD().produzione, nT = Pd.mesi.length, giac = R.giacenza;
       const intest = (k = nT) => [tx(`i \\backslash t`), ...Pd.mesi.slice(0, k).map((m, t) => String(t + 1))];
-      const righe = (A) => A.map((riga, i) => [String(i + 1), ...riga.map((x) => SOL.z(x, 1))]);
-      return SOL.blocco(`${T("Costo ottimo", "Optimal cost")}: <b>${euro(R.costo)}</b>, ${T("di cui giacenza", "of which holding")} ${euro(giac)}`, [
+      const righe = (A) => A.map((riga, i) => [String(i + 1), ...riga.map((x) => FR.z(x, 1))]);
+      return SOL.blocco(`${T("Costo ottimo", "Optimal cost")}: <b>${FR.txt(R.costo)} €</b>, ${T("di cui giacenza", "of which holding")} ${FR.txt(giac)} €`, [
         SOL.tab(T("Produzione \\(\\tilde x_{it}\\) (unità): prodotto \\(i\\) per riga, mese \\(t\\) per colonna", "Production \\(\\tilde x_{it}\\) (units): product \\(i\\) by row, month \\(t\\) by column"), intest(), righe(R.x)),
         SOL.tab(T("Scorte di fine mese \\(\\tilde s_{it}\\) (unità)", "End-of-month inventory \\(\\tilde s_{it}\\) (units)"), intest(nT - 1), righe(R.s)),
-      ], T(`«—»: valore nullo. Le scorte sono variabili fino al mese ${nT - 1}: a fine mese ${nT} la scorta è il dato \\(r_{i${nT}}\\) (\\(${DV.L(Pd.rm)}\\) unità).`,
-        `«—»: zero value. The inventory is a variable up to month ${nT - 1}: at the end of month ${nT} the inventory is the datum \\(r_{i${nT}}\\) (\\(${DV.L(Pd.rm)}\\) units).`));
+      ], T("«—»: valore nullo.", "«—»: zero value."));
     },
-    domanda: T("Il mese 1 ha prezzo ombra nullo: perché? Porta la capacità a × 1,10: quale mese smette di essere saturo? E perché il mese 3 resta saturo fino a × 1,30? Sotto × 0,95 il piano non esiste più: perché? Abbassa la domanda sotto il 93%: che cosa cambia nei mesi saturi e nelle scorte? Poi alza la giacenza \\(h_{3t}\\) del prodotto 3: fino a 1,6 € il piano non cambia ma il costo e i prezzi ombra sì; oltre, le scorte passano al prodotto 2. Perché proprio 1,6 €?",
-      "Month 1 has a zero shadow price: why? Set capacity to × 1.10: which month stops being binding? And why does month 3 stay binding up to × 1.30? Below × 0.95 there is no plan any more: why? Lower demand below 93%: what changes in the binding months and in the inventory? Then raise the holding cost \\(h_{3t}\\) of product 3: up to 1.6 € the plan does not change but the cost and the shadow prices do; beyond it, the inventory moves to product 2. Why exactly 1.6 €?"),
+    domanda: T("Il mese 1 ha prezzo ombra nullo: perché? Porta la capacità al 114%: quale mese smette di essere saturo? Perché il mese 3 resta saturo fino al 130%? Sotto il 95% il piano non esiste più: perché? Abbassa la domanda all'87%: che cosa cambia nei mesi saturi e nelle scorte? Poi alza la giacenza \\(h_{3t}\\) del prodotto 3: fino a \\(\\frac{8}{5}\\) € il piano non cambia ma il costo e i prezzi ombra sì; oltre, le scorte passano al prodotto 2. Perché proprio \\(\\frac{8}{5}\\) €?",
+      "Month 1 has a zero shadow price: why? Set capacity to 114%: which month stops being binding? Why does month 3 stay binding up to 130%? Below 95% there is no plan any more: why? Lower demand to 87%: what changes in the binding months and in the inventory? Then raise the holding cost \\(h_{3t}\\) of product 3: up to \\(\\frac{8}{5}\\) € the plan does not change but the cost and the shadow prices do; beyond it, the inventory moves to product 2. Why exactly \\(\\frac{8}{5}\\) €?"),
   };
 
   // ================================================================ ricarica EV (cap. 5)

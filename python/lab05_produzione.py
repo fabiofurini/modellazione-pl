@@ -8,6 +8,8 @@ Contenuto:
   2. Prezzi ombra della capacità e analisi dei duali
   3. Sensitività: costo ottimo al variare della capacità
 """
+from fractions import Fraction
+
 import gurobipy as gp
 import numpy as np
 import pandas as pd
@@ -15,6 +17,14 @@ from gurobipy import GRB
 
 from stile import (ARANCIO, GRIGIO, ROSSO, TEAL, VERDE, intestazione, plt, salva_dat, salva_dati,
                    salva_figura)
+
+
+def frazione(x):
+    """un numero non intero come frazione con denominatore al più 12 (6/5, -3/5); altrimenti con due decimali"""
+    if not np.isfinite(x):
+        return "inf" if x > 0 else "-inf"
+    q = Fraction(x).limit_denominator(12)
+    return str(q) if abs(float(q) - x) < 1e-9 else f"{x:.2f}"
 
 # ----------------------------------------------------------------------
 # 1. DATI
@@ -28,12 +38,12 @@ domanda = {
     ("2", 1): 60,  ("2", 2): 80,  ("2", 3): 120,
     ("3", 1): 40,  ("3", 2): 40,  ("3", 3): 70,
 }
-costo_prod = {"1": 10.0, "2": 15.0, "3": 20.0}   # €/unità
-costo_giac = {"1": 1.0, "2": 1.2, "3": 1.2}      # €/unità/mese
-ore_unit = {"1": 1.0, "2": 1.5, "3": 2.0}        # ore macchina per unità
+costo_prod = {"1": 10, "2": 15, "3": 20}          # €/unità
+costo_giac = {"1": 1, "2": 6 / 5, "3": 6 / 5}      # €/unità/mese
+ore_unit = {"1": 1, "2": 3 / 2, "3": 2}              # ore macchina per unità
 capacita = {1: 400, 2: 400, 3: 400}  # ore/mese
-scorta_iniziale = {"1": 0, "2": 0, "3": 0}      # r_i0: scorta a inizio orizzonte (unità)
-scorta_finale = {"1": 0, "2": 0, "3": 0}        # r_im: scorta richiesta a fine orizzonte (unità)
+scorta_iniziale = {"1": 20, "2": 20, "3": 0}    # r_i0: scorta a inizio orizzonte (unità)
+scorta_finale = {"1": 10, "2": 0, "3": 20}      # r_im: scorta richiesta a fine orizzonte (unità)
 ultimo = mesi[-1]                               # mese m
 mesi_s = mesi[:-1]                              # mesi 1..m-1: solo qui la scorta s_it è una variabile
 
@@ -77,7 +87,7 @@ intestazione("LP base: costo minimo con servizio obbligatorio")
 m, x, s, v_cap = costruisci_lp()
 m.optimize()
 assert m.Status == GRB.OPTIMAL
-print(f"Costo totale ottimo: {m.ObjVal:,.2f} €")
+print(f"Costo totale ottimo: {frazione(m.ObjVal)} €")
 
 def scorta(i, t):
     """scorta a fine mese t: la variabile s_it per t < m, il dato r_im per t = m"""
@@ -89,9 +99,9 @@ piano = pd.DataFrame(
     columns=["prodotto", "mese", "produzione", "scorta"])
 salva_dati(piano, "produzione_piano_ottimo")
 print("\nPiano di produzione (unità/mese):")
-print(piano.pivot(index="prodotto", columns="mese", values="produzione").round(1))
+print(piano.pivot(index="prodotto", columns="mese", values="produzione").apply(lambda c: c.map(frazione)))
 print(f"\nScorte a fine mese (mese {ultimo}: la scorta finale richiesta r_i{ultimo}, un dato):")
-print(piano.pivot(index="prodotto", columns="mese", values="scorta").round(1))
+print(piano.pivot(index="prodotto", columns="mese", values="scorta").apply(lambda c: c.map(frazione)))
 
 print("\nVincoli di capacità: utilizzo, prezzo ombra e range di validità")
 righe_duali = []
@@ -99,8 +109,8 @@ for t in mesi:
     uso = sum(ore_unit[i] * x[i, t].X for i in prodotti)
     c = v_cap[t]
     righe_duali.append((t, uso, capacita[t], c.Pi, c.SARHSLow, c.SARHSUp))
-    print(f"  mese {t}: uso {uso:6.1f}/{capacita[t]} ore | "
-          f"prezzo ombra {c.Pi:6.3f} €/ora | valido per b_t in [{c.SARHSLow:6.1f}, {c.SARHSUp:6.1f}]")
+    print(f"  mese {t}: uso {frazione(uso)} ore su {capacita[t]} | "
+          f"prezzo ombra {frazione(c.Pi)} €/ora | valido per b_t in [{frazione(c.SARHSLow)}, {frazione(c.SARHSUp)}]")
 duali = pd.DataFrame(righe_duali, columns=["mese", "ore_usate", "capacita", "prezzo_ombra",
                                            "rhs_min", "rhs_max"])
 salva_dati(duali, "produzione_duali_capacita")
@@ -112,8 +122,8 @@ pi_star = duali["prezzo_ombra"].min()
 m2, x2, s2, v2 = costruisci_lp()
 v2[t_star].RHS = capacita[t_star] + 1
 m2.optimize()
-print(f"\nVerifica: +1 ora nel mese {t_star} → costo passa da {m.ObjVal:.2f} a {m2.ObjVal:.2f} "
-      f"(variazione {m2.ObjVal - m.ObjVal:+.3f} = prezzo ombra {pi_star:.3f})")
+print(f"\nVerifica: +1 ora nel mese {t_star} → il costo varia di {frazione(m2.ObjVal - m.ObjVal)} € "
+      f"(= prezzo ombra {frazione(pi_star)})")
 
 # ----------------------------------------------------------------------
 # 3. FIGURE (dati per pgfplots + anteprima matplotlib)
@@ -171,21 +181,22 @@ salva_figura(fig, "cap05_piano_scorte")
 
 # sensitività: costo ottimo al variare della capacità uniforme
 intestazione("Sensitività: costo ottimo al variare della capacità")
-fattori = np.linspace(0.90, 1.35, 19)
+percenti = np.arange(90, 136)
 costi = []
-for f in fattori:
+for p in percenti:
     ms, xs_, ss_, vs = costruisci_lp()
     for t in mesi:
-        vs[t].RHS = capacita[t] * f
+        vs[t].RHS = capacita[t] * p / 100
     ms.optimize()
     costi.append(ms.ObjVal if ms.Status == GRB.OPTIMAL else np.nan)
-    print(f"  capacità x{f:4.2f}: costo {costi[-1]:10.2f} €")
+    if p % 5 == 0:
+        print(f"  capacità al {p}%: " + (f"costo {frazione(costi[-1])} €" if ms.Status == GRB.OPTIMAL else "inammissibile"))
 
-tab_cap = pd.DataFrame({"percento": fattori * 100, "costo": costi}).dropna()
+tab_cap = pd.DataFrame({"percento": percenti, "costo": costi}).dropna()
 salva_dat(tab_cap, "cap05_capacita")
 
 fig, ax = plt.subplots()
-ax.plot(fattori * 100, costi, "-o", color=TEAL)
+ax.plot(percenti, costi, "-o", ms=3, color=TEAL)
 ax.axvline(100, color=ARANCIO, linestyle="--", label="capacità attuale")
 ax.set_xlabel("capacità disponibile (% dell'attuale)")
 ax.set_ylabel("costo totale ottimo (€)")
