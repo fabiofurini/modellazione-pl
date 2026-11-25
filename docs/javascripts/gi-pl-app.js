@@ -188,7 +188,7 @@
    *  vincolo, variabili a sinistra e termine noto a destra di ≤ = ≥, \\[1ex] fra le righe, in fondo le righe
    *  delle variabili (separate da virgole) con il loro dominio.
    *  P = { senso: "min"|"max", vars: [nomi TeX], c: [costi], righe: [{ a: [coefficienti], rel, rhs, cifre }],
-   *        dominio: [{ cols: [indici], rel, rhs }] (di default tutte ≥ 0), cifre, cifreObj,
+   *        dominio: [{ cols: [indici], rel, rhs }] (di default tutte ≥ 0), cifre, cifreObj, limiti (vedi sotto),
    *        pezzi: [[indici o null], ...] }
    *  «pezzi» con un solo elemento dà l'ordine delle colonne. Con più pezzi le righe lunghe vanno a capo come in tecniche-modelli-05: ogni pezzo è una riga
    *  dell'array (null = colonna vuota), la continuazione comincia con il suo segno, relazione e termine noto
@@ -200,7 +200,17 @@
     const nz = (a) => a && Math.abs(a) > 1e-12;
     const rhsTex = (r, c) => (typeof r === "number" ? n(r, c ?? 2) : r ?? "");
     const righe = [{ lab: P.senso === "max" ? "\\max" : "\\min", c: P.c, cifre: P.cifreObj ?? P.cifre ?? 3 }];
-    P.righe.forEach((r, i) => righe.push({ lab: i ? "" : SA(), c: r.a, rel: r.rel, rhs: rhsTex(r.rhs, r.cifre ?? P.cifre), cifre: r.cifre ?? P.cifre ?? 3 }));
+    // con P.limiti i limiti semplici x_j <= u (una sola variabile, coefficiente 1) si scrivono come la riga del dominio:
+    // una riga per valore di u, le variabili nelle loro colonne separate da virgole («x_{11}, ..., x_{16} <= 11»)
+    const semplice = (r) => P.limiti && r.rel === "<=" && r.a.filter(nz).length === 1 && Math.abs(r.a.find(nz) - 1) < 1e-12;
+    const limiti = new Map();
+    P.righe.filter((r) => !semplice(r)).forEach((r, i) => righe.push({ lab: i ? "" : SA(), c: r.a, rel: r.rel, rhs: rhsTex(r.rhs, r.cifre ?? P.cifre), cifre: r.cifre ?? P.cifre ?? 3 }));
+    P.righe.filter(semplice).forEach((r) => {
+      const u = rhsTex(r.rhs, r.cifre ?? P.cifre);
+      if (!limiti.has(u)) limiti.set(u, []);
+      limiti.get(u).push(r.a.findIndex(nz));
+    });
+    limiti.forEach((cols, u) => righe.push({ dominio: cols, rel: "<=", rhs: u }));
     (P.dominio || [{ cols: tutte, rel: ">=", rhs: "0" }]).forEach((d) => righe.push({ dominio: d.cols, rel: d.rel, rhs: d.rhs }));
     const br = (s) => (s === "" ? "" : /^\\text/.test(s) ? s : `{${s}}`);
     const out = [];
@@ -352,12 +362,13 @@
         s_{it} &\\ge 0, & ${it}.`;
       const fD = v[0] / 100, fC = v[1] / 100, fH = v[2] / 100;
       // un solo array dalle righe del simplesso (R.lp, colonne x_{11}, ..., x_{nm}, s_{11}, ..., s_{nm});
-      // a video le colonne vanno per prodotto, x_{i1}, s_{i1}, x_{i2}, s_{i2}, ...: il bilancio viene «a scala»;
-      const lp = R.lp, kx = (i, t) => i * nT + t, ks = (i, t) => nI * nT + i * nT + t, vars = [], ordine = [];
-      for (let i = 0; i < nI; i++) for (let t = 0; t < nT; t++) { vars[kx(i, t)] = `x_{${i + 1}${t + 1}}`; vars[ks(i, t)] = `s_{${i + 1}${t + 1}}`; ordine.push(kx(i, t), ks(i, t)); }
-      // 18 colonne non stanno nel riquadro: un pezzo per prodotto (come in tecniche-modelli-05), il bilancio resta su una
-      // riga a scala e la capacità del mese t somma in verticale x_{1t}, x_{2t}, x_{3t}, uno sotto l'altro
-      const num = numLP({ senso: "min", vars, c: lp.c, cifre: 2, pezzi: aCapo(ordine, 2 * nT),
+      // a video le colonne vanno per mese, x_{1t}, x_{2t}, x_{3t}, s_{1t}, s_{2t}, s_{3t}, e le 18 colonne vanno a capo
+      // a ogni mese (come in tecniche-modelli-05): la capacità del mese t sta su una riga, il bilancio va a capo al
+      // più una volta (s_{i,t-1} nella riga del mese prima, sopra s_{it})
+      const lp = R.lp, kx = (i, t) => i * nT + t, ks = (i, t) => nI * nT + i * nT + t, vars = [], pezzi = [];
+      for (let i = 0; i < nI; i++) for (let t = 0; t < nT; t++) { vars[kx(i, t)] = `x_{${i + 1}${t + 1}}`; vars[ks(i, t)] = `s_{${i + 1}${t + 1}}`; }
+      for (let t = 0; t < nT; t++) pezzi.push([...P.prodotti.map((q, i) => kx(i, t)), ...P.prodotti.map((q, i) => ks(i, t))]);
+      const num = numLP({ senso: "min", vars, c: lp.c, cifre: 2, pezzi,
         righe: lp.A.map((a, k) => ({ a, rel: lp.rel[k], rhs: lp.b[k], cifre: k < nI * nT ? 2 : 1 })) });
       const hI = P.ch.map((h, i) => h * (i === 2 ? fH : 1));
       const TABS = DV.tabelle(DV.tab(T("Domanda \\(d_{it}\\) (unità): prodotto \\(i\\) per riga, mese \\(t\\) per colonna", "Demand \\(d_{it}\\) (units): product \\(i\\) by row, month \\(t\\) by column"),
@@ -487,17 +498,16 @@
         x_{vt} &\\ge 0, & ${vt}.`;
       // un solo array dalle righe del simplesso (R.lp): una colonna per ogni coppia furgone-ora di collegamento
       // (d = 1 h); righe: energia di ogni furgone, rete in ogni ora (a destra k - b_t), potenza del caricatore
-      // a capo come in tecniche-modelli-05: un pezzo per gruppo di furgoni con ore disgiunte (V1; V2 e V3), la colonna è
-      // l'ora, così nella riga della rete dell'ora t le variabili x_{vt} stanno una sotto l'altra
-      const lp = R.lp, vars = lp.vars.map(([j, t]) => `x_{${j + 1}${t + 1}}`), pezzi = [];
-      lp.vars.forEach(([j, t], q) => {
-        const tutte = lp.vars.map((u, w) => w).filter((w) => lp.vars[w][0] === j);
-        if (tutte[0] !== q) return;
-        let g = pezzi.find((p) => tutte.every((w) => p[lp.vars[w][1]] == null));
-        if (!g) { g = new Array(nT).fill(null); pezzi.push(g); }
-        tutte.forEach((w) => { g[lp.vars[w][1]] = w; });
-      });
-      const num = numLP({ senso: "min", vars, c: lp.c, cifre: 3, pezzi,
+      // a video le colonne vanno per ora (x_{11}, x_{21}, x_{12}, x_{22}, ...) e vanno a capo solo fra un'ora e l'altra
+      // (al più 6 colonne per riga, come in tecniche-modelli-05): ogni riga della rete sta su una riga, l'energia di un
+      // furgone va a capo al più una volta; i limiti x_{vt} <= p_v come la riga del dominio, uno per valore di p_v
+      const lp = R.lp, vars = lp.vars.map(([j, t]) => `x_{${j + 1}${t + 1}}`), pezzi = [[]];
+      for (let t = 0; t < nT; t++) {
+        const ora = lp.vars.map((u, w) => w).filter((w) => lp.vars[w][1] === t);
+        if (pezzi[pezzi.length - 1].length + ora.length > 6) pezzi.push([]);
+        pezzi[pezzi.length - 1].push(...ora);
+      }
+      const num = numLP({ senso: "min", vars, c: lp.c, cifre: 3, pezzi, limiti: true,
         righe: lp.A.map((a, k) => ({ a, rel: lp.rel[k], rhs: lp.b[k], cifre: k < nV ? 2 : 1 })) });
       const TABS = DV.tabelle(
         DV.tab(T("Ore: prezzo \\(c_t\\) (€/kWh) e carico di base \\(b_t\\) (kW)", "Hours: price \\(c_t\\) (€/kWh) and base load \\(b_t\\) (kW)"),

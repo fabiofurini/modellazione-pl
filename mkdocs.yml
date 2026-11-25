@@ -142,7 +142,7 @@ extra_javascript:
   - javascripts/gi-ott.js?v=04048d2032
   - javascripts/gi-pl-dati.js?v=4c513c092e
   - javascripts/gi-pl-modelli.js?v=7b15bd0cee
-  - javascripts/gi-pl-app.js?v=3d90d8c8a2
+  - javascripts/gi-pl-app.js?v=cf60c1f613
   - javascripts/gi-pl-finanza.js?v=56f537bcc6
   - javascripts/gi-pl-tecniche.js?v=56403a0a47
   - javascripts/quiz.js?v=be7fae2b85
