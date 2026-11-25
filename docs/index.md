@@ -33,7 +33,7 @@ Prerequisiti: [Programmazione lineare](https://fabiofurini.github.io/programmazi
 <!-- collana-app -->
 ## Provalo subito
 
-Il problema del trasporto dai magazzini ai clienti, risolto all'ottimo nel browser su un'istanza con due magazzini e tre clienti: cambia un costo e la capacità di un magazzino con i cursori e il simplesso ricalcola le spedizioni ottime e il loro costo.
+L'app risolve all'ottimo nel browser un modello di programmazione lineare: i dati, il modello simbolico, il modello numerico dell'istanza e la soluzione ottima con il suo grafico. Con i cursori si cambiano i dati e la soluzione si ricalcola.
 
 <div class="gi" data-grafico="pl-trasporto"></div>
 

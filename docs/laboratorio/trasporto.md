@@ -9,6 +9,6 @@ title: "Trasporto dai magazzini ai clienti"
 
 # Trasporto dai magazzini ai clienti
 
-Il trasporto dai magazzini ai clienti, risolto all'ottimo nel browser su un'istanza con due magazzini e tre clienti: il problema, i dati, il modello simbolico e quello numerico, le spedizioni ottime e il loro costo. Muovi un costo e la capacità del magazzino 1: cambiano le spedizioni ottime.
+L'app risolve all'ottimo nel browser un modello di programmazione lineare: i dati, il modello simbolico, il modello numerico dell'istanza e la soluzione ottima con il suo grafico. Con i cursori si cambiano i dati e la soluzione si ricalcola.
 
 <div class="gi gi-app-intera" data-grafico="pl-trasporto"></div>
