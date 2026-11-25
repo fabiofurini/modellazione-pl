@@ -54,3 +54,11 @@
     - il terzo vincolo lineare garantisce che la persona consumi almeno il numero indicato di grammi di dolci al giorno;
 
     - l'ultimo vincolo definisce le variabili del modello.
+
+<!-- laboratorio-interattivo: sezione aggiunta per l'app dei nove modelli -->
+
+## Laboratorio interattivo { #laboratorio-interattivo }
+
+L'app risolve questo modello nel browser, con i dati dell'esempio: i cursori cambiano i dati principali e il simplesso ricalcola la soluzione ottima, il valore ottimo e i prezzi ombra. Si apre anche a tutta pagina nel [laboratorio interattivo](laboratorio/tecniche.md), con gli altri otto modelli svolti.
+
+<div class="gi gi-capitolo" data-grafico="pl-tecniche" data-funzione="dolci"></div>

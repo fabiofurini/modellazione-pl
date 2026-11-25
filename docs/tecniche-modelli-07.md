@@ -60,3 +60,11 @@
     - gli otto vincoli lineari successivi impongono i limiti giornalieri di capacità produttiva e di stoccaggio;
 
     - gli ultimi vincoli definiscono le variabili del modello di ottimizzazione.
+
+<!-- laboratorio-interattivo: sezione aggiunta per l'app dei nove modelli -->
+
+## Laboratorio interattivo { #laboratorio-interattivo }
+
+L'app risolve questo modello nel browser, con i dati dell'esempio: i cursori cambiano i dati principali e il simplesso ricalcola la soluzione ottima, il valore ottimo e i prezzi ombra. Si apre anche a tutta pagina nel [laboratorio interattivo](laboratorio/tecniche.md), con gli altri otto modelli svolti.
+
+<div class="gi gi-capitolo" data-grafico="pl-tecniche" data-funzione="torte"></div>

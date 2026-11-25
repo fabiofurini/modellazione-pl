@@ -21,6 +21,14 @@ e delle dispense. Scegli un'app: si apre a tutta pagina.
 
     [Apri l'app →](tre-modelli-lp.md)
 
+-   :material-format-list-numbered: **Nove modelli LP svolti**
+
+    ---
+
+    I nove modelli svolti del capitolo 4: produzione, trasporto, diete, pianificazione su più periodi, miscelazione e rapporti. Cambia i dati con i cursori: il simplesso, nel browser, ricalcola la soluzione ottima, il valore ottimo e i prezzi ombra.
+
+    [Apri l'app →](tecniche.md)
+
 </div>
 
 ## Modelli deterministici
