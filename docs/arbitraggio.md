@@ -304,3 +304,12 @@ Lo stesso codice è disponibile come notebook — [`notebooks/lab10_arbitraggio.
    $21{,}60$?
 3. Nel mercato completo, prezzare una call sul titolo 2 con strike 20 e
    verificare il prezzo con le probabilità neutrali al rischio.
+
+<!-- laboratorio-interattivo: sezione generata da genera_laboratorio.py -->
+
+## Laboratorio interattivo { #laboratorio-interattivo }
+
+L'app di questo capitolo risolve il modello nel browser, con i dati del caso di studio. ▶ accanto a un cursore lo fa muovere da solo.
+Si apre anche a tutta pagina nel [laboratorio interattivo](laboratorio/index.md): [Arbitraggio e prezzi coerenti](laboratorio/arbitraggio.md).
+
+<div class="gi gi-capitolo" data-grafico="pl-arbitraggio"></div>

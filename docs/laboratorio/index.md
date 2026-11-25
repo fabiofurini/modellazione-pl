@@ -65,6 +65,22 @@ e delle dispense. Scegli un'app: si apre a tutta pagina.
 
     [Apri l'app →](newsvendor-scenari.md)
 
+-   :material-chart-bell-curve: **VaR e CVaR: portafoglio a rischio di coda minimo**
+
+    ---
+
+    Gli otto titoli e i 220 scenari mensili del capitolo: la distribuzione delle perdite del portafoglio a CVaR minimo con media, VaR e CVaR, e la frontiera rendimento-CVaR. Muovi il livello α e il rendimento richiesto b.
+
+    [Apri l'app →](var-cvar.md)
+
+-   :material-scale-balance: **Arbitraggio e prezzi coerenti**
+
+    ---
+
+    Un titolo privo di rischio, due titoli rischiosi e tre stati: l'LP normalizzato rileva l'arbitraggio, i prezzi ombra danno le probabilità neutrali al rischio. Muovi i prezzi e il tasso r e guarda l'intervallo dei prezzi coerenti.
+
+    [Apri l'app →](arbitraggio.md)
+
 </div>
 
 ## Ottimizzazione e machine learning

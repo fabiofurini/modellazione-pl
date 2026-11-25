@@ -452,3 +452,12 @@ Lo stesso codice è disponibile come notebook — [`notebooks/lab09_var_cvar.ipy
 4. Forma vincolata $\max \sum_i m_i x_i$ soggetto a $\mathrm{CVaR} \le k$: stessa
    frontiera, duale = rendimento marginale del rischio.
 5. Stress test: scenario estremo con probabilità 1% — come cambia la prenotazione?
+
+<!-- laboratorio-interattivo: sezione generata da genera_laboratorio.py -->
+
+## Laboratorio interattivo { #laboratorio-interattivo }
+
+L'app di questo capitolo risolve il modello nel browser, con i dati del caso di studio. ▶ accanto a un cursore lo fa muovere da solo.
+Si apre anche a tutta pagina nel [laboratorio interattivo](laboratorio/index.md): [VaR e CVaR: portafoglio a rischio di coda minimo](laboratorio/var-cvar.md).
+
+<div class="gi gi-capitolo" data-grafico="pl-var-cvar"></div>
