@@ -13,6 +13,14 @@ e delle dispense. Scegli un'app: si apre a tutta pagina.
 
 <div class="grid cards" markdown>
 
+-   :material-truck-delivery-outline: **Trasporto dai magazzini ai clienti**
+
+    ---
+
+    Il trasporto da due magazzini a tre clienti, risolto all'ottimo nel browser: il problema, i dati, il modello simbolico e quello numerico, le spedizioni ottime e il loro costo.
+
+    [Apri l'app →](trasporto.md)
+
 -   :material-chart-timeline-variant: **Tre modelli LP risolti all'ottimo**
 
     ---

@@ -33,9 +33,9 @@ Prerequisiti: [Programmazione lineare](https://fabiofurini.github.io/programmazi
 <!-- collana-app -->
 ## Provalo subito
 
-Un modello di produzione e scorte, risolto all'ottimo nel browser: cambia la domanda, la capacità e il costo di giacenza con i cursori e il simplesso ricalcola il piano ottimo, il costo e i prezzi ombra delle ore macchina.
+Il problema del trasporto da due magazzini a tre clienti, risolto all'ottimo nel browser: cambia un costo e la capacità di un magazzino con i cursori e il simplesso ricalcola le spedizioni ottime e il loro costo.
 
-<div class="gi" data-grafico="pl-produzione"></div>
+<div class="gi" data-grafico="pl-trasporto"></div>
 
 [:material-gesture-tap: Altre app nel laboratorio](laboratorio/index.md){ .md-button }
 <!-- /collana-app -->
