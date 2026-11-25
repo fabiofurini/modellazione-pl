@@ -277,15 +277,15 @@
   const vProduzione = {
     etichetta: T("Produzione e scorte", "Production and inventory"),
     cursori: [
-      { nome: T("\\text{domanda}\\ d_{it}", "\\text{demand}\\ d_{it}"), min: 80, max: 105, step: 1, val: 100,
+      { nome: T("\\text{domanda}\\ d_{it}", "\\text{demand}\\ d_{it}"), min: 75, max: 110, step: 1, val: 100,
         fmt: (x) => `${mig(somma2(DD().produzione.domanda) * x / 100)} ${T("unità", "units")} (${per(x)})`,
-        descr: T("moltiplica per lo stesso fattore le 18 domande \\(d_{it}\\) (3 prodotti × 6 mesi)", "multiplies the 18 demands \\(d_{it}\\) (3 products × 6 months) by the same factor") },
-      { nome: T("\\text{capacità totale}", "\\text{total capacity}"), min: 95, max: 130, step: 1, val: 100,
+        descr: T("moltiplica per lo stesso fattore le 9 domande \\(d_{it}\\) (3 prodotti × 3 mesi)", "multiplies the 9 demands \\(d_{it}\\) (3 products × 3 months) by the same factor") },
+      { nome: T("\\text{capacità totale}", "\\text{total capacity}"), min: 90, max: 130, step: 1, val: 100,
         fmt: (x) => `${mig(somma2(DD().produzione.cap) * x / 100)} ${T("ore", "hours")} (${per(x)})`,
-        descr: T("moltiplica per lo stesso fattore le 6 capacità mensili \\(b_t\\) (420 o 460 ore macchina)", "multiplies the 6 monthly capacities \\(b_t\\) (420 or 460 machine hours) by the same factor") },
+        descr: T("moltiplica per lo stesso fattore le 3 capacità mensili \\(b_t\\) (400 ore macchina ciascuna)", "multiplies the 3 monthly capacities \\(b_t\\) (400 machine hours each) by the same factor") },
       { nome: T("\\text{giacenza}\\ h_{3t}", "\\text{holding}\\ h_{3t}"), min: 25, max: 300, step: 25, val: 100,
         fmt: (x) => `${nt(DD().produzione.ch[2] * x / 100, 2)} €`,
-        descr: T("costo di giacenza del prodotto 3 per unità e mese (prodotti 1 e 2: 0,8 e 1,2 €)", "holding cost of product 3 per unit and month (products 1 and 2: 0.8 and 1.2 €)") },
+        descr: T("costo di giacenza del prodotto 3 per unità e mese (prodotti 1 e 2: 1 e 1,2 €)", "holding cost of product 3 per unit and month (products 1 and 2: 1 and 1.2 €)") },
     ],
     calcola: (v) => PL().produzione(v[1] / 100, v[0] / 100, [1, 1, v[2] / 100]),
     formula(R, v, st) {
@@ -297,25 +297,21 @@
         x_{it} &\\ge 0, & ${it}, \\\\
         s_{it} &\\ge 0, & ${it}.`;
       const fD = v[0] / 100, fC = v[1] / 100, fH = v[2] / 100;
-      // un blocco per prodotto e semestre, colonne x_{i1}, s_{i1}, x_{i2}, s_{i2}, ...: il bilancio viene «a scala».
-      // Il secondo blocco riparte dalla scorta s_{i,3} del primo (il suo costo è già nel primo blocco).
+      // un blocco per prodotto, colonne x_{i1}, s_{i1}, x_{i2}, s_{i2}, ...: il bilancio viene «a scala»
       let num = "";
-      const meta = Math.ceil(nT / 2);
-      for (let i = 0; i < nI; i++) for (let h = 0; h < 2; h++) {
-        const I = i + 1, t0 = h ? meta : 0, t1 = h ? nT : meta, vars = [], ob = [];
-        if (h) { vars.push(`s_{${I},${t0}}`); ob.push(0); }
-        for (let t = t0 + 1; t <= t1; t++) { vars.push(`x_{${I},${t}}`, `s_{${I},${t}}`); ob.push(P.cp[i], P.ch[i] * (i === 2 ? fH : 1)); }
-        const primo = i === 0 && h === 0, sh = h ? 1 : 0;
+      for (let i = 0; i < nI; i++) {
+        const I = i + 1, vars = [], ob = [];
+        for (let t = 1; t <= nT; t++) { vars.push(`x_{${I},${t}}`, `s_{${I},${t}}`); ob.push(P.cp[i], P.ch[i] * (i === 2 ? fH : 1)); }
+        const primo = i === 0;
         const righe = [{ lab: primo ? MIN : "", c: ob, piu: !primo, cifre: 3 }];
-        for (let t = t0; t < t1; t++) {
-          const c = new Array(vars.length).fill(0), k = sh + 2 * (t - t0);
+        for (let t = 0; t < nT; t++) {
+          const c = new Array(vars.length).fill(0), k = 2 * t;
           c[k] = 1; c[k + 1] = -1; if (t > 0) c[k - 1] = 1;
           righe.push({ lab: primo && t === 0 ? SA() : "", c, rel: "=", rhs: n(P.domanda[i][t] * fD - (t ? 0 : P.s0[i]), 1) });
         }
-        righe.push({ dominio: vars.map((x, j) => j).filter((j) => j >= sh), rel: ">=", rhs: "0" });
-        num += blocco(h ? T(`Prodotto ${I}, mesi ${t0 + 1}–${t1} (la scorta \\(s_{${I},${t0}}\\) viene dal blocco precedente)`, `Product ${I}, months ${t0 + 1}–${t1} (the inventory \\(s_{${I},${t0}}\\) comes from the previous block)`)
-          : T(`Prodotto ${I}, mesi 1–${t1}: costi e bilancio delle scorte (per \\(t = 1\\) a destra c'è \\(d_{${I},1} - s_{${I},0}\\), con \\(s_{${I},0} = ${n(P.s0[i], 1)}\\))`,
-            `Product ${I}, months 1–${t1}: costs and inventory balance (for \\(t = 1\\) the right-hand side is \\(d_{${I},1} - s_{${I},0}\\), with \\(s_{${I},0} = ${n(P.s0[i], 1)}\\))`), griglia(vars, righe));
+        righe.push({ dominio: vars.map((x, j) => j), rel: ">=", rhs: "0" });
+        num += blocco(T(`Prodotto ${I}: costi e bilancio delle scorte (per \\(t = 1\\) a destra c'è \\(d_{${I},1} - s_{${I},0}\\), con \\(s_{${I},0} = ${n(P.s0[i], 1)}\\))`,
+          `Product ${I}: costs and inventory balance (for \\(t = 1\\) the right-hand side is \\(d_{${I},1} - s_{${I},0}\\), with \\(s_{${I},0} = ${n(P.s0[i], 1)}\\))`), griglia(vars, righe));
       }
       // capacità: una colonna per prodotto, una riga per mese
       const capR = P.mesi.map((m, t) => ({ nomi: P.prodotti.map((q, i) => `x_{${i + 1},${t + 1}}`), c: P.ore, rel: "<=", rhs: n(P.cap[t] * fC, 1) }));
@@ -333,8 +329,8 @@
         "<br><b>Variables:</b> \\(x_{it}\\): units of product \\(i\\) produced in month \\(t\\); \\(s_{it}\\): units of product \\(i\\) in inventory at the end of month \\(t\\)." +
         `<br><b>Data:</b> \\(n = ${nI}\\): number of products; \\(m = ${nT}\\): number of months; \\(c_{it}\\): production cost of one unit of \\(i\\), the same in every month: \\(${DV.L(P.cp)}\\) € (products 1, 2, 3); \\(h_{it}\\): holding cost of one unit of \\(i\\) for one month, the same in every month: \\(${DV.L(hI)}\\) €; \\(d_{it}\\): demand for product \\(i\\) in month \\(t\\) (units, table below); \\(a_i\\): machine hours to produce one unit of \\(i\\): \\(${DV.L(P.ore)}\\); \\(b_t\\): machine hours available in month \\(t\\): \\(${DV.L(P.cap.map((x) => x * fC), 1)}\\); \\(s_{i0}\\): initial inventory of product \\(i\\): \\(${DV.L(P.s0)}\\) units.` + TABS),
       sim, num,
-      T("La funzione obiettivo è la somma delle righe di costo dei sei blocchi di prodotto.",
-        "The objective function is the sum of the cost rows of the six product blocks."));
+      T("La funzione obiettivo è la somma delle righe di costo dei tre blocchi di prodotto.",
+        "The objective function is the sum of the cost rows of the three product blocks."));
     },
     disegna(crea, R, v, C, S) {
       if (R.stato !== "ottimo") return avviso(crea, S, C, T("Nessun piano ammissibile: la capacità non basta per la domanda", "No feasible plan: capacity does not cover demand"));
@@ -417,8 +413,8 @@
         SOL.tab(T("Scorte di fine mese \\(\\tilde s_{it}\\) (unità)", "End-of-month inventory \\(\\tilde s_{it}\\) (units)"), intest(), righe(R.s)),
       ], T("«—»: valore nullo.", "«—»: zero value."));
     },
-    domanda: T("Il mese 1 ha prezzo ombra nullo: perché? Porta la capacità a × 1,10: quali mesi smettono di essere saturi? Sotto × 0,97 il piano non esiste più: perché? Poi alza la giacenza \\(h_{3t}\\) del prodotto 3: fino a 1,8 € il piano non cambia ma il costo e i prezzi ombra sì; oltre, le scorte passano al prodotto 2. Perché proprio 1,8 €?",
-      "Month 1 has a zero shadow price: why? Set capacity to × 1.10: which months stop being binding? Below × 0.97 there is no plan any more: why? Then raise the holding cost \\(h_{3t}\\) of product 3: up to 1.8 € the plan does not change but the cost and the shadow prices do; beyond it, the inventory moves to product 2. Why exactly 1.8 €?"),
+    domanda: T("Il mese 1 ha prezzo ombra nullo: perché? Porta la capacità a × 1,10: quale mese smette di essere saturo? E perché il mese 3 resta saturo fino a × 1,30? Sotto × 0,95 il piano non esiste più: perché? Abbassa la domanda sotto il 93%: che cosa cambia nei mesi saturi e nelle scorte? Poi alza la giacenza \\(h_{3t}\\) del prodotto 3: fino a 1,6 € il piano non cambia ma il costo e i prezzi ombra sì; oltre, le scorte passano al prodotto 2. Perché proprio 1,6 €?",
+      "Month 1 has a zero shadow price: why? Set capacity to × 1.10: which month stops being binding? And why does month 3 stay binding up to × 1.30? Below × 0.95 there is no plan any more: why? Lower demand below 93%: what changes in the binding months and in the inventory? Then raise the holding cost \\(h_{3t}\\) of product 3: up to 1.6 € the plan does not change but the cost and the shadow prices do; beyond it, the inventory moves to product 2. Why exactly 1.6 €?"),
   };
 
   // ================================================================ ricarica EV (cap. 5)

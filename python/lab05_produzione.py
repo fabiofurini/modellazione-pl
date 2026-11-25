@@ -1,7 +1,7 @@
 """Capitolo 5 — Produzione e scorte multiperiodali (LP).
 
 Caso di studio: azienda che produce 3 componenti (prodotti 1, 2, 3) su un orizzonte
-di 6 mesi con una risorsa condivisa (ore macchina).
+di 3 mesi con una risorsa condivisa (ore macchina).
 
 Contenuto:
   1. LP a costo minimo con servizio obbligatorio
@@ -20,19 +20,19 @@ from stile import (ARANCIO, GRIGIO, ROSSO, TEAL, VERDE, intestazione, plt, salva
 # 1. DATI
 # ----------------------------------------------------------------------
 prodotti = ["1", "2", "3"]
-mesi = list(range(1, 7))
+mesi = list(range(1, 4))
 
-# domanda (unità/mese): stagionalità crescente con picco nei mesi 4-5
+# domanda (unità/mese): crescente, con il picco nel mese 3
 domanda = {
-    ("1", 1): 110, ("1", 2): 130, ("1", 3): 150, ("1", 4): 190, ("1", 5): 210, ("1", 6): 160,
-    ("2", 1): 70,  ("2", 2): 80,  ("2", 3): 110, ("2", 4): 140, ("2", 5): 150, ("2", 6): 100,
-    ("3", 1): 50,  ("3", 2): 55,  ("3", 3): 60,  ("3", 4): 80,  ("3", 5): 95,  ("3", 6): 70,
+    ("1", 1): 110, ("1", 2): 140, ("1", 3): 200,
+    ("2", 1): 60,  ("2", 2): 80,  ("2", 3): 120,
+    ("3", 1): 40,  ("3", 2): 40,  ("3", 3): 70,
 }
-costo_prod = {"1": 12.0, "2": 18.0, "3": 25.0}   # €/unità
-costo_giac = {"1": 0.8, "2": 1.2, "3": 1.6}      # €/unità/mese
-ore_unit = {"1": 0.9, "2": 1.4, "3": 2.1}        # ore macchina per unità
-capacita = {1: 420, 2: 420, 3: 460, 4: 460, 5: 460, 6: 420}  # ore/mese
-scorta_iniziale = {"1": 30, "2": 20, "3": 10}
+costo_prod = {"1": 10.0, "2": 15.0, "3": 20.0}   # €/unità
+costo_giac = {"1": 1.0, "2": 1.2, "3": 1.2}      # €/unità/mese
+ore_unit = {"1": 1.0, "2": 1.5, "3": 2.0}        # ore macchina per unità
+capacita = {1: 400, 2: 400, 3: 400}  # ore/mese
+scorta_iniziale = {"1": 0, "2": 0, "3": 0}
 
 df = pd.DataFrame(
     [(i, t, domanda[i, t], costo_prod[i], costo_giac[i], ore_unit[i], scorta_iniziale[i])
@@ -132,7 +132,7 @@ for k, t in enumerate(mesi):
         ax1.text(t, capacita[t] + 8, "satura", ha="center", fontsize=8, color=ROSSO)
 ax1.plot([], [], " ", label="satura: vincolo di capacità attivo (tutte le ore usate)")      # voce di sola legenda
 ax1.set_ylim(0, max(capacita.values()) * 1.12)
-ax1.set_xlabel("mese"); ax1.set_ylabel("ore")
+ax1.set_xticks(mesi); ax1.set_xlabel("mese"); ax1.set_ylabel("ore")
 ax1.set_title("Ore macchina usate per prodotto e capacità (l'altezza della barra è il totale del mese)")
 ax1.legend(fontsize=8, loc="upper left", bbox_to_anchor=(1.01, 1.0))   # fuori a destra: non copre le barre
 larg = 0.26
@@ -143,19 +143,19 @@ for k, i in enumerate(prodotti):
     ax2.plot([t + (k - 1) * larg for t in mesi], [domanda[i, t] for t in mesi], "--", marker="D", ms=4,
              color=colori[i], mfc="white", lw=1.2, label=f"prodotto {i}: domanda $d_{{{i}t}}$")
 ax2.set_ylim(0, max(domanda.values()) * 1.6)
-ax2.set_xlabel("mese"); ax2.set_ylabel("unità")
+ax2.set_xticks(mesi); ax2.set_xlabel("mese"); ax2.set_ylabel("unità")
 ax2.set_title("Produzione e domanda per prodotto")
 ax2.legend(fontsize=7, ncol=2, loc="upper left")
 for i in prodotti:
     ax3.plot(mesi, [s[i, t].X for t in mesi], marker="o", color=colori[i], label=f"prodotto {i}")
-ax3.set_xlabel("mese"); ax3.set_ylabel("unità a scorta")
+ax3.set_xticks(mesi); ax3.set_xlabel("mese"); ax3.set_ylabel("unità a scorta")
 ax3.set_title("Scorte di fine mese")
 ax3.legend(fontsize=8)
 salva_figura(fig, "cap05_piano_scorte")
 
 # sensitività: costo ottimo al variare della capacità uniforme
 intestazione("Sensitività: costo ottimo al variare della capacità")
-fattori = np.linspace(0.85, 1.25, 17)
+fattori = np.linspace(0.90, 1.35, 19)
 costi = []
 for f in fattori:
     ms, xs_, ss_, vs = costruisci_lp()

@@ -39,7 +39,7 @@ e delle dispense. Scegli un'app: si apre a tutta pagina.
 
     ---
 
-    Il piano ottimo su sei mesi con le scorte: cambia domanda, capacità e costo di giacenza e guarda quali mesi saturano le ore macchina e quanto vale un'ora in più.
+    Il piano ottimo su tre mesi con le scorte: cambia domanda, capacità e costo di giacenza e guarda quali mesi saturano le ore macchina e quanto vale un'ora in più.
 
     [Apri l'app →](piano-produzione.md)
 

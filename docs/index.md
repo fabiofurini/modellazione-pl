@@ -33,7 +33,7 @@ Prerequisiti: [Programmazione lineare](https://fabiofurini.github.io/programmazi
 <!-- collana-app -->
 ## Provalo subito
 
-Il piano di produzione e scorte su sei mesi, risolto all'ottimo nel browser: cambia la domanda, la capacità e il costo di giacenza con i cursori e il simplesso ricalcola il piano ottimo, il costo e i prezzi ombra delle ore macchina.
+Il piano di produzione e scorte su tre mesi, risolto all'ottimo nel browser: cambia la domanda, la capacità e il costo di giacenza con i cursori e il simplesso ricalcola il piano ottimo, il costo e i prezzi ombra delle ore macchina.
 
 <div class="gi" data-grafico="pl-produzione"></div>
 

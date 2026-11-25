@@ -701,9 +701,9 @@
    },
    "corretta": 3,
    "it": {
-    "testo": "LP di produzione e scorte a costo minimo (prodotti $i$, mesi $t$; $x_{it}$ = unità prodotte, $s_{it}$ = scorta a fine mese $t$, $d_{it}$ = domanda). $h_i$ è il costo mensile di giacenza e $a_i$ le ore macchina per unità del prodotto $i$. Nel caso di studio i prezzi ombra dei vincoli di capacità mensile differiscono esattamente di $h_3/a_3 = 0{,}762$ € all'ora fra mesi consecutivi. Perché?",
+    "testo": "LP di produzione e scorte a costo minimo (prodotti $i$, mesi $t$; $x_{it}$ = unità prodotte, $s_{it}$ = scorta a fine mese $t$, $d_{it}$ = domanda). $h_i$ è il costo mensile di giacenza e $a_i$ le ore macchina per unità del prodotto $i$. Nel caso di studio i prezzi ombra dei vincoli di capacità mensile differiscono esattamente di $h_3/a_3 = 0{,}6$ € all'ora fra mesi consecutivi. Perché?",
     "opzioni": [
-     "Perché $0{,}762$ €/ora è il costo di produzione del prodotto 3",
+     "Perché $0{,}6$ €/ora è il costo di produzione del prodotto 3",
      "Perché il solver arrotonda i duali ai dati dell'ultimo prodotto",
      "Perché ogni ora costa lo stesso in tutti i mesi dell'orizzonte",
      "Perché un'ora in più permette di produrre $1/a_3$ unità del prodotto 3 un mese dopo"
@@ -711,9 +711,9 @@
     "spiegazione": "Produrre $1/a_3$ unità del prodotto 3 un mese più tardi risparmia un mese di giacenza, $h_3/a_3$ per ora: ragionamento economico e solver danno lo stesso numero."
    },
    "en": {
-    "testo": "Minimum-cost production-inventory LP (products $i$, months $t$; $x_{it}$ = units produced, $s_{it}$ = inventory at the end of month $t$, $d_{it}$ = demand). $h_i$ is the monthly holding cost and $a_i$ the machine hours per unit of product $i$. In the case study the shadow prices of the monthly capacity constraints differ by exactly $h_3/a_3 = 0.762$ € per hour between consecutive months. Why?",
+    "testo": "Minimum-cost production-inventory LP (products $i$, months $t$; $x_{it}$ = units produced, $s_{it}$ = inventory at the end of month $t$, $d_{it}$ = demand). $h_i$ is the monthly holding cost and $a_i$ the machine hours per unit of product $i$. In the case study the shadow prices of the monthly capacity constraints differ by exactly $h_3/a_3 = 0.6$ € per hour between consecutive months. Why?",
     "opzioni": [
-     "Because $0.762$ €/hour is the production cost of product 3",
+     "Because $0.6$ €/hour is the production cost of product 3",
      "Because the solver rounds the duals to the last product's data",
      "Because each hour costs the same in every month of the horizon",
      "Because one more hour lets $1/a_3$ units of product 3 be made a month later"
@@ -768,7 +768,7 @@
      "Quello con $a_i$ minimo, che usa meno capacità",
      "Tutti i prodotti in proporzione alla domanda dei mesi di picco"
     ],
-    "spiegazione": "Anticipare di un mese un'ora macchina costa $h_i/a_i$. Nel caso di studio si anticipa il prodotto 3 ($h_3/a_3 = 0{,}762$, il minimo), fino a 107 unità a scorta."
+    "spiegazione": "Anticipare di un mese un'ora macchina costa $h_i/a_i$. Nel caso di studio si anticipa il prodotto 3 ($h_3/a_3 = 0{,}6$, il minimo), fino a 60 unità a scorta."
    },
    "en": {
     "testo": "Minimum-cost production-inventory LP (products $i$, months $t$; $x_{it}$ = units produced, $s_{it}$ = inventory at the end of month $t$, $d_{it}$ = demand). Capacity is tight in the peak months, so some production must be anticipated. Holding costs $h_i$ (€/unit/month) and machine hours $a_i$ (per unit) differ by product. Which product is it cheapest to produce in advance and stock?",
@@ -778,7 +778,7 @@
      "The one with the smallest $a_i$, which uses the least capacity",
      "All products in proportion to their demand in the peak months"
     ],
-    "spiegazione": "Anticipating one machine hour by one month costs $h_i/a_i$. In the case study product 3 ($h_3/a_3 = 0.762$, the smallest) is produced in advance, up to 107 units in stock."
+    "spiegazione": "Anticipating one machine hour by one month costs $h_i/a_i$. In the case study product 3 ($h_3/a_3 = 0.6$, the smallest) is produced in advance, up to 60 units in stock."
    }
   },
   {
@@ -2921,22 +2921,22 @@
    },
    "corretta": 2,
    "it": {
-    "testo": "LP di produzione e scorte a costo minimo (prodotti $i$, mesi $t$; $x_{it}$ = unità prodotte, $s_{it}$ = scorta a fine mese $t$, $d_{it}$ = domanda). Nel caso di studio (3 prodotti, 6 mesi) il problema diventa inammissibile quando le capacità mensili $b_t$ scendono sotto il $97\\%$ dei loro valori. Perché?",
+    "testo": "LP di produzione e scorte a costo minimo (prodotti $i$, mesi $t$; $x_{it}$ = unità prodotte, $s_{it}$ = scorta a fine mese $t$, $d_{it}$ = domanda). Nel caso di studio (3 prodotti, 3 mesi) il problema diventa inammissibile quando le capacità mensili $b_t$ scendono sotto il $95\\%$ dei loro valori. Perché?",
     "opzioni": [
      "Perché i costi di giacenza diventano negativi",
      "Perché l'obiettivo diventa non convesso",
      "Perché la capacità cumulata non copre più la domanda cumulata",
-     "Perché Gurobi richiede almeno il $97\\%$ della capacità"
+     "Perché Gurobi richiede almeno il $95\\%$ della capacità"
     ],
     "spiegazione": "Con i bilanci che obbligano a servire la domanda, la produzione dei mesi $1..t$ deve coprire la domanda dei mesi $1..t$ (al netto delle scorte iniziali): sotto quella capacità non esiste alcun piano."
    },
    "en": {
-    "testo": "Minimum-cost production-inventory LP (products $i$, months $t$; $x_{it}$ = units produced, $s_{it}$ = inventory at the end of month $t$, $d_{it}$ = demand). In the case study (3 products, 6 months) the problem becomes infeasible when the monthly capacities $b_t$ are cut below $97\\%$ of their values. Why?",
+    "testo": "Minimum-cost production-inventory LP (products $i$, months $t$; $x_{it}$ = units produced, $s_{it}$ = inventory at the end of month $t$, $d_{it}$ = demand). In the case study (3 products, 3 months) the problem becomes infeasible when the monthly capacities $b_t$ are cut below $95\\%$ of their values. Why?",
     "opzioni": [
      "Because the holding costs become negative",
      "Because the objective becomes non-convex",
      "Because cumulated capacity can no longer cover cumulated demand",
-     "Because Gurobi needs at least $97\\%$ of capacity"
+     "Because Gurobi needs at least $95\\%$ of capacity"
     ],
     "spiegazione": "With balances that force demand to be served, the production of months $1..t$ must cover the demand of months $1..t$ (net of initial stocks): below that capacity no plan exists."
    }
@@ -2981,24 +2981,24 @@
    },
    "corretta": 0,
    "it": {
-    "testo": "LP di produzione e scorte a costo minimo (prodotti $i$, mesi $t$; $x_{it}$ = unità prodotte, $s_{it}$ = scorta a fine mese $t$, $d_{it}$ = domanda). Nel caso di studio il vincolo di capacità del mese 6 ha prezzo ombra $-3{,}810$ €/ora. Aggiungendo un'ora nel mese 6 e risolvendo di nuovo, il costo passa da $32889{,}33$ a $32885{,}52$ €. Che cosa mostra questa verifica?",
+    "testo": "LP di produzione e scorte a costo minimo (prodotti $i$, mesi $t$; $x_{it}$ = unità prodotte, $s_{it}$ = scorta a fine mese $t$, $d_{it}$ = domanda). Nel caso di studio il vincolo di capacità del mese 3 ha prezzo ombra $-1{,}200$ €/ora. Aggiungendo un'ora nel mese 3 e risolvendo di nuovo, il costo passa da $11508{,}00$ a $11506{,}80$ €. Che cosa mostra questa verifica?",
     "opzioni": [
-     "Il prezzo ombra è confermato: la variazione, $-3{,}81$, coincide",
+     "Il prezzo ombra è confermato: la variazione, $-1{,}2$, coincide",
      "Il prezzo ombra è sbagliato, perché il costo è sceso",
      "L'ora in più è fuori dall'intervallo di validità",
-     "La capacità del mese 6 non è un vincolo attivo"
+     "La capacità del mese 3 non è un vincolo attivo"
     ],
-    "spiegazione": "È il passo 3 del protocollo: la riottimizzazione riproduce la previsione marginale del duale, $\\Delta\\tilde z = \\tilde\\pi_6 \\cdot 1$."
+    "spiegazione": "È il passo 3 del protocollo: la riottimizzazione riproduce la previsione marginale del duale, $\\Delta\\tilde z = \\tilde\\pi_3 \\cdot 1$."
    },
    "en": {
-    "testo": "Minimum-cost production-inventory LP (products $i$, months $t$; $x_{it}$ = units produced, $s_{it}$ = inventory at the end of month $t$, $d_{it}$ = demand). In the case study the capacity constraint of month 6 has shadow price $-3.810$ €/hour. Adding one hour in month 6 and re-solving, the cost goes from $32889.33$ to $32885.52$ €. What does this check show?",
+    "testo": "Minimum-cost production-inventory LP (products $i$, months $t$; $x_{it}$ = units produced, $s_{it}$ = inventory at the end of month $t$, $d_{it}$ = demand). In the case study the capacity constraint of month 3 has shadow price $-1.200$ €/hour. Adding one hour in month 3 and re-solving, the cost goes from $11508.00$ to $11506.80$ €. What does this check show?",
     "opzioni": [
-     "The shadow price is confirmed: the change, $-3.81$, matches it",
+     "The shadow price is confirmed: the change, $-1.2$, matches it",
      "The shadow price is wrong, since the cost decreased",
      "The extra hour is outside the validity range",
-     "Capacity in month 6 is not binding"
+     "Capacity in month 3 is not binding"
     ],
-    "spiegazione": "This is step 3 of the protocol: the re-optimization reproduces the marginal prediction of the dual, $\\Delta\\tilde z = \\tilde\\pi_6 \\cdot 1$."
+    "spiegazione": "This is step 3 of the protocol: the re-optimization reproduces the marginal prediction of the dual, $\\Delta\\tilde z = \\tilde\\pi_3 \\cdot 1$."
    }
   },
   {
@@ -3761,24 +3761,24 @@
    },
    "corretta": 1,
    "it": {
-    "testo": "LP di produzione e scorte a costo minimo (prodotti $i$, mesi $t$; $x_{it}$ = unità prodotte, $s_{it}$ = scorta a fine mese $t$, $d_{it}$ = domanda). Caso di studio: 3 prodotti, 6 mesi, domanda di picco nei mesi 4–5, gli stessi costi unitari in ogni mese. Il prodotto 3 si produce in $89{,}5$ unità nel mese 1 ma solo $29{,}0$ nel mese 5. Perché?",
+    "testo": "LP di produzione e scorte a costo minimo (prodotti $i$, mesi $t$; $x_{it}$ = unità prodotte, $s_{it}$ = scorta a fine mese $t$, $d_{it}$ = domanda). Caso di studio: 3 prodotti, 3 mesi, domanda di picco nel mese 3, gli stessi costi unitari in ogni mese. Il prodotto 3 si produce in $70$ unità nei mesi 1 e 2 ma solo $10$ nel mese 3. Perché?",
     "opzioni": [
-     "La sua domanda è molto più alta nel mese 1 che nel mese 5",
-     "Pre-build: si produce in anticipo per liberare capacità nei mesi di picco",
-     "Il suo costo di produzione è più basso nel mese 1 che nel mese 5",
+     "La sua domanda è molto più alta nei mesi 1 e 2 che nel mese 3",
+     "Pre-build: si produce in anticipo per liberare capacità nel mese di picco",
+     "Il suo costo di produzione è più basso nei mesi 1 e 2 che nel mese 3",
      "Un errore numerico: un piano ottimo non crea mai scorte"
     ],
-    "spiegazione": "A parità di costi la scorta costa e basta; il solver anticipa il prodotto 3 (quello col minor costo di giacenza per ora macchina) per liberare ore macchina nei mesi di picco, e la scorta torna a zero nel mese 6."
+    "spiegazione": "A parità di costi la scorta costa e basta; il solver anticipa il prodotto 3 (quello col minor costo di giacenza per ora macchina) per liberare ore macchina nel mese di picco, e la scorta torna a zero nel mese 3."
    },
    "en": {
-    "testo": "Minimum-cost production-inventory LP (products $i$, months $t$; $x_{it}$ = units produced, $s_{it}$ = inventory at the end of month $t$, $d_{it}$ = demand). Case study: 3 products, 6 months, demand peaking in months 4–5, the same unit costs in every month. Product 3 is produced in $89.5$ units in month 1 but only $29.0$ in month 5. Why?",
+    "testo": "Minimum-cost production-inventory LP (products $i$, months $t$; $x_{it}$ = units produced, $s_{it}$ = inventory at the end of month $t$, $d_{it}$ = demand). Case study: 3 products, 3 months, demand peaking in month 3, the same unit costs in every month. Product 3 is produced in $70$ units in months 1 and 2 but only $10$ in month 3. Why?",
     "opzioni": [
-     "Its demand is much higher in month 1 than in month 5",
-     "Pre-build: it is made early to free capacity in the peak months",
-     "Its production cost is lower in month 1 than in month 5",
+     "Its demand is much higher in months 1 and 2 than in month 3",
+     "Pre-build: it is made early to free capacity in the peak month",
+     "Its production cost is lower in months 1 and 2 than in month 3",
      "A numerical error: an optimal plan never builds inventory"
     ],
-    "spiegazione": "With equal costs, inventory only costs money; the solver anticipates product 3 (the one with the smallest holding cost per machine hour) to free machine hours in the peak months, and the stock returns to zero in month 6."
+    "spiegazione": "With equal costs, inventory only costs money; the solver anticipates product 3 (the one with the smallest holding cost per machine hour) to free machine hours in the peak month, and the stock returns to zero in month 3."
    }
   },
   {
@@ -6821,24 +6821,24 @@
    },
    "corretta": 2,
    "it": {
-    "testo": "LP di produzione e scorte a costo minimo (prodotti $i$, mesi $t$; $x_{it}$ = unità prodotte, $s_{it}$ = scorta a fine mese $t$, $d_{it}$ = domanda, $c_{it}$ e $h_{it}$ = costi unitari di produzione e di giacenza, $a_i$ = ore macchina per unità, $b_t$ = ore disponibili): bilanci $s_{i,t-1} + x_{it} = d_{it} + s_{it}$, capacità $\\sum_ia_ix_{it} \\le b_t$. Caso di studio: 3 prodotti, 6 mesi; $(c_i, h_i, a_i, s_{i0})$ = $(12; 0{,}8; 0{,}9; 30)$, $(18; 1{,}2; 1{,}4; 20)$, $(25; 1{,}6; 2{,}1; 10)$; ore $b_t$ = 420, 420, 460, 460, 460, 420; domanda con picco nei mesi 4–5. Quale prodotto ha il costo di giacenza per ora macchina, $h_i/a_i$, più basso?",
+    "testo": "LP di produzione e scorte a costo minimo (prodotti $i$, mesi $t$; $x_{it}$ = unità prodotte, $s_{it}$ = scorta a fine mese $t$, $d_{it}$ = domanda, $c_{it}$ e $h_{it}$ = costi unitari di produzione e di giacenza, $a_i$ = ore macchina per unità, $b_t$ = ore disponibili): bilanci $s_{i,t-1} + x_{it} = d_{it} + s_{it}$, capacità $\\sum_ia_ix_{it} \\le b_t$. Caso di studio: 3 prodotti, 3 mesi; $(c_i, h_i, a_i, s_{i0})$ = $(10; 1; 1; 0)$, $(15; 1{,}2; 1{,}5; 0)$, $(20; 1{,}2; 2; 0)$; ore $b_t$ = 400, 400, 400; domanda con picco nel mese 3. Quale prodotto ha il costo di giacenza per ora macchina, $h_i/a_i$, più basso?",
     "opzioni": [
-     "Il prodotto 1, $0{,}889$",
-     "Il prodotto 2, $0{,}857$",
-     "Il prodotto 3, $0{,}762$",
+     "Il prodotto 1, $1$",
+     "Il prodotto 2, $0{,}8$",
+     "Il prodotto 3, $0{,}6$",
      "Sono tutti uguali"
     ],
-    "spiegazione": "$0{,}8/0{,}9 = 0{,}889$, $1{,}2/1{,}4 = 0{,}857$, $1{,}6/2{,}1 = 0{,}762$: tenere a scorta il prodotto 3 è il modo più economico di «immagazzinare» ore macchina, per questo si produce in anticipo."
+    "spiegazione": "$1/1 = 1$, $1{,}2/1{,}5 = 0{,}8$, $1{,}2/2 = 0{,}6$: tenere a scorta il prodotto 3 è il modo più economico di «immagazzinare» ore macchina, per questo si produce in anticipo."
    },
    "en": {
-    "testo": "Minimum-cost production-inventory LP (products $i$, months $t$; $x_{it}$ = units produced, $s_{it}$ = inventory at the end of month $t$, $d_{it}$ = demand, $c_{it}$ and $h_{it}$ = unit production and holding costs, $a_i$ = machine hours per unit, $b_t$ = hours available): balances $s_{i,t-1} + x_{it} = d_{it} + s_{it}$, capacities $\\sum_ia_ix_{it} \\le b_t$. Case study: 3 products, 6 months; $(c_i, h_i, a_i, s_{i0})$ = $(12, 0.8, 0.9, 30)$, $(18, 1.2, 1.4, 20)$, $(25, 1.6, 2.1, 10)$; hours $b_t$ = 420, 420, 460, 460, 460, 420; demand peaking in months 4–5. Which product has the lowest holding cost per machine hour, $h_i/a_i$?",
+    "testo": "Minimum-cost production-inventory LP (products $i$, months $t$; $x_{it}$ = units produced, $s_{it}$ = inventory at the end of month $t$, $d_{it}$ = demand, $c_{it}$ and $h_{it}$ = unit production and holding costs, $a_i$ = machine hours per unit, $b_t$ = hours available): balances $s_{i,t-1} + x_{it} = d_{it} + s_{it}$, capacities $\\sum_ia_ix_{it} \\le b_t$. Case study: 3 products, 3 months; $(c_i, h_i, a_i, s_{i0})$ = $(10, 1, 1, 0)$, $(15, 1.2, 1.5, 0)$, $(20, 1.2, 2, 0)$; hours $b_t$ = 400, 400, 400; demand peaking in month 3. Which product has the lowest holding cost per machine hour, $h_i/a_i$?",
     "opzioni": [
-     "Product 1, $0.889$",
-     "Product 2, $0.857$",
-     "Product 3, $0.762$",
+     "Product 1, $1$",
+     "Product 2, $0.8$",
+     "Product 3, $0.6$",
      "All equal"
     ],
-    "spiegazione": "$0.8/0.9 = 0.889$, $1.2/1.4 = 0.857$, $1.6/2.1 = 0.762$: holding product 3 is the cheapest way to «store» machine hours, which is why it is produced in advance."
+    "spiegazione": "$1/1 = 1$, $1.2/1.5 = 0.8$, $1.2/2 = 0.6$: holding product 3 is the cheapest way to «store» machine hours, which is why it is produced in advance."
    }
   },
   {
@@ -6851,24 +6851,24 @@
    },
    "corretta": 1,
    "it": {
-    "testo": "LP di produzione e scorte a costo minimo (prodotti $i$, mesi $t$; $x_{it}$ = unità prodotte, $s_{it}$ = scorta a fine mese $t$, $d_{it}$ = domanda, $c_{it}$ e $h_{it}$ = costi unitari di produzione e di giacenza, $a_i$ = ore macchina per unità, $b_t$ = ore disponibili): bilanci $s_{i,t-1} + x_{it} = d_{it} + s_{it}$, capacità $\\sum_ia_ix_{it} \\le b_t$. Caso di studio: 3 prodotti, 6 mesi; $(c_i, h_i, a_i, s_{i0})$ = $(12; 0{,}8; 0{,}9; 30)$, $(18; 1{,}2; 1{,}4; 20)$, $(25; 1{,}6; 2{,}1; 10)$; ore $b_t$ = 420, 420, 460, 460, 460, 420; domanda con picco nei mesi 4–5. Nel mese 5 le domande sono $210$, $150$, $95$. Quante ore macchina servirebbero al mese 5 per produrre la propria domanda, contro $b_5 = 460$?",
+    "testo": "LP di produzione e scorte a costo minimo (prodotti $i$, mesi $t$; $x_{it}$ = unità prodotte, $s_{it}$ = scorta a fine mese $t$, $d_{it}$ = domanda, $c_{it}$ e $h_{it}$ = costi unitari di produzione e di giacenza, $a_i$ = ore macchina per unità, $b_t$ = ore disponibili): bilanci $s_{i,t-1} + x_{it} = d_{it} + s_{it}$, capacità $\\sum_ia_ix_{it} \\le b_t$. Caso di studio: 3 prodotti, 3 mesi; $(c_i, h_i, a_i, s_{i0})$ = $(10; 1; 1; 0)$, $(15; 1{,}2; 1{,}5; 0)$, $(20; 1{,}2; 2; 0)$; ore $b_t$ = 400, 400, 400; domanda con picco nel mese 3. Nel mese 3 le domande sono $200$, $120$, $70$. Quante ore macchina servirebbero al mese 3 per produrre la propria domanda, contro $b_3 = 400$?",
     "opzioni": [
-     "$455$, entro la capacità",
-     "$598{,}5$, oltre la capacità",
-     "$460$, esattamente la capacità",
-     "$520$, appena oltre la capacità"
+     "$380$, entro la capacità",
+     "$520$, oltre la capacità",
+     "$400$, esattamente la capacità",
+     "$410$, appena oltre la capacità"
     ],
-    "spiegazione": "$0{,}9\\cdot 210 + 1{,}4\\cdot 150 + 2{,}1\\cdot 95 = 189 + 210 + 199{,}5 = 598{,}5 > 460$: il picco non si serve mese per mese, quindi servono scorte costruite nei mesi precedenti."
+    "spiegazione": "$1\\cdot 200 + 1{,}5\\cdot 120 + 2\\cdot 70 = 200 + 180 + 140 = 520 > 400$: il picco non si serve mese per mese, quindi servono scorte costruite nei mesi precedenti."
    },
    "en": {
-    "testo": "Minimum-cost production-inventory LP (products $i$, months $t$; $x_{it}$ = units produced, $s_{it}$ = inventory at the end of month $t$, $d_{it}$ = demand, $c_{it}$ and $h_{it}$ = unit production and holding costs, $a_i$ = machine hours per unit, $b_t$ = hours available): balances $s_{i,t-1} + x_{it} = d_{it} + s_{it}$, capacities $\\sum_ia_ix_{it} \\le b_t$. Case study: 3 products, 6 months; $(c_i, h_i, a_i, s_{i0})$ = $(12, 0.8, 0.9, 30)$, $(18, 1.2, 1.4, 20)$, $(25, 1.6, 2.1, 10)$; hours $b_t$ = 420, 420, 460, 460, 460, 420; demand peaking in months 4–5. In month 5 the demands are $210$, $150$, $95$. How many machine hours would month 5 need to produce its own demand, against $b_5 = 460$?",
+    "testo": "Minimum-cost production-inventory LP (products $i$, months $t$; $x_{it}$ = units produced, $s_{it}$ = inventory at the end of month $t$, $d_{it}$ = demand, $c_{it}$ and $h_{it}$ = unit production and holding costs, $a_i$ = machine hours per unit, $b_t$ = hours available): balances $s_{i,t-1} + x_{it} = d_{it} + s_{it}$, capacities $\\sum_ia_ix_{it} \\le b_t$. Case study: 3 products, 3 months; $(c_i, h_i, a_i, s_{i0})$ = $(10, 1, 1, 0)$, $(15, 1.2, 1.5, 0)$, $(20, 1.2, 2, 0)$; hours $b_t$ = 400, 400, 400; demand peaking in month 3. In month 3 the demands are $200$, $120$, $70$. How many machine hours would month 3 need to produce its own demand, against $b_3 = 400$?",
     "opzioni": [
-     "$455$, within the capacity",
-     "$598.5$, beyond capacity",
-     "$460$, exactly the capacity",
-     "$520$, just beyond capacity"
+     "$380$, within the capacity",
+     "$520$, beyond capacity",
+     "$400$, exactly the capacity",
+     "$410$, just beyond capacity"
     ],
-    "spiegazione": "$0.9\\cdot 210 + 1.4\\cdot 150 + 2.1\\cdot 95 = 189 + 210 + 199.5 = 598.5 > 460$: the peak cannot be served month by month, so inventory built in the earlier months is needed."
+    "spiegazione": "$1\\cdot 200 + 1.5\\cdot 120 + 2\\cdot 70 = 200 + 180 + 140 = 520 > 400$: the peak cannot be served month by month, so inventory built in the earlier months is needed."
    }
   },
   {
@@ -6881,24 +6881,24 @@
    },
    "corretta": 0,
    "it": {
-    "testo": "LP di produzione e scorte a costo minimo (prodotti $i$, mesi $t$; $x_{it}$ = unità prodotte, $s_{it}$ = scorta a fine mese $t$, $d_{it}$ = domanda, $c_{it}$ e $h_{it}$ = costi unitari di produzione e di giacenza, $a_i$ = ore macchina per unità, $b_t$ = ore disponibili): bilanci $s_{i,t-1} + x_{it} = d_{it} + s_{it}$, capacità $\\sum_ia_ix_{it} \\le b_t$. Caso di studio: 3 prodotti, 6 mesi; $(c_i, h_i, a_i, s_{i0})$ = $(12; 0{,}8; 0{,}9; 30)$, $(18; 1{,}2; 1{,}4; 20)$, $(25; 1{,}6; 2{,}1; 10)$; ore $b_t$ = 420, 420, 460, 460, 460, 420; domanda con picco nei mesi 4–5. Come entra nel modello la scorta iniziale $s_{i0}$?",
+    "testo": "LP di produzione e scorte a costo minimo (prodotti $i$, mesi $t$; $x_{it}$ = unità prodotte, $s_{it}$ = scorta a fine mese $t$, $d_{it}$ = domanda, $c_{it}$ e $h_{it}$ = costi unitari di produzione e di giacenza, $a_i$ = ore macchina per unità, $b_t$ = ore disponibili): bilanci $s_{i,t-1} + x_{it} = d_{it} + s_{it}$, capacità $\\sum_ia_ix_{it} \\le b_t$. Caso di studio: 3 prodotti, 3 mesi; $(c_i, h_i, a_i, s_{i0})$ = $(10; 1; 1; 0)$, $(15; 1{,}2; 1{,}5; 0)$, $(20; 1{,}2; 2; 0)$; ore $b_t$ = 400, 400, 400; domanda con picco nel mese 3. Come entra nel modello la scorta iniziale $s_{i0}$?",
     "opzioni": [
      "Come dato nel bilancio del mese 1",
      "Come variabile decisionale del mese 0",
      "Come limite inferiore della scorta finale",
      "L'LP la ignora"
     ],
-    "spiegazione": "Per $t = 1$ il bilancio è $s_{i0} + x_{i1} = d_{i1} + s_{i1}$ con $s_{i0}$ noto: è un dato, non una variabile (30, 20 e 10 unità nel caso di studio)."
+    "spiegazione": "Per $t = 1$ il bilancio è $s_{i0} + x_{i1} = d_{i1} + s_{i1}$ con $s_{i0}$ noto: è un dato, non una variabile (nel caso di studio vale 0 per tutti i prodotti)."
    },
    "en": {
-    "testo": "Minimum-cost production-inventory LP (products $i$, months $t$; $x_{it}$ = units produced, $s_{it}$ = inventory at the end of month $t$, $d_{it}$ = demand, $c_{it}$ and $h_{it}$ = unit production and holding costs, $a_i$ = machine hours per unit, $b_t$ = hours available): balances $s_{i,t-1} + x_{it} = d_{it} + s_{it}$, capacities $\\sum_ia_ix_{it} \\le b_t$. Case study: 3 products, 6 months; $(c_i, h_i, a_i, s_{i0})$ = $(12, 0.8, 0.9, 30)$, $(18, 1.2, 1.4, 20)$, $(25, 1.6, 2.1, 10)$; hours $b_t$ = 420, 420, 460, 460, 460, 420; demand peaking in months 4–5. How does the initial stock $s_{i0}$ enter the model?",
+    "testo": "Minimum-cost production-inventory LP (products $i$, months $t$; $x_{it}$ = units produced, $s_{it}$ = inventory at the end of month $t$, $d_{it}$ = demand, $c_{it}$ and $h_{it}$ = unit production and holding costs, $a_i$ = machine hours per unit, $b_t$ = hours available): balances $s_{i,t-1} + x_{it} = d_{it} + s_{it}$, capacities $\\sum_ia_ix_{it} \\le b_t$. Case study: 3 products, 3 months; $(c_i, h_i, a_i, s_{i0})$ = $(10, 1, 1, 0)$, $(15, 1.2, 1.5, 0)$, $(20, 1.2, 2, 0)$; hours $b_t$ = 400, 400, 400; demand peaking in month 3. How does the initial stock $s_{i0}$ enter the model?",
     "opzioni": [
      "As a datum in the balance of month 1",
      "As a decision variable of month 0",
      "As a lower bound on the final stock",
      "It is ignored by the LP"
     ],
-    "spiegazione": "For $t = 1$ the balance reads $s_{i0} + x_{i1} = d_{i1} + s_{i1}$ with $s_{i0}$ known: it is data, not a variable (30, 20 and 10 units in the case study)."
+    "spiegazione": "For $t = 1$ the balance reads $s_{i0} + x_{i1} = d_{i1} + s_{i1}$ with $s_{i0}$ known: it is data, not a variable (0 for every product in the case study)."
    }
   },
   {
@@ -6911,7 +6911,7 @@
    },
    "corretta": 3,
    "it": {
-    "testo": "LP di produzione e scorte a costo minimo (prodotti $i$, mesi $t$; $x_{it}$ = unità prodotte, $s_{it}$ = scorta a fine mese $t$, $d_{it}$ = domanda, $c_{it}$ e $h_{it}$ = costi unitari di produzione e di giacenza, $a_i$ = ore macchina per unità, $b_t$ = ore disponibili): bilanci $s_{i,t-1} + x_{it} = d_{it} + s_{it}$, capacità $\\sum_ia_ix_{it} \\le b_t$. Caso di studio: 3 prodotti, 6 mesi; $(c_i, h_i, a_i, s_{i0})$ = $(12; 0{,}8; 0{,}9; 30)$, $(18; 1{,}2; 1{,}4; 20)$, $(25; 1{,}6; 2{,}1; 10)$; ore $b_t$ = 420, 420, 460, 460, 460, 420; domanda con picco nei mesi 4–5. Dove sono i dati del caso di studio, e perché conta?",
+    "testo": "LP di produzione e scorte a costo minimo (prodotti $i$, mesi $t$; $x_{it}$ = unità prodotte, $s_{it}$ = scorta a fine mese $t$, $d_{it}$ = domanda, $c_{it}$ e $h_{it}$ = costi unitari di produzione e di giacenza, $a_i$ = ore macchina per unità, $b_t$ = ore disponibili): bilanci $s_{i,t-1} + x_{it} = d_{it} + s_{it}$, capacità $\\sum_ia_ix_{it} \\le b_t$. Caso di studio: 3 prodotti, 3 mesi; $(c_i, h_i, a_i, s_{i0})$ = $(10; 1; 1; 0)$, $(15; 1{,}2; 1{,}5; 0)$, $(20; 1{,}2; 2; 0)$; ore $b_t$ = 400, 400, 400; domanda con picco nel mese 3. Dove sono i dati del caso di studio, e perché conta?",
     "opzioni": [
      "Solo nella dispensa, come tabelle",
      "Nel log stampato dal solver",
@@ -6921,7 +6921,7 @@
     "spiegazione": "Domanda e capacità sono nei file CSV della cartella `dati/`; lo script li legge, quindi cambiando un dato e rieseguendo si rigenerano tutti i numeri del capitolo."
    },
    "en": {
-    "testo": "Minimum-cost production-inventory LP (products $i$, months $t$; $x_{it}$ = units produced, $s_{it}$ = inventory at the end of month $t$, $d_{it}$ = demand, $c_{it}$ and $h_{it}$ = unit production and holding costs, $a_i$ = machine hours per unit, $b_t$ = hours available): balances $s_{i,t-1} + x_{it} = d_{it} + s_{it}$, capacities $\\sum_ia_ix_{it} \\le b_t$. Case study: 3 products, 6 months; $(c_i, h_i, a_i, s_{i0})$ = $(12, 0.8, 0.9, 30)$, $(18, 1.2, 1.4, 20)$, $(25, 1.6, 2.1, 10)$; hours $b_t$ = 420, 420, 460, 460, 460, 420; demand peaking in months 4–5. Where are the data of the case study kept, and why does it matter?",
+    "testo": "Minimum-cost production-inventory LP (products $i$, months $t$; $x_{it}$ = units produced, $s_{it}$ = inventory at the end of month $t$, $d_{it}$ = demand, $c_{it}$ and $h_{it}$ = unit production and holding costs, $a_i$ = machine hours per unit, $b_t$ = hours available): balances $s_{i,t-1} + x_{it} = d_{it} + s_{it}$, capacities $\\sum_ia_ix_{it} \\le b_t$. Case study: 3 products, 3 months; $(c_i, h_i, a_i, s_{i0})$ = $(10, 1, 1, 0)$, $(15, 1.2, 1.5, 0)$, $(20, 1.2, 2, 0)$; hours $b_t$ = 400, 400, 400; demand peaking in month 3. Where are the data of the case study kept, and why does it matter?",
     "opzioni": [
      "Inside the notes only, as tables",
      "In the log printed by the solver",
@@ -7061,24 +7061,24 @@
    },
    "corretta": 1,
    "it": {
-    "testo": "LP di produzione e scorte a costo minimo (prodotti $i$, mesi $t$; $x_{it}$ = unità prodotte, $s_{it}$ = scorta a fine mese $t$, $d_{it}$ = domanda, $c_{it}$ e $h_{it}$ = costi unitari di produzione e di giacenza, $a_i$ = ore macchina per unità, $b_t$ = ore disponibili): bilanci $s_{i,t-1} + x_{it} = d_{it} + s_{it}$, capacità $\\sum_ia_ix_{it} \\le b_t$. Caso di studio: 3 prodotti, 6 mesi; $(c_i, h_i, a_i, s_{i0})$ = $(12; 0{,}8; 0{,}9; 30)$, $(18; 1{,}2; 1{,}4; 20)$, $(25; 1{,}6; 2{,}1; 10)$; ore $b_t$ = 420, 420, 460, 460, 460, 420; domanda con picco nei mesi 4–5. Nel piano ottimo il prodotto 1 si produce in $80$ unità nel mese 1, benché la sua domanda sia $110$. Perché?",
+    "testo": "LP di produzione e scorte a costo minimo (prodotti $i$, mesi $t$; $x_{it}$ = unità prodotte, $s_{it}$ = scorta a fine mese $t$, $d_{it}$ = domanda, $c_{it}$ e $h_{it}$ = costi unitari di produzione e di giacenza, $a_i$ = ore macchina per unità, $b_t$ = ore disponibili): bilanci $s_{i,t-1} + x_{it} = d_{it} + s_{it}$, capacità $\\sum_ia_ix_{it} \\le b_t$. Caso di studio: 3 prodotti, 3 mesi; $(c_i, h_i, a_i, s_{i0})$ = $(10; 1; 1; 0)$, $(15; 1{,}2; 1{,}5; 0)$, $(20; 1{,}2; 2; 0)$; ore $b_t$ = 400, 400, 400; domanda con picco nel mese 3. Nel piano ottimo il prodotto 3 si produce in $70$ unità nel mese 1, benché la sua domanda sia $40$. Perché?",
     "opzioni": [
      "La capacità del mese 1 è satura",
-     "La scorta iniziale di 30 copre il resto",
-     "Il prodotto 1 costa meno nei mesi dopo",
+     "Le 30 in più vanno a scorta per il mese 3",
+     "Il prodotto 3 costa meno nel mese 1",
      "Una parte della sua domanda va persa"
     ],
-    "spiegazione": "$s_{10} = 30$: il bilancio $30 + 80 = 110 + 0$ vale senza scorta residua; il mese 1 usa solo 330 delle sue 420 ore."
+    "spiegazione": "Il bilancio $0 + 70 = 40 + 30$ lascia 30 unità a scorta: il mese 1 usa solo 340 delle sue 400 ore, e le ore libere servono al mese 3, a cui ne mancano 120."
    },
    "en": {
-    "testo": "Minimum-cost production-inventory LP (products $i$, months $t$; $x_{it}$ = units produced, $s_{it}$ = inventory at the end of month $t$, $d_{it}$ = demand, $c_{it}$ and $h_{it}$ = unit production and holding costs, $a_i$ = machine hours per unit, $b_t$ = hours available): balances $s_{i,t-1} + x_{it} = d_{it} + s_{it}$, capacities $\\sum_ia_ix_{it} \\le b_t$. Case study: 3 products, 6 months; $(c_i, h_i, a_i, s_{i0})$ = $(12, 0.8, 0.9, 30)$, $(18, 1.2, 1.4, 20)$, $(25, 1.6, 2.1, 10)$; hours $b_t$ = 420, 420, 460, 460, 460, 420; demand peaking in months 4–5. In the optimal plan product 1 is produced in $80$ units in month 1, although its demand is $110$. Why?",
+    "testo": "Minimum-cost production-inventory LP (products $i$, months $t$; $x_{it}$ = units produced, $s_{it}$ = inventory at the end of month $t$, $d_{it}$ = demand, $c_{it}$ and $h_{it}$ = unit production and holding costs, $a_i$ = machine hours per unit, $b_t$ = hours available): balances $s_{i,t-1} + x_{it} = d_{it} + s_{it}$, capacities $\\sum_ia_ix_{it} \\le b_t$. Case study: 3 products, 3 months; $(c_i, h_i, a_i, s_{i0})$ = $(10, 1, 1, 0)$, $(15, 1.2, 1.5, 0)$, $(20, 1.2, 2, 0)$; hours $b_t$ = 400, 400, 400; demand peaking in month 3. In the optimal plan product 3 is produced in $70$ units in month 1, although its demand is $40$. Why?",
     "opzioni": [
      "Capacity of month 1 is saturated",
-     "The initial stock of 30 covers the rest",
-     "Product 1 is cheaper in later months",
+     "The extra 30 are stocked for month 3",
+     "Product 3 is cheaper in month 1",
      "Part of its demand is lost"
     ],
-    "spiegazione": "$s_{10} = 30$: the balance $30 + 80 = 110 + 0$ holds with no inventory left; month 1 uses only 330 of its 420 hours."
+    "spiegazione": "The balance $0 + 70 = 40 + 30$ leaves 30 units in stock: month 1 uses only 340 of its 400 hours, and the free hours serve month 3, which is 120 hours short."
    }
   },
   {
@@ -7091,21 +7091,21 @@
    },
    "corretta": 3,
    "it": {
-    "testo": "LP di produzione e scorte a costo minimo (prodotti $i$, mesi $t$; $x_{it}$ = unità prodotte, $s_{it}$ = scorta a fine mese $t$, $d_{it}$ = domanda, $c_{it}$ e $h_{it}$ = costi unitari di produzione e di giacenza, $a_i$ = ore macchina per unità, $b_t$ = ore disponibili): bilanci $s_{i,t-1} + x_{it} = d_{it} + s_{it}$, capacità $\\sum_ia_ix_{it} \\le b_t$. Caso di studio: 3 prodotti, 6 mesi; $(c_i, h_i, a_i, s_{i0})$ = $(12; 0{,}8; 0{,}9; 30)$, $(18; 1{,}2; 1{,}4; 20)$, $(25; 1{,}6; 2{,}1; 10)$; ore $b_t$ = 420, 420, 460, 460, 460, 420; domanda con picco nei mesi 4–5. Nel piano ottimo (costo $32.889{,}33$ €) tutte le scorte sono nulle alla fine del mese 6. Perché?",
+    "testo": "LP di produzione e scorte a costo minimo (prodotti $i$, mesi $t$; $x_{it}$ = unità prodotte, $s_{it}$ = scorta a fine mese $t$, $d_{it}$ = domanda, $c_{it}$ e $h_{it}$ = costi unitari di produzione e di giacenza, $a_i$ = ore macchina per unità, $b_t$ = ore disponibili): bilanci $s_{i,t-1} + x_{it} = d_{it} + s_{it}$, capacità $\\sum_ia_ix_{it} \\le b_t$. Caso di studio: 3 prodotti, 3 mesi; $(c_i, h_i, a_i, s_{i0})$ = $(10; 1; 1; 0)$, $(15; 1{,}2; 1{,}5; 0)$, $(20; 1{,}2; 2; 0)$; ore $b_t$ = 400, 400, 400; domanda con picco nel mese 3. Nel piano ottimo (costo $11.508{,}00$ €) tutte le scorte sono nulle alla fine del mese 3. Perché?",
     "opzioni": [
      "Lo impone un vincolo esplicito",
      "Il solver arrotonda l'ultimo mese",
-     "La domanda del mese 6 è nulla",
+     "La domanda del mese 3 è nulla",
      "Una scorta finale costerebbe e basta"
     ],
     "spiegazione": "Nulla dà valore alla scorta dopo l'orizzonte, quindi un'unità avanzata alla fine aggiungerebbe costo di produzione e giacenza senza servire domanda: il modello non ne lascia."
    },
    "en": {
-    "testo": "Minimum-cost production-inventory LP (products $i$, months $t$; $x_{it}$ = units produced, $s_{it}$ = inventory at the end of month $t$, $d_{it}$ = demand, $c_{it}$ and $h_{it}$ = unit production and holding costs, $a_i$ = machine hours per unit, $b_t$ = hours available): balances $s_{i,t-1} + x_{it} = d_{it} + s_{it}$, capacities $\\sum_ia_ix_{it} \\le b_t$. Case study: 3 products, 6 months; $(c_i, h_i, a_i, s_{i0})$ = $(12, 0.8, 0.9, 30)$, $(18, 1.2, 1.4, 20)$, $(25, 1.6, 2.1, 10)$; hours $b_t$ = 420, 420, 460, 460, 460, 420; demand peaking in months 4–5. In the optimal plan (cost $32{,}889.33$ €) every inventory is zero at the end of month 6. Why?",
+    "testo": "Minimum-cost production-inventory LP (products $i$, months $t$; $x_{it}$ = units produced, $s_{it}$ = inventory at the end of month $t$, $d_{it}$ = demand, $c_{it}$ and $h_{it}$ = unit production and holding costs, $a_i$ = machine hours per unit, $b_t$ = hours available): balances $s_{i,t-1} + x_{it} = d_{it} + s_{it}$, capacities $\\sum_ia_ix_{it} \\le b_t$. Case study: 3 products, 3 months; $(c_i, h_i, a_i, s_{i0})$ = $(10, 1, 1, 0)$, $(15, 1.2, 1.5, 0)$, $(20, 1.2, 2, 0)$; hours $b_t$ = 400, 400, 400; demand peaking in month 3. In the optimal plan (cost $11{,}508.00$ €) every inventory is zero at the end of month 3. Why?",
     "opzioni": [
      "An explicit constraint forces it",
      "The solver rounds the last month",
-     "The demand of month 6 is zero",
+     "The demand of month 3 is zero",
      "A final stock would only cost money"
     ],
     "spiegazione": "Nothing values the stock after the horizon, so any unit left at the end would add holding and production cost without serving demand: the model does not leave any."
@@ -7121,24 +7121,24 @@
    },
    "corretta": 0,
    "it": {
-    "testo": "LP di produzione e scorte a costo minimo (prodotti $i$, mesi $t$; $x_{it}$ = unità prodotte, $s_{it}$ = scorta a fine mese $t$, $d_{it}$ = domanda, $c_{it}$ e $h_{it}$ = costi unitari di produzione e di giacenza, $a_i$ = ore macchina per unità, $b_t$ = ore disponibili): bilanci $s_{i,t-1} + x_{it} = d_{it} + s_{it}$, capacità $\\sum_ia_ix_{it} \\le b_t$. Caso di studio: 3 prodotti, 6 mesi; $(c_i, h_i, a_i, s_{i0})$ = $(12; 0{,}8; 0{,}9; 30)$, $(18; 1{,}2; 1{,}4; 20)$, $(25; 1{,}6; 2{,}1; 10)$; ore $b_t$ = 420, 420, 460, 460, 460, 420; domanda con picco nei mesi 4–5. Nel piano ottimo i prodotti 1 e 2 si producono su domanda, mentre il prodotto 3 accumula scorta nei mesi 1–3 (fino a $106{,}9$ unità a fine mese 3). Che strategia ha trovato il solver?",
+    "testo": "LP di produzione e scorte a costo minimo (prodotti $i$, mesi $t$; $x_{it}$ = unità prodotte, $s_{it}$ = scorta a fine mese $t$, $d_{it}$ = domanda, $c_{it}$ e $h_{it}$ = costi unitari di produzione e di giacenza, $a_i$ = ore macchina per unità, $b_t$ = ore disponibili): bilanci $s_{i,t-1} + x_{it} = d_{it} + s_{it}$, capacità $\\sum_ia_ix_{it} \\le b_t$. Caso di studio: 3 prodotti, 3 mesi; $(c_i, h_i, a_i, s_{i0})$ = $(10; 1; 1; 0)$, $(15; 1{,}2; 1{,}5; 0)$, $(20; 1{,}2; 2; 0)$; ore $b_t$ = 400, 400, 400; domanda con picco nel mese 3. Nel piano ottimo i prodotti 1 e 2 si producono su domanda, mentre il prodotto 3 accumula scorta nei mesi 1 e 2 ($60$ unità a fine mese 2). Che strategia ha trovato il solver?",
     "opzioni": [
      "Il pre-build del prodotto 3",
      "Produzione livellata di ogni prodotto",
      "Vendite perse nei mesi di picco",
      "Straordinari nei mesi di picco"
     ],
-    "spiegazione": "Il prodotto 3 ha il $h_i/a_i$ più basso: produrlo in anticipo libera ore nei mesi di picco 4–5 al costo di giacenza per ora minore; la sua scorta poi torna a zero."
+    "spiegazione": "Il prodotto 3 ha il $h_i/a_i$ più basso: produrlo in anticipo libera ore nel mese di picco 3 al costo di giacenza per ora minore; la sua scorta poi torna a zero."
    },
    "en": {
-    "testo": "Minimum-cost production-inventory LP (products $i$, months $t$; $x_{it}$ = units produced, $s_{it}$ = inventory at the end of month $t$, $d_{it}$ = demand, $c_{it}$ and $h_{it}$ = unit production and holding costs, $a_i$ = machine hours per unit, $b_t$ = hours available): balances $s_{i,t-1} + x_{it} = d_{it} + s_{it}$, capacities $\\sum_ia_ix_{it} \\le b_t$. Case study: 3 products, 6 months; $(c_i, h_i, a_i, s_{i0})$ = $(12, 0.8, 0.9, 30)$, $(18, 1.2, 1.4, 20)$, $(25, 1.6, 2.1, 10)$; hours $b_t$ = 420, 420, 460, 460, 460, 420; demand peaking in months 4–5. In the optimal plan products 1 and 2 are produced on demand, while product 3 accumulates inventory in months 1–3 (up to $106.9$ units at the end of month 3). What strategy has the solver found?",
+    "testo": "Minimum-cost production-inventory LP (products $i$, months $t$; $x_{it}$ = units produced, $s_{it}$ = inventory at the end of month $t$, $d_{it}$ = demand, $c_{it}$ and $h_{it}$ = unit production and holding costs, $a_i$ = machine hours per unit, $b_t$ = hours available): balances $s_{i,t-1} + x_{it} = d_{it} + s_{it}$, capacities $\\sum_ia_ix_{it} \\le b_t$. Case study: 3 products, 3 months; $(c_i, h_i, a_i, s_{i0})$ = $(10, 1, 1, 0)$, $(15, 1.2, 1.5, 0)$, $(20, 1.2, 2, 0)$; hours $b_t$ = 400, 400, 400; demand peaking in month 3. In the optimal plan products 1 and 2 are produced on demand, while product 3 accumulates inventory in months 1 and 2 ($60$ units at the end of month 2). What strategy has the solver found?",
     "opzioni": [
      "Pre-build of product 3",
      "Level production of every product",
      "Lost sales in the peak months",
      "Overtime in the peak months"
     ],
-    "spiegazione": "Product 3 has the lowest $h_i/a_i$: producing it early frees hours in the peak months 4–5 at the smallest holding cost per hour; its inventory then falls back to zero."
+    "spiegazione": "Product 3 has the lowest $h_i/a_i$: producing it early frees hours in the peak month 3 at the smallest holding cost per hour; its inventory then falls back to zero."
    }
   },
   {
@@ -7151,24 +7151,24 @@
    },
    "corretta": 2,
    "it": {
-    "testo": "LP di produzione e scorte a costo minimo (prodotti $i$, mesi $t$; $x_{it}$ = unità prodotte, $s_{it}$ = scorta a fine mese $t$, $d_{it}$ = domanda, $c_{it}$ e $h_{it}$ = costi unitari di produzione e di giacenza, $a_i$ = ore macchina per unità, $b_t$ = ore disponibili): bilanci $s_{i,t-1} + x_{it} = d_{it} + s_{it}$, capacità $\\sum_ia_ix_{it} \\le b_t$. Caso di studio: 3 prodotti, 6 mesi; $(c_i, h_i, a_i, s_{i0})$ = $(12; 0{,}8; 0{,}9; 30)$, $(18; 1{,}2; 1{,}4; 20)$, $(25; 1{,}6; 2{,}1; 10)$; ore $b_t$ = 420, 420, 460, 460, 460, 420; domanda con picco nei mesi 4–5. Il mese 1 usa $330$ delle sue $420$ ore; il solver riporta `Pi` $= 0$ con intervallo di validità $[330, +\\infty)$. Come si legge?",
+    "testo": "LP di produzione e scorte a costo minimo (prodotti $i$, mesi $t$; $x_{it}$ = unità prodotte, $s_{it}$ = scorta a fine mese $t$, $d_{it}$ = domanda, $c_{it}$ e $h_{it}$ = costi unitari di produzione e di giacenza, $a_i$ = ore macchina per unità, $b_t$ = ore disponibili): bilanci $s_{i,t-1} + x_{it} = d_{it} + s_{it}$, capacità $\\sum_ia_ix_{it} \\le b_t$. Caso di studio: 3 prodotti, 3 mesi; $(c_i, h_i, a_i, s_{i0})$ = $(10; 1; 1; 0)$, $(15; 1{,}2; 1{,}5; 0)$, $(20; 1{,}2; 2; 0)$; ore $b_t$ = 400, 400, 400; domanda con picco nel mese 3. Il mese 1 usa $340$ delle sue $400$ ore; il solver riporta `Pi` $= 0$ con intervallo di validità $[340, +\\infty)$. Come si legge?",
     "opzioni": [
      "Il mese 1 è il collo di bottiglia del piano",
-     "Ore in più nel mese 1 valgono $0{,}762$ €",
+     "Ore in più nel mese 1 valgono $0{,}6$ €",
      "Vincolo lasco: ore in più non valgono nulla",
      "Il modello è degenere nel mese 1"
     ],
-    "spiegazione": "Un vincolo lasco ha prezzo ombra nullo; il prezzo resta nullo finché $b_1 \\ge 330$, le ore effettivamente usate. Sotto 330 il vincolo comincerebbe a legare."
+    "spiegazione": "Un vincolo lasco ha prezzo ombra nullo; il prezzo resta nullo finché $b_1 \\ge 340$, le ore effettivamente usate. Sotto 340 il vincolo comincerebbe a legare."
    },
    "en": {
-    "testo": "Minimum-cost production-inventory LP (products $i$, months $t$; $x_{it}$ = units produced, $s_{it}$ = inventory at the end of month $t$, $d_{it}$ = demand, $c_{it}$ and $h_{it}$ = unit production and holding costs, $a_i$ = machine hours per unit, $b_t$ = hours available): balances $s_{i,t-1} + x_{it} = d_{it} + s_{it}$, capacities $\\sum_ia_ix_{it} \\le b_t$. Case study: 3 products, 6 months; $(c_i, h_i, a_i, s_{i0})$ = $(12, 0.8, 0.9, 30)$, $(18, 1.2, 1.4, 20)$, $(25, 1.6, 2.1, 10)$; hours $b_t$ = 420, 420, 460, 460, 460, 420; demand peaking in months 4–5. Month 1 uses $330$ of its $420$ hours; the solver reports `Pi` $= 0$ with validity range $[330, +\\infty)$. How is it read?",
+    "testo": "Minimum-cost production-inventory LP (products $i$, months $t$; $x_{it}$ = units produced, $s_{it}$ = inventory at the end of month $t$, $d_{it}$ = demand, $c_{it}$ and $h_{it}$ = unit production and holding costs, $a_i$ = machine hours per unit, $b_t$ = hours available): balances $s_{i,t-1} + x_{it} = d_{it} + s_{it}$, capacities $\\sum_ia_ix_{it} \\le b_t$. Case study: 3 products, 3 months; $(c_i, h_i, a_i, s_{i0})$ = $(10, 1, 1, 0)$, $(15, 1.2, 1.5, 0)$, $(20, 1.2, 2, 0)$; hours $b_t$ = 400, 400, 400; demand peaking in month 3. Month 1 uses $340$ of its $400$ hours; the solver reports `Pi` $= 0$ with validity range $[340, +\\infty)$. How is it read?",
     "opzioni": [
      "Month 1 is the bottleneck of the plan",
-     "Extra hours in month 1 are worth $0.762$ €",
+     "Extra hours in month 1 are worth $0.6$ €",
      "Slack constraint: extra hours are worthless",
      "The model is degenerate in month 1"
     ],
-    "spiegazione": "A slack constraint has zero shadow price; the price stays zero as long as $b_1 \\ge 330$, the hours actually used. Below 330 the constraint would start to bind."
+    "spiegazione": "A slack constraint has zero shadow price; the price stays zero as long as $b_1 \\ge 340$, the hours actually used. Below 340 the constraint would start to bind."
    }
   },
   {
@@ -10571,24 +10571,24 @@
    },
    "corretta": 1,
    "it": {
-    "testo": "Il prezzo ombra della capacità di un mese vale $-3{,}81$ €/ora nell'intervallo $[330, 431]$ ore. La capacità passa da $420$ a $600$ ore. Che cosa raccomanda la checklist?",
+    "testo": "Il prezzo ombra della capacità di un mese vale $-1{,}2$ €/ora nell'intervallo $[380, 460]$ ore. La capacità passa da $400$ a $600$ ore. Che cosa raccomanda la checklist?",
     "opzioni": [
-     "Prevedere il costo con $-3{,}81 \\cdot 180$",
+     "Prevedere il costo con $-1{,}2 \\cdot 200$",
      "Riottimizzare: si è usciti dall'intervallo",
      "Raddoppiare il prezzo ombra",
      "Considerare il modello inammissibile"
     ],
-    "spiegazione": "Il prezzo ombra vale solo dentro il suo intervallo di validità; $600$ è oltre $431$, quindi la previsione lineare non vale e si riottimizza."
+    "spiegazione": "Il prezzo ombra vale solo dentro il suo intervallo di validità; $600$ è oltre $460$, quindi la previsione lineare non vale e si riottimizza."
    },
    "en": {
-    "testo": "The shadow price of the capacity of a month is $-3.81$ €/hour in the range $[330, 431]$ hours. The capacity goes from $420$ to $600$ hours. What does the checklist recommend?",
+    "testo": "The shadow price of the capacity of a month is $-1.2$ €/hour in the range $[380, 460]$ hours. The capacity goes from $400$ to $600$ hours. What does the checklist recommend?",
     "opzioni": [
-     "Predict the cost with $-3.81 \\cdot 180$",
+     "Predict the cost with $-1.2 \\cdot 200$",
      "Re-optimize: we left the range",
      "Double the shadow price",
      "Consider the model infeasible"
     ],
-    "spiegazione": "The shadow price holds only within its validity range; $600$ is beyond $431$, so the linear prediction does not hold and one re-optimizes."
+    "spiegazione": "The shadow price holds only within its validity range; $600$ is beyond $460$, so the linear prediction does not hold and one re-optimizes."
    }
   },
   {
