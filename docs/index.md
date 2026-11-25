@@ -35,7 +35,7 @@ Prerequisiti: [Programmazione lineare](https://fabiofurini.github.io/programmazi
 
 L'app risolve all'ottimo nel browser un modello di programmazione lineare: i dati, il modello simbolico, il modello numerico dell'istanza e la soluzione ottima con il suo grafico. Con i cursori si cambiano i dati e la soluzione si ricalcola.
 
-<div class="gi" data-grafico="pl-trasporto"></div>
+<div class="gi" data-grafico="pl-trasporto" data-vetrina="compatta"></div>
 
 [:material-gesture-tap: Altre app nel laboratorio](laboratorio/index.md){ .md-button }
 <!-- /collana-app -->

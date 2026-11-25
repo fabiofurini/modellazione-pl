@@ -22,6 +22,14 @@
   const DATI = { f: [[1, 1, 5], [5, 3, 8]], d: [60, 50], e: [30, 20, 40] };
   const S = 2, R = 3;
 
+  // home (data-vetrina): la soluzione va nella colonna dei cursori, sopra il «Prova tu», come nell'app di Modellazione PNL
+  function solDestra(st) {
+    const sol = st.el.querySelector(".plm-sol"), ctrl = st.el.querySelector(".gi-ctrl");
+    if (!sol || !ctrl) return;
+    const dx = ctrl.parentElement, prova = dx.querySelector(".gi-domanda");
+    if (sol.parentElement !== dx || (prova && sol.nextElementSibling !== prova)) dx.insertBefore(sol, prova || null);
+  }
+
   /** l'LP sui dati dei cursori: colonne x_11, x_12, x_13, x_21, x_22, x_23 */
   function calcola(v) {
     const f = DATI.f.map((r) => r.slice()), d = DATI.d.slice();
@@ -71,9 +79,11 @@
         "at minimum total cost, without exceeding the capacity of the warehouses and serving the demand of the customers in full." +
         "<br><b>Variables:</b> \\(x_{ij} \\ge 0\\): units shipped from warehouse \\(i\\) to customer \\(j\\)." +
         `<br><b>Data:</b> \\(s = ${S}\\) warehouses, \\(r = ${R}\\) customers; \\(f_{ij}\\): cost of one unit from \\(i\\) to \\(j\\); \\(d_i\\): capacity of warehouse \\(i\\); \\(e_j\\): demand of customer \\(j\\).` + TAB);
-      const html = `<div class="plm"><p class="plm-testo">${testo}</p>` +
+      const V = !!st.el.dataset.vetrina;
+      if (V) setTimeout(() => solDestra(st), 0);
+      const html = `<div class="plm"><p class="plm-testo">${V ? testo.split(TAB).join("") : testo}</p>` +
         `<div class="plm-sim">\\(\\displaystyle \\begin{aligned} ${sim} \\end{aligned}\\)</div>` +
-        `<details class="plm-num" open><summary>${T("Modello numerico con i dati attuali", "Numerical model with the current data")}</summary>` +
+        `<details class="plm-num"${V ? "" : " open"}><summary>${T("Modello numerico con i dati attuali", "Numerical model with the current data")}</summary>` +
         `<div class="plm-num-corpo">${num}</div></details></div>`;
       return FONDO.sposta(st, html);
     },

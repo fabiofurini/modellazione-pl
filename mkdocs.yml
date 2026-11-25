@@ -111,7 +111,7 @@ extra:
 
 extra_css:
   - stylesheets/collana.css
-  - stylesheets/extra.css?v=5bc02d8f0b
+  - stylesheets/extra.css?v=8d85499640
   # laboratorio interattivo (genera_laboratorio.py)
   - https://cdn.jsdelivr.net/npm/jsxgraph@1.10.1/distrib/jsxgraph.css
   - stylesheets/interattivi.css?v=c22e1a0e82
@@ -145,7 +145,7 @@ extra_javascript:
   - javascripts/gi-pl-app.js?v=adecb0dd8a
   - javascripts/gi-pl-finanza.js?v=675eccface
   - javascripts/gi-pl-tecniche.js?v=2991821b1f
-  - javascripts/gi-pl-trasporto.js?v=5a3cb3c50a
+  - javascripts/gi-pl-trasporto.js?v=ce16f21e66
   - javascripts/quiz.js?v=be7fae2b85
 
 # le pagine delle singole app non stanno nel menu: il laboratorio è una voce sola
