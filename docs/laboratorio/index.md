@@ -21,14 +21,6 @@ e delle dispense. Scegli un'app: si apre a tutta pagina.
 
     [Apri l'app →](trasporto.md)
 
--   :material-chart-timeline-variant: **Tre modelli LP risolti all'ottimo**
-
-    ---
-
-    Produzione e scorte, ricarica di veicoli elettrici e newsvendor a scenari: scegli il modello, cambia i dati con i cursori e il simplesso, nel browser, ricalcola la soluzione ottima e i prezzi ombra.
-
-    [Apri l'app →](tre-modelli-lp.md)
-
 -   :material-format-list-numbered: **Nove modelli LP svolti**
 
     ---

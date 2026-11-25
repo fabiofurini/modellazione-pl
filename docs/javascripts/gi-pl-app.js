@@ -1,6 +1,5 @@
 /* Laboratorio di «Modellazione PL / LP Modelling»: le ricette delle app.
  *
- *   pl-modelli     (home) tre modelli LP a voci: produzione, ricarica EV, newsvendor
  *   pl-produzione  cap. 4: piano ottimo, scorte, prezzi ombra della capacità
  *   pl-ricarica-ev cap. 5: ricarica notturna a costo minimo
  *   pl-dea         cap. 6: efficienza, peer e target di una filiale (CCR/BCC, 4 indicatori o personale→prestiti)
@@ -917,8 +916,6 @@
 
   // ================================================================ registrazione
   const R = (nome, opz, voci) => { SOL.voci(voci); window.GI_RICETTE[nome] = () => O.ricettaVoci(opz, voci); };
-  R("pl-modelli", { titolo: T("Tre modelli LP", "Three LP models"), etichetta: T("Modello", "Model") },
-    { produzione: vProduzione, ev: vEv, newsvendor: vNewsvendor });
   R("pl-produzione", { titolo: T("Piano di produzione", "Production plan") }, { produzione: vProduzione });
   R("pl-ricarica-ev", { titolo: T("Ricarica di veicoli elettrici", "Electric vehicle charging") }, { ev: vEv });
   R("pl-newsvendor", { titolo: "Newsvendor" }, { newsvendor: vNewsvendor });
