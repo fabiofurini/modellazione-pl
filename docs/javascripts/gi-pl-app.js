@@ -209,6 +209,49 @@
     `<details class="plm-num"${NUM.aperto ? " open" : ""}><summary>${T("Modello numerico con i dati attuali", "Numerical model with the current data")}</summary>` +
     `<div class="plm-num-corpo">${num}${nota ? `<p class="plm-nota">${nota}</p>` : ""}</div></details></div>`;
 
+  // ================================================================ il blocco «Soluzione ottima» sotto il grafico
+  /* Al posto della legenda ripetuta (nascosta da extra.css: ogni grafico ha la sua) c'è il blocco «Soluzione ottima»:
+   * valore ottimo con l'unità e valori delle variabili (x̃, notazione dei capitoli), aggiornati con i cursori.
+   * La colonna di destra tiene prezzi ombra e letture. Lo usano anche gi-pl-finanza.js e gi-pl-tecniche.js.
+   * Una voce con soluzione(R, v, st, C) -> HTML lo riempie a ogni aggiornamento (SOL.voce avvolge le sue letture). */
+  const SOL = {
+    mostra(st, html) {
+      const leg = st.el.querySelector(".gi-legenda");
+      if (!leg) return;
+      let b = st.el.querySelector(".plm-sol");
+      if (!b) { b = GI.h("div", { class: "plm-sol" }); leg.after(b); }
+      const testo = html ? `<p class="plm-sol-tit">${T("Soluzione ottima", "Optimal solution")}</p>${html}` : "";
+      if (b.dataset.html === testo) return;
+      b.dataset.html = testo;
+      b.hidden = !html;
+      b.innerHTML = GI.mj(testo);
+      if (html) GI.typeset(b);
+    },
+    /** avvolge le letture della voce: prima la colonna di destra, poi il blocco */
+    voce(vc) {
+      if (!vc.soluzione || vc.conSoluzione) return vc;
+      const vecchie = vc.letture;
+      vc.conSoluzione = true;
+      vc.letture = (R, v, st, C) => {
+        const out = vecchie ? vecchie(R, v, st, C) : "";
+        let h = "";
+        try { h = vc.soluzione(R, v, st, C) || ""; } catch (e) { console.error("GI: soluzione", e); }
+        SOL.mostra(st, h);
+        return out;
+      };
+      return vc;
+    },
+    voci(oggetto) { Object.values(oggetto).forEach(SOL.voce); return oggetto; },
+    /** valore di una variabile: «—» se è nullo alle cifre mostrate */
+    z: (x, c = 1) => (Math.abs(x) < 0.5 * Math.pow(10, -c) ? "—" : GI.numTxt(x, c)),
+    /** una tabella con il suo titolo */
+    tab: (titolo, intest, righe) => `<div class="plm-sol-t">${titolo ? `<p>${titolo}</p>` : ""}${M.tab(intest, righe)}</div>`,
+    /** il blocco: riga del valore ottimo, tabelle affiancate (vanno a capo), nota */
+    blocco: (valore, tabelle = [], nota = "") => `<div class="plm-sol-val">${valore}</div>` +
+      (tabelle.length ? `<div class="plm-sol-tabs">${tabelle.join("")}</div>` : "") + (nota ? `<p class="plm-sol-nota">${nota}</p>` : ""),
+  };
+  window.GI_PL_SOL = SOL;
+
   // ================================================================ produzione (cap. 4)
   /** riga evidenziata sotto il problema: quantità continue, non oggetti da contare */
   const CONTINUE = ["", ""];   // la nota sulle unità continue sta solo nella pagina del capitolo (Fabio, 25/11/2026)
@@ -336,8 +379,7 @@
       const righe = R.ombra.map((y, t) => [String(t + 1), `${nt(R.ore[t], 0)}/${nt(R.cap[t], 0)}`, tx(n(y, 3)),
         `[${nt(R.lo[t], 0)}, ${isFinite(R.up[t]) ? nt(R.up[t], 0) : "∞"}]`]);
       const att = R.ombra.map((y, t) => (Math.abs(y) > 1e-9 ? t : -1)).filter((t) => t >= 0);
-      const Pd = DD().produzione, giac = R.s.reduce((tot, riga, i) => tot + riga.reduce((a, x) => a + x, 0) * Pd.ch[i] * (i === 2 ? v[2] / 100 : 1), 0);
-      return `<div>${T("Costo ottimo", "Optimal cost")}: <b>${euro(R.costo)}</b>, ${T("di cui giacenza", "of which holding")} <b>${euro(giac)}</b></div>` +
+      return `<div>${T("Prezzi ombra della capacità \\(b_t\\) (€ per ora)", "Shadow prices of the capacity \\(b_t\\) (€ per hour)")}</div>` +
         M.tab([T("mese", "month"), T("ore", "hours"), T("prezzo ombra", "shadow price"), T("valido per \\(b_t\\) in", "valid for \\(b_t\\) in")], righe, att.length ? att[att.length - 1] : -1, C.rosso) +
         `<div style="margin-top:.3em">${T("Un'ora in più nel mese", "One more hour in month")} ${att.length ? att[att.length - 1] + 1 : "—"} ` +
         `${T("fa risparmiare", "saves")} ${att.length ? euro(-R.ombra[att[att.length - 1]], 3) : "0 €"}: ` +
@@ -345,6 +387,16 @@
           "the shadow prices grow towards the end, because a late hour avoids inventory built up earlier.") + "</div>" +
         `<div style="margin-top:.3em">${T("Le scorte \\(s_{it}\\) si accumulano nei mesi precedenti per coprire la domanda dei mesi in cui la capacità è satura; costano \\(h_{it}\\) per unità e mese.",
           "The inventory \\(s_{it}\\) is built up in earlier months to cover demand in the months where capacity is binding; it costs \\(h_{it}\\) per unit and month.")}</div>`;
+    },
+    soluzione(R, v) {
+      if (R.stato !== "ottimo") return "";
+      const Pd = DD().produzione, giac = R.s.reduce((tot, riga, i) => tot + riga.reduce((a, x) => a + x, 0) * Pd.ch[i] * (i === 2 ? v[2] / 100 : 1), 0);
+      const intest = (s) => [tx(`i \\backslash t`), ...Pd.mesi.map((m, t) => String(t + 1))];
+      const righe = (A) => A.map((riga, i) => [String(i + 1), ...riga.map((x) => SOL.z(x, 1))]);
+      return SOL.blocco(`${T("Costo ottimo", "Optimal cost")}: <b>${euro(R.costo)}</b>, ${T("di cui giacenza", "of which holding")} ${euro(giac)}`, [
+        SOL.tab(T("Produzione \\(\\tilde x_{it}\\) (unità): prodotto \\(i\\) per riga, mese \\(t\\) per colonna", "Production \\(\\tilde x_{it}\\) (units): product \\(i\\) by row, month \\(t\\) by column"), intest(), righe(R.x)),
+        SOL.tab(T("Scorte di fine mese \\(\\tilde s_{it}\\) (unità)", "End-of-month inventory \\(\\tilde s_{it}\\) (units)"), intest(), righe(R.s)),
+      ], T("«—»: valore nullo.", "«—»: zero value."));
     },
     domanda: T("Il mese 1 ha prezzo ombra nullo: perché? Porta la capacità a × 1,10: quali mesi smettono di essere saturi? Sotto × 0,97 il piano non esiste più: perché? Poi alza la giacenza \\(h_{3t}\\) del prodotto 3: fino a 1,8 € il piano non cambia ma il costo e i prezzi ombra sì; oltre, le scorte passano al prodotto 2. Perché proprio 1,8 €?",
       "Month 1 has a zero shadow price: why? Set capacity to × 1.10: which months stop being binding? Below × 0.97 there is no plan any more: why? Then raise the holding cost \\(h_{3t}\\) of product 3: up to 1.8 € the plan does not change but the cost and the shadow prices do; beyond it, the inventory moves to product 2. Why exactly 1.8 €?"),
@@ -430,11 +482,21 @@
       const E = DD().ev;
       const righe = E.veicoli.map((x, j) => [x.nome, `${x.arrivo}–${x.partenza}`, nt(x.energia * v[1] / 100, 1), tx(n(R.ombraEnergia[j] * 100, 2))]);
       const sature = R.ombraRete.map((y, t) => (Math.abs(y) > 1e-9 ? t : -1)).filter((t) => t >= 0);
-      return `<div>${T("Costo", "Cost")}: <b>${euro(R.costo)}</b> · ${T("picco", "peak")} ${nt(R.picco, 1)} kW</div>` +
+      return `<div>${T("Picco di prelievo", "Peak withdrawal")}: ${nt(R.picco, 1)} kW</div>` +
         M.tab([T("furgone", "van"), T("ore", "hours"), "kWh", T("ombra c€/kWh", "shadow c€/kWh")], righe) +
         `<div style="margin-top:.3em">${sature.length ? T("Limite di rete saturo alle ore ", "Grid limit binding at hours ") + sature.join(", ") +
           T(": un kW in più lì vale ", ": one more kW there is worth ") + sature.map((t) => nt(-R.ombraRete[t] * 100, 1)).join(", ") + " c€."
           : T("Il limite di rete non è mai saturo: ogni furgone carica nelle sue ore più economiche.", "The grid limit is never binding: every van charges in its cheapest hours.")}</div>`;
+    },
+    soluzione(R) {
+      if (R.stato !== "ottimo") return "";
+      const V = DD().ev.veicoli, coll = (x, t) => x.arrivo <= t || t < x.partenza;
+      const ore = ORDINE_ORE.filter((t) => V.some((x) => coll(x, t)));
+      const righe = V.map((x, j) => [String(j + 1), ...ore.map((t) => (coll(x, t) ? SOL.z(R.x[j][t], 1) : "")), nt(R.x[j].reduce((s, q) => s + q, 0), 1)]);
+      return SOL.blocco(`${T("Costo ottimo", "Optimal cost")}: <b>${euro(R.costo)}</b>`, [
+        SOL.tab(T("Potenza \\(\\tilde x_{vt}\\) (kW): furgone \\(v\\) per riga, ora \\(t\\) per colonna, solo nelle ore in cui è collegato", "Power \\(\\tilde x_{vt}\\) (kW): van \\(v\\) by row, hour \\(t\\) by column, only in the hours when it is plugged in"),
+          [tx("v \\backslash t"), ...ore.map(String), T("kWh prelevati", "kWh drawn")], righe),
+      ], T("«—»: valore nullo; casella vuota: furgone non collegato.", "«—»: zero value; empty cell: van not plugged in."));
     },
     domanda: T("Abbassa \\(k\\) a 90 kW: in quali ore il limite diventa saturo e quanto sale il costo? Porta i prezzi serali sotto 0,1 €/kWh: da quando i furgoni caricano anche la sera? Perché il prezzo ombra dell'energia di un furgone è il prezzo della sua ora più cara usata, diviso per \\(r\\)?",
       "Lower \\(k\\) to 90 kW: in which hours does the limit become binding and how much does the cost grow? Bring the evening prices below 0.1 €/kWh: from when do the vans also charge in the evening? Why is the shadow price of a van's energy the price of its most expensive hour used, divided by \\(r\\)?"),
@@ -522,14 +584,31 @@
     letture(R, v, st, C) {
       const vss = R.costoMedia - R.media;
       return `<div>${T("Frattile critico", "Critical fractile")} \\(f^* = c_u/(c_u + c_o) = ${n(R.Cu, 1)}/${n(R.Cu + R.Co, 1)} = ${n(R.alfaStar, 4)}\\)</div>` +
-        M.tab(["", "q", T("costo atteso", "exp. cost"), "CVaR\\(_\\alpha\\)"], [
-          [M.tinta(C.blu, T("ottimo", "optimal")), nt(R.q, 2), nt(R.media, 2), nt(R.cvar, 2)],
-          [T("q = media", "q = mean"), "100", nt(R.costoMedia, 2), nt(R.f.cv(100), 2)],
+        M.tab(["", T("costo atteso (€)", "exp. cost (€)"), "CVaR\\(_\\alpha\\) (€)"], [
+          [M.tinta(C.blu, T("ordine ottimo \\(\\tilde q\\)", "optimal order \\(\\tilde q\\)")), nt(R.media, 2), nt(R.cvar, 2)],
+          [T("\\(q = 100\\), la media", "\\(q = 100\\), the mean"), nt(R.costoMedia, 2), nt(R.f.cv(100), 2)],
         ]) +
-        `<div style="margin-top:.3em">${v[1] === 0 ? T(`L'LP sceglie il quantile empirico al ${nt(100 * R.alfaStar, 2)}%: q* = ${nt(R.quantile, 2)}. ` +
-          `Ordinare la media costerebbe ${euro(vss)} in più a ciclo (VSS, valore della soluzione stocastica).`, `The LP picks the empirical quantile at ${nt(100 * R.alfaStar, 2)}%: q* = ${nt(R.quantile, 2)}. ` +
+        `<div style="margin-top:.3em">${v[1] === 0 ? T(`L'LP sceglie come \\(\\tilde q\\) il quantile empirico al ${nt(100 * R.alfaStar, 2)}% della domanda. ` +
+          `Ordinare la media costerebbe ${euro(vss)} in più a ciclo (VSS, valore della soluzione stocastica).`, `The LP picks as \\(\\tilde q\\) the empirical quantile at ${nt(100 * R.alfaStar, 2)}% of demand. ` +
           `Ordering the mean would cost ${euro(vss)} more per cycle (VSS, value of the stochastic solution).`)
           : T("Con \\(r > 0\\) si ordina di più: si paga in costo medio per proteggersi dagli scenari di coda.", "With \\(r > 0\\) one orders more: one pays in average cost to be protected from the tail scenarios.")}</div>`;
+    },
+    soluzione(R, v) {
+      // õ_s, ũ_s, ξ̃_s dei 600 scenari in sintesi: in quanti scenari sono positive, media e massimo
+      const k = R.d.length, q = R.q, r = v[1];
+      const o = R.d.map((d) => Math.max(0, q - d)), u = R.d.map((d) => Math.max(0, d - q));
+      const costi = o.map((x, s) => R.Co * x + R.Cu * u[s]), eta = O.vaR(costi, ALFA), xi = costi.map((c) => Math.max(0, c - eta));
+      const riga = (nome, a, c = 1) => { const pos = a.filter((x) => x > 1e-9); return [nome, `${pos.length} / ${k}`, nt(a.reduce((s, x) => s + x, 0) / k, c), pos.length ? nt(Math.max(...pos), c) : "—"]; };
+      const righe = [riga(T("\\(\\tilde o_s\\): invendute (unità)", "\\(\\tilde o_s\\): unsold (units)"), o), riga(T("\\(\\tilde u_s\\): domanda non servita (unità)", "\\(\\tilde u_s\\): unmet demand (units)"), u)];
+      if (r > 0) righe.push(riga(T("\\(\\tilde\\xi_s\\): costo oltre \\(\\tilde\\eta\\) (€)", "\\(\\tilde\\xi_s\\): cost above \\(\\tilde\\eta\\) (€)"), xi, 2));
+      return SOL.blocco(`${T("Valore ottimo", "Optimal value")}: <b>${euro(R.obiettivo)}</b> ` +
+        (r > 0 ? T(`(\\(1 - r\\) volte il costo atteso più \\(r\\) volte il CVaR\\(_\\alpha\\))`, `(\\(1 - r\\) times the expected cost plus \\(r\\) times the CVaR\\(_\\alpha\\))`) : T("(costo atteso)", "(expected cost)")) +
+        `<br>\\(\\tilde q = ${n(q, 2)}\\) ${T("unità", "units")} · ` +
+        (r > 0 ? `\\(\\tilde\\eta = ${n(eta, 2)}\\) € ${T("(un VaR\\(_\\alpha\\) del costo)", "(a VaR\\(_\\alpha\\) of the cost)")}`
+          : T("con \\(r = 0\\), \\(\\eta\\) e \\(\\xi_s\\) non entrano nella funzione obiettivo", "with \\(r = 0\\), \\(\\eta\\) and \\(\\xi_s\\) do not enter the objective function")), [
+        SOL.tab(T(`Variabili di scenario, in sintesi sui ${k} scenari`, `Scenario variables, summarized over the ${k} scenarios`),
+          [T("variabile", "variable"), T("positiva in", "positive in"), T("media", "mean"), T("massimo", "maximum")], righe),
+      ]);
     },
     domanda: T("Con \\(r = 0\\) muovi \\(p\\): l'ordine ottimo segue il frattile critico \\(f^*\\). Poi porta \\(r\\) a 1: di quanto cresce \\(q^*\\), di quanto il costo medio, di quanto scende il CVaR?",
       "With \\(r = 0\\) move \\(p\\): the optimal order follows the critical fractile \\(f^*\\). Then set \\(r\\) to 1: how much does \\(q^*\\) grow, how much the average cost, how much does the CVaR drop?"),
@@ -628,20 +707,27 @@
       const nomi = vista === "1x1" ? [T("personale", "staff"), T("prestiti", "loans")] : [T("personale", "staff"), T("costi", "costs"), T("prestiti", "loans"), T("depositi", "deposits")];
       const att = [...R.X.map((r) => r[R.o]), ...R.Y.map((r) => r[R.o])], tgt = [...R.tIn, ...R.tOut], sc = [...R.sIn, ...R.sOut];
       const eff = Math.abs(R.theta - 1) < 1e-6;
-      return `<div>${T("Efficienza", "Efficiency")} \\(\\theta = ${n(R.theta, 4)}\\) · ${eff ? M.tinta(C.c, T("sulla frontiera", "on the frontier")) : M.tinta(C.a, T("inefficiente", "inefficient"))}</div>` +
-        `<div>${T("Peer (filiali con \\(\\lambda_j > 0\\))", "Peers (branches with \\(\\lambda_j > 0\\))")}: ${R.peer.map(([j, l]) => `${j + 1} (λ = ${nt(l, 3)})`).join(", ")}</div>` +
-        `<div>${T("Target: input e output della filiale virtuale, combinazione dei peer con pesi \\(\\lambda_j\\); scarto: riduzione di input o aumento di output ancora possibile oltre al fattore \\(\\theta\\).",
+      return `<div>${T("Target: input e output della filiale virtuale, combinazione dei peer con pesi \\(\\lambda_j\\); scarto: riduzione di input o aumento di output ancora possibile oltre al fattore \\(\\theta\\).",
           "Target: inputs and outputs of the virtual branch, combination of the peers with weights \\(\\lambda_j\\); slack: reduction of input or increase of output still possible beyond the factor \\(\\theta\\).")}</div>` +
         M.tab(["", T("attuale", "actual"), "target", T("scarto", "slack")], nomi.map((nm, k) => [nm, nt(att[k], 1), nt(tgt[k], k < R.X.length ? 2 : 2), nt(sc[k], 2)])) +
         `<div style="margin-top:.3em">${eff ? T("Nessuna combinazione di filiali fa meglio con meno input.", "No combination of branches does better with fewer inputs.")
           : T(`Una combinazione dei peer produce almeno gli stessi output con il ${nt(100 * R.theta, 1)}% degli input.`, `A combination of the peers produces at least the same outputs with ${nt(100 * R.theta, 1)}% of the inputs.`)}</div>`;
+    },
+    soluzione(R, v, st, C) {
+      if (R.stato !== "ottimo") return "";
+      const eff = Math.abs(R.theta - 1) < 1e-6, nn = R.lam.length;
+      return SOL.blocco(`${T("Valore ottimo", "Optimal value")}: <b>\\(\\tilde\\theta = ${n(R.theta, 4)}\\)</b>, ${T("efficienza della filiale", "efficiency of branch")} ${R.o + 1} · ` +
+        (eff ? M.tinta(C.c, T("sulla frontiera", "on the frontier")) : M.tinta(C.a, T("inefficiente", "inefficient"))), [
+        SOL.tab(T(`Pesi \\(\\tilde\\lambda_j > 0\\): i peer (le altre ${nn - R.peer.length} filiali hanno \\(\\tilde\\lambda_j = 0\\))`, `Weights \\(\\tilde\\lambda_j > 0\\): the peers (the other ${nn - R.peer.length} branches have \\(\\tilde\\lambda_j = 0\\))`),
+          [T("filiale \\(j\\)", "branch \\(j\\)"), ...R.peer.map(([j]) => String(j + 1))], [[tx("\\tilde\\lambda_j"), ...R.peer.map(([, l]) => nt(l, 4))]]),
+      ]);
     },
     domanda: T("Passa le filiali con ▶: quali sono efficienti nel modello CCR e quali solo nel BCC? Nella vista personale→prestiti la filiale 6 è lontana dalla frontiera CCR ma sulla BCC: che cosa dice dei rendimenti di scala?",
       "Go through the branches with ▶: which are efficient in the CCR model and which only in BCC? In the staff→loans view branch 6 is far from the CCR frontier but on the BCC one: what does it say about returns to scale?"),
   });
 
   // ================================================================ registrazione
-  const R = (nome, opz, voci) => { window.GI_RICETTE[nome] = () => O.ricettaVoci(opz, voci); };
+  const R = (nome, opz, voci) => { SOL.voci(voci); window.GI_RICETTE[nome] = () => O.ricettaVoci(opz, voci); };
   R("pl-modelli", { titolo: T("Tre modelli LP", "Three LP models"), etichetta: T("Modello", "Model") },
     { produzione: vProduzione, ev: vEv, newsvendor: vNewsvendor });
   R("pl-produzione", { titolo: T("Piano di produzione", "Production plan") }, { produzione: vProduzione });
@@ -655,8 +741,19 @@
   });
 
   // ================================================================ regressione (cap. 10): punti trascinabili
-  const DATI_REG = { t: null, y: null };
-  window.GI_RICETTE["pl-regressione"] = () => O.ricettaRetta({
+  const DATI_REG = { t: null, y: null, rette: null };
+  /** blocco «Soluzione ottima» della regressione: w̃, b̃, valore ottimo e quanti ũ_i, ṽ_i sono positivi, per le due rette */
+  const solRegressione = (p) => {
+    const rr = DATI_REG.rette, m = (DATI_REG.t || []).length;
+    if (!rr || !m) return "";
+    const riga = (r, nome) => [nome, nt(r.w, 3), nt(r.b, 2), nt(r.f, 2), `${r.sopra} / ${m}`, `${r.sotto} / ${m}`];
+    return SOL.blocco(T("Le due rette sono le soluzioni ottime dello stesso LP con due valori di \\(\\tau\\).", "The two lines are the optimal solutions of the same LP with two values of \\(\\tau\\)."), [
+      SOL.tab("", ["", T("\\(\\tilde w\\) (pezzi/°C)", "\\(\\tilde w\\) (pieces/°C)"), T("\\(\\tilde b\\) (pezzi)", "\\(\\tilde b\\) (pieces)"),
+        T("valore ottimo (pezzi)", "optimal value (pieces)"), T("giorni con \\(\\tilde u_i > 0\\)", "days with \\(\\tilde u_i > 0\\)"), T("giorni con \\(\\tilde v_i > 0\\)", "days with \\(\\tilde v_i > 0\\)")],
+        [riga(rr[0], M.tinta(FIG().navy, "\\(\\tau = 1/2\\)")), riga(rr[1], M.tinta(FIG().verde, `\\(\\tau = ${n(p.tau, 2)}\\)`))]),
+    ], T("\\(\\tilde u_i > 0\\): giorno sopra la retta; \\(\\tilde v_i > 0\\): sotto; gli altri giorni stanno sulla retta.", "\\(\\tilde u_i > 0\\): day above the line; \\(\\tilde v_i > 0\\): below; the other days lie on the line."));
+  };
+  window.GI_RICETTE["pl-regressione"] = () => { const ric = O.ricettaRetta({
     titolo: T("Scarti assoluti e regressione quantile", "Least absolute deviations and quantile regression"),
     dati: () => DD().panetteria,
     // come la figura del capitolo (cap11_quantili): punti grigi, retta mediana blu notte, retta del quantile verde
@@ -708,14 +805,16 @@
     },
     letture(rette, p, dati, C) {
       const [lad, q] = rette, m = dati.t.length;
-      const eq = (r) => `\\(y = ${n(r.b, 2)} ${r.w < 0 ? "-" : "+"} ${n(Math.abs(r.w), 2)}\\, x\\)`;
-      return `<div>${M.tinta(FIG().navy, T("Scarti assoluti", "Least abs. dev."))}: ${eq(lad)}</div>` +
-        `<div>${M.tinta(FIG().verde, T("Quantile", "Quantile") + " τ = " + nt(p.tau, 2))}: ${eq(q)}</div>` +
-        `<div>${T("Sotto la retta τ", "Below the τ line")}: ${q.sotto}/${m} = ${nt(q.sotto / m, 3)}, ${T("sopra", "above")}: ${q.sopra}/${m}, ` +
-        `${T("sulla retta", "on it")}: ${q.appoggio.length} (${T("i due punti di appoggio, cerchiati", "the two support points, circled")})</div>` +
+      DATI_REG.rette = rette;
+      return `<div>${T("Retta τ", "τ line")}: ${T("quota dei giorni sotto", "share of days below")} ${q.sotto}/${m} = ${nt(q.sotto / m, 3)}, ` +
+        `${T("sulla retta", "on it")} ${q.appoggio.length} (${T("i due punti di appoggio, cerchiati", "the two support points, circled")})</div>` +
         `<div style="margin-top:.3em">${T("La quota sotto la retta sta fra", "The share below the line lies between")} \\(${n(q.sotto / m, 3)}\\) ${T("e", "and")} \\(${n((q.sotto + q.appoggio.length) / m, 3)}\\): ${T("contiene sempre", "it always contains")} \\(\\tau\\).</div>`;
     },
     domanda: T("Trascina in basso un giorno caldo, di 100 pezzi: quanto si sposta la retta degli scarti assoluti? Poi muovi \\(\\tau\\): quanti giorni restano sotto la retta? Con i 5 scioperi e senza, le rette cambiano di poco: perché?",
       "Drag a hot day down by 100 pieces: how much does the least absolute deviations line move? Then move \\(\\tau\\): how many days stay below the line? With and without the 5 strike days the lines barely change: why?"),
   });
+    const vecchie = ric.letture;
+    ric.letture = (p, st) => { const out = vecchie(p, st); SOL.mostra(st, solRegressione(p)); return out; };
+    return ric;
+  };
 })();

@@ -215,7 +215,11 @@
     return M.tab([T("vincolo", "constraint"), T("duale", "dual"), T("prezzo ombra", "shadow price"), T("valore e limite", "value and bound")], righe) +
       (!tutti ? `<div style="margin-top:.2em">${T(`Gli altri ${nulli} vincoli hanno prezzo ombra nullo.`, `The other ${nulli} constraints have a zero shadow price.`)}</div>` : "");
   }
-  const valore = (testo, R, unita, cifre = 2) => `<div>${testo}: <b>${fq(R.z, cifre)} ${unita}</b></div>`;
+  const valore = (testo, R, unita, cifre = 2) => `${testo}: <b>${fq(R.z, cifre)} ${unita}</b>`;
+  /** il blocco «Soluzione ottima» sotto il grafico (GI_PL_SOL, gi-pl-app.js): valore ottimo e variabili; a destra prezzi ombra e note */
+  const SOL = () => window.GI_PL_SOL;
+  const z = (x, c = 2) => SOL().z(x, c);
+  const NULLO = () => T("«—»: valore nullo.", "«—»: zero value.");
   const nota = (s) => `<div style="margin-top:.3em">${s}</div>`;
 
   // ================================================================ 4.4 produzione in orario ordinario e in straordinario
@@ -291,12 +295,17 @@
     letture(R, v, st, C) {
       if (R.stato !== "ottimo") return stato(R, C);
       const x = R.x;
-      return valore(T("Profitto massimo", "Maximum profit"), R, T("€ al giorno", "€ per day")) +
-        M.tab([T("prodotto", "product"), "\\(x_i\\)", "\\(y_i\\)", "\\(z_i\\)", T("totale (L)", "total (L)")],
-          [0, 1, 2].map((i) => [String(i + 1), nt(x[i]), nt(x[3 + i]), nt(x[6 + i]), `${nt(x[i] + x[3 + i] + x[6 + i])} / ${nt(R.D.w[i])}`])) +
-        tabOmbra(R) +
+      return tabOmbra(R) +
         nota(T("Il prezzo ombra \\(\\pi\\) è il profitto in più per un litro in più di capacità in orario ordinario, finché la base ottima non cambia.",
           "The shadow price \\(\\pi\\) is the extra profit for one more liter of regular-time capacity, as long as the optimal basis does not change."));
+    },
+    soluzione(R) {
+      if (R.stato !== "ottimo") return "";
+      const x = R.x;
+      return SOL().blocco(valore(T("Profitto massimo", "Maximum profit"), R, T("€ al giorno", "€ per day")), [
+        SOL().tab(T("Litri al giorno per prodotto", "Liters per day by product"), [T("prodotto \\(i\\)", "product \\(i\\)"), "\\(\\tilde x_i\\)", "\\(\\tilde y_i\\)", "\\(\\tilde z_i\\)", T("totale / \\(w_i\\)", "total / \\(w_i\\)")],
+          [0, 1, 2].map((i) => [String(i + 1), z(x[i]), z(x[3 + i]), z(x[6 + i]), `${nt(x[i] + x[3 + i] + x[6 + i])} / ${nt(R.D.w[i])}`])),
+      ], NULLO());
     },
     domanda: T("Porta \\(d\\) da 30 a 35 L/giorno: il profitto cresce di \\(5\\,\\pi\\)? Poi porta \\(e\\) a 0: quali prodotti restano non trattati? Infine alza \\(b_1\\) sopra 6 €/L: perché tutta la capacità in orario ordinario va al prodotto 1?",
       "Raise \\(d\\) from 30 to 35 L/day: does the profit grow by \\(5\\,\\pi\\)? Then set \\(e\\) to 0: which products stay untreated? Finally raise \\(b_1\\) above 6 €/L: why does all the regular-time capacity go to product 1?"),
@@ -382,12 +391,17 @@
     letture(R, v, st, C) {
       if (R.stato !== "ottimo") return stato(R, C) + nota(T("La domanda totale \\(e_1 + e_2 + e_3\\) supera la capacità totale \\(d_1 + d_2\\).", "Total demand \\(e_1 + e_2 + e_3\\) exceeds the total capacity \\(d_1 + d_2\\)."));
       const x = R.x;
-      return valore(T("Costo minimo", "Minimum cost"), R, T("€ a settimana", "€ per week")) +
-        M.tab(["", T("cliente 1", "client 1"), T("cliente 2", "client 2"), T("cliente 3", "client 3")],
-          [0, 1].map((i) => [T(`magazzino ${i + 1}`, `warehouse ${i + 1}`), nt(x[3 * i]), nt(x[3 * i + 1]), nt(x[3 * i + 2])])) +
-        tabOmbra(R) +
+      return tabOmbra(R) +
         nota(T("\\(\\pi_j\\) è il costo di un litro in più chiesto dal cliente \\(j\\); \\(\\mu_i \\le 0\\) è il risparmio per un litro in più di capacità del magazzino \\(i\\).",
           "\\(\\pi_j\\) is the cost of one more liter demanded by client \\(j\\); \\(\\mu_i \\le 0\\) is the saving for one more liter of capacity at warehouse \\(i\\)."));
+    },
+    soluzione(R) {
+      if (R.stato !== "ottimo") return "";
+      const x = R.x;
+      return SOL().blocco(valore(T("Costo minimo", "Minimum cost"), R, T("€ a settimana", "€ per week")), [
+        SOL().tab(T("Litri a settimana \\(\\tilde x_{ij}\\) dal magazzino \\(i\\) al cliente \\(j\\)", "Liters per week \\(\\tilde x_{ij}\\) from warehouse \\(i\\) to client \\(j\\)"),
+          [tx("i \\backslash j"), "1", "2", "3"], [0, 1].map((i) => [String(i + 1), z(x[3 * i]), z(x[3 * i + 1]), z(x[3 * i + 2])])),
+      ], NULLO());
     },
     domanda: T("Abbassa \\(d_1\\) a 100 L: perché il costo non cambia e \\(\\mu_1\\) resta 0? Poi alza \\(f_{23}\\): da quale costo il cliente 3 viene servito tutto dal magazzino 1?",
       "Lower \\(d_1\\) to 100 L: why does the cost not change and \\(\\mu_1\\) stay 0? Then raise \\(f_{23}\\): from which cost is client 3 served entirely by warehouse 1?"),
@@ -451,10 +465,15 @@
       [F.blu, T("intervalli ammessi \\([c_i, d_i]\\) e \\([a_j, b_j]\\)", "allowed ranges \\([c_i, d_i]\\) and \\([a_j, b_j]\\)"), ""]]; },
     letture(R, v, st, C) {
       if (R.stato !== "ottimo") return stato(R, C);
-      return valore(T("Costo minimo", "Minimum cost"), R, T("€ al mese", "€ per month")) +
-        M.tab([T("alimento", "food"), T("kg", "kg"), "\\([c_i, d_i]\\)"], R.x.map((q, i) => [String(i + 1), nt(q, 3), `[${nt(R.D.c[i], 0)}, ${nt(R.D.d[i], 0)}]`])) +
-        tabOmbra(R) +
+      return tabOmbra(R) +
         nota(T("\\(\\alpha_j\\) è il costo in più per un grammo in più di fabbisogno minimo del nutriente \\(j\\).", "\\(\\alpha_j\\) is the extra cost for one more gram of minimum requirement of nutrient \\(j\\)."));
+    },
+    soluzione(R) {
+      if (R.stato !== "ottimo") return "";
+      return SOL().blocco(valore(T("Costo minimo", "Minimum cost"), R, T("€ al mese", "€ per month")), [
+        SOL().tab(T("Chili al mese di ogni alimento", "Kilograms per month of each food"), [T("alimento \\(i\\)", "food \\(i\\)"), ...R.x.map((q, i) => String(i + 1))],
+          [[T("\\(\\tilde x_i\\) (kg)", "\\(\\tilde x_i\\) (kg)"), ...R.x.map((q) => z(q, 3))], ["\\([c_i, d_i]\\)", ...R.x.map((q, i) => `[${nt(R.D.c[i], 0)}, ${nt(R.D.d[i], 0)}]`)]]),
+      ], NULLO());
     },
     domanda: T("Alza \\(a_2\\) di 2 g: il costo cresce di \\(2\\,\\alpha_2\\)? Porta \\(w_4\\) sopra 2 €/kg: perché la dieta non cambia e \\(\\gamma_4\\) cresce? Alza \\(a_3\\): da quale valore il problema diventa inammissibile?",
       "Raise \\(a_2\\) by 2 g: does the cost grow by \\(2\\,\\alpha_2\\)? Bring \\(w_4\\) above 2 €/kg: why does the diet not change while \\(\\gamma_4\\) grows? Raise \\(a_3\\): from which value does the problem become infeasible?"),
@@ -536,10 +555,15 @@
     letture(R, v, st, C) {
       if (R.stato !== "ottimo") return stato(R, C);
       const x = R.x;
-      return valore(T("Costo minimo", "Minimum cost"), R, T("€ al mese", "€ per month"), 4) +
-        M.tab([T("alimento", "food"), T("dieta 1 (kg)", "diet 1 (kg)"), T("dieta 2 (kg)", "diet 2 (kg)"), T("totale", "total")],
-          [0, 1, 2].map((i) => [String(i + 1), nt(x[2 * i], 4), nt(x[2 * i + 1], 4), nt(x[2 * i] + x[2 * i + 1], 4)])) +
-        tabOmbra(R);
+      return tabOmbra(R);
+    },
+    soluzione(R) {
+      if (R.stato !== "ottimo") return "";
+      const x = R.x;
+      return SOL().blocco(valore(T("Costo minimo", "Minimum cost"), R, T("€ al mese", "€ per month"), 4), [
+        SOL().tab(T("Chili \\(\\tilde x_{ik}\\) dell'alimento \\(i\\) nella dieta \\(k\\)", "Kilograms \\(\\tilde x_{ik}\\) of food \\(i\\) in diet \\(k\\)"),
+          [tx("i \\backslash k"), "1", "2", T("totale", "total")], [0, 1, 2].map((i) => [String(i + 1), z(x[2 * i], 4), z(x[2 * i + 1], 4), z(x[2 * i] + x[2 * i + 1], 4)])),
+      ], NULLO());
     },
     domanda: T("Porta \\(a_{11}\\) a 30 g: quanto alimento 1 in più serve nella dieta 1 e quanto costa? Poi abbassa \\(w_3\\) fino a 2 €/kg: perché il piano non cambia e di quanto scende il costo per ogni euro in meno? Alza \\(c_2\\): il costo cresce di \\(\\gamma_2\\) per chilogrammo?",
       "Set \\(a_{11}\\) to 30 g: how much more food 1 does diet 1 need and what does it cost? Then lower \\(w_3\\) down to 2 €/kg: why does the plan not change and how much does the cost drop per euro? Raise \\(c_2\\): does the cost grow by \\(\\gamma_2\\) per kilogram?"),
@@ -622,11 +646,19 @@
     letture(R, v, st, C) {
       if (R.stato !== "ottimo") return stato(R, C);
       const x = R.x, D = R.D;
-      return valore(T("Costo minimo", "Minimum cost"), R, "€") +
-        M.tab([T("giorno", "day"), "\\(x_t\\)", "\\(b_t\\)", "\\(s_t\\)"], [0, 1, 2, 3].map((t) => [String(t + 1), nt(x[t]), nt(x[4 + t]), t < 3 ? nt(x[8 + t]) : `${nt(D.ln)} (\\(\\ell_n\\))`])) +
-        tabOmbra(R) +
+      return tabOmbra(R) +
         nota(T("\\(\\mu_t\\) è il costo del modo più economico di procurare un litro in più nel giorno \\(t\\): produrlo dove c'è capacità e tenerlo in magazzino, oppure comprarlo.",
           "\\(\\mu_t\\) is the cost of the cheapest way to obtain one more liter on day \\(t\\): producing it where there is capacity and keeping it in stock, or buying it."));
+    },
+    soluzione(R) {
+      if (R.stato !== "ottimo") return "";
+      const x = R.x, D = R.D;
+      return SOL().blocco(valore(T("Costo minimo", "Minimum cost"), R, "€"), [
+        SOL().tab(T("Litri prodotti \\(\\tilde x_t\\), acquistati \\(\\tilde b_t\\) e in magazzino \\(\\tilde s_t\\) alla fine del giorno \\(t\\)", "Liters produced \\(\\tilde x_t\\), bought \\(\\tilde b_t\\) and in stock \\(\\tilde s_t\\) at the end of day \\(t\\)"),
+          [T("giorno \\(t\\)", "day \\(t\\)"), "1", "2", "3", "4"],
+          [["\\(\\tilde x_t\\)", ...[0, 1, 2, 3].map((t) => z(x[t]))], ["\\(\\tilde b_t\\)", ...[0, 1, 2, 3].map((t) => z(x[4 + t]))],
+            ["\\(\\tilde s_t\\)", ...[0, 1, 2].map((t) => z(x[8 + t])), `${nt(D.ln)} (\\(\\ell_n\\))`]]),
+      ], T("«—»: valore nullo. La scorta finale \\(\\ell_n\\) è un dato.", "«—»: zero value. The final stock \\(\\ell_n\\) is a given."));
     },
     domanda: T("Con \\(h_t = 0\\) si compra ancora nel giorno 2: perché? Porta \\(u_t\\) a 10 €/L: che cosa cambia nel piano? Abbassa \\(m_3\\) sotto 115 L: quale giorno compra di più e quanto vale \\(\\pi_3\\)?",
       "With \\(h_t = 0\\) the plan still buys on day 2: why? Set \\(u_t\\) to 10 €/L: what changes in the plan? Lower \\(m_3\\) below 115 L: which day buys more and what is \\(\\pi_3\\)?"),
@@ -733,10 +765,16 @@
     letture(R, v, st, C) {
       if (R.stato !== "ottimo") return stato(R, C);
       const D = R.D, x = R.x;
-      return valore(T("Gradimento massimo", "Maximum taste score"), R, T("punti", "points"), 3) +
-        M.tab(["", T("porzioni", "portions"), T("grammi", "grams")], [[T("torta di frutta", "fruit cake"), nt(x[0], 4), nt(D.a[0] * x[0], 2)], [T("gelato", "ice cream"), nt(x[1], 4), nt(D.a[1] * x[1], 2)]]) +
-        tabOmbra(R) +
+      return tabOmbra(R) +
         nota(T("La soluzione ottima è un vertice della regione ammissibile: lo trova anche il metodo grafico.", "The optimal solution is a vertex of the feasible region: the graphical method finds it too."));
+    },
+    soluzione(R) {
+      if (R.stato !== "ottimo") return "";
+      const D = R.D, x = R.x;
+      return SOL().blocco(valore(T("Gradimento massimo", "Maximum taste score"), R, T("punti", "points"), 3), [
+        SOL().tab(T("Porzioni \\(\\tilde x_i\\) di ogni dolce", "Portions \\(\\tilde x_i\\) of each dessert"), ["", "\\(\\tilde x_i\\)", T("grammi", "grams")],
+          [[T("torta di frutta", "fruit cake"), z(x[0], 4), z(D.a[0] * x[0], 2)], [T("gelato", "ice cream"), z(x[1], 4), z(D.a[1] * x[1], 2)]]),
+      ], NULLO());
     },
     domanda: T("Muovi \\(s_2\\) da 9 a 5: in quale vertice si sposta la soluzione ottima? Abbassa \\(v\\): da quale valore il vincolo delle calorie smette di essere attivo? Con \\(u\\) troppo basso la regione diventa vuota: da quale valore?",
       "Move \\(s_2\\) from 9 to 5: to which vertex does the optimal solution move? Lower \\(v\\): from which value does the calorie constraint stop being active? With \\(u\\) too low the region becomes empty: from which value?"),
@@ -810,11 +848,18 @@
     letture(R, v, st, C) {
       if (R.stato !== "ottimo") return stato(R, C);
       const x = R.x;
-      return valore(T("Costo minimo", "Minimum cost"), R, "€") +
-        M.tab([T("giorno", "day"), "\\(x_t\\) (kg)", "\\(s_t\\) (kg)"], [0, 1, 2, 3].map((t) => [String(t + 1), nt(x[t]), t < 3 ? nt(x[4 + t]) : "—"])) +
-        tabOmbra(R) +
+      return tabOmbra(R) +
         nota(T("Il costo di produzione cresce di giorno in giorno: conviene produrre prima e tenere a magazzino, finché la capacità \\(k\\) lo permette.",
           "The production cost grows day by day: it pays to produce earlier and keep the cakes in stock, as far as the capacity \\(k\\) allows."));
+    },
+    soluzione(R) {
+      if (R.stato !== "ottimo") return "";
+      const x = R.x;
+      return SOL().blocco(valore(T("Costo minimo", "Minimum cost"), R, "€"), [
+        SOL().tab(T("Chili di torte prodotti \\(\\tilde x_t\\) e in magazzino \\(\\tilde s_t\\) alla fine del giorno \\(t\\)", "Kilograms of cakes produced \\(\\tilde x_t\\) and in stock \\(\\tilde s_t\\) at the end of day \\(t\\)"),
+          [T("giorno \\(t\\)", "day \\(t\\)"), "1", "2", "3", "4"],
+          [["\\(\\tilde x_t\\)", ...[0, 1, 2, 3].map((t) => z(x[t]))], ["\\(\\tilde s_t\\)", ...[0, 1, 2].map((t) => z(x[4 + t])), ""]]),
+      ], NULLO());
     },
     domanda: T("Porta \\(k\\) a 20 kg: quanto si risparmia e perché? Con \\(k = 0\\) qual è la produzione massima \\(m\\) minima che rende il problema ammissibile? Alza \\(\\ell_0\\): il costo scende di \\(\\mu_1\\) per chilogrammo?",
       "Set \\(k\\) to 20 kg: how much is saved and why? With \\(k = 0\\), what is the smallest maximum production \\(m\\) that makes the problem feasible? Raise \\(\\ell_0\\): does the cost drop by \\(\\mu_1\\) per kilogram?"),
@@ -886,11 +931,17 @@
     letture(R, v, st, C) {
       if (R.stato !== "ottimo") return stato(R, C);
       const x = R.x;
-      return valore(T("Ricavo massimo", "Maximum revenue"), R, "$", 0) +
-        M.tab(["", T("greggio 1", "crude 1"), T("greggio 2", "crude 2"), T("totale", "total")],
-          [[T("benzina", "gasoline"), mig(x[0]), mig(x[1]), mig(x[0] + x[1])], [T("gasolio", "heating oil"), mig(x[2]), mig(x[3]), mig(x[2] + x[3])]]) +
-        tabOmbra(R) +
+      return tabOmbra(R) +
         nota(T("\\(\\pi_1\\) e \\(\\pi_2\\) sono il ricavo in più per un barile in più di ciascun greggio.", "\\(\\pi_1\\) and \\(\\pi_2\\) are the extra revenue for one more barrel of each crude."));
+    },
+    soluzione(R) {
+      if (R.stato !== "ottimo") return "";
+      const x = R.x, zm = (q) => (Math.abs(q) < 0.5 ? "—" : mig(q));
+      return SOL().blocco(valore(T("Ricavo massimo", "Maximum revenue"), R, "$", 0), [
+        SOL().tab(T("Barili di greggio \\(j\\) destinati a benzina (\\(\\tilde x_j\\)) e gasolio (\\(\\tilde y_j\\))", "Barrels of crude \\(j\\) used for gasoline (\\(\\tilde x_j\\)) and heating oil (\\(\\tilde y_j\\))"),
+          ["", T("greggio 1", "crude 1"), T("greggio 2", "crude 2"), T("totale", "total")],
+          [[T("benzina \\(\\tilde x_j\\)", "gasoline \\(\\tilde x_j\\)"), zm(x[0]), zm(x[1]), zm(x[0] + x[1])], [T("gasolio \\(\\tilde y_j\\)", "heating oil \\(\\tilde y_j\\)"), zm(x[2]), zm(x[3]), zm(x[2] + x[3])]]),
+      ], NULLO());
     },
     domanda: T("Alza \\(w_1\\) di 250 barili: il ricavo cresce di \\(250\\,\\pi_1\\)? Porta \\(g_1\\) a 10: che benzina si può ancora fare? Abbassa \\(p_2\\) sotto 25 $: perché il piano non cambia finché tutto il greggio viene usato?",
       "Raise \\(w_1\\) by 250 barrels: does the revenue grow by \\(250\\,\\pi_1\\)? Set \\(g_1\\) to 10: what gasoline can still be made? Lower \\(p_2\\) below 25 $: why does the plan not change as long as all the crude is used?"),
@@ -952,11 +1003,18 @@
     letture(R, v, st, C) {
       if (R.stato !== "ottimo") return stato(R, C);
       const x = R.x, y = [x[0] - 2 * x[1], x[1] - x[2], x[2]];
-      return valore(T("Ricavo massimo", "Maximum revenue"), R, "€", 0) +
-        M.tab([T("farmaco", "drug"), T("prodotte", "produced"), T("vendute", "sold")], [0, 1, 2].map((i) => [String(i + 1), mig(x[i]), mig(Math.max(0, y[i]))])) +
-        tabOmbra(R) +
+      return tabOmbra(R) +
         nota(T("\\(\\pi\\) è il ricavo in più per un'ora di lavoro in più: il farmaco che rende di più per ora, contando le ore dei farmaci consumati, prende tutte le ore.",
           "\\(\\pi\\) is the extra revenue for one more working hour: the drug with the highest revenue per hour, counting the hours of the drugs it uses, takes all the hours."));
+    },
+    soluzione(R) {
+      if (R.stato !== "ottimo") return "";
+      const x = R.x, y = [x[0] - 2 * x[1], x[1] - x[2], x[2]], zm = (q) => (Math.abs(q) < 0.5 ? "—" : mig(q));
+      return SOL().blocco(valore(T("Ricavo massimo", "Maximum revenue"), R, "€", 0), [
+        SOL().tab(T("Unità di ogni farmaco: prodotte \\(\\tilde x_i\\) e vendute (le altre servono per il farmaco successivo)", "Units of each drug: produced \\(\\tilde x_i\\) and sold (the others are used for the next drug)"),
+          [T("farmaco \\(i\\)", "drug \\(i\\)"), "1", "2", "3"],
+          [["\\(\\tilde x_i\\)", ...x.map(zm)], [T("vendute", "sold"), ...y.map((q) => zm(Math.max(0, q)))]]),
+      ], NULLO());
     },
     domanda: T("Ogni unità venduta di farmaco 2 richiede 4 ore e di farmaco 3 ne richiede 7: alza \\(p_3\\) e trova il prezzo da cui conviene vendere il farmaco 3. Raddoppia \\(k\\): il ricavo raddoppia? Perché?",
       "Each unit sold of drug 2 needs 4 hours and of drug 3 needs 7: raise \\(p_3\\) and find the price from which selling drug 3 pays off. Double \\(k\\): does the revenue double? Why?"),
@@ -965,6 +1023,7 @@
   // ================================================================ registrazione
   const VOCI = { straordinario: vStraordinario, trasporto: vTrasporto, dieta: vDieta, "dieta-classi": vDietaClassi, "piu-periodi": vPiuPeriodi,
     dolci: vDolci, torte: vTorte, raffineria: vRaffineria, farmaci: vFarmaci };
+  if (window.GI_PL_SOL) window.GI_PL_SOL.voci(VOCI);
   window.GI_RICETTE["pl-tecniche"] = () => O.ricettaVoci({ titolo: T("Nove modelli LP svolti", "Nine worked LP models"), etichetta: T("Modello", "Model") }, VOCI);
   // per i test in node / in console
   window.GI_PL_TECNICHE = VOCI;

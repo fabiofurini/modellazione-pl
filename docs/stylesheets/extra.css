@@ -103,3 +103,14 @@
 
 /* pl-legenda-sotto: le app di Modellazione PL hanno la legenda dentro ogni grafico; quella ripetuta sotto non serve (Fabio, 25/11/2026) */
 .gi[data-grafico^="pl-"] .gi-legenda { display: none; }
+/* al suo posto il blocco «Soluzione ottima» (GI_PL_SOL in gi-pl-app.js): valore ottimo e valori delle variabili, aggiornati con i cursori */
+.md-typeset .plm-sol { margin: .5em 0 0; padding: .45em .7em .3em; font-size: .76rem; line-height: 1.5; overflow-x: auto;
+  background: color-mix(in srgb, var(--gi-line) 50%, transparent); border-radius: 8px; }
+.md-typeset .plm-sol-tit { margin: 0 0 .15em; font-weight: 700; }
+.md-typeset .plm-sol-val { margin: 0 0 .25em; }
+.plm-sol-tabs { display: flex; flex-wrap: wrap; gap: .2em 1.8em; align-items: flex-start; }
+.md-typeset .plm-sol-t > p { margin: .1em 0 0; font-weight: 600; }
+.md-typeset .gi .plm-sol table.gi-tabella { width: auto; margin: 0 0 .3em; }
+.md-typeset .gi .plm-sol table.gi-tabella td, .md-typeset .gi .plm-sol table.gi-tabella th { min-width: 2.8em; padding: .1em .45em; }
+.md-typeset .gi .plm-sol table.gi-tabella td:first-child, .md-typeset .gi .plm-sol table.gi-tabella th:first-child { text-align: left; }
+.md-typeset .plm-sol-nota { margin: .1em 0 .2em; opacity: .85; }

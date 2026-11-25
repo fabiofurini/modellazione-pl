@@ -619,10 +619,7 @@
       if (R.stato !== "ottimo") return M.tinta(C.rosso, T("Inammissibile.", "Infeasible.")) + " " +
         T(`Nessun titolo rende più del ${pc(MMAX, 1)} annuo.`, `No asset returns more than ${pc(MMAX, 1)} per year.`);
       const ped = fx(v[0], 2), F = FIG();
-      const righe = TITOLI.map((t, i) => [t, pc(MEDIE[i], 1), R.x[i] > 5e-5 ? pc(R.x[i], 1) : "—"]);
-      return `<div>${M.tinta(F.rosso, `CVaR<sub>${ped}</sub>`)} = <b>${pc(R.cvar)}</b> ${T("(valore ottimo dell'LP)", "(optimal value of the LP)")}</div>` +
-        `<div>${M.tinta(F.arancio, `VaR<sub>${ped}</sub>`)} = ${pc(R.var)} · ${M.tinta(F.verde, T("perdita media", "mean loss"))} = ${pc(R.media)}</div>` +
-        M.tab([T("titolo", "asset"), "\\(m_i\\)", T("quota \\(x_i\\)", "share \\(x_i\\)")], righe) +
+      return `<div>${M.tinta(F.arancio, `VaR<sub>${ped}</sub>`)} = ${pc(R.var)} · ${M.tinta(F.verde, T("perdita media", "mean loss"))} = ${pc(R.media)}</div>` +
         `<div style="margin-top:.3em">${T(`Rendimento atteso del portafoglio: ${pc(R.rend, 1)} annuo, cioè ${pc(-R.media)} al mese; nel ${fx(100 * (1 - v[0]), 0)}% dei mesi peggiori (${nCoda(v[0])} scenari) la perdita media è ${pc(R.cvar)}.`,
           `Expected return of the portfolio: ${pc(R.rend, 1)} per year, i.e. ${pc(-R.media)} per month; in the ${fx(100 * (1 - v[0]), 0)}% worst months (${nCoda(v[0])} scenarios) the mean loss is ${pc(R.cvar)}.`)}</div>` +
         `<div style="margin-top:.3em">${R.ombra > 1e-9
@@ -630,6 +627,18 @@
             `Shadow price of the return constraint: ${fx(R.ombra, 3)}. One more percentage point of \\(b\\) costs about ${fx(R.ombra, 2)} points of monthly CVaR.`)
           : T("Il vincolo di rendimento non è attivo (prezzo ombra 0): il portafoglio a CVaR minimo rende già più di \\(b\\).",
             "The return constraint is not active (shadow price 0): the minimum-CVaR portfolio already returns more than \\(b\\).")}</div>`;
+    },
+    soluzione(R, v) {
+      if (R.stato !== "ottimo") return "";
+      const SOL = W.GI_PL_SOL, F = FIG(), ped = fx(v[0], 2);
+      const xi = R.perdite.map((l) => Math.max(0, l - R.eta)), pos = xi.filter((q) => q > 1e-9);
+      const quota = (x) => (x > 5e-5 ? pc(x, 1) : "—");
+      return SOL.blocco(`${T("Valore ottimo", "Optimal value")}: ${M.tinta(F.rosso, `CVaR<sub>${ped}</sub>`)} = <b>${pc(R.cvar)}</b> ${T("del capitale (perdita mensile)", "of the capital (monthly loss)")}` +
+        `<br>\\(\\tilde\\eta = ${fxT(100 * R.eta, 2)}\\%\\) ${T("(un VaR della perdita)", "(a VaR of the loss)")} · ` +
+        T(`\\(\\tilde\\xi_s > 0\\) in ${pos.length} scenari su ${K}, i mesi con perdita oltre \\(\\tilde\\eta\\)`, `\\(\\tilde\\xi_s > 0\\) in ${pos.length} scenarios out of ${K}, the months with a loss above \\(\\tilde\\eta\\)`), [
+        SOL.tab(T("Quote del portafoglio \\(\\tilde x_i\\)", "Portfolio shares \\(\\tilde x_i\\)"), [T("titolo", "asset"), ...TITOLI],
+          [[T("rendimento atteso \\(m_i\\)", "expected return \\(m_i\\)"), ...MEDIE.map((m) => pc(m, 1))], [tx("\\tilde x_i"), ...R.x.map(quota)]]),
+      ], T("«—»: valore nullo.", "«—»: zero value."));
     },
     domanda: T("Con \\(\\alpha = 0{,}90\\) e \\(b = 8\\%\\) ritrovi le quote del capitolo (UTL 46,5%, MAT 22,5%). Porta \\(b\\) sotto il 3,9%: perché il CVaR non scende più e il prezzo ombra diventa 0? Poi porta \\(\\alpha\\) a 0,99: su quanti scenari si stima la coda, e quanto cambiano le quote?",
       "With \\(\\alpha = 0.90\\) and \\(b = 8\\%\\) you find the shares of the chapter (UTL 46.5%, MAT 22.5%). Set \\(b\\) below 3.9%: why does the CVaR stop decreasing and the shadow price become 0? Then set \\(\\alpha\\) to 0.99: how many scenarios estimate the tail, and how much do the shares change?"),
@@ -734,15 +743,13 @@
     letture(A, v, st, C) {
       const F = FIG(), I = A.int2;
       const intTxt = I ? `[${fx(I[0], 2)}; ${fx(I[1], 2)}] €` : T("vuoto", "empty");
-      let out = `<div>${T("Valore ottimo dell'LP normalizzato", "Optimal value of the normalized LP")}: <b>${fx(A.lp.z, 2)}</b> · `;
+      let out = "<div>";
       if (A.tipoA) {
-        out += M.tinta(F.rosso, T("arbitraggio di tipo A", "type A arbitrage")) + "</div>" +
-          M.tab([T("titolo", "asset"), T("posizione \\(x_i\\)", "position \\(x_i\\)"), T("costo oggi", "cost today")],
-            A.lp.x.map((x, i) => [String(i), fx(x, 3), euro(x * A.s0[i], 3)])) +
-          `<div style="margin-top:.3em">${T(`Si incassa ${euro(-A.lp.z)} oggi e domani il payoff è (${A.lp.payoff.map((p) => fx(p, 2)).join("; ")}) €, mai negativo.`,
-            `One cashes ${euro(-A.lp.z)} today and tomorrow the payoff is (${A.lp.payoff.map((p) => fx(p, 2)).join(", ")}) €, never negative.`)}</div>`;
+        out += M.tinta(F.rosso, T("Arbitraggio di tipo A", "Type A arbitrage")) + "</div>" +
+          `<div style="margin-top:.3em">${T("La strategia sotto il grafico incassa denaro oggi e domani ha un payoff mai negativo: guadagno senza rischio.",
+            "The strategy below the chart cashes money today and tomorrow has a payoff that is never negative: profit without risk.")}</div>`;
       } else {
-        out += M.tinta(F.verde, T("nessun arbitraggio di tipo A", "no type A arbitrage")) + "</div>" +
+        out += M.tinta(F.verde, T("Nessun arbitraggio di tipo A", "No type A arbitrage")) + "</div>" +
           M.tab([T("stato", "state"), "\\(p_j\\)", "\\(q_j = R\\, p_j\\)"], A.lp.p.map((p, j) => [String(j + 1), fx(p, 4), fx(A.q[j], 4)])) +
           `<div style="margin-top:.3em">${T(`I prezzi ombra riproducono i prezzi: \\(\\sum_j s^1_{ij} p_j = s^0_i\\) per i tre titoli, \\(\\sum_j q_j = ${n(A.q.reduce((s, q) => s + q, 0), 4)}\\).`,
             `The shadow prices reproduce the prices: \\(\\sum_j s^1_{ij} p_j = s^0_i\\) for the three assets, \\(\\sum_j q_j = ${n(A.q.reduce((s, q) => s + q, 0), 4)}\\).`)} ` +
@@ -757,12 +764,23 @@
         `${T("con i tre titoli", "with the three assets")} ${cc ? `${fx(cc[0], 4)} €` : T("nessun prezzo coerente", "no coherent price")}.</div>`;
       return out;
     },
+    soluzione(A) {
+      const SOL = W.GI_PL_SOL, x = A.lp.x, z = (q, c) => (Math.abs(q) < 0.5 * Math.pow(10, -c) ? "—" : fx(q, c));
+      return SOL.blocco(`${T("Valore ottimo dell'LP normalizzato", "Optimal value of the normalized LP")}: <b>${fx(A.lp.z, 2)} €</b> ` +
+        (A.tipoA ? T("(costo oggi della strategia: si incassa 1 €)", "(cost today of the strategy: one cashes 1 €)") : T("(nessuna strategia incassa denaro oggi senza rischio)", "(no strategy cashes money today without risk)")), [
+        SOL.tab(T("Posizioni \\(\\tilde x_i\\) (quantità di titolo; negativa: vendita allo scoperto)", "Positions \\(\\tilde x_i\\) (amount of asset; negative: short sale)"),
+          [T("titolo \\(i\\)", "asset \\(i\\)"), "0", "1", "2"],
+          [[tx("\\tilde x_i"), ...x.map((q) => z(q, 3))], [T("costo oggi \\(s^0_i\\, \\tilde x_i\\) (€)", "cost today \\(s^0_i\\, \\tilde x_i\\) (€)"), ...x.map((q, i) => z(q * A.s0[i], 3))]]),
+        SOL.tab(T("Payoff domani \\(\\sum_i s^1_{ij}\\, \\tilde x_i\\) (€)", "Payoff tomorrow \\(\\sum_i s^1_{ij}\\, \\tilde x_i\\) (€)"),
+          [T("stato \\(j\\)", "state \\(j\\)"), ...A.lp.payoff.map((q, j) => String(j + 1))], [["", ...A.lp.payoff.map((q) => z(q, 2))]]),
+      ], T("«—»: valore nullo.", "«—»: zero value."));
+    },
     domanda: T("Con \\(s^0_1 = 13\\) € porta \\(s^0_2\\) a 18,70 € e poi a 18,69 €: che cosa succede al valore dell'LP e alle \\(q_j\\)? Poi metti \\(s^0_1 = 6\\) €: quale strategia incassa 1 € oggi? Infine alza \\(r\\): come si sposta l'intervallo dei prezzi coerenti?",
       "With \\(s^0_1 = 13\\) € set \\(s^0_2\\) to 18.70 € and then to 18.69 €: what happens to the LP value and to the \\(q_j\\)? Then set \\(s^0_1 = 6\\) €: which strategy cashes 1 € today? Finally raise \\(r\\): how does the interval of coherent prices move?"),
   };
 
   // ================================================================ registrazione
-  const reg = (nome, opz, voci) => { W.GI_RICETTE[nome] = () => O().ricettaVoci(opz, voci); };
+  const reg = (nome, opz, voci) => { if (W.GI_PL_SOL) W.GI_PL_SOL.voci(voci); W.GI_RICETTE[nome] = () => O().ricettaVoci(opz, voci); };
   reg("pl-var-cvar", { titolo: T("VaR e CVaR di un portafoglio", "VaR and CVaR of a portfolio") }, { varcvar: vVarCvar });
   reg("pl-arbitraggio", { titolo: T("Arbitraggio e prezzatura", "Arbitrage and pricing") }, { arbitraggio: vArbitraggio });
 })();
