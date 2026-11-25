@@ -78,15 +78,9 @@
 .plm-sim { overflow-x: auto; overflow-y: hidden; text-align: center; font-size: .95em; padding: .2em 0 .3em; }
 .md-typeset details.plm-num { margin: .3em 0 0; font-size: .74rem; }
 .md-typeset details.plm-num > summary { font-weight: 600; }
-.plm-num-corpo { max-height: 46vh; overflow: auto; padding: .2em 0 .4em; }
-.md-typeset .gi-app-intera details.plm-num { position: relative; overflow: visible; }
-/* a tutta pagina il modello numerico si apre sopra il grafico, che resta della sua altezza */
-.gi-app-intera details.plm-num[open] > .plm-num-corpo {
-  position: absolute; left: -1px; right: -1px; top: 100%; z-index: 6;
-  max-height: min(62vh, 680px); padding: .4em .8em .6em;
-  background: var(--md-default-bg-color); border: 1px solid var(--md-default-fg-color--lighter);
-  border-radius: 0 0 6px 6px; box-shadow: 0 8px 22px rgba(0, 0, 0, .22);
-}
+/* il modello numerico (un solo array, GI_PL_NUM in gi-pl-app.js) si apre in linea, sotto il modello e sopra il grafico */
+.plm-num-corpo { padding: .2em 0 .4em; }
+.plm-riga.plm-array { font-size: .92em; }
 .plm-riga { text-align: left; margin: .1em 0 .5em; white-space: nowrap; overflow-x: auto; overflow-y: hidden; }
 .md-typeset .plm-tit { margin: .6em 0 .1em; font-weight: 600; font-size: .95em; }
 .md-typeset .plm-num-corpo > .plm-tit:first-child { margin-top: .2em; }

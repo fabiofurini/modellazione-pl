@@ -33,14 +33,14 @@
       for (let i = 0; i < nI; i++) a[ix(i, t)] = P.ore[i];
       A.push(a); rel.push("<="); b.push(cap[t]);
     }
-    const r = O().lp({ c, A, rel, b, senso: "min" });
-    if (r.stato !== "ottimo") return { stato: r.stato, cap, dom };
+    const r = O().lp({ c, A, rel, b, senso: "min" }), lp = { c, A, rel, b };   // lp: le righe del simplesso, per il modello numerico
+    if (r.stato !== "ottimo") return { stato: r.stato, cap, dom, lp };
     const x = [], s = [], ore = [];
     for (let i = 0; i < nI; i++) { x.push([]); s.push([]); for (let t = 0; t < nT; t++) { x[i].push(r.x[ix(i, t)]); s[i].push(r.x[is(i, t)]); } }
     for (let t = 0; t < nT; t++) ore.push(P.ore.reduce((acc, h, i) => acc + h * x[i][t], 0));
     const k = nI * nT;
     return {
-      stato: "ottimo", costo: r.z, x, s, ore, cap, dom,
+      stato: "ottimo", costo: r.z, x, s, ore, cap, dom, lp,
       ombra: r.y.slice(k), lo: r.rhsLo.slice(k), up: r.rhsUp.slice(k),
       bilancio: r.y.slice(0, k),
     };
@@ -62,14 +62,14 @@
     V.forEach((v, k) => { A.push(vars.map(([kk]) => (kk === k ? E.eta : 0))); rel.push(">="); b.push(v.energia * fEne); });
     for (let t = 0; t < nT; t++) { A.push(vars.map(([, tt]) => (tt === t ? 1 : 0))); rel.push("<="); b.push(Cr - E.base[t]); }
     vars.forEach(([k], j) => { const a = new Array(n).fill(0); a[j] = 1; A.push(a); rel.push("<="); b.push(V[k].pmax); });
-    const r = O().lp({ c, A, rel, b, senso: "min" });
-    if (r.stato !== "ottimo") return { stato: r.stato, C: Cr, prezzo };
+    const r = O().lp({ c, A, rel, b, senso: "min" }), lp = { c, A, rel, b, vars };   // vars: [furgone, ora] di ogni colonna
+    if (r.stato !== "ottimo") return { stato: r.stato, C: Cr, prezzo, lp };
     const x = V.map(() => new Array(nT).fill(0));
     vars.forEach(([k, t], j) => { x[k][t] = r.x[j]; });
     const tot = [];
     for (let t = 0; t < nT; t++) tot.push(E.base[t] + x.reduce((s, riga) => s + riga[t], 0));
     return {
-      stato: "ottimo", costo: r.z, x, tot, picco: Math.max(...tot), C: Cr, prezzo,
+      stato: "ottimo", costo: r.z, x, tot, picco: Math.max(...tot), C: Cr, prezzo, lp,
       ombraEnergia: r.y.slice(0, V.length), ombraRete: r.y.slice(V.length, V.length + nT),
     };
   }

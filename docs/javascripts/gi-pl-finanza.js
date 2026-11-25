@@ -251,32 +251,6 @@
   }, true);
   const SA = () => T("\\text{soggetto a}", "\\text{subject to}");
   const PER = (i, m) => `\\forall ${i} \\in \\{1, 2, \\dots, ${m}\\}`;
-  const REL = { "<=": "\\le", "=": "=", ">=": "\\ge", "><": "\\gtreqless" };
-  /** griglia nello stile delle dispense (array rcrc…cr), come griglia() di gi-pl-app.js: «nomi» dà i nomi
-   *  delle variabili di una riga (ξ₁, ξ₂, … nella stessa colonna), «segue» avvicina la riga successiva */
-  const griglia = (vars, righe) => {
-    const tex = righe.map((r) => {
-      const celle = [], nomi = r.nomi || vars;
-      if (r.puntini) vars.forEach((x, j) => celle.push("", j === 0 ? "\\vdots" : ""));
-      else if (r.dominio) {
-        const ultimo = Math.max(...r.dominio);
-        vars.forEach((x, j) => celle.push("", r.dominio.includes(j) ? nomi[j] + (j === ultimo ? "" : ",") : ""));
-      } else {
-        let primo = !r.piu;
-        vars.forEach((x, j) => {
-          const a = r.c[j];
-          if (!a || Math.abs(a) < 1e-12) { celle.push("", ""); return; }
-          celle.push(a < 0 ? "-" : primo ? "" : "+", (Math.abs(Math.abs(a) - 1) < 1e-12 ? "" : n(Math.abs(a), r.cifre ?? 2) + "\\,") + nomi[j]);
-          primo = false;
-        });
-      }
-      const rel = r.rel ? (REL[r.rel] || r.rel) : "";
-      return [r.lab || "", ...celle, rel, r.rhs ?? ""].map((c) => (c === "" ? "" : `{${c}}`)).join(" & ");
-    });
-    const corpo = tex.map((t, k) => t + (k === tex.length - 1 ? "" : righe[k].segue ? " \\\\\n" : " \\\\[1ex]\n")).join("");
-    return `\\begin{array}{r${"cr".repeat(vars.length)}cr} ${corpo} \\end{array}`;
-  };
-  const blocco = (titolo, g, cls = "") => `<p class="plm-tit">${titolo}</p><div class="plm-riga ${cls}">\\(\\displaystyle ${g}\\)</div>`;
   const modello = (cap, testo, simbolico, num, nota) =>
     `<div class="plm plm-fin"><p class="plm-testo">${testo}</p>${rigaCapitolo(cap)}` +
     `<div class="plm-sim">\\(\\displaystyle \\begin{aligned} ${simbolico} \\end{aligned}\\)</div>` +
@@ -317,26 +291,23 @@
         \\eta &\\gtreqless 0, & \\\\
         x_i &\\ge 0, & ${ni}, \\\\
         \\xi_s &\\ge 0, & ${ks}.`;
-      // tutto il modello numerico: colonne x_1, x_2, x_3, eta e xi_s; una riga di coda per scenario, con il suo xi_s
+      // tutto il modello numerico in un array: colonne x_1, x_2, x_3, eta, xi_1, ..., xi_k; una riga di coda per scenario
       const a = v[0], U = 1 / (K * (1 - a)), NM = NOMI();
-      const vars = [...NM.map((t, i) => `x_{${i + 1}}`), "\\eta", "\\xi_s"], z = () => new Array(vars.length).fill(0);
-      const ie = NT, ix = NT + 1;
-      const ob = z(); ob[ie] = 1; ob[ix] = U;
+      const vars = [...NM.map((t, i) => `x_{${i + 1}}`), "\\eta", ...RENDIMENTI.map((r, s) => `\\xi_{${s + 1}}`)], z = () => new Array(vars.length).fill(0);
+      const ie = NT, ix = (s) => NT + 1 + s;
+      const ob = z(); ob[ie] = 1; RENDIMENTI.forEach((r, s) => { ob[ix(s)] = U; });
       const bud = z(), ren = z();
       for (let i = 0; i < NT; i++) { bud[i] = 1; ren[i] = MEDIE[i]; }
-      const righe = [{ lab: "\\min", c: ob, cifre: 4, nomi: vars.map((x, j) => (j === ix ? `\\textstyle\\sum_{s=1}^{${K}} \\xi_s` : x)) },
-        { lab: SA(), c: ren, rel: ">=", rhs: n(v[1], 2) }, { c: bud, rel: "=", rhs: "1" }];
+      const righe = [{ a: ren, rel: ">=", rhs: v[1], cifre: 2 }, { a: bud, rel: "=", rhs: 1 }];
       RENDIMENTI.forEach((rr, s) => {
         const c = z();
         for (let i = 0; i < NT; i++) c[i] = rr[i];
-        c[ie] = 1; c[ix] = 1;
-        righe.push({ c, rel: ">=", rhs: "0", nomi: vars.map((x) => x.replace("_s", `_{${s + 1}}`)), segue: s < K - 1 });
+        c[ie] = 1; c[ix(s)] = 1;
+        righe.push({ a: c, rel: ">=", rhs: 0 });
       });
-      righe.push({ dominio: [ie], rel: "><", rhs: "0" },
-        { dominio: vars.map((x, j) => j).filter((j) => j !== ie), rel: ">=", rhs: `0, \\quad s = 1, \\dots, ${K}` });
-      const num = blocco(T(`Funzione obiettivo, rendimento, bilancio e, per ogni scenario \\(s = 1, \\dots, ${K}\\), la riga di coda con i rendimenti \\(r_{is}\\) a sinistra: ${NT + 1 + K} variabili, ${K + 2} vincoli`,
-        `Objective function, return, budget and, for each scenario \\(s = 1, \\dots, ${K}\\), the tail row with the returns \\(r_{is}\\) on the left: ${NT + 1 + K} variables, ${K + 2} constraints`),
-      griglia(vars, righe));
+      // 14 colonne non stanno nel riquadro: a capo dopo xi_5, con xi_6, ..., xi_10 sotto xi_1, ..., xi_5
+      const num = W.GI_PL_NUM.numLP({ senso: "min", vars, c: ob, cifreObj: 4, cifre: 2, righe, pezzi: W.GI_PL_NUM.aCapo(vars.map((x, j) => j), NT + 6, NT + 1),
+        dominio: [{ cols: [ie], rel: "><", rhs: "0" }, { cols: vars.map((x, j) => j).filter((j) => j !== ie), rel: ">=", rhs: "0" }] });
       const DV = W.GI_PL_DV;
       const TABS = DV.tabelle(DV.tab(T(`Rendimento annuo \\(r_{is}\\) (%) del titolo \\(i\\) nello scenario \\(s\\), e rendimento atteso \\(m_i\\) (%)`, `Annual return \\(r_{is}\\) (%) of asset \\(i\\) in scenario \\(s\\), and expected return \\(m_i\\) (%)`),
         [T("titolo", "asset"), ...RENDIMENTI.map((r, s) => `\\(s = ${s + 1}\\)`), "\\(m_i\\)"],
@@ -459,11 +430,11 @@
         \\sum_{i=0}^{n} ${s0}\\, x_i &\\ge -1, & \\\\
         x_i &\\gtreqless 0, & \\forall i \\in \\{0, 1, \\dots, n\\}.`;
       const vars = ["x_{0}", "x_{1}", "x_{2}"], S = A.lp.S;
-      const righe = [{ lab: "\\min", c: A.s0, cifre: 2 }];
-      [0, 1, 2].forEach((j) => righe.push({ lab: j ? "" : SA(), c: S.map((r) => r[j]), cifre: 3, rel: ">=", rhs: "0" }));
-      righe.push({ c: A.s0, cifre: 2, rel: ">=", rhs: "-1" }, { dominio: [0, 1, 2], rel: "><", rhs: "0" });
-      const num = blocco(T("Colonne: le posizioni nei titoli 0, 1, 2. Righe: costo oggi, payoff negli stati 1, 2, 3, normalizzazione",
-        "Columns: the positions in assets 0, 1, 2. Rows: cost today, payoff in states 1, 2, 3, normalization"), griglia(vars, righe));
+      const righe = [0, 1, 2].map((j) => ({ a: S.map((r) => r[j]), cifre: 3, rel: ">=", rhs: 0 }));
+      righe.push({ a: A.s0, cifre: 2, rel: ">=", rhs: "-1" });
+      const num = W.GI_PL_NUM.numLP({ senso: "min", vars, c: A.s0, cifreObj: 2, righe, dominio: [{ cols: [0, 1, 2], rel: "><", rhs: "0" }] },
+        T("Il modello LP dell'istanza: 3 variabili, 4 vincoli. Colonne: le posizioni nei titoli 0, 1, 2. Righe: payoff negli stati 1, 2, 3, normalizzazione del costo.",
+          "The LP model of the instance: 3 variables, 4 constraints. Columns: the positions in assets 0, 1, 2. Rows: payoff in states 1, 2, 3, normalization of the cost."));
       const DV = W.GI_PL_DV;
       const TABS = DV.tabelle(DV.tab(T("Prezzi oggi \\(s^0_i\\) e payoff domani \\(s^1_{ij}\\) (€): un titolo per riga, uno stato per colonna", "Prices today \\(s^0_i\\) and payoffs tomorrow \\(s^1_{ij}\\) (€): one asset per row, one state per column"),
         [T("titolo \\(i\\)", "asset \\(i\\)"), "\\(s^0_i\\)", "\\(j = 1\\)", "\\(j = 2\\)", "\\(j = 3\\)"], S.map((r, i) => [String(i), fx(A.s0[i], 2), ...r.map((x) => fx(x, i ? 0 : 3))])));

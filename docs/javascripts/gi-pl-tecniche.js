@@ -184,7 +184,7 @@
     `<div class="plm-sim">\\(\\displaystyle \\begin{aligned} ${simbolico} \\end{aligned}\\)</div>` +
     `<details class="plm-num"${NUM.aperto ? " open" : ""}><summary>${T("Modello numerico con i dati attuali", "Numerical model with the current data")}</summary>` +
     `<div class="plm-num-corpo"><p class="plm-tit">${T("Il modello LP dell'istanza, come nella pagina dell'esempio", "The LP model of the instance, as on the page of the example")}</p>` +
-    `<div class="plm-riga">\\(\\displaystyle ${num}\\)</div>${nota ? `<p class="plm-nota">${nota}</p>` : ""}</div></details></div>`;
+    `<div class="plm-riga plm-array">\\(\\displaystyle ${num}\\)</div>${nota ? `<p class="plm-nota">${nota}</p>` : ""}</div></details></div>`;
 
   // ================================================================ risoluzione e letture comuni
   /** risolve l'LP P = {vars, c, senso, righe: [{a, rel, b, nome, duale, unita}], costante} */
