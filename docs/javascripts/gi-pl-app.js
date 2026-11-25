@@ -54,19 +54,61 @@
   const SA = () => T("\\text{soggetto a}", "\\text{subject to}");
   const PER = (i, m) => `\\forall ${i} \\in \\{1, 2, \\dots, ${m}\\}`;
   const REL = { "<=": "\\le", "=": "=", ">=": "\\ge", "><": "\\gtreqless" };
-  /** a·var con il segno: [[coeff, "x_1"], ...] -> "12\,x_1 - 3\,x_2"; coeff 1 omesso */
-  const somma = (termini, c = 2) => termini.map(([a, x], k) => {
-    const s = a < 0 ? (k ? " - " : "-") : (k ? " + " : ""), m = Math.abs(a);
-    return s + (Math.abs(m - 1) < 1e-12 ? "" : n(m, c) + "\\,") + x;
-  }).join("");
-  /** modello numerico: obiettivo (righe) e vincoli [lhs, rel, rhs, nota], relazioni in colonna */
-  const numerico = (senso, obiettivo, righe) => {
-    const ob = obiettivo.length > 1 ? `\\begin{aligned}[t] ${obiettivo.map((l) => "& " + l).join(" \\\\ ")} \\end{aligned}` : obiettivo[0];
-    const corpo = righe.map((r, k) =>
-      `${k ? "" : SA()} & ${r[0]} & ${REL[r[1]] || ""} & ${r[2]} & ${r[3] ? "\\quad " + r[3] : ""} \\\\`).join("\n");
-    return `<div class="plm-riga">\\(\\displaystyle \\${senso}\\ \\ ${ob}\\)</div>` +
-      `<div class="plm-riga">\\(\\displaystyle \\begin{array}{lrcll} ${corpo} \\end{array}\\)</div>`;
+  /** griglia nello stile delle dispense (array rcrc…cr): una colonna per variabile con i segni in colonne
+   *  proprie, celle vuote per le variabili assenti, relazione e termine noto a destra, \\[1ex] fra le righe.
+   *  righe: { lab, c: [coefficienti per colonna], piu (primo segno + esplicito), rel, rhs, cifre }
+   *         { lab, dominio: [colonne], rel, rhs }  riga delle variabili separate da virgole
+   *         nomi: [...]  nomi propri della riga (colonne per prodotto / per furgone)
+   *         { puntini: true }  riga ⋮ */
+  const griglia = (vars, righe) => {
+    const tex = righe.map((r) => {
+      const celle = [], nomi = r.nomi || vars;
+      if (r.puntini) vars.forEach((x, j) => celle.push("", j === 0 ? "\\vdots" : ""));
+      else if (r.dominio) {
+        const ultimo = r.virgole ? -1 : Math.max(...r.dominio);
+        vars.forEach((x, j) => celle.push("", r.dominio.includes(j) ? nomi[j] + (j === ultimo ? "" : ",") : ""));
+      } else {
+        let primo = !r.piu;
+        vars.forEach((x, j) => {
+          const a = r.c[j];
+          if (!a || Math.abs(a) < 1e-12) { celle.push("", ""); return; }
+          celle.push(a < 0 ? "-" : primo ? "" : "+", (Math.abs(Math.abs(a) - 1) < 1e-12 ? "" : n(Math.abs(a), r.cifre ?? 2) + "\\,") + nomi[j]);
+          primo = false;
+        });
+      }
+      const rel = r.rel ? (REL[r.rel] || r.rel) : "";
+      return [r.lab || "", ...celle, rel, r.rhs ?? ""].map((c) => (c === "" ? "" : `{${c}}`)).join(" & ");
+    });
+    const corpo = tex.map((t, k) => t + (k === tex.length - 1 ? "" : righe[k].segue ? " \\\\\n" : " \\\\[1ex]\n")).join("");
+    return `\\begin{array}{r${"cr".repeat(vars.length)}cr} ${corpo} \\end{array}`;
   };
+  /** come griglia, ma ogni riga lunga va a capo ogni «per» variabili, come nelle dispense: le righe di
+   *  continuazione ripartono dalla seconda colonna con il segno, relazione e termine noto sull'ultima */
+  const grigliaLunga = (vars, righe, per) => {
+    const pezzi = [];
+    for (let k = 0; k < vars.length; k += per) pezzi.push([...Array(Math.min(per, vars.length - k)).keys()].map((q) => q + k));
+    const pad = (a, f) => [...a, ...new Array(per - a.length).fill(f)];
+    const out = [];
+    righe.forEach((r) => {
+      if (r.puntini) { out.push(r); return; }
+      let visto = !!r.piu;
+      const pieno = (g) => (r.dominio ? g.some((j) => r.dominio.includes(j)) : g.some((j) => r.c[j] && Math.abs(r.c[j]) > 1e-12));
+      const fine = r.dominio || !r.rel ? Math.max(...pezzi.map((g, k) => (pieno(g) ? k : -1))) : pezzi.length - 1;
+      pezzi.forEach((g, k) => {
+        if (k > fine) return;
+        const ultimo = k === fine;
+        const q = { lab: k ? "" : r.lab, nomi: pad(g.map((j) => (r.nomi || vars)[j]), ""), cifre: r.cifre, segue: !ultimo,
+          rel: ultimo ? r.rel : "", rhs: ultimo ? r.rhs : "" };
+        if (r.dominio) { q.dominio = g.map((j, i) => (r.dominio.includes(j) ? i : -1)).filter((i) => i >= 0); q.virgole = !ultimo; }
+        else { q.c = pad(g.map((j) => r.c[j]), 0); q.piu = visto; if (q.c.some((a) => a && Math.abs(a) > 1e-12)) visto = true; }
+        if (!r.dominio || q.dominio.length) out.push(q);
+      });
+    });
+    return griglia(new Array(per).fill(""), out);
+  };
+  /** un blocco del modello numerico: titolo e griglia (che scorre da sola se è più larga del riquadro) */
+  const blocco = (titolo, g, cls = "") => `<p class="plm-tit">${titolo}</p><div class="plm-riga ${cls}">\\(\\displaystyle ${g}\\)</div>`;
+  const MIN = "\\min";
   /** il blocco completo: problema, modello simbolico, modello numerico richiudibile */
   const modello = (testo, simbolico, num, nota) =>
     `<div class="plm"><p class="plm-testo">${testo}</p>` +
@@ -96,21 +138,37 @@
         x_{it} &\\ge 0, & ${it}, \\\\
         s_{it} &\\ge 0, & ${it}.`;
       const fD = v[0] / 100, fC = v[1] / 100, fH = v[2] / 100;
-      const lista = (x, i) => P.mesi.map((m, t) => `${x}_{${i + 1},${t + 1}}`).join(" + ");
-      const ob = P.prodotti.map((p, i) => `${i ? "+ " : ""}${n(P.cp[i], 2)}\\,(${lista("x", i)}) + ${n(P.ch[i] * fH, 3)}\\,(${lista("s", i)})`);
-      const righe = [];
-      for (let i = 0; i < nI; i++) for (let t = 0; t < nT; t++)
-        righe.push([`${t ? `s_{${i + 1},${t}}` : n(P.s0[i], 1)} + x_{${i + 1},${t + 1}}`, "=", `${n(P.domanda[i][t] * fD, 1)} + s_{${i + 1},${t + 1}}`, `i = ${i + 1},~t = ${t + 1}`]);
-      for (let t = 0; t < nT; t++)
-        righe.push([somma(P.ore.map((a, i) => [a, `x_{${i + 1},${t + 1}}`])), "<=", n(P.cap[t] * fC, 1), `t = ${t + 1}`]);
-      righe.push(["x_{it},~ s_{it}", ">=", "0", `i \\in \\{1, 2, 3\\},~ t \\in \\{1, 2, \\dots, 6\\}`]);
+      // un blocco per prodotto e semestre, colonne x_{i1}, s_{i1}, x_{i2}, s_{i2}, ...: il bilancio viene «a scala».
+      // Il secondo blocco riparte dalla scorta s_{i,3} del primo (il suo costo è già nel primo blocco).
+      let num = "";
+      const meta = Math.ceil(nT / 2);
+      for (let i = 0; i < nI; i++) for (let h = 0; h < 2; h++) {
+        const I = i + 1, t0 = h ? meta : 0, t1 = h ? nT : meta, vars = [], ob = [];
+        if (h) { vars.push(`s_{${I},${t0}}`); ob.push(0); }
+        for (let t = t0 + 1; t <= t1; t++) { vars.push(`x_{${I},${t}}`, `s_{${I},${t}}`); ob.push(P.cp[i], P.ch[i] * fH); }
+        const primo = i === 0 && h === 0, sh = h ? 1 : 0;
+        const righe = [{ lab: primo ? MIN : "", c: ob, piu: !primo, cifre: 3 }];
+        for (let t = t0; t < t1; t++) {
+          const c = new Array(vars.length).fill(0), k = sh + 2 * (t - t0);
+          c[k] = 1; c[k + 1] = -1; if (t > 0) c[k - 1] = 1;
+          righe.push({ lab: primo && t === 0 ? SA() : "", c, rel: "=", rhs: n(P.domanda[i][t] * fD - (t ? 0 : P.s0[i]), 1) });
+        }
+        righe.push({ dominio: vars.map((x, j) => j).filter((j) => j >= sh), rel: ">=", rhs: "0" });
+        num += blocco(h ? T(`Prodotto ${I}, mesi ${t0 + 1}–${t1} (la scorta \\(s_{${I},${t0}}\\) viene dal blocco precedente)`, `Product ${I}, months ${t0 + 1}–${t1} (the inventory \\(s_{${I},${t0}}\\) comes from the previous block)`)
+          : T(`Prodotto ${I}, mesi 1–${t1}: costi e bilancio delle scorte (per \\(t = 1\\) a destra c'è \\(d_{${I},1} - s_{${I},0}\\), con \\(s_{${I},0} = ${n(P.s0[i], 1)}\\))`,
+            `Product ${I}, months 1–${t1}: costs and inventory balance (for \\(t = 1\\) the right-hand side is \\(d_{${I},1} - s_{${I},0}\\), with \\(s_{${I},0} = ${n(P.s0[i], 1)}\\))`), griglia(vars, righe));
+      }
+      // capacità: una colonna per prodotto, una riga per mese
+      const capR = P.mesi.map((m, t) => ({ nomi: P.prodotti.map((q, i) => `x_{${i + 1},${t + 1}}`), c: P.ore, rel: "<=", rhs: n(P.cap[t] * fC, 1) }));
+      num += blocco(T("Capacità: una riga per mese, una colonna per prodotto", "Capacity: one row per month, one column per product"),
+        griglia(P.prodotti.map((q, i) => `x_{${i + 1},t}`), capR));
       return modello(T(`<b>Il problema.</b> Decidiamo quante unità di ognuno dei ${nI} prodotti produrre in ognuno dei ${nT} mesi e quante tenerne a scorta. ` +
         "L'obiettivo è minimizzare il costo di produzione e di giacenza. I vincoli: bilancio di magazzino mese per mese, con la domanda servita per intero, e ore macchina disponibili in ogni mese.",
       `<b>The problem.</b> We decide how many units of each of the ${nI} products to produce in each of the ${nT} months and how many to keep in inventory. ` +
         "The objective is to minimize production and holding cost. The constraints: inventory balance month by month, with demand served in full, and the machine hours available in each month."),
-      sim, numerico("min", ob, righe),
-      T("Righe: 18 vincoli di bilancio (per \\(t = 1\\) compare la scorta iniziale \\(s_{i0}\\)), poi i 6 vincoli di capacità.",
-        "Rows: 18 balance constraints (for \\(t = 1\\) the initial inventory \\(s_{i0}\\) appears), then the 6 capacity constraints."));
+      sim, num,
+      T("La funzione obiettivo è la somma delle righe di costo dei sei blocchi di prodotto.",
+        "The objective function is the sum of the cost rows of the six product blocks."));
     },
     disegna(crea, R, v, C, S) {
       if (R.stato !== "ottimo") return avviso(crea, S, C, T("Nessun piano ammissibile: la capacità non basta per la domanda", "No feasible plan: capacity does not cover demand"));
@@ -180,31 +238,29 @@
       const prezzo = (t) => E.prezzo[t] * (t >= 17 && t <= 20 ? v[2] / 100 : 1);
       const ore = (x) => ORDINE_ORE.filter((t) => coll(x, t));
       const xv = (j, t) => `x_{${j + 1},${t}}`;
-      // obiettivo raggruppato per ora (Delta t = 1 h), al più 8 variabili per riga
-      const gruppi = ORDINE_ORE.map((t) => [t, V.map((x, j) => (coll(x, t) ? xv(j, t) : null)).filter(Boolean)]).filter((q) => q[1].length);
-      const ob = [];
-      let riga = [], quante = 0;
-      gruppi.forEach(([t, xs]) => {
-        if (riga.length && quante + xs.length > 8) { ob.push((ob.length ? "+ " : "") + riga.join(" + ")); riga = []; quante = 0; }
-        riga.push(`${n(prezzo(t), 3)}\\,(${xs.join(" + ")})`); quante += xs.length;
+      // un blocco per furgone (le sue ore di collegamento in colonna), poi il blocco della rete
+      let num = "";
+      V.forEach((x, j) => {
+        const hh = ore(x), vars = hh.map((t) => xv(j, t)), tutte = vars.map((q, k) => k);
+        num += blocco(T(`Furgone ${j + 1}, collegato dalle ${x.arrivo} alle ${x.partenza}: costo, energia, potenza del caricatore`,
+          `Van ${j + 1}, plugged in from ${x.arrivo}:00 to ${x.partenza}:00: cost, energy, charger power`), grigliaLunga(vars, [
+          { lab: j ? "" : MIN, c: hh.map(prezzo), piu: j > 0, cifre: 3 },
+          { lab: j ? "" : SA(), c: hh.map(() => E.eta), rel: ">=", rhs: n(x.energia * v[1] / 100, 1) },
+          { dominio: tutte, rel: "<=", rhs: n(x.pmax, 1) },
+          { dominio: tutte, rel: ">=", rhs: "0" },
+        ], 5));
       });
-      if (riga.length) ob.push((ob.length ? "+ " : "") + riga.join(" + "));
-      const breve = (j, hh) => [xv(j, hh[0]), xv(j, hh[1]), "\\dots", xv(j, hh[hh.length - 1])].join(" + ");
-      const righe = V.map((x, j) => [`${n(E.eta, 2)}\\,(${breve(j, ore(x))})`, ">=", n(x.energia * v[1] / 100, 1), `v = ${j + 1}`]);
-      ORDINE_ORE.forEach((t) => {
-        const xs = V.map((x, j) => (coll(x, t) ? xv(j, t) : null)).filter(Boolean);
-        if (xs.length) righe.push([`${xs.join(" + ")} + ${n(E.base[t], 1)}`, "<=", n(v[0], 0), `t = ${t}`]);
-      });
-      V.forEach((x, j) => righe.push([`x_{${j + 1},t}`, "<=", n(x.pmax, 1), `t \\in \\{${x.arrivo}, \\dots, 23, 0, \\dots, ${x.partenza - 1}\\}`]));
-      righe.push(["x_{vt}", "<=", "0", T("\\text{nelle ore con } a_{vt} = 0", "\\text{in the hours with } a_{vt} = 0")]);
-      righe.push(["x_{vt}", ">=", "0", `v \\in \\{1, \\dots, ${nV}\\},~ t \\in \\{0, \\dots, 23\\}`]);
+      const reteR = ORDINE_ORE.filter((t) => V.some((x) => coll(x, t)))
+        .map((t) => ({ nomi: V.map((x, j) => xv(j, t)), c: V.map((x) => (coll(x, t) ? 1 : 0)), rel: "<=", rhs: n(v[0] - E.base[t], 1) }));
+      num += blocco(T("Rete: una riga per ora, una colonna per furgone; a destra \\(k - b_t\\)", "Grid: one row per hour, one column per van; on the right \\(k - b_t\\)"),
+        griglia(V.map((x, j) => `x_{${j + 1},t}`), reteR));
       return modello(T(`<b>Il problema.</b> Decidiamo la potenza \\(x_{vt}\\) assegnata a ognuno dei ${nV} furgoni in ogni ora \\(t\\) (\\(\\Delta t = 1\\) h). ` +
         "L'obiettivo è la minima spesa energetica. I vincoli: energia richiesta entro la partenza, ricarica solo quando il furgone è collegato e sotto la potenza del caricatore, prelievo totale sotto la potenza \\(k\\) del contatore.",
       `<b>The problem.</b> We decide the power \\(x_{vt}\\) assigned to each of the ${nV} vans in each hour \\(t\\) (\\(\\Delta t = 1\\) h). ` +
         "The objective is the minimum energy expenditure. The constraints: the energy required before departure, charging only while the van is plugged in and below the power of the charger, total draw below the power \\(k\\) of the meter."),
-      sim, numerico("min", ob, righe),
-      T("Le ore sono quelle dell'orologio (\\(x_{1,18}\\): furgone 1 alle 18); nei vincoli di energia la somma va dall'ora di arrivo all'ultima ora prima della partenza. I vincoli di rete sono scritti solo per le ore con almeno un furgone collegato.",
-        "Hours are clock hours (\\(x_{1,18}\\): van 1 at 6 pm); in the energy constraints the sum runs from the arrival hour to the last hour before departure. The grid constraints are written only for the hours with at least one van plugged in."));
+      sim, num,
+      T("Le ore sono quelle dell'orologio (\\(x_{1,18}\\): furgone 1 alle 18). Nelle ore in cui un furgone non è collegato (\\(a_{vt} = 0\\)) la sua variabile vale 0 e non compare. La funzione obiettivo è la somma delle righe di costo dei sei blocchi.",
+        "Hours are clock hours (\\(x_{1,18}\\): van 1 at 6 pm). In the hours when a van is not plugged in (\\(a_{vt} = 0\\)) its variable is 0 and does not appear. The objective function is the sum of the cost rows of the six blocks."));
     },
     disegna(crea, R, v, C, S) {
       if (R.stato !== "ottimo") return avviso(crea, S, C, T("Inammissibile: con questo limite i furgoni non si ricaricano in tempo", "Infeasible: with this limit the vans cannot be charged in time"));
@@ -265,23 +321,28 @@
         q &\\ge 0, & \\\\
         \\eta &\\gtreqless 0, & \\\\
         o_s,\\ u_s,\\ \\xi_s &\\ge 0, & ${ks}.`;
-      const Co = N.c - N.v, Cu = v[0] - N.c, L = v[1];
-      const ob = [`${n(1 - L, 2)} \\cdot \\frac{1}{${k}} \\sum_{s=1}^{${k}} \\bigl( ${n(Co, 2)}\\, o_s + ${n(Cu, 2)}\\, u_s \\bigr)`, `+ ${n(L, 2)} \\Bigl( \\eta + \\frac{1}{${n(1 - ALFA, 1)} \\cdot ${k}} \\sum_{s=1}^{${k}} \\xi_s \\Bigr)`];
-      const righe = [];
-      [0, 1, 2].forEach((s) => {
-        const ds = n(d[s], 2), S = s + 1;
-        righe.push([`o_{${S}}`, ">=", `q - ${ds}`, `s = ${S}`], [`u_{${S}}`, ">=", `${ds} - q`, `s = ${S}`],
-          [`\\xi_{${S}}`, ">=", `${somma([[Co, `o_{${S}}`], [Cu, `u_{${S}}`]])} - \\eta`, `s = ${S}`]);
+      const Co = N.c - N.v, Cu = v[0] - N.c, L = v[1], S3 = [0, 1];
+      const vars = ["q", "\\eta"];
+      S3.forEach((s) => vars.push(`o_{${s + 1}}`, `u_{${s + 1}}`, `\\xi_{${s + 1}}`));
+      const z = () => new Array(vars.length).fill(0), ob = z();
+      ob[1] = L;
+      S3.forEach((s) => { ob[2 + 3 * s] = (1 - L) * Co / k; ob[3 + 3 * s] = (1 - L) * Cu / k; ob[4 + 3 * s] = L / ((1 - ALFA) * k); });
+      const righe = [{ lab: MIN, c: ob, cifre: 4, rel: "+\\,\\cdots" }];
+      S3.forEach((s) => {
+        const a = z(), b = z(), c = z(), o = 2 + 3 * s;
+        a[0] = 1; a[o] = -1; b[0] = 1; b[o + 1] = 1; c[1] = 1; c[o] = -Co; c[o + 1] = -Cu; c[o + 2] = 1;
+        righe.push({ lab: s ? "" : SA(), c: a, rel: "<=", rhs: n(d[s], 2) }, { c: b, rel: ">=", rhs: n(d[s], 2) }, { c, rel: ">=", rhs: "0" });
       });
-      righe.push(["\\vdots", "", "", T(`\\text{analoghi per } s = 4, \\dots, ${k}`, `\\text{analogous for } s = 4, \\dots, ${k}`)]);
-      righe.push(["q", ">=", "0", ""], ["\\eta", "><", "0", ""], ["o_s,~ u_s,~ \\xi_s", ">=", "0", `s \\in \\{1, \\dots, ${k}\\}`]);
+      righe.push({ puntini: true }, { dominio: [1], rel: "><", rhs: "0" }, { dominio: vars.map((x, j) => j).filter((j) => j !== 1), rel: ">=", rhs: "0" });
+      const num = blocco(T(`Scenari 1 e 2, con \\(d_1, d_2\\) a destra; gli scenari \\(s = 3, \\dots, ${k}\\) aggiungono colonne \\(o_s, u_s, \\xi_s\\) e righe analoghe`,
+        `Scenarios 1 and 2, with \\(d_1, d_2\\) on the right; scenarios \\(s = 3, \\dots, ${k}\\) add columns \\(o_s, u_s, \\xi_s\\) and analogous rows`), griglia(vars, righe), "plm-stretto");
       return modello(T(`<b>Il problema.</b> Decidiamo la quantità \\(q\\) da ordinare prima di osservare la domanda, descritta da ${k} scenari equiprobabili \\(d_s\\) (\\(\\pi_s = 1/${k}\\)). ` +
         "Ogni unità invenduta costa \\(c_o\\), ogni vendita persa \\(c_u\\). L'obiettivo è minimizzare \\((1-\\lambda)\\) volte il costo atteso più \\(\\lambda\\) volte il CVaR\\(_{0{,}9}\\) del costo.",
       `<b>The problem.</b> We decide the quantity \\(q\\) to order before observing demand, described by ${k} equally likely scenarios \\(d_s\\) (\\(\\pi_s = 1/${k}\\)). ` +
         "Each unsold unit costs \\(c_o\\), each lost sale \\(c_u\\). The objective is to minimize \\((1-\\lambda)\\) times the expected cost plus \\(\\lambda\\) times the CVaR\\(_{0.9}\\) of the cost."),
-      sim, numerico("min", ob, righe),
-      T(`Con ${k} scenari si scrivono per intero i vincoli dei primi tre; gli altri hanno la stessa forma con il proprio \\(d_s\\). Qui \\(c_o = c - v = ${n(Co, 2)}\\), \\(c_u = p - c = ${n(Cu, 2)}\\), \\(\\alpha = 0{,}9\\).`,
-        `With ${k} scenarios the constraints of the first three are written in full; the others have the same form with their own \\(d_s\\). Here \\(c_o = c - v = ${n(Co, 2)}\\), \\(c_u = p - c = ${n(Cu, 2)}\\), \\(\\alpha = 0.9\\).`));
+      sim, num,
+      T(`Coefficienti: \\(c_o = c - v = ${n(Co, 2)}\\), \\(c_u = p - c = ${n(Cu, 2)}\\); nella funzione obiettivo \\(o_s\\) ha \\((1-\\lambda)\\,c_o/${k}\\), \\(u_s\\) ha \\((1-\\lambda)\\,c_u/${k}\\), \\(\\xi_s\\) ha \\(\\lambda/(0{,}1 \\cdot ${k})\\), \\(\\eta\\) ha \\(\\lambda\\).`,
+        `Coefficients: \\(c_o = c - v = ${n(Co, 2)}\\), \\(c_u = p - c = ${n(Cu, 2)}\\); in the objective function \\(o_s\\) has \\((1-\\lambda)\\,c_o/${k}\\), \\(u_s\\) has \\((1-\\lambda)\\,c_u/${k}\\), \\(\\xi_s\\) has \\(\\lambda/(0.1 \\cdot ${k})\\), \\(\\eta\\) has \\(\\lambda\\).`));
     },
     disegna(crea, R, v, C, S) {
       const mg = margini(S, 22, 40);
@@ -346,21 +407,20 @@
         ${vrs ? `\\sum_{j=1}^{n} \\lambda_j &= 1, & \\\\` : ""}
         \\theta &\\gtreqless 0, & \\\\
         \\lambda_j &\\ge 0, & ${PER("j", "n")}.`;
-      // numerico: una colonna per variabile (theta, lambda_1..lambda_n), relazioni in colonna
+      // numerico: una colonna per variabile (theta, lambda_1..lambda_n)
       const d = DD().dea, oo = Math.round(v[0]) - 1;
       const X = vista === "1x1" ? [d.personale] : [d.personale, d.costi], Y = vista === "1x1" ? [d.prestiti] : [d.prestiti, d.depositi];
-      const nI = X.length, nR = Y.length, nn = X[0].length;
+      const nn = X[0].length;
       const nomiI = vista === "1x1" ? [T("personale", "staff")] : [T("personale", "staff"), T("costi", "costs")];
       const nomiR = vista === "1x1" ? [T("prestiti", "loans")] : [T("prestiti", "loans"), T("depositi", "deposits")];
-      const cella = (a, x, primo) => (a === 0 ? "" : (a < 0 ? "-" : primo ? "" : "+") + (Math.abs(a) === 1 ? "" : n(Math.abs(a), 1) + "\\,") + x);
-      const riga = (lab, th, coef, rel, rhs, nota) => `${lab} & ${th} & ${coef.map((a, j) => cella(a, `\\lambda_{${j + 1}}`, !th && j === 0)).join(" & ")} & ${rel} & ${rhs} & ${nota ? `\\quad \\text{${nota}}` : ""} \\\\`;
-      const vuoto = new Array(nn).fill(0);
-      const righe = [riga("\\min", "\\theta", vuoto, "", "", "")];
-      X.forEach((r, i) => righe.push(riga(i ? "" : SA(), `${n(r[oo], 1)}\\,\\theta`, r.map((x) => -x), "\\ge", "0", nomiI[i])));
-      Y.forEach((r, k) => righe.push(riga("", "", r, "\\ge", n(r[oo], 1), nomiR[k])));
-      if (vrs) righe.push(riga("", "", new Array(nn).fill(1), "=", "1", ""));
-      const num = `<div class="plm-riga plm-stretto">\\(\\displaystyle \\begin{array}{lr${"r".repeat(nn)}cll} ${righe.join("\n")} \\end{array}\\)</div>` +
-        `<div class="plm-riga">\\(\\displaystyle \\theta \\gtreqless 0, \\qquad \\lambda_j \\ge 0 \\quad j \\in \\{1, 2, \\dots, ${nn}\\}\\)</div>`;
+      const vars = ["\\theta", ...X[0].map((q, j) => `\\lambda_{${j + 1}}`)], ob = vars.map((q, j) => (j ? 0 : 1));
+      const righe = [{ lab: MIN, c: ob }];
+      X.forEach((r, i) => righe.push({ lab: i ? "" : SA(), c: [r[oo], ...r.map((q) => -q)], rel: ">=", rhs: "0", cifre: 1 }));
+      Y.forEach((r) => righe.push({ c: [0, ...r], rel: ">=", rhs: n(r[oo], 1), cifre: 1 }));
+      if (vrs) righe.push({ c: [0, ...new Array(nn).fill(1)], rel: "=", rhs: "1" });
+      righe.push({ dominio: [0], rel: "><", rhs: "0" }, { dominio: vars.map((q, j) => j).filter((j) => j), rel: ">=", rhs: "0" });
+      const num = blocco(T(`Filiale \\(o = ${oo + 1}\\). Righe: input (${nomiI.join(", ")}), poi output (${nomiR.join(", ")})${vrs ? ", poi \\(\\sum_j \\lambda_j = 1\\)" : ""}`,
+        `Branch \\(o = ${oo + 1}\\). Rows: inputs (${nomiI.join(", ")}), then outputs (${nomiR.join(", ")})${vrs ? ", then \\(\\sum_j \\lambda_j = 1\\)" : ""}`), grigliaLunga(vars, righe, 7));
       return modello(T(`<b>Il problema.</b> Per la filiale valutata \\(o = ${oo + 1}\\) cerchiamo i pesi \\(\\lambda_j\\) delle ${nn} filiali e il fattore \\(\\theta\\): la combinazione pesata deve produrre almeno gli output di \\(o\\) (${nomiR.join(", ")}) usando al più \\(\\theta\\) volte i suoi input (${nomiI.join(", ")}). ` +
         `L'obiettivo è minimizzare \\(\\theta\\), l'efficienza della filiale${vrs ? "; il vincolo \\(\\sum_j \\lambda_j = 1\\) dà il modello BCC" : ""}.`,
       `<b>The problem.</b> For the branch under evaluation \\(o = ${oo + 1}\\) we look for the weights \\(\\lambda_j\\) of the ${nn} branches and the factor \\(\\theta\\): the weighted combination must produce at least the outputs of \\(o\\) (${nomiR.join(", ")}) using at most \\(\\theta\\) times its inputs (${nomiI.join(", ")}). ` +
@@ -445,18 +505,23 @@
         w &\\gtreqless 0, & \\\\
         b &\\gtreqless 0, & \\\\
         u_i,\; v_i &\\ge 0, & ${ni}.`;
-      const t = DATI_REG.t || [], y = DATI_REG.y || [], m = t.length;
-      const ob = [`\\sum_{i=1}^{${m}} \\bigl( ${n(p.tau, 2)}\\, u_i + ${n(1 - p.tau, 2)}\\, v_i \\bigr)`];
-      const righe = [0, 1, 2].filter((i) => i < m).map((i) => [`${n(t[i], 1)}\\, w + b + u_{${i + 1}} - v_{${i + 1}}`, "=", n(y[i], 1), `i = ${i + 1}`]);
-      righe.push(["\\vdots", "", "", T(`\\text{analoghi per } i = 4, \\dots, ${m}`, `\\text{analogous for } i = 4, \\dots, ${m}`)]);
-      righe.push(["w,~ b", "><", "0", ""], ["u_i,~ v_i", ">=", "0", `i \\in \\{1, \\dots, ${m}\\}`]);
+      const t = DATI_REG.t || [], y = DATI_REG.y || [], m = t.length, ii = [0, 1, 2].filter((i) => i < m);
+      const vars = ["w", "b"];
+      ii.forEach((i) => vars.push(`u_{${i + 1}}`, `v_{${i + 1}}`));
+      const z = () => new Array(vars.length).fill(0), ob = z();
+      ii.forEach((i) => { ob[2 + 2 * i] = p.tau; ob[3 + 2 * i] = 1 - p.tau; });
+      const righe = [{ lab: MIN, c: ob, rel: "+\\,\\cdots" }];
+      ii.forEach((i) => { const c = z(); c[0] = t[i]; c[1] = 1; c[2 + 2 * i] = 1; c[3 + 2 * i] = -1; righe.push({ lab: i ? "" : SA(), c, rel: "=", rhs: n(y[i], 1), cifre: 1 }); });
+      righe.push({ puntini: true }, { dominio: [0, 1], rel: "><", rhs: "0" }, { dominio: vars.map((q, j) => j).filter((j) => j > 1), rel: ">=", rhs: "0" });
+      const num = blocco(T(`Giorni 1, 2, 3, con \\(x_i\\) (temperatura) come coefficiente di \\(w\\) e \\(y_i\\) a destra; i giorni \\(i = 4, \\dots, ${m}\\) aggiungono colonne \\(u_i, v_i\\) e righe analoghe`,
+        `Days 1, 2, 3, with \\(x_i\\) (temperature) as the coefficient of \\(w\\) and \\(y_i\\) on the right; days \\(i = 4, \\dots, ${m}\\) add columns \\(u_i, v_i\\) and analogous rows`), griglia(vars, righe));
       return modello(T(`<b>Il problema.</b> Decidiamo la pendenza \\(w\\) e l'intercetta \\(b\\) della retta che stima la domanda \\(y_i\\) dalla temperatura \\(x_i\\) degli ${m} giorni osservati; \\(u_i\\) e \\(v_i\\) sono gli scostamenti in eccesso e in difetto. ` +
         "L'obiettivo è minimizzare la somma degli scostamenti pesati \\(\\tau\\) e \\(1 - \\tau\\) (con \\(\\tau = 1/2\\) si ottengono gli scarti assoluti).",
       `<b>The problem.</b> We decide the slope \\(w\\) and the intercept \\(b\\) of the line that estimates demand \\(y_i\\) from the temperature \\(x_i\\) of the ${m} observed days; \\(u_i\\) and \\(v_i\\) are the deviations in excess and in defect. ` +
         "The objective is to minimize the sum of the deviations weighted by \\(\\tau\\) and \\(1 - \\tau\\) (with \\(\\tau = 1/2\\) one gets least absolute deviations)."),
-      sim, numerico("min", ob, righe),
-      T(`Il modello numerico è quello della retta \\(\\tau\\) con i punti attuali (anche quelli trascinati): si scrivono per intero i primi tre vincoli, gli altri hanno la stessa forma con il proprio \\((x_i, y_i)\\).`,
-        `The numerical model is the one of the \\(\\tau\\) line with the current points (dragged ones included): the first three constraints are written in full, the others have the same form with their own \\((x_i, y_i)\\).`));
+      sim, num,
+      T("Il modello numerico è quello della retta \\(\\tau\\) con i punti attuali, anche quelli trascinati.",
+        "The numerical model is the one of the \\(\\tau\\) line with the current points, dragged ones included."));
     },
     letture(rette, p, dati, C) {
       const [lad, q] = rette, m = dati.t.length;

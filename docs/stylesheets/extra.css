@@ -79,6 +79,8 @@
   background: var(--md-default-bg-color); border: 1px solid var(--md-default-fg-color--lighter);
   border-radius: 0 0 6px 6px; box-shadow: 0 8px 22px rgba(0, 0, 0, .22);
 }
-.plm-riga { text-align: left; margin: .25em 0; white-space: nowrap; }
+.plm-riga { text-align: left; margin: .1em 0 .5em; white-space: nowrap; overflow-x: auto; overflow-y: hidden; }
+.md-typeset .plm-tit { margin: .6em 0 .1em; font-weight: 600; font-size: .95em; }
+.md-typeset .plm-num-corpo > .plm-tit:first-child { margin-top: .2em; }
 .md-typeset .plm-nota { margin: .4em 0 0; font-size: .95em; opacity: .85; white-space: normal; }
 .plm-stretto { font-size: .8em; }
