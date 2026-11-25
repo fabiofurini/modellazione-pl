@@ -19,6 +19,11 @@
   const n = (x, c = 1) => GI.num(x, c), nt = (x, c = 1) => GI.numTxt(x, c);
   const pct = (v) => nt(v, 0) + "%";
   const euro = (x, c = 2) => nt(x, c) + " €";
+  /** intero con le migliaia separate da uno spazio fine: 2 010 */
+  const mig = (x) => String(Math.round(x)).replace(/\B(?=(\d{3})+(?!\d))/g, " ");
+  /** fattore di scala di un cursore in %: «× 1,05» */
+  const per = (v) => "× " + nt(v / 100, 2);
+  const somma2 = (a) => a.flat().reduce((t, x) => t + x, 0);
   const tx = (s) => `\\(${s}\\)`;
   const margini = (S, alto = 22, basso = 36) => ({ X0: 54, X1: S.W - 14, alto, basso });
 
@@ -121,12 +126,15 @@
   const vProduzione = {
     etichetta: T("Produzione e scorte", "Production and inventory"),
     cursori: [
-      { nome: T("\\text{domanda}", "\\text{demand}"), min: 80, max: 105, step: 1, val: 100, fmt: pct,
-        descr: T("tutte le domande \\(d_{it}\\), in % dei dati del capitolo", "all the demands \\(d_{it}\\), in % of the chapter data") },
-      { nome: T("\\text{capacità}", "\\text{capacity}"), min: 95, max: 130, step: 1, val: 100, fmt: pct,
-        descr: T("ore macchina \\(b_t\\) di ogni mese", "machine hours \\(b_t\\) of every month") },
-      { nome: T("\\text{giacenza}", "\\text{holding}"), min: 25, max: 300, step: 25, val: 100, fmt: pct,
-        descr: T("costo di giacenza \\(h_{it}\\)", "holding cost \\(h_{it}\\)") },
+      { nome: T("\\text{domanda totale}", "\\text{total demand}"), min: 80, max: 105, step: 1, val: 100,
+        fmt: (x) => `${mig(somma2(DD().produzione.domanda) * x / 100)} ${T("unità", "units")} (${per(x)})`,
+        descr: T("moltiplica per lo stesso fattore le 18 domande \\(d_{it}\\) (3 prodotti × 6 mesi)", "multiplies the 18 demands \\(d_{it}\\) (3 products × 6 months) by the same factor") },
+      { nome: T("\\text{capacità totale}", "\\text{total capacity}"), min: 95, max: 130, step: 1, val: 100,
+        fmt: (x) => `${mig(somma2(DD().produzione.cap) * x / 100)} ${T("ore", "hours")} (${per(x)})`,
+        descr: T("moltiplica per lo stesso fattore le 6 capacità mensili \\(b_t\\) (420 o 460 ore macchina)", "multiplies the 6 monthly capacities \\(b_t\\) (420 or 460 machine hours) by the same factor") },
+      { nome: T("\\text{giacenza}\\ h_{it}", "\\text{holding}\\ h_{it}"), min: 25, max: 300, step: 25, val: 100,
+        fmt: (x) => DD().produzione.ch.map((h) => nt(h * x / 100, 2)).join(" / ") + " €",
+        descr: T("costo di giacenza per unità e mese dei prodotti 1, 2, 3", "holding cost per unit and month of products 1, 2, 3") },
     ],
     calcola: (v) => PL().produzione(v[1] / 100, v[0] / 100, v[2] / 100),
     formula(R, v, st) {
@@ -162,9 +170,9 @@
       const capR = P.mesi.map((m, t) => ({ nomi: P.prodotti.map((q, i) => `x_{${i + 1},${t + 1}}`), c: P.ore, rel: "<=", rhs: n(P.cap[t] * fC, 1) }));
       num += blocco(T("Capacità: una riga per mese, una colonna per prodotto", "Capacity: one row per month, one column per product"),
         griglia(P.prodotti.map((q, i) => `x_{${i + 1},t}`), capR));
-      return modello(T(`<b>Il problema.</b> Decidiamo quante unità di ognuno dei ${nI} prodotti produrre in ognuno dei ${nT} mesi e quante tenerne a scorta. ` +
+      return modello(T(`<b>Il problema.</b> Istanza: \\(n = ${nI}\\) prodotti, \\(m = ${nT}\\) mesi. Decidiamo quante unità di ogni prodotto produrre in ogni mese e quante tenerne a scorta. ` +
         "L'obiettivo è minimizzare il costo di produzione e di giacenza. I vincoli: bilancio di magazzino mese per mese, con la domanda servita per intero, e ore macchina disponibili in ogni mese.",
-      `<b>The problem.</b> We decide how many units of each of the ${nI} products to produce in each of the ${nT} months and how many to keep in inventory. ` +
+      `<b>The problem.</b> Instance: \\(n = ${nI}\\) products, \\(m = ${nT}\\) months. We decide how many units of each product to produce in each month and how many to keep in inventory. ` +
         "The objective is to minimize production and holding cost. The constraints: inventory balance month by month, with demand served in full, and the machine hours available in each month."),
       sim, num,
       T("La funzione obiettivo è la somma delle righe di costo dei sei blocchi di prodotto.",
@@ -208,8 +216,8 @@
         T("i prezzi ombra crescono verso la fine, perché un'ora tardi evita giacenze accumulate prima.",
           "the shadow prices grow towards the end, because a late hour avoids inventory built up earlier.") + "</div>";
     },
-    domanda: T("Il mese 1 ha prezzo ombra nullo: perché? Porta la capacità al 110%: quali mesi smettono di essere saturi? Sotto il 97% il piano non esiste più: perché? Poi triplica il costo di giacenza: il piano non cambia, i prezzi ombra sì. Perché?",
-      "Month 1 has a zero shadow price: why? Set capacity to 110%: which months stop being binding? Below 97% there is no plan any more: why? Then triple the holding cost: the plan does not change, the shadow prices do. Why?"),
+    domanda: T("Il mese 1 ha prezzo ombra nullo: perché? Porta la capacità a × 1,10: quali mesi smettono di essere saturi? Sotto × 0,97 il piano non esiste più: perché? Poi triplica il costo di giacenza: il piano non cambia, i prezzi ombra sì. Perché?",
+      "Month 1 has a zero shadow price: why? Set capacity to × 1.10: which months stop being binding? Below × 0.97 there is no plan any more: why? Then triple the holding cost: the plan does not change, the shadow prices do. Why?"),
   };
 
   // ================================================================ ricarica EV (cap. 5)
@@ -220,10 +228,12 @@
     cursori: [
       { nome: "k", min: 80, max: 160, step: 5, val: 120, fmt: (x) => nt(x, 0) + " kW",
         descr: T("potenza massima prelevabile dal contatore", "maximum power drawn from the meter") },
-      { nome: "e_v", min: 60, max: 130, step: 5, val: 100, fmt: pct,
-        descr: T("fabbisogno di energia dei furgoni, in % dei dati", "energy needed by the vans, in % of the data") },
-      { nome: T("\\pi_t\\ \\text{serale}", "\\pi_t\\ \\text{evening}"), min: 50, max: 200, step: 10, val: 100, fmt: pct,
-        descr: T("prezzo dell'energia dalle 17 alle 21", "energy price from 5 pm to 9 pm") },
+      { nome: T("\\text{energia totale}", "\\text{total energy}"), min: 60, max: 130, step: 5, val: 100,
+        fmt: (x) => `${mig(DD().ev.veicoli.reduce((t, q) => t + q.energia, 0) * x / 100)} kWh (${per(x)})`,
+        descr: T("moltiplica per lo stesso fattore le 6 energie richieste \\(e_v\\) (da 30 a 55 kWh per furgone)", "multiplies the 6 required energies \\(e_v\\) (30 to 55 kWh per van) by the same factor") },
+      { nome: T("\\pi_t\\ \\text{serale}", "\\pi_t\\ \\text{evening}"), min: 50, max: 200, step: 10, val: 100,
+        fmt: (x) => { const q = DD().ev.prezzo.slice(17, 21).map((y) => y * x / 100); return `${nt(Math.min(...q), 3)}–${nt(Math.max(...q), 3)} €/kWh`; },
+        descr: T("moltiplica per lo stesso fattore i prezzi delle 4 ore dalle 17 alle 21", "multiplies the prices of the 4 hours from 5 pm to 9 pm by the same factor") },
     ],
     calcola: (v) => PL().ricaricaEv(v[0], v[1] / 100, v[2] / 100),
     formula(R, v, st) {
@@ -254,9 +264,9 @@
         .map((t) => ({ nomi: V.map((x, j) => xv(j, t)), c: V.map((x) => (coll(x, t) ? 1 : 0)), rel: "<=", rhs: n(v[0] - E.base[t], 1) }));
       num += blocco(T("Rete: una riga per ora, una colonna per furgone; a destra \\(k - b_t\\)", "Grid: one row per hour, one column per van; on the right \\(k - b_t\\)"),
         griglia(V.map((x, j) => `x_{${j + 1},t}`), reteR));
-      return modello(T(`<b>Il problema.</b> Decidiamo la potenza \\(x_{vt}\\) assegnata a ognuno dei ${nV} furgoni in ogni ora \\(t\\) (\\(\\Delta t = 1\\) h). ` +
+      return modello(T(`<b>Il problema.</b> Istanza: \\(n = ${nV}\\) furgoni, \\(m = 24\\) ore (\\(\\Delta t = 1\\) h). Decidiamo la potenza \\(x_{vt}\\) assegnata a ogni furgone in ogni ora \\(t\\). ` +
         "L'obiettivo è la minima spesa energetica. I vincoli: energia richiesta entro la partenza, ricarica solo quando il furgone è collegato e sotto la potenza del caricatore, prelievo totale sotto la potenza \\(k\\) del contatore.",
-      `<b>The problem.</b> We decide the power \\(x_{vt}\\) assigned to each of the ${nV} vans in each hour \\(t\\) (\\(\\Delta t = 1\\) h). ` +
+      `<b>The problem.</b> Instance: \\(n = ${nV}\\) vans, \\(m = 24\\) hours (\\(\\Delta t = 1\\) h). We decide the power \\(x_{vt}\\) assigned to each van in each hour \\(t\\). ` +
         "The objective is the minimum energy expenditure. The constraints: the energy required before departure, charging only while the van is plugged in and below the power of the charger, total draw below the power \\(k\\) of the meter."),
       sim, num,
       T("Le ore sono quelle dell'orologio (\\(x_{1,18}\\): furgone 1 alle 18). Nelle ore in cui un furgone non è collegato (\\(a_{vt} = 0\\)) la sua variabile vale 0 e non compare. La funzione obiettivo è la somma delle righe di costo dei sei blocchi.",
@@ -336,9 +346,9 @@
       righe.push({ puntini: true }, { dominio: [1], rel: "><", rhs: "0" }, { dominio: vars.map((x, j) => j).filter((j) => j !== 1), rel: ">=", rhs: "0" });
       const num = blocco(T(`Scenari 1 e 2, con \\(d_1, d_2\\) a destra; gli scenari \\(s = 3, \\dots, ${k}\\) aggiungono colonne \\(o_s, u_s, \\xi_s\\) e righe analoghe`,
         `Scenarios 1 and 2, with \\(d_1, d_2\\) on the right; scenarios \\(s = 3, \\dots, ${k}\\) add columns \\(o_s, u_s, \\xi_s\\) and analogous rows`), griglia(vars, righe), "plm-stretto");
-      return modello(T(`<b>Il problema.</b> Decidiamo la quantità \\(q\\) da ordinare prima di osservare la domanda, descritta da ${k} scenari equiprobabili \\(d_s\\) (\\(\\pi_s = 1/${k}\\)). ` +
+      return modello(T(`<b>Il problema.</b> Istanza: \\(k = ${k}\\) scenari equiprobabili di domanda \\(d_s\\) (\\(\\pi_s = 1/${k}\\)). Decidiamo la quantità \\(q\\) da ordinare prima di osservare la domanda. ` +
         "Ogni unità invenduta costa \\(c_o\\), ogni vendita persa \\(c_u\\). L'obiettivo è minimizzare \\((1-\\lambda)\\) volte il costo atteso più \\(\\lambda\\) volte il CVaR\\(_{0{,}9}\\) del costo.",
-      `<b>The problem.</b> We decide the quantity \\(q\\) to order before observing demand, described by ${k} equally likely scenarios \\(d_s\\) (\\(\\pi_s = 1/${k}\\)). ` +
+      `<b>The problem.</b> Instance: \\(k = ${k}\\) equally likely demand scenarios \\(d_s\\) (\\(\\pi_s = 1/${k}\\)). We decide the quantity \\(q\\) to order before observing demand. ` +
         "Each unsold unit costs \\(c_o\\), each lost sale \\(c_u\\). The objective is to minimize \\((1-\\lambda)\\) times the expected cost plus \\(\\lambda\\) times the CVaR\\(_{0.9}\\) of the cost."),
       sim, num,
       T(`Coefficienti: \\(c_o = c - v = ${n(Co, 2)}\\), \\(c_u = p - c = ${n(Cu, 2)}\\); nella funzione obiettivo \\(o_s\\) ha \\((1-\\lambda)\\,c_o/${k}\\), \\(u_s\\) ha \\((1-\\lambda)\\,c_u/${k}\\), \\(\\xi_s\\) ha \\(\\lambda/(0{,}1 \\cdot ${k})\\), \\(\\eta\\) ha \\(\\lambda\\).`,
@@ -385,8 +395,8 @@
   // ================================================================ DEA (cap. 6)
   const deaVoce = (vrs, vista, etichetta) => ({
     etichetta,
-    cursori: [{ nome: T("\\text{filiale}", "\\text{branch}"), min: 1, max: 12, step: 1, val: 1, fmt: (x) => String(Math.round(x)),
-      descr: T("la filiale valutata \\(o\\)", "the branch under evaluation \\(o\\)") }],
+    cursori: [{ nome: T("\\text{filiale}", "\\text{branch}"), min: 1, max: 12, step: 1, val: 1, fmt: (x) => T(`${Math.round(x)} di 12`, `${Math.round(x)} of 12`),
+      descr: T("la filiale valutata \\(o\\), fra le 12", "the branch under evaluation \\(o\\), among the 12") }],
     calcola(v) {
       const o = Math.round(v[0]) - 1, R = PL().dea(o, vrs, vista);
       R.o = o;
@@ -421,9 +431,9 @@
       righe.push({ dominio: [0], rel: "><", rhs: "0" }, { dominio: vars.map((q, j) => j).filter((j) => j), rel: ">=", rhs: "0" });
       const num = blocco(T(`Filiale \\(o = ${oo + 1}\\). Righe: input (${nomiI.join(", ")}), poi output (${nomiR.join(", ")})${vrs ? ", poi \\(\\sum_j \\lambda_j = 1\\)" : ""}`,
         `Branch \\(o = ${oo + 1}\\). Rows: inputs (${nomiI.join(", ")}), then outputs (${nomiR.join(", ")})${vrs ? ", then \\(\\sum_j \\lambda_j = 1\\)" : ""}`), grigliaLunga(vars, righe, 7));
-      return modello(T(`<b>Il problema.</b> Per la filiale valutata \\(o = ${oo + 1}\\) cerchiamo i pesi \\(\\lambda_j\\) delle ${nn} filiali e il fattore \\(\\theta\\): la combinazione pesata deve produrre almeno gli output di \\(o\\) (${nomiR.join(", ")}) usando al più \\(\\theta\\) volte i suoi input (${nomiI.join(", ")}). ` +
+      return modello(T(`<b>Il problema.</b> Istanza: \\(n = ${nn}\\) filiali, \\(m = ${nomiI.length}\\) input, \\(p = ${nomiR.length}\\) output. Per la filiale valutata \\(o = ${oo + 1}\\) cerchiamo i pesi \\(\\lambda_j\\) delle ${nn} filiali e il fattore \\(\\theta\\): la combinazione pesata deve produrre almeno gli output di \\(o\\) (${nomiR.join(", ")}) usando al più \\(\\theta\\) volte i suoi input (${nomiI.join(", ")}). ` +
         `L'obiettivo è minimizzare \\(\\theta\\), l'efficienza della filiale${vrs ? "; il vincolo \\(\\sum_j \\lambda_j = 1\\) dà il modello BCC" : ""}.`,
-      `<b>The problem.</b> For the branch under evaluation \\(o = ${oo + 1}\\) we look for the weights \\(\\lambda_j\\) of the ${nn} branches and the factor \\(\\theta\\): the weighted combination must produce at least the outputs of \\(o\\) (${nomiR.join(", ")}) using at most \\(\\theta\\) times its inputs (${nomiI.join(", ")}). ` +
+      `<b>The problem.</b> Instance: \\(n = ${nn}\\) branches, \\(m = ${nomiI.length}\\) inputs, \\(p = ${nomiR.length}\\) outputs. For the branch under evaluation \\(o = ${oo + 1}\\) we look for the weights \\(\\lambda_j\\) of the ${nn} branches and the factor \\(\\theta\\): the weighted combination must produce at least the outputs of \\(o\\) (${nomiR.join(", ")}) using at most \\(\\theta\\) times its inputs (${nomiI.join(", ")}). ` +
         `The objective is to minimize \\(\\theta\\), the efficiency of the branch${vrs ? "; the constraint \\(\\sum_j \\lambda_j = 1\\) gives the BCC model" : ""}.`),
       sim, num);
     },
@@ -515,9 +525,9 @@
       righe.push({ puntini: true }, { dominio: [0, 1], rel: "><", rhs: "0" }, { dominio: vars.map((q, j) => j).filter((j) => j > 1), rel: ">=", rhs: "0" });
       const num = blocco(T(`Giorni 1, 2, 3, con \\(x_i\\) (temperatura) come coefficiente di \\(w\\) e \\(y_i\\) a destra; i giorni \\(i = 4, \\dots, ${m}\\) aggiungono colonne \\(u_i, v_i\\) e righe analoghe`,
         `Days 1, 2, 3, with \\(x_i\\) (temperature) as the coefficient of \\(w\\) and \\(y_i\\) on the right; days \\(i = 4, \\dots, ${m}\\) add columns \\(u_i, v_i\\) and analogous rows`), griglia(vars, righe));
-      return modello(T(`<b>Il problema.</b> Decidiamo la pendenza \\(w\\) e l'intercetta \\(b\\) della retta che stima la domanda \\(y_i\\) dalla temperatura \\(x_i\\) degli ${m} giorni osservati; \\(u_i\\) e \\(v_i\\) sono gli scostamenti in eccesso e in difetto. ` +
+      return modello(T(`<b>Il problema.</b> Istanza: \\(n = ${m}\\) giorni osservati (punti). Decidiamo la pendenza \\(w\\) e l'intercetta \\(b\\) della retta che stima la domanda \\(y_i\\) dalla temperatura \\(x_i\\); \\(u_i\\) e \\(v_i\\) sono gli scostamenti in eccesso e in difetto. ` +
         "L'obiettivo è minimizzare la somma degli scostamenti pesati \\(\\tau\\) e \\(1 - \\tau\\) (con \\(\\tau = 1/2\\) si ottengono gli scarti assoluti).",
-      `<b>The problem.</b> We decide the slope \\(w\\) and the intercept \\(b\\) of the line that estimates demand \\(y_i\\) from the temperature \\(x_i\\) of the ${m} observed days; \\(u_i\\) and \\(v_i\\) are the deviations in excess and in defect. ` +
+      `<b>The problem.</b> Instance: \\(n = ${m}\\) observed days (points). We decide the slope \\(w\\) and the intercept \\(b\\) of the line that estimates demand \\(y_i\\) from the temperature \\(x_i\\); \\(u_i\\) and \\(v_i\\) are the deviations in excess and in defect. ` +
         "The objective is to minimize the sum of the deviations weighted by \\(\\tau\\) and \\(1 - \\tau\\) (with \\(\\tau = 1/2\\) one gets least absolute deviations)."),
       sim, num,
       T("Il modello numerico è quello della retta \\(\\tau\\) con i punti attuali, anche quelli trascinati.",
