@@ -261,9 +261,15 @@
       num += blocco(T("Capacità: una riga per mese, una colonna per prodotto", "Capacity: one row per month, one column per product"),
         griglia(P.prodotti.map((q, i) => `x_{${i + 1},t}`), capR));
       return modelloDi("produzione")(T(`<b>Il problema.</b> Istanza: \\(n = ${nI}\\) prodotti, \\(m = ${nT}\\) mesi. Decidiamo quante unità di ogni prodotto produrre in ogni mese e quante tenerne a scorta. ` +
-        "L'obiettivo è minimizzare il costo di produzione e di giacenza. I vincoli: bilancio di magazzino mese per mese, con la domanda servita per intero, e ore macchina disponibili in ogni mese." + CONTINUE[0],
+        "L'obiettivo è minimizzare il costo di produzione e di giacenza. I vincoli: bilancio di magazzino mese per mese, con la domanda servita per intero, e ore macchina disponibili in ogni mese." + CONTINUE[0] +
+        "<br><b>Variabili:</b> \\(x_{it}\\): unità del prodotto \\(i\\) prodotte nel mese \\(t\\); \\(s_{it}\\): unità del prodotto \\(i\\) a scorta alla fine del mese \\(t\\)." +
+        "<br><b>Dati:</b> \\(c_{it}\\): costo di produzione di un'unità di \\(i\\) nel mese \\(t\\) (€); \\(h_{it}\\): costo di giacenza di un'unità di \\(i\\) per il mese \\(t\\) (€); " +
+        "\\(d_{it}\\): domanda del prodotto \\(i\\) nel mese \\(t\\) (unità); \\(a_i\\): ore macchina per produrre un'unità di \\(i\\); \\(b_t\\): ore macchina disponibili nel mese \\(t\\); \\(s_{i0}\\): scorta iniziale del prodotto \\(i\\) (unità).",
       `<b>The problem.</b> Instance: \\(n = ${nI}\\) products, \\(m = ${nT}\\) months. We decide how many units of each product to produce in each month and how many to keep in inventory. ` +
-        "The objective is to minimize production and holding cost. The constraints: inventory balance month by month, with demand served in full, and the machine hours available in each month." + CONTINUE[1]),
+        "The objective is to minimize production and holding cost. The constraints: inventory balance month by month, with demand served in full, and the machine hours available in each month." + CONTINUE[1] +
+        "<br><b>Variables:</b> \\(x_{it}\\): units of product \\(i\\) produced in month \\(t\\); \\(s_{it}\\): units of product \\(i\\) in inventory at the end of month \\(t\\)." +
+        "<br><b>Data:</b> \\(c_{it}\\): production cost of one unit of \\(i\\) in month \\(t\\) (€); \\(h_{it}\\): holding cost of one unit of \\(i\\) for month \\(t\\) (€); " +
+        "\\(d_{it}\\): demand for product \\(i\\) in month \\(t\\) (units); \\(a_i\\): machine hours to produce one unit of \\(i\\); \\(b_t\\): machine hours available in month \\(t\\); \\(s_{i0}\\): initial inventory of product \\(i\\) (units)."),
       sim, num,
       T("La funzione obiettivo è la somma delle righe di costo dei sei blocchi di prodotto.",
         "The objective function is the sum of the cost rows of the six product blocks."));
@@ -388,10 +394,10 @@
         .map((t) => ({ nomi: V.map((x, j) => xv(j, t)), c: V.map((x) => (coll(x, t) ? 1 : 0)), rel: "<=", rhs: n(v[0] - E.base[t], 1) }));
       num += blocco(T("Rete: una riga per ora, una colonna per furgone; a destra \\(k - b_t\\)", "Grid: one row per hour, one column per van; on the right \\(k - b_t\\)"),
         griglia(V.map((x, j) => `x_{${j + 1},t}`), reteR));
-      return modelloDi("ev")(T(`<b>Il problema.</b> Istanza: \\(n = ${nV}\\) furgoni, \\(m = 24\\) ore (durata di un'ora \\(d = 1\\) h). Decidiamo la potenza \\(x_{vt}\\) assegnata a ogni furgone in ogni ora \\(t\\). ` +
-        "L'obiettivo è la minima spesa energetica, con il prezzo \\(c_t\\) dell'energia nell'ora \\(t\\). I vincoli: l'energia \\(e_v\\) richiesta da ogni furgone entro la partenza, tenendo conto del rendimento \\(r\\) della ricarica (la quota dell'energia prelevata che arriva in batteria); la ricarica solo quando il furgone è collegato (\\(a_{vt} = 1\\)) e sotto la potenza \\(\\bar p_v\\) del suo caricatore; il prelievo totale, carico di base \\(b_t\\) dell'edificio compreso, sotto la potenza \\(k\\) del contatore.",
-      `<b>The problem.</b> Instance: \\(n = ${nV}\\) vans, \\(m = 24\\) hours (length of an hour \\(d = 1\\) h). We decide the power \\(x_{vt}\\) assigned to each van in each hour \\(t\\). ` +
-        "The objective is the minimum energy expenditure, with the energy price \\(c_t\\) in hour \\(t\\). The constraints: the energy \\(e_v\\) required by each van before departure, taking into account the charging efficiency \\(r\\) (the share of the energy drawn that reaches the battery); charging only while the van is plugged in (\\(a_{vt} = 1\\)) and below the power \\(\\bar p_v\\) of its charger; the total draw, including the base load \\(b_t\\) of the building, below the power \\(k\\) of the meter."),
+      return modelloDi("ev")(T(`<b>Il problema.</b> Istanza: \\(n = ${nV}\\) furgoni, \\(m = 24\\) ore (durata di un'ora \\(d = 1\\) h). Decidiamo la potenza \\(x_{vt}\\) (kW) assegnata al furgone \\(v\\) nell'ora \\(t\\). ` +
+        "L'obiettivo è la minima spesa energetica, con il prezzo \\(c_t\\) dell'energia nell'ora \\(t\\) (€/kWh). I vincoli: l'energia \\(e_v\\) (kWh) richiesta dal furgone \\(v\\) entro la partenza, tenendo conto del rendimento \\(r\\) della ricarica (la quota dell'energia prelevata che arriva in batteria, qui \\(r = " + n(DD().ev.eta, 2) + "\\)); la ricarica solo quando il furgone è collegato (\\(a_{vt} = 1\\), altrimenti \\(a_{vt} = 0\\)) e sotto la potenza \\(\\bar p_v\\) (kW) del suo caricatore; il prelievo totale, carico di base \\(b_t\\) (kW) dell'edificio compreso, sotto la potenza \\(k\\) (kW) del contatore.",
+      `<b>The problem.</b> Instance: \\(n = ${nV}\\) vans, \\(m = 24\\) hours (length of an hour \\(d = 1\\) h). We decide the power \\(x_{vt}\\) (kW) assigned to van \\(v\\) in hour \\(t\\). ` +
+        "The objective is the minimum energy expenditure, with the energy price \\(c_t\\) in hour \\(t\\) (€/kWh). The constraints: the energy \\(e_v\\) (kWh) required by van \\(v\\) before departure, taking into account the charging efficiency \\(r\\) (the share of the energy drawn that reaches the battery, here \\(r = " + n(DD().ev.eta, 2) + "\\)); charging only while the van is plugged in (\\(a_{vt} = 1\\), otherwise \\(a_{vt} = 0\\)) and below the power \\(\\bar p_v\\) (kW) of its charger; the total draw, including the base load \\(b_t\\) (kW) of the building, below the power \\(k\\) (kW) of the meter."),
       sim, num,
       T("Le ore sono quelle dell'orologio (\\(x_{1,18}\\): furgone 1 alle 18). Nelle ore in cui un furgone non è collegato (\\(a_{vt} = 0\\)) la sua variabile vale 0 e non compare. La funzione obiettivo è la somma delle righe di costo dei sei blocchi.",
         "Hours are clock hours (\\(x_{1,18}\\): van 1 at 6 pm). In the hours when a van is not plugged in (\\(a_{vt} = 0\\)) its variable is 0 and does not appear. The objective function is the sum of the cost rows of the six blocks."));
@@ -440,9 +446,9 @@
     etichetta: T("Newsvendor a scenari", "Scenario newsvendor"),
     cursori: [
       { nome: "p", min: 8, max: 30, step: 0.5, val: 15, fmt: (x) => euro(x, 1),
-        descr: T("prezzo di vendita: \\(C_u = p - c\\), \\(C_o = c - v\\) con \\(c = 6\\), \\(v = 2\\)", "selling price: \\(C_u = p - c\\), \\(C_o = c - v\\) with \\(c = 6\\), \\(v = 2\\)") },
+        descr: T("prezzo di vendita di un'unità: \\(c_u = p - c\\), \\(c_o = c - v\\) con \\(c = 6\\) €, \\(v = 2\\) €", "selling price of one unit: \\(c_u = p - c\\), \\(c_o = c - v\\) with \\(c = 6\\) €, \\(v = 2\\) €") },
       { nome: "r", min: 0, max: 1, step: 0.05, val: 0, fmt: (x) => nt(x, 2),
-        descr: T("avversione al rischio: peso del CVaR\\(_{0,9}\\) del costo", "risk aversion: weight of the CVaR\\(_{0.9}\\) of the cost") },
+        descr: T("avversione al rischio: peso del CVaR\\(_\\alpha\\) del costo (\\(\\alpha = 0{,}9\\))", "risk aversion: weight of the CVaR\\(_\\alpha\\) of the cost (\\(\\alpha = 0.9\\))") },
     ],
     calcola(v) {
       const R = PL().newsvendor(v[0], v[1], ALFA);
@@ -478,12 +484,22 @@
       const num = blocco(T(`Scenari 1 e 2, con \\(d_1, d_2\\) a destra; gli scenari \\(s = 3, \\dots, ${k}\\) aggiungono colonne \\(o_s, u_s, \\xi_s\\) e righe analoghe`,
         `Scenarios 1 and 2, with \\(d_1, d_2\\) on the right; scenarios \\(s = 3, \\dots, ${k}\\) add columns \\(o_s, u_s, \\xi_s\\) and analogous rows`), griglia(vars, righe), "plm-stretto");
       return modelloDi("newsvendor")(T(`<b>Il problema.</b> Istanza: \\(k = ${k}\\) scenari equiprobabili di domanda \\(d_s\\) (\\(w_s = 1/${k}\\)). Decidiamo la quantità \\(q\\) da ordinare prima di osservare la domanda. ` +
-        "Ogni unità invenduta costa \\(c_o\\), ogni vendita persa \\(c_u\\). L'obiettivo è minimizzare \\((1-r)\\) volte il costo atteso più \\(r\\) volte il CVaR\\(_{0{,}9}\\) del costo.",
+        "Ogni unità invenduta costa \\(c_o\\), ogni vendita persa \\(c_u\\). L'obiettivo è minimizzare \\((1-r)\\) volte il costo atteso più \\(r\\) volte il CVaR\\(_\\alpha\\) del costo. " +
+        `Il CVaR\\(_\\alpha\\) (valore a rischio condizionato) è il costo medio nella frazione \\(1 - \\alpha\\) degli scenari peggiori: con il livello di confidenza \\(\\alpha = 0{,}9\\), il costo medio nel 10% peggiore, cioè nei ${Math.round((1 - ALFA) * k)} scenari più costosi su ${k}.` +
+        "<br><b>Variabili:</b> \\(q\\): quantità ordinata (unità); \\(o_s\\): unità invendute nello scenario \\(s\\); \\(u_s\\): domanda non servita nello scenario \\(s\\) (unità); " +
+        "\\(\\eta\\): soglia di costo nella formula del CVaR, libera di segno (€); \\(\\xi_s\\): parte del costo dello scenario \\(s\\) che supera la soglia \\(\\eta\\) (€)." +
+        `<br><b>Dati:</b> \\(d_s\\): domanda nello scenario \\(s\\) (unità); \\(w_s\\): probabilità dello scenario \\(s\\); \\(p\\): prezzo di vendita, \\(c = ${n(N.c, 0)}\\): costo d'acquisto, \\(v = ${n(N.v, 0)}\\): valore di recupero di un'invenduta (€ per unità); ` +
+        "\\(c_u = p - c\\): costo di una vendita persa (€); \\(c_o = c - v\\): costo di un'unità invenduta (€); \\(r\\): peso del rischio, da 0 a 1; \\(\\alpha = 0{,}9\\): livello di confidenza del CVaR.",
       `<b>The problem.</b> Instance: \\(k = ${k}\\) equally likely demand scenarios \\(d_s\\) (\\(w_s = 1/${k}\\)). We decide the quantity \\(q\\) to order before observing demand. ` +
-        "Each unsold unit costs \\(c_o\\), each lost sale \\(c_u\\). The objective is to minimize \\((1-r)\\) times the expected cost plus \\(r\\) times the CVaR\\(_{0.9}\\) of the cost."),
+        "Each unsold unit costs \\(c_o\\), each lost sale \\(c_u\\). The objective is to minimize \\((1-r)\\) times the expected cost plus \\(r\\) times the CVaR\\(_\\alpha\\) of the cost. " +
+        `The CVaR\\(_\\alpha\\) (conditional value at risk) is the average cost in the worst fraction \\(1 - \\alpha\\) of the scenarios: with the confidence level \\(\\alpha = 0.9\\), the average cost in the worst 10%, that is in the ${Math.round((1 - ALFA) * k)} most expensive scenarios out of ${k}.` +
+        "<br><b>Variables:</b> \\(q\\): quantity ordered (units); \\(o_s\\): unsold units in scenario \\(s\\); \\(u_s\\): unmet demand in scenario \\(s\\) (units); " +
+        "\\(\\eta\\): cost threshold in the CVaR formula, free in sign (€); \\(\\xi_s\\): part of the cost of scenario \\(s\\) above the threshold \\(\\eta\\) (€)." +
+        `<br><b>Data:</b> \\(d_s\\): demand in scenario \\(s\\) (units); \\(w_s\\): probability of scenario \\(s\\); \\(p\\): selling price, \\(c = ${n(N.c, 0)}\\): purchase cost, \\(v = ${n(N.v, 0)}\\): salvage value of an unsold unit (€ per unit); ` +
+        "\\(c_u = p - c\\): cost of a lost sale (€); \\(c_o = c - v\\): cost of an unsold unit (€); \\(r\\): risk weight, from 0 to 1; \\(\\alpha = 0.9\\): confidence level of the CVaR."),
       sim, num,
-      T(`Coefficienti: \\(c_o = c - v = ${n(Co, 2)}\\), \\(c_u = p - c = ${n(Cu, 2)}\\); nella funzione obiettivo \\(o_s\\) ha \\((1-r)\\,c_o/${k}\\), \\(u_s\\) ha \\((1-r)\\,c_u/${k}\\), \\(\\xi_s\\) ha \\(r/(0{,}1 \\cdot ${k})\\), \\(\\eta\\) ha \\(r\\).`,
-        `Coefficients: \\(c_o = c - v = ${n(Co, 2)}\\), \\(c_u = p - c = ${n(Cu, 2)}\\); in the objective function \\(o_s\\) has \\((1-r)\\,c_o/${k}\\), \\(u_s\\) has \\((1-r)\\,c_u/${k}\\), \\(\\xi_s\\) has \\(r/(0.1 \\cdot ${k})\\), \\(\\eta\\) has \\(r\\).`));
+      T(`Coefficienti: \\(c_o = c - v = ${n(Co, 2)}\\), \\(c_u = p - c = ${n(Cu, 2)}\\); nella funzione obiettivo \\(o_s\\) ha \\((1-r)\\,c_o/${k}\\), \\(u_s\\) ha \\((1-r)\\,c_u/${k}\\), \\(\\xi_s\\) ha \\(r/((1-\\alpha) \\cdot ${k})\\), \\(\\eta\\) ha \\(r\\).`,
+        `Coefficients: \\(c_o = c - v = ${n(Co, 2)}\\), \\(c_u = p - c = ${n(Cu, 2)}\\); in the objective function \\(o_s\\) has \\((1-r)\\,c_o/${k}\\), \\(u_s\\) has \\((1-r)\\,c_u/${k}\\), \\(\\xi_s\\) has \\(r/((1-\\alpha) \\cdot ${k})\\), \\(\\eta\\) has \\(r\\).`));
     },
     disegna(crea, R, v, C, S) {
       // come la figura del capitolo (cap08_frontiera): costo medio contro CVaR al variare del peso r, qui per il prezzo p scelto
@@ -494,25 +510,25 @@
       const P = figura(crea, { X0: MF.sx, X1: S.W - MF.dx, Y0: MF.basso, Y1: S.H - MF.alto,
         xa: Math.min(...xs) - dx * 0.06, xb: Math.max(...xs) + dx * 0.32, ya: Math.min(...ys) - dy * 0.08, yb: Math.max(...ys) + dy * 0.1,
         titolo: T("Frontiera costo medio – rischio di coda", "Mean cost – tail risk frontier"),
-        nx: T("CVaR₀,₉₀ del costo (€)", "CVaR₀.₉₀ of the cost (€)"), ny: T("costo medio (€)", "mean cost (€)") }, C, { nTx: 6, nTy: 5 });
+        nx: T("CVaRα del costo, α = 0,9 (€)", "CVaRα of the cost, α = 0.9 (€)"), ny: T("costo medio (€)", "mean cost (€)") }, C, { nTx: 6, nTy: 5 });
       lineaPunti(crea, P, pti.map((p) => p.cv), pti.map((p) => p.media), F.teal, { r: 4.5 });
       pti.forEach((p) => M.scritta(crea, P.X(p.cv) + 8, P.Y(p.media), `r = ${T(p.r.toFixed(2).replace(".", ","), p.r.toFixed(2))}: q = ${nt(p.q, 0)}`, { anchorX: "left", fontSize: 11, strokeColor: C.testo }));
       M.pallino(crea, P.X(R.cvar), P.Y(R.media), { size: 7, fillColor: "none", fillOpacity: 0, strokeColor: F.arancio, strokeWidth: 3 });
       legendaIn(crea, P, [[F.teal, T("frontiera (r = 0; 0,25; 0,5; 0,75; 1)", "frontier (r = 0, 0.25, 0.5, 0.75, 1)"), "lineaPunti"],
         [F.arancio, T(`ordine ottimo con r = ${nt(v[1], 2)}: q* = ${nt(R.q, 1)}`, `optimal order with r = ${nt(v[1], 2)}: q* = ${nt(R.q, 1)}`), "punto"]], C, "dx");
     },
-    legenda: () => { const F = FIG(); return [[F.teal, T("ogni punto è l'ordine ottimo \\(q^*\\) per un peso \\(r\\): costo atteso e CVaR\\(_{0,9}\\) del costo", "each point is the optimal order \\(q^*\\) for a weight \\(r\\): expected cost and CVaR\\(_{0.9}\\) of the cost"), ""],
+    legenda: () => { const F = FIG(); return [[F.teal, T("ogni punto è l'ordine ottimo \\(q^*\\) per un peso \\(r\\): costo atteso e CVaR\\(_\\alpha\\) del costo, \\(\\alpha = 0{,}9\\)", "each point is the optimal order \\(q^*\\) for a weight \\(r\\): expected cost and CVaR\\(_\\alpha\\) of the cost, \\(\\alpha = 0.9\\)"), ""],
       [F.arancio, T("l'ordine ottimo con il peso \\(r\\) del cursore", "the optimal order with the slider weight \\(r\\)"), "punto"]]; },
     letture(R, v, st, C) {
       const vss = R.costoMedia - R.media;
-      return `<div>${T("Frattile critico", "Critical fractile")} \\(f^* = C_u/(C_u + C_o) = ${n(R.Cu, 1)}/${n(R.Cu + R.Co, 1)} = ${n(R.alfaStar, 4)}\\)</div>` +
-        M.tab(["", "q", T("costo atteso", "exp. cost"), "CVaR"], [
+      return `<div>${T("Frattile critico", "Critical fractile")} \\(f^* = c_u/(c_u + c_o) = ${n(R.Cu, 1)}/${n(R.Cu + R.Co, 1)} = ${n(R.alfaStar, 4)}\\)</div>` +
+        M.tab(["", "q", T("costo atteso", "exp. cost"), "CVaR\\(_\\alpha\\)"], [
           [M.tinta(C.blu, T("ottimo", "optimal")), nt(R.q, 2), nt(R.media, 2), nt(R.cvar, 2)],
           [T("q = media", "q = mean"), "100", nt(R.costoMedia, 2), nt(R.f.cv(100), 2)],
         ]) +
         `<div style="margin-top:.3em">${v[1] === 0 ? T(`L'LP sceglie il quantile empirico al ${nt(100 * R.alfaStar, 2)}%: q* = ${nt(R.quantile, 2)}. ` +
-          `Ordinare la media costerebbe ${euro(vss)} in più a ciclo (VSS).`, `The LP picks the empirical quantile at ${nt(100 * R.alfaStar, 2)}%: q* = ${nt(R.quantile, 2)}. ` +
-          `Ordering the mean would cost ${euro(vss)} more per cycle (VSS).`)
+          `Ordinare la media costerebbe ${euro(vss)} in più a ciclo (VSS, valore della soluzione stocastica).`, `The LP picks the empirical quantile at ${nt(100 * R.alfaStar, 2)}%: q* = ${nt(R.quantile, 2)}. ` +
+          `Ordering the mean would cost ${euro(vss)} more per cycle (VSS, value of the stochastic solution).`)
           : T("Con \\(r > 0\\) si ordina di più: si paga in costo medio per proteggersi dagli scenari di coda.", "With \\(r > 0\\) one orders more: one pays in average cost to be protected from the tail scenarios.")}</div>`;
     },
     domanda: T("Con \\(r = 0\\) muovi \\(p\\): l'ordine ottimo segue il frattile critico \\(f^*\\). Poi porta \\(r\\) a 1: di quanto cresce \\(q^*\\), di quanto il costo medio, di quanto scende il CVaR?",
@@ -559,9 +575,17 @@
       const num = blocco(T(`Filiale \\(o = ${oo + 1}\\). Righe: input (${nomiI.join(", ")}), poi output (${nomiR.join(", ")})${vrs ? ", poi \\(\\sum_j \\lambda_j = 1\\)" : ""}`,
         `Branch \\(o = ${oo + 1}\\). Rows: inputs (${nomiI.join(", ")}), then outputs (${nomiR.join(", ")})${vrs ? ", then \\(\\sum_j \\lambda_j = 1\\)" : ""}`), grigliaLunga(vars, righe, 7));
       return modelloDi("dea")(T(`<b>Il problema.</b> Istanza: \\(n = ${nn}\\) filiali, \\(m = ${nomiI.length}\\) input, \\(p = ${nomiR.length}\\) output. Per la filiale valutata \\(o = ${oo + 1}\\) cerchiamo i pesi \\(\\lambda_j\\) delle ${nn} filiali e il fattore \\(\\theta\\): la combinazione pesata deve produrre almeno gli output di \\(o\\) (${nomiR.join(", ")}) usando al più \\(\\theta\\) volte i suoi input (${nomiI.join(", ")}). ` +
-        `L'obiettivo è minimizzare \\(\\theta\\), l'efficienza della filiale${vrs ? "; il vincolo \\(\\sum_j \\lambda_j = 1\\) dà il modello BCC" : ""}.`,
+        `L'obiettivo è minimizzare \\(\\theta\\), l'efficienza della filiale${vrs ? "; il vincolo \\(\\sum_j \\lambda_j = 1\\) dà il modello BCC" : ""}.` +
+        "<br><b>Variabili:</b> \\(\\theta\\): fattore per cui si possono moltiplicare gli input di \\(o\\), cioè la sua efficienza (\\(\\theta = 1\\): efficiente); \\(\\lambda_j\\): peso della filiale \\(j\\) nella filiale virtuale di confronto." +
+        `<br><b>Dati:</b> \\(x_{ij}\\): quantità dell'input \\(i\\) usata dalla filiale \\(j\\) (personale in FTE, addetti a tempo pieno${vista === "1x1" ? "" : "; costi operativi in k€"}); ` +
+        `\\(y_{rj}\\): quantità dell'output \\(r\\) prodotta dalla filiale \\(j\\) (prestiti${vista === "1x1" ? "" : " e depositi"} in M€); \\(o\\): la filiale valutata. ` +
+        "CCR (Charnes, Cooper, Rhodes): rendimenti di scala costanti; BCC (Banker, Charnes, Cooper): aggiunge \\(\\sum_j \\lambda_j = 1\\), rendimenti di scala variabili.",
       `<b>The problem.</b> Instance: \\(n = ${nn}\\) branches, \\(m = ${nomiI.length}\\) inputs, \\(p = ${nomiR.length}\\) outputs. For the branch under evaluation \\(o = ${oo + 1}\\) we look for the weights \\(\\lambda_j\\) of the ${nn} branches and the factor \\(\\theta\\): the weighted combination must produce at least the outputs of \\(o\\) (${nomiR.join(", ")}) using at most \\(\\theta\\) times its inputs (${nomiI.join(", ")}). ` +
-        `The objective is to minimize \\(\\theta\\), the efficiency of the branch${vrs ? "; the constraint \\(\\sum_j \\lambda_j = 1\\) gives the BCC model" : ""}.`),
+        `The objective is to minimize \\(\\theta\\), the efficiency of the branch${vrs ? "; the constraint \\(\\sum_j \\lambda_j = 1\\) gives the BCC model" : ""}.` +
+        "<br><b>Variables:</b> \\(\\theta\\): factor by which the inputs of \\(o\\) can be multiplied, that is its efficiency (\\(\\theta = 1\\): efficient); \\(\\lambda_j\\): weight of branch \\(j\\) in the virtual comparison branch." +
+        `<br><b>Data:</b> \\(x_{ij}\\): amount of input \\(i\\) used by branch \\(j\\) (staff in FTE, full-time equivalent employees${vista === "1x1" ? "" : "; operating costs in k€"}); ` +
+        `\\(y_{rj}\\): amount of output \\(r\\) produced by branch \\(j\\) (loans${vista === "1x1" ? "" : " and deposits"} in M€); \\(o\\): the branch under evaluation. ` +
+        "CCR (Charnes, Cooper, Rhodes): constant returns to scale; BCC (Banker, Charnes, Cooper): adds \\(\\sum_j \\lambda_j = 1\\), variable returns to scale."),
       sim, num);
     },
     disegna(crea, R, v, C, S) {
@@ -605,7 +629,9 @@
       const att = [...R.X.map((r) => r[R.o]), ...R.Y.map((r) => r[R.o])], tgt = [...R.tIn, ...R.tOut], sc = [...R.sIn, ...R.sOut];
       const eff = Math.abs(R.theta - 1) < 1e-6;
       return `<div>${T("Efficienza", "Efficiency")} \\(\\theta = ${n(R.theta, 4)}\\) · ${eff ? M.tinta(C.c, T("sulla frontiera", "on the frontier")) : M.tinta(C.a, T("inefficiente", "inefficient"))}</div>` +
-        `<div>${T("Peer", "Peers")}: ${R.peer.map(([j, l]) => `${j + 1} (λ = ${nt(l, 3)})`).join(", ")}</div>` +
+        `<div>${T("Peer (filiali con \\(\\lambda_j > 0\\))", "Peers (branches with \\(\\lambda_j > 0\\))")}: ${R.peer.map(([j, l]) => `${j + 1} (λ = ${nt(l, 3)})`).join(", ")}</div>` +
+        `<div>${T("Target: input e output della filiale virtuale, combinazione dei peer con pesi \\(\\lambda_j\\); scarto: riduzione di input o aumento di output ancora possibile oltre al fattore \\(\\theta\\).",
+          "Target: inputs and outputs of the virtual branch, combination of the peers with weights \\(\\lambda_j\\); slack: reduction of input or increase of output still possible beyond the factor \\(\\theta\\).")}</div>` +
         M.tab(["", T("attuale", "actual"), "target", T("scarto", "slack")], nomi.map((nm, k) => [nm, nt(att[k], 1), nt(tgt[k], k < R.X.length ? 2 : 2), nt(sc[k], 2)])) +
         `<div style="margin-top:.3em">${eff ? T("Nessuna combinazione di filiali fa meglio con meno input.", "No combination of branches does better with fewer inputs.")
           : T(`Una combinazione dei peer produce almeno gli stessi output con il ${nt(100 * R.theta, 1)}% degli input.`, `A combination of the peers produces at least the same outputs with ${nt(100 * R.theta, 1)}% of the inputs.`)}</div>`;
@@ -639,7 +665,7 @@
     nomeX: () => T("temperatura massima xᵢ (°C)", "maximum temperature xᵢ (°C)"), nomeY: () => T("domanda yᵢ (pezzi)", "demand yᵢ (pieces)"),
     legendaGrafico: true, appoggioNome: () => T("punti di appoggio della retta τ", "support points of the τ line"),
     parametri: [{ k: "tau", nome: "\\tau", min: 0.05, max: 0.95, step: 0.01, val: 0.69, colore: "c", cifre: 2,
-      descr: T("quantile: \\(9/13 \\approx 0{,}69\\) è il frattile critico del newsvendor", "quantile: \\(9/13 \\approx 0.69\\) is the critical fractile of the newsvendor") }],
+      descr: T("livello del quantile: \\(9/13 \\approx 0{,}69\\) è il frattile critico \\(c_u/(c_u + c_o)\\) del newsvendor, con vendita persa \\(c_u = 9\\) € e invenduto \\(c_o = 4\\) €", "quantile level: \\(9/13 \\approx 0.69\\) is the critical fractile \\(c_u/(c_u + c_o)\\) of the newsvendor, with lost sale \\(c_u = 9\\) € and unsold unit \\(c_o = 4\\) €") }],
     rette(t, y, p, C) {
       DATI_REG.t = t; DATI_REG.y = y;
       const lad = PL().regressione(t, y, 0.5), q = PL().regressione(t, y, p.tau);
@@ -657,7 +683,7 @@
         ${SA()} \\quad w\\, x_i + b + u_i - v_i &= y_i, & ${ni}, \\\\
         w &\\gtreqless 0, & \\\\
         b &\\gtreqless 0, & \\\\
-        u_i,\; v_i &\\ge 0, & ${ni}.`;
+        u_i,\\; v_i &\\ge 0, & ${ni}.`;
       const t = DATI_REG.t || [], y = DATI_REG.y || [], m = t.length, ii = [0, 1, 2].filter((i) => i < m);
       const vars = ["w", "b"];
       ii.forEach((i) => vars.push(`u_{${i + 1}}`, `v_{${i + 1}}`));
@@ -669,16 +695,20 @@
       const num = blocco(T(`Giorni 1, 2, 3, con \\(x_i\\) (temperatura) come coefficiente di \\(w\\) e \\(y_i\\) a destra; i giorni \\(i = 4, \\dots, ${m}\\) aggiungono colonne \\(u_i, v_i\\) e righe analoghe`,
         `Days 1, 2, 3, with \\(x_i\\) (temperature) as the coefficient of \\(w\\) and \\(y_i\\) on the right; days \\(i = 4, \\dots, ${m}\\) add columns \\(u_i, v_i\\) and analogous rows`), griglia(vars, righe));
       return modelloDi("regressione")(T(`<b>Il problema.</b> Istanza: \\(n = ${m}\\) giorni osservati (punti). Decidiamo la pendenza \\(w\\) e l'intercetta \\(b\\) della retta che stima la domanda \\(y_i\\) dalla temperatura \\(x_i\\); \\(u_i\\) e \\(v_i\\) sono gli scostamenti in eccesso e in difetto. ` +
-        "L'obiettivo è minimizzare la somma degli scostamenti pesati \\(\\tau\\) e \\(1 - \\tau\\) (con \\(\\tau = 1/2\\) si ottengono gli scarti assoluti).",
+        "L'obiettivo è minimizzare la somma degli scostamenti pesati \\(\\tau\\) e \\(1 - \\tau\\) (con \\(\\tau = 1/2\\) si ottengono gli scarti assoluti)." +
+        "<br><b>Variabili:</b> \\(w\\): pendenza della retta (pezzi per °C), libera di segno; \\(b\\): intercetta (pezzi), libera di segno; \\(u_i\\): quanto la domanda \\(y_i\\) supera la retta nel giorno \\(i\\) (pezzi); \\(v_i\\): quanto la domanda \\(y_i\\) resta sotto la retta (pezzi)." +
+        "<br><b>Dati:</b> \\(x_i\\): temperatura massima del giorno \\(i\\) (°C); \\(y_i\\): domanda di pane del giorno \\(i\\) (pezzi); \\(\\tau\\): livello del quantile, fra 0 e 1, cioè la quota di giorni che la retta lascia sotto di sé. I 5 giorni di sciopero hanno domanda anomala, molto bassa.",
       `<b>The problem.</b> Instance: \\(n = ${m}\\) observed days (points). We decide the slope \\(w\\) and the intercept \\(b\\) of the line that estimates demand \\(y_i\\) from the temperature \\(x_i\\); \\(u_i\\) and \\(v_i\\) are the deviations in excess and in defect. ` +
-        "The objective is to minimize the sum of the deviations weighted by \\(\\tau\\) and \\(1 - \\tau\\) (with \\(\\tau = 1/2\\) one gets least absolute deviations)."),
+        "The objective is to minimize the sum of the deviations weighted by \\(\\tau\\) and \\(1 - \\tau\\) (with \\(\\tau = 1/2\\) one gets least absolute deviations)." +
+        "<br><b>Variables:</b> \\(w\\): slope of the line (pieces per °C), free in sign; \\(b\\): intercept (pieces), free in sign; \\(u_i\\): how much demand \\(y_i\\) exceeds the line on day \\(i\\) (pieces); \\(v_i\\): how much demand \\(y_i\\) falls below the line (pieces)." +
+        "<br><b>Data:</b> \\(x_i\\): maximum temperature of day \\(i\\) (°C); \\(y_i\\): bread demand of day \\(i\\) (pieces); \\(\\tau\\): quantile level, between 0 and 1, that is the share of days the line leaves below it. The 5 strike days have anomalous, very low demand."),
       sim, num,
       T("Il modello numerico è quello della retta \\(\\tau\\) con i punti attuali, anche quelli trascinati.",
         "The numerical model is the one of the \\(\\tau\\) line with the current points, dragged ones included."));
     },
     letture(rette, p, dati, C) {
       const [lad, q] = rette, m = dati.t.length;
-      const eq = (r) => `\\(y = ${n(r.b, 2)} ${r.w < 0 ? "-" : "+"} ${n(Math.abs(r.w), 2)}\\, t\\)`;
+      const eq = (r) => `\\(y = ${n(r.b, 2)} ${r.w < 0 ? "-" : "+"} ${n(Math.abs(r.w), 2)}\\, x\\)`;
       return `<div>${M.tinta(FIG().navy, T("Scarti assoluti", "Least abs. dev."))}: ${eq(lad)}</div>` +
         `<div>${M.tinta(FIG().verde, T("Quantile", "Quantile") + " τ = " + nt(p.tau, 2))}: ${eq(q)}</div>` +
         `<div>${T("Sotto la retta τ", "Below the τ line")}: ${q.sotto}/${m} = ${nt(q.sotto / m, 3)}, ${T("sopra", "above")}: ${q.sopra}/${m}, ` +
