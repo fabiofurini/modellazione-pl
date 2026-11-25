@@ -7,9 +7,8 @@ cella, con le figure che compaiono sotto le celle invece di finire in un file.
 
 !!! tip "La licenza del pacchetto pip basta"
     La licenza inclusa in `gurobipy` è limitata a 2000 variabili e 2000 vincoli, e
-    tutti i modelli del laboratorio ci stanno: il più grande — la scelta dei
-    fornitori a due stadi del capitolo 9 — ne usa 1603 e 1600. Aumentando il numero
-    di scenari si può superarla:
+    tutti i modelli del laboratorio sono piccoli e ci stanno con largo margine. Si
+    supera solo ingrandendo molto le istanze:
     in quel caso si attiva la licenza accademica gratuita da
     [portal.gurobi.com](https://portal.gurobi.com).
 

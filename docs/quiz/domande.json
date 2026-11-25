@@ -1811,24 +1811,24 @@
    },
    "corretta": 1,
    "it": {
-    "testo": "LP di Rockafellar–Uryasev per una perdita con scenari $s$ di probabilità $w_s$ e perdita $\\ell_s(\\mathbf x)$: $\\min\\ \\eta + \\frac{1}{1-\\alpha}\\sum_s w_s\\xi_s$ soggetto a $\\xi_s \\ge \\ell_s(\\mathbf x) - \\eta$, $\\xi_s \\ge 0$, $\\mathbf x \\in X$. Con $\\alpha = 0{,}99$ e solo $k = 220$ scenari equiprobabili, perché il CVaR stimato è poco affidabile?",
+    "testo": "LP di Rockafellar–Uryasev per una perdita con scenari $s$ di probabilità $w_s$ e perdita $\\ell_s(\\mathbf x)$: $\\min\\ \\eta + \\frac{1}{1-\\alpha}\\sum_s w_s\\xi_s$ soggetto a $\\xi_s \\ge \\ell_s(\\mathbf x) - \\eta$, $\\xi_s \\ge 0$, $\\mathbf x \\in X$. Con $\\alpha = 0{,}9$ e i soli $k = 10$ scenari equiprobabili del caso di studio, perché il CVaR stimato è poco affidabile?",
     "opzioni": [
      "Perché l'LP diventa non convesso per $\\alpha$ vicino a $1$",
-     "Perché la coda contiene solo 2–3 scenari",
+     "Perché la coda contiene un solo scenario",
      "Perché il VaR è allora sempre unico",
-     "Perché il CVaR non è definito per $\\alpha > 0{,}95$"
+     "Perché il CVaR non è definito per $\\alpha > 0{,}85$"
     ],
-    "spiegazione": "La coda di massa $0{,}01$ contiene $2{,}2$ scenari: la stima è quasi rumore. Regola pratica: almeno alcune decine di scenari oltre il quantile."
+    "spiegazione": "La coda di massa $0{,}1$ contiene $0{,}1 \\cdot 10 = 1$ scenario: il CVaR è la perdita di quel solo scenario e cambia con lui. Regola pratica: almeno alcune decine di scenari oltre il quantile."
    },
    "en": {
-    "testo": "Rockafellar–Uryasev LP for a loss with scenarios $s$ of probability $w_s$ and loss $\\ell_s(\\mathbf x)$: $\\min\\ \\eta + \\frac{1}{1-\\alpha}\\sum_s w_s\\xi_s$ subject to $\\xi_s \\ge \\ell_s(\\mathbf x) - \\eta$, $\\xi_s \\ge 0$, $\\mathbf x \\in X$. With $\\alpha = 0.99$ and only $k = 220$ equally likely scenarios, why is the estimated CVaR unreliable?",
+    "testo": "Rockafellar–Uryasev LP for a loss with scenarios $s$ of probability $w_s$ and loss $\\ell_s(\\mathbf x)$: $\\min\\ \\eta + \\frac{1}{1-\\alpha}\\sum_s w_s\\xi_s$ subject to $\\xi_s \\ge \\ell_s(\\mathbf x) - \\eta$, $\\xi_s \\ge 0$, $\\mathbf x \\in X$. With $\\alpha = 0.9$ and only the $k = 10$ equally likely scenarios of the case study, why is the estimated CVaR unreliable?",
     "opzioni": [
      "Because the LP becomes non-convex for $\\alpha$ close to $1$",
-     "Because the tail contains only 2–3 scenarios",
+     "Because the tail contains a single scenario",
      "Because the VaR is then always unique",
-     "Because the CVaR is not defined for $\\alpha > 0.95$"
+     "Because the CVaR is not defined for $\\alpha > 0.85$"
     ],
-    "spiegazione": "The tail of mass $0.01$ holds $2.2$ scenarios: the estimate is almost noise. Rule of thumb: at least a few dozen scenarios beyond the quantile."
+    "spiegazione": "The tail of mass $0.1$ holds $0.1 \\cdot 10 = 1$ scenario: the CVaR is the loss of that single scenario and changes with it. Rule of thumb: at least a few dozen scenarios beyond the quantile."
    }
   },
   {
@@ -3438,7 +3438,7 @@
      "Gli scenari sono equiprobabili, quindi il CVaR è una media semplice delle perdite",
      "Le perdite sono sempre positive, quindi le parti positive si possono togliere"
     ],
-    "spiegazione": "Perdite lineari e vincoli poliedrali ($\\sum_ix_i = 1$, soglia di rendimento, $x \\ge 0$) mantengono lineare la formulazione di Rockafellar–Uryasev, qualunque sia la distribuzione dei rendimenti (qui a code grasse)."
+    "spiegazione": "Perdite lineari e vincoli poliedrali ($\\sum_ix_i = 1$, soglia di rendimento, $x \\ge 0$) mantengono lineare la formulazione di Rockafellar–Uryasev, qualunque sia la distribuzione dei rendimenti."
    },
    "en": {
     "testo": "Mean-CVaR portfolio: the loss of scenario $s$ is $\\ell_s(\\mathbf x) = -\\sum_i r_{is}x_i$, where $r_{is}$ is the return of asset $i$ in scenario $s$ and $x_i$ its share. Why can the whole model be solved as an LP?",
@@ -3448,7 +3448,7 @@
      "The scenarios are equally likely, so the CVaR is a plain average of losses",
      "The losses are always positive, so the positive parts can be dropped"
     ],
-    "spiegazione": "Linear losses and polyhedral constraints ($\\sum_ix_i = 1$, return threshold, $x \\ge 0$) keep the Rockafellar–Uryasev formulation linear, whatever the distribution of the returns (here fat tails)."
+    "spiegazione": "Linear losses and polyhedral constraints ($\\sum_ix_i = 1$, return threshold, $x \\ge 0$) keep the Rockafellar–Uryasev formulation linear, whatever the distribution of the returns."
    }
   },
   {
@@ -5981,24 +5981,24 @@
    },
    "corretta": 3,
    "it": {
-    "testo": "Supply chain a due stadi con CVaR: il fornitore 1 è economico ma fragile (nel $12\\%$ degli scenari la sua disponibilità crolla al $30\\%$), il fornitore 2 caro ma affidabile. Quando il peso del rischio $r$ va da 0 a 1, che cosa succede alle capacità prenotate?",
+    "testo": "Scelta dei fornitori a due stadi con CVaR: il fornitore 1 è economico ma fragile (in 2 scenari su 10 consegna solo metà della capacità prenotata), il fornitore 2 caro ma affidabile. Quando il peso del rischio $r$ sale da 0 a $0{,}75$, che cosa succede alle capacità prenotate?",
     "opzioni": [
      "Non cambiano: cambia solo il ricorso",
      "La capacità si sposta verso il fornitore 1",
      "Si riducono entrambe per tagliare il costo di prenotazione",
      "La capacità si sposta verso il fornitore affidabile 2"
     ],
-    "spiegazione": "Da $r = 0$ a $1$ il fornitore 1 passa da $161{,}5$ a $68{,}5$ e il fornitore 2 da $134{,}2$ a $236{,}9$: la protezione dagli scenari di guasto si compra con capacità affidabile."
+    "spiegazione": "Da $r = 0$ a $0{,}75$ il fornitore 1 passa da $120$ a $20$ unità e il fornitore 2 da $0$ a $120$: la protezione dagli scenari di guasto si compra con capacità affidabile."
    },
    "en": {
-    "testo": "Two-stage supply chain with CVaR: supplier 1 is cheap but fragile (in $12\\%$ of the scenarios its availability drops to $30\\%$), supplier 2 expensive but reliable. As the risk weight $r$ goes from 0 to 1, what happens to the booked capacities?",
+    "testo": "Two-stage supplier choice with CVaR: supplier 1 is cheap but fragile (in 2 scenarios out of 10 it delivers only half of the booked capacity), supplier 2 expensive but reliable. As the risk weight $r$ rises from 0 to $0.75$, what happens to the booked capacities?",
     "opzioni": [
      "They do not change: only the recourse changes",
      "Capacity moves toward supplier 1",
      "Both shrink to cut the booking cost",
      "Capacity moves toward the reliable supplier 2"
     ],
-    "spiegazione": "From $r = 0$ to $1$ supplier 1 goes from $161.5$ to $68.5$ and supplier 2 from $134.2$ to $236.9$: protection against the failure scenarios is bought with reliable capacity."
+    "spiegazione": "From $r = 0$ to $0.75$ supplier 1 goes from $120$ to $20$ units and supplier 2 from $0$ to $120$: protection against the failure scenarios is bought with reliable capacity."
    }
   },
   {
@@ -6011,24 +6011,24 @@
    },
    "corretta": 1,
    "it": {
-    "testo": "Supply chain a due stadi con CVaR del laboratorio: da $r = 0$ a $r = 1$ il costo medio passa da $1724$ a $1906$ € e il $\\mathrm{CVaR}_{0{,}90}$ da $2902$ a $2203$ €; già con $r = 0{,}5$: $1803$ e $2221$. Come chiama la dispensa il costo medio in più pagato per la protezione?",
+    "testo": "Scelta dei fornitori a due stadi con CVaR del laboratorio: da $r = 0$ a $r = 0{,}75$ il costo medio passa da $758$ a $840$ € e il $\\mathrm{CVaR}_{0{,}8}$ da $1050$ a $940$ €; già con $r = 0{,}5$: $798$ e $970$. Come chiama la dispensa il costo medio in più pagato per la protezione?",
     "opzioni": [
      "Il valore della soluzione stocastica",
      "Il costo della resilienza",
      "Il prezzo dell'anarchia",
      "Il prezzo ombra della capacità"
     ],
-    "spiegazione": "Circa $+79$ € di costo medio comprano $-681$ € di CVaR (con $r = 0{,}5$): il costo della resilienza, il numero che serve in una discussione su dual sourcing o rishoring."
+    "spiegazione": "Con $r = 0{,}5$, $+40$ € di costo medio comprano $-80$ € di CVaR: il costo della resilienza, il numero che serve in una discussione su dual sourcing o rishoring."
    },
    "en": {
-    "testo": "Two-stage supply chain with CVaR of the lab: from $r = 0$ to $r = 1$ the mean cost goes from $1724$ to $1906$ € and the $\\mathrm{CVaR}_{0.90}$ from $2902$ to $2203$ €; already with $r = 0.5$: $1803$ and $2221$. How do the notes call the extra mean cost paid for the protection?",
+    "testo": "Two-stage supplier choice with CVaR of the lab: from $r = 0$ to $r = 0.75$ the mean cost goes from $758$ to $840$ € and the $\\mathrm{CVaR}_{0.8}$ from $1050$ to $940$ €; already with $r = 0.5$: $798$ and $970$. How do the notes call the extra mean cost paid for the protection?",
     "opzioni": [
      "The value of the stochastic solution",
      "The cost of resilience",
      "The price of anarchy",
      "The shadow price of the capacity"
     ],
-    "spiegazione": "About $+79$ € of mean cost buy $-681$ € of CVaR (at $r = 0.5$): the cost of resilience, the number needed in a discussion about dual sourcing or reshoring."
+    "spiegazione": "At $r = 0.5$, $+40$ € of mean cost buy $-80$ € of CVaR: the cost of resilience, the number needed in a discussion about dual sourcing or reshoring."
    }
   },
   {
@@ -9821,24 +9821,24 @@
    },
    "corretta": 0,
    "it": {
-    "testo": "Portafoglio mean-CVaR del corso (otto titoli settoriali, 220 scenari mensili): quale rendimento atteso minimo e quale livello $\\alpha$ usa il caso di studio?",
+    "testo": "Portafoglio a CVaR minimo del corso (3 titoli, 10 scenari annui equiprobabili): quale rendimento atteso minimo e quale livello $\\alpha$ usa il caso di studio?",
     "opzioni": [
-     "$8\\%$ annuo e $\\alpha = 0{,}90$",
-     "$5\\%$ annuo e $\\alpha = 0{,}95$",
-     "$8\\%$ annuo e $\\alpha = 0{,}99$",
-     "$10\\%$ annuo e $\\alpha = 0{,}90$"
+     "$3\\%$ e $\\alpha = 0{,}80$",
+     "$3\\%$ e $\\alpha = 0{,}90$",
+     "$7\\%$ e $\\alpha = 0{,}80$",
+     "$5\\%$ e $\\alpha = 0{,}95$"
     ],
-    "spiegazione": "Si minimizza il $\\mathrm{CVaR}_{0,90}$ della perdita mensile con rendimento atteso almeno dell'$8\\%$ annuo."
+    "spiegazione": "Si minimizza il $\\mathrm{CVaR}_{0,8}$ della perdita annua con rendimento atteso almeno del $3\\%$: con 10 scenari la coda sono i 2 peggiori."
    },
    "en": {
-    "testo": "Mean-CVaR portfolio of the course (eight sector stocks, 220 monthly scenarios): which minimum expected return and which level $\\alpha$ does the case study use?",
+    "testo": "Minimum-CVaR portfolio of the course (3 assets, 10 equally likely annual scenarios): which minimum expected return and which level $\\alpha$ does the case study use?",
     "opzioni": [
-     "$8\\%$ per year and $\\alpha = 0.90$",
-     "$5\\%$ per year and $\\alpha = 0.95$",
-     "$8\\%$ per year and $\\alpha = 0.99$",
-     "$10\\%$ per year and $\\alpha = 0.90$"
+     "$3\\%$ and $\\alpha = 0.80$",
+     "$3\\%$ and $\\alpha = 0.90$",
+     "$7\\%$ and $\\alpha = 0.80$",
+     "$5\\%$ and $\\alpha = 0.95$"
     ],
-    "spiegazione": "One minimizes the $\\mathrm{CVaR}_{0.90}$ of the monthly loss with an expected return of at least $8\\%$ per year."
+    "spiegazione": "One minimizes the $\\mathrm{CVaR}_{0.8}$ of the annual loss with an expected return of at least $3\\%$: with 10 scenarios the tail is the 2 worst ones."
    }
   },
   {
@@ -9851,24 +9851,24 @@
    },
    "corretta": 2,
    "it": {
-    "testo": "Portafoglio mean-CVaR del corso, $\\alpha = 0{,}90$, rendimento atteso almeno $8\\%$: la perdita mensile media è $-0{,}67\\%$ e il VaR$_{90}$ è $3{,}27\\%$. Quanto vale il CVaR$_{90}$?",
+    "testo": "Portafoglio a CVaR minimo del corso, $\\alpha = 0{,}8$, rendimento atteso almeno $3\\%$: la perdita media è $-3\\%$, il VaR$_{0,8}$ è $0{,}46\\%$ e nei 2 scenari peggiori le perdite sono $3{,}46\\%$ e $0{,}46\\%$. Quanto vale il CVaR$_{0,8}$?",
     "opzioni": [
-     "$3{,}27\\%$",
-     "$-0{,}67\\%$",
-     "$5{,}11\\%$",
-     "$2{,}60\\%$"
+     "$0{,}46\\%$",
+     "$-3\\%$",
+     "$1{,}96\\%$",
+     "$3{,}46\\%$"
     ],
-    "spiegazione": "Il CVaR$_{90}$ è la perdita media nel 10\\% dei mesi peggiori, quindi non inferiore al VaR: $5{,}11\\%$."
+    "spiegazione": "Il CVaR$_{0,8}$ è la perdita media nei 2 scenari peggiori su 10: $(3{,}46 + 0{,}46)/2 = 1{,}96\\%$, non inferiore al VaR."
    },
    "en": {
-    "testo": "Mean-CVaR portfolio of the course, $\\alpha = 0.90$, expected return at least $8\\%$: the mean monthly loss is $-0.67\\%$ and the VaR$_{90}$ is $3.27\\%$. What is the CVaR$_{90}$?",
+    "testo": "Minimum-CVaR portfolio of the course, $\\alpha = 0.8$, expected return at least $3\\%$: the mean loss is $-3\\%$, the VaR$_{0.8}$ is $0.46\\%$ and in the 2 worst scenarios the losses are $3.46\\%$ and $0.46\\%$. What is the CVaR$_{0.8}$?",
     "opzioni": [
-     "$3.27\\%$",
-     "$-0.67\\%$",
-     "$5.11\\%$",
-     "$2.60\\%$"
+     "$0.46\\%$",
+     "$-3\\%$",
+     "$1.96\\%$",
+     "$3.46\\%$"
     ],
-    "spiegazione": "The CVaR$_{90}$ is the mean loss in the worst 10\\% of the months, hence not below the VaR: $5.11\\%$."
+    "spiegazione": "The CVaR$_{0.8}$ is the mean loss in the 2 worst scenarios out of 10: $(3.46 + 0.46)/2 = 1.96\\%$, not below the VaR."
    }
   },
   {
@@ -9881,24 +9881,24 @@
    },
    "corretta": 3,
    "it": {
-    "testo": "Portafoglio mean-CVaR del corso con otto titoli settoriali: su quali due titoli si concentra la soluzione ottima?",
+    "testo": "Portafoglio a CVaR minimo del corso (TEC, UTL, ORO, con rendimenti attesi $7\\%$, $3\\%$, $1\\%$), $\\alpha = 0{,}8$, rendimento atteso almeno $3\\%$: quale titolo ha la quota maggiore?",
     "opzioni": [
-     "ENE e FIN",
-     "TEC e IND",
-     "CON e SAN",
-     "UTL e MAT"
+     "TEC, il più redditizio",
+     "UTL, il meno volatile",
+     "Nessuno: quote uguali",
+     "ORO, che sale nel crollo"
     ],
-    "spiegazione": "La composizione ottima è UTL 46,5\\% e MAT 22,5\\%, con quote minori di TEC, ENE, SAN e FIN."
+    "spiegazione": "Le quote ottime sono TEC 26\\%, UTL 22\\%, ORO 52\\%: l'oro rende poco in media, ma guadagna proprio nello scenario 1, il crollo degli altri due titoli, e taglia la coda."
    },
    "en": {
-    "testo": "Mean-CVaR portfolio of the course with eight sector stocks: on which two stocks does the optimal solution concentrate?",
+    "testo": "Minimum-CVaR portfolio of the course (TEC, UTL, GLD, with expected returns $7\\%$, $3\\%$, $1\\%$), $\\alpha = 0.8$, expected return at least $3\\%$: which asset has the largest share?",
     "opzioni": [
-     "ENE and FIN",
-     "TEC and IND",
-     "CON and SAN",
-     "UTL and MAT"
+     "TEC, the most profitable",
+     "UTL, the least volatile",
+     "None: equal shares",
+     "GLD, which rises in the crash"
     ],
-    "spiegazione": "The optimal composition is UTL 46.5\\% and MAT 22.5\\%, with smaller shares of TEC, ENE, SAN and FIN."
+    "spiegazione": "The optimal shares are TEC 26\\%, UTL 22\\%, GLD 52\\%: gold returns little on average, but gains exactly in scenario 1, the crash of the other two assets, and cuts the tail."
    }
   },
   {
