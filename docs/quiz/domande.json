@@ -1548,7 +1548,7 @@
      "Costo atteso di ordinare $\\mathbb E[D]$ meno costo atteso di $\\tilde q$",
      "La varianza del costo all'ordine ottimo"
     ],
-    "spiegazione": "Il VSS è il guadagno di modellare l'incertezza invece di inserire la media: nel caso di studio $11{,}17$ € per ciclo, l'$11\\%$ del costo."
+    "spiegazione": "Il VSS è il guadagno di modellare l'incertezza invece di inserire la media: nel caso di studio $12$ € per ciclo ($195$ contro $183$), il $6{,}6\\%$ del costo."
    },
    "en": {
     "testo": "Newsvendor: order quantity $q$ before observing the random demand $D$ (distribution function $F$); unit underage cost $c_u$ (demand left unmet) and overage cost $c_o$ (unit left unsold); minimize $c_o\\mathbb E[(q - D)^+] + c_u\\mathbb E[(D - q)^+]$. What does the value of the stochastic solution (VSS) measure?",
@@ -1558,7 +1558,7 @@
      "Expected cost of ordering $\\mathbb E[D]$ minus expected cost of $\\tilde q$",
      "The variance of the cost at the optimal order"
     ],
-    "spiegazione": "VSS is the gain from modelling the uncertainty instead of plugging in the mean: in the case study $11.17$ € per cycle, $11\\%$ of the cost."
+    "spiegazione": "VSS is the gain from modelling the uncertainty instead of plugging in the mean: in the case study $12$ € per cycle ($195$ against $183$), $6.6\\%$ of the cost."
    }
   },
   {
@@ -1571,24 +1571,24 @@
    },
    "corretta": 1,
    "it": {
-    "testo": "Newsvendor: quantità ordinata $q$ prima di osservare la domanda aleatoria $D$ (funzione di ripartizione $F$); costo unitario di underage $c_u$ (domanda non servita) e di overage $c_o$ (unità invenduta); si minimizza $c_o\\mathbb E[(q - D)^+] + c_u\\mathbb E[(D - q)^+]$. Nel caso di studio, con $\\tilde q = 110$ la probabilità di non andare in rottura, $\\mathbb P(D \\le \\tilde q)$, è $69\\%$, mentre il fill rate (quota attesa di domanda servita) è $96\\%$. Che cosa mostra?",
+    "testo": "Newsvendor: quantità ordinata $q$ prima di osservare la domanda aleatoria $D$ (funzione di ripartizione $F$); costo unitario di underage $c_u$ (domanda non servita) e di overage $c_o$ (unità invenduta); si minimizza $c_o\\mathbb E[(q - D)^+] + c_u\\mathbb E[(D - q)^+]$. Nel caso di studio (10 scenari), con $\\tilde q = 110$ la probabilità di non andare in rottura, $\\mathbb P(D \\le \\tilde q)$, è $70\\%$, mentre il fill rate (quota attesa di domanda servita) è $89\\%$. Che cosa mostra?",
     "opzioni": [
      "Che il modello newsvendor è sbagliato",
      "Che livello di servizio di ciclo e fill rate sono misure diverse",
      "Che il fill rate è sempre il minore dei due",
      "Che $\\tilde q$ dovrebbe essere la domanda media"
     ],
-    "spiegazione": "Le due misure sono spesso confuse nei contratti: promettere il $95\\%$ di probabilità di copertura piena costa $45{,}59$ € in più per ciclo, promettere un fill rate del $95\\%$ è quasi gratis."
+    "spiegazione": "Le due misure sono spesso confuse nei contratti: promettere il $95\\%$ di probabilità di copertura piena obbliga a coprire lo scenario eccezionale da $190$ e costa $177$ € in più per ciclo, promettere un fill rate del $95\\%$ ne costa $42$."
    },
    "en": {
-    "testo": "Newsvendor: order quantity $q$ before observing the random demand $D$ (distribution function $F$); unit underage cost $c_u$ (demand left unmet) and overage cost $c_o$ (unit left unsold); minimize $c_o\\mathbb E[(q - D)^+] + c_u\\mathbb E[(D - q)^+]$. In the case study, at $\\tilde q = 110$ the probability of no stock-out, $\\mathbb P(D \\le \\tilde q)$, is $69\\%$, while the fill rate (expected share of demand served) is $96\\%$. What does this show?",
+    "testo": "Newsvendor: order quantity $q$ before observing the random demand $D$ (distribution function $F$); unit underage cost $c_u$ (demand left unmet) and overage cost $c_o$ (unit left unsold); minimize $c_o\\mathbb E[(q - D)^+] + c_u\\mathbb E[(D - q)^+]$. In the case study (10 scenarios), at $\\tilde q = 110$ the probability of no stock-out, $\\mathbb P(D \\le \\tilde q)$, is $70\\%$, while the fill rate (expected share of demand served) is $89\\%$. What does this show?",
     "opzioni": [
      "That the newsvendor model is wrong",
      "That cycle service level and fill rate are different measures",
      "That the fill rate is always the smaller of the two",
      "That $\\tilde q$ should equal the mean demand"
     ],
-    "spiegazione": "The two are often confused in contracts: promising $95\\%$ probability of full coverage costs $45.59$ € per cycle more, promising a $95\\%$ fill rate is almost free."
+    "spiegazione": "The two are often confused in contracts: promising $95\\%$ probability of full coverage forces one to cover the exceptional scenario of $190$ and costs $177$ € per cycle more, promising a $95\\%$ fill rate costs $42$."
    }
   },
   {
@@ -3281,24 +3281,24 @@
    },
    "corretta": 2,
    "it": {
-    "testo": "Newsvendor: quantità ordinata $q$ prima di osservare la domanda aleatoria $D$ (funzione di ripartizione $F$); costo unitario di underage $c_u$ (domanda non servita) e di overage $c_o$ (unità invenduta); si minimizza $c_o\\mathbb E[(q - D)^+] + c_u\\mathbb E[(D - q)^+]$. Caso della panetteria: $p = 15$, $c = 6$, recupero $v = 2$ €, domanda normale con media $100$ e deviazione standard $20$. L'ordine ottimo è $\\tilde q = 110{,}05$. Perché sopra la media?",
+    "testo": "Newsvendor: quantità ordinata $q$ prima di osservare la domanda aleatoria $D$ (funzione di ripartizione $F$); costo unitario di underage $c_u$ (domanda non servita) e di overage $c_o$ (unità invenduta); si minimizza $c_o\\mathbb E[(q - D)^+] + c_u\\mathbb E[(D - q)^+]$. Caso della panetteria: $p = 15$, $c = 6$, recupero $v = 2$ €, 10 scenari equiprobabili di domanda con media $100$ ($50, 60, \\dots, 130$ e uno eccezionale da $190$). L'ordine ottimo è $\\tilde q = 110$. Perché sopra la media?",
     "opzioni": [
-     "Perché la distribuzione normale è asimmetrica a destra",
+     "Perché lo scenario da $190$ trascina l'ottimo a destra",
      "Perché il valore di recupero è positivo",
      "Perché $f = c_u/(c_u + c_o) = 9/13 > 1/2$",
      "Perché $c_o > c_u$"
     ],
-    "spiegazione": "$c_u = p - c = 9$, $c_o = c - v = 4$: restare a corto costa di più, quindi il rapporto critico supera un mezzo e $\\tilde q = F^{-1}(0{,}6923)$ sta sopra la mediana $100$."
+    "spiegazione": "$c_u = p - c = 9$, $c_o = c - v = 4$: restare a corto costa di più, quindi il rapporto critico supera un mezzo e $\\tilde q$ è il più piccolo scenario con $F(d_s) \\ge 0{,}6923$, il 7°: $110$. Lo scenario da $190$ non conta: con $140$ al suo posto l'ottimo resterebbe $110$."
    },
    "en": {
-    "testo": "Newsvendor: order quantity $q$ before observing the random demand $D$ (distribution function $F$); unit underage cost $c_u$ (demand left unmet) and overage cost $c_o$ (unit left unsold); minimize $c_o\\mathbb E[(q - D)^+] + c_u\\mathbb E[(D - q)^+]$. Bakery case study: $p = 15$, $c = 6$, salvage $v = 2$ €, demand normal with mean $100$ and standard deviation $20$. The optimal order is $\\tilde q = 110.05$. Why above the mean?",
+    "testo": "Newsvendor: order quantity $q$ before observing the random demand $D$ (distribution function $F$); unit underage cost $c_u$ (demand left unmet) and overage cost $c_o$ (unit left unsold); minimize $c_o\\mathbb E[(q - D)^+] + c_u\\mathbb E[(D - q)^+]$. Bakery case study: $p = 15$, $c = 6$, salvage $v = 2$ €, 10 equally likely demand scenarios with mean $100$ ($50, 60, \\dots, 130$ and an exceptional one of $190$). The optimal order is $\\tilde q = 110$. Why above the mean?",
     "opzioni": [
-     "Because the normal distribution is skewed to the right",
+     "Because the scenario of $190$ drags the optimum to the right",
      "Because the salvage value is positive",
      "Because $f = c_u/(c_u + c_o) = 9/13 > 1/2$",
      "Because $c_o > c_u$"
     ],
-    "spiegazione": "$c_u = p - c = 9$, $c_o = c - v = 4$: running short costs more, so the critical ratio exceeds one half and $\\tilde q = F^{-1}(0.6923)$ lies above the median $100$."
+    "spiegazione": "$c_u = p - c = 9$, $c_o = c - v = 4$: running short costs more, so the critical ratio exceeds one half and $\\tilde q$ is the smallest scenario with $F(d_s) \\ge 0.6923$, the 7th: $110$. The scenario of $190$ does not matter: with $140$ in its place the optimum would stay $110$."
    }
   },
   {
@@ -3341,24 +3341,24 @@
    },
    "corretta": 3,
    "it": {
-    "testo": "Newsvendor: quantità ordinata $q$ prima di osservare la domanda aleatoria $D$ (funzione di ripartizione $F$); costo unitario di underage $c_u$ (domanda non servita) e di overage $c_o$ (unità invenduta); si minimizza $c_o\\mathbb E[(q - D)^+] + c_u\\mathbb E[(D - q)^+]$. Una panetteria avversa al rischio minimizza $(1-r)\\,\\mathbb E[\\text{costo}] + r\\,\\mathrm{CVaR}_{0{,}90}(\\text{costo})$. Nel caso di studio, quando $r$ va da $0$ a $1$, come cambia l'ordine?",
+    "testo": "Newsvendor: quantità ordinata $q$ prima di osservare la domanda aleatoria $D$ (funzione di ripartizione $F$); costo unitario di underage $c_u$ (domanda non servita) e di overage $c_o$ (unità invenduta); si minimizza $c_o\\mathbb E[(q - D)^+] + c_u\\mathbb E[(D - q)^+]$. Una panetteria avversa al rischio minimizza $(1-r)\\,\\mathbb E[\\text{costo}] + r\\,\\mathrm{CVaR}_{0{,}8}(\\text{costo})$ sui 10 scenari del caso di studio. Quando $r$ va da $0$ a $1$, come cambia l'ordine?",
     "opzioni": [
-     "Scende da $108{,}6$ a $101{,}2$: avversione al rischio vuol dire ordinare meno",
-     "Resta $108{,}6$: il CVaR non dipende da $q$",
+     "Scende da $110$ a $90$: avversione al rischio vuol dire ordinare meno",
+     "Resta $110$: il CVaR non dipende da $q$",
      "Scende a zero: non ordinare elimina ogni rischio",
-     "Sale da $108{,}6$ a $116{,}2$: gli scenari peggiori sono rotture di stock"
+     "Sale da $110$ a $150$: lo scenario peggiore è una rottura di stock"
     ],
-    "spiegazione": "Qui la coda costosa viene dalle rotture di stock ($c_u > c_o$), quindi proteggersi vuol dire ordinare di più: $6{,}5$ € in più in media tagliano di $20{,}7$ € il costo medio del peggior $10\\%$."
+    "spiegazione": "Qui la coda costosa viene soprattutto dallo scenario eccezionale da $190$ (vendite perse, $c_u > c_o$), quindi proteggersi vuol dire ordinare di più: da $110$ a $150$ il costo medio sale di $69$ € e il CVaR dei 2 scenari peggiori scende di $100$ €."
    },
    "en": {
-    "testo": "Newsvendor: order quantity $q$ before observing the random demand $D$ (distribution function $F$); unit underage cost $c_u$ (demand left unmet) and overage cost $c_o$ (unit left unsold); minimize $c_o\\mathbb E[(q - D)^+] + c_u\\mathbb E[(D - q)^+]$. A risk-averse bakery minimizes $(1-r)\\,\\mathbb E[\\text{cost}] + r\\,\\mathrm{CVaR}_{0.90}(\\text{cost})$. In the case study, as $r$ goes from $0$ to $1$, how does the order change?",
+    "testo": "Newsvendor: order quantity $q$ before observing the random demand $D$ (distribution function $F$); unit underage cost $c_u$ (demand left unmet) and overage cost $c_o$ (unit left unsold); minimize $c_o\\mathbb E[(q - D)^+] + c_u\\mathbb E[(D - q)^+]$. A risk-averse bakery minimizes $(1-r)\\,\\mathbb E[\\text{cost}] + r\\,\\mathrm{CVaR}_{0.8}(\\text{cost})$ over the 10 scenarios of the case study. As $r$ goes from $0$ to $1$, how does the order change?",
     "opzioni": [
-     "It falls from $108.6$ to $101.2$: risk aversion means ordering less",
-     "It stays at $108.6$: the CVaR does not depend on $q$",
+     "It falls from $110$ to $90$: risk aversion means ordering less",
+     "It stays at $110$: the CVaR does not depend on $q$",
      "It drops to zero: not ordering removes every risk",
-     "It rises from $108.6$ to $116.2$: the worst scenarios are shortages"
+     "It rises from $110$ to $150$: the worst scenario is a shortage"
     ],
-    "spiegazione": "Here the costly tail comes from stock-outs ($c_u > c_o$), so protection means ordering more: $6.5$ € more on average cut the mean cost of the worst $10\\%$ by $20.7$ €."
+    "spiegazione": "Here the costly tail comes mostly from the exceptional scenario of $190$ (lost sales, $c_u > c_o$), so protection means ordering more: from $110$ to $150$ the mean cost rises by $69$ € and the CVaR of the 2 worst scenarios drops by $100$ €."
    }
   },
   {
@@ -3371,24 +3371,24 @@
    },
    "corretta": 1,
    "it": {
-    "testo": "Newsvendor multiprodotto: tre torte ordinate in quantità $q_i$, costo atteso minimo di overage e underage, con un budget di produzione condiviso $\\sum_i c_iq_i \\le 1200$ €. All'ottimo il budget è speso tutto e il suo prezzo ombra è $-0{,}553$. Come si legge?",
+    "testo": "Newsvendor multiprodotto: tre dolci ordinati in quantità $q_i$, costo atteso minimo di overage e underage, con un budget di produzione condiviso $\\sum_i c_iq_i \\le 1250$ €. All'ottimo il budget è speso tutto e il suo prezzo ombra è $-0{,}2$. Come si legge?",
     "opzioni": [
-     "Ogni euro di budget costa $0{,}553$ € di interessi",
-     "Un euro di budget in più abbassa il costo atteso di circa $0{,}553$ €",
-     "Il budget andrebbe tagliato del $55{,}3\\%$",
-     "Le torte sono correlate al $55{,}3\\%$"
+     "Ogni euro di budget costa $0{,}2$ € di interessi",
+     "Un euro di budget in più abbassa il costo atteso di circa $0{,}2$ €",
+     "Il budget andrebbe tagliato del $20\\%$",
+     "I dolci sono correlati al $20\\%$"
     ],
-    "spiegazione": "In un problema di minimo un budget $\\le$ ha duale non positivo: allentarlo di un euro abbassa il costo atteso ottimo di $0{,}553$ €."
+    "spiegazione": "In un problema di minimo un budget $\\le$ ha duale non positivo: allentarlo di un euro abbassa il costo atteso ottimo di $0{,}2$ €. Nel caso di studio l'euro va al panettone: un pezzo in più fa risparmiare $1{,}2$ € e costa $6$ €."
    },
    "en": {
-    "testo": "Multi-product newsvendor: three cakes ordered in quantities $q_i$, minimum expected cost of overage and underage, with a shared production budget $\\sum_i c_iq_i \\le 1200$ €. At the optimum the budget is fully spent and its shadow price is $-0.553$. How is it read?",
+    "testo": "Multi-product newsvendor: three cakes ordered in quantities $q_i$, minimum expected cost of overage and underage, with a shared production budget $\\sum_i c_iq_i \\le 1250$ €. At the optimum the budget is fully spent and its shadow price is $-0.2$. How is it read?",
     "opzioni": [
-     "Each euro of budget costs $0.553$ € of interest",
-     "One more euro of budget lowers the expected cost by about $0.553$ €",
-     "The budget should be cut by $55.3\\%$",
-     "The cakes are $55.3\\%$ correlated"
+     "Each euro of budget costs $0.2$ € of interest",
+     "One more euro of budget lowers the expected cost by about $0.2$ €",
+     "The budget should be cut by $20\\%$",
+     "The cakes are $20\\%$ correlated"
     ],
-    "spiegazione": "In a minimization a $\\le$ budget has a non-positive dual: relaxing it by one euro lowers the optimal expected cost by $0.553$ €."
+    "spiegazione": "In a minimization a $\\le$ budget has a non-positive dual: relaxing it by one euro lowers the optimal expected cost by $0.2$ €. In the case study the euro goes to panettone: one more piece saves $1.2$ € and costs $6$ €."
    }
   },
   {
@@ -3408,7 +3408,7 @@
      "nulle tranne che per il prodotto più redditizio",
      "più basse: il moltiplicatore del budget agisce come un costo unitario in più"
     ],
-    "spiegazione": "Con moltiplicatore $\\lambda$ la condizione di ottimo di ogni prodotto include il termine $\\lambda c_i$, come se il costo d'acquisto fosse più alto: ogni quantità si riduce (nel caso di studio da $111{,}1$ a $99{,}3$ per la prima torta)."
+    "spiegazione": "Con moltiplicatore $\\lambda$ la condizione di ottimo di ogni prodotto include il termine $\\lambda c_i$, come se il costo d'acquisto fosse più alto: ogni quantità si riduce (nel caso di studio da $110$ a $101{,}67$ per il panettone)."
    },
    "en": {
     "testo": "Multi-product newsvendor with a shared budget $\\sum_i c_iq_i \\le B$ that is active at the optimum. Compared with the single-product optimal quantities (each product on its own), the quantities with the budget are:",
@@ -3418,7 +3418,7 @@
      "zero for all but the most profitable product",
      "lower: the budget multiplier acts like an extra unit cost"
     ],
-    "spiegazione": "With multiplier $\\lambda$ the optimality condition of each product includes the term $\\lambda c_i$, as if the purchase cost were higher: every quantity shrinks (in the case study from $111.1$ to $99.3$ for the first cake)."
+    "spiegazione": "With multiplier $\\lambda$ the optimality condition of each product includes the term $\\lambda c_i$, as if the purchase cost were higher: every quantity shrinks (in the case study from $110$ to $101.67$ for panettone)."
    }
   },
   {
@@ -5411,24 +5411,24 @@
    },
    "corretta": 1,
    "it": {
-    "testo": "Newsvendor: quantità ordinata $q$ scelta prima di osservare la domanda aleatoria $D$ (funzione di ripartizione $F$); costo unitario di underage $c_u$ (domanda non servita) e di overage $c_o$ (unità invenduta); si minimizza $c_o\\mathbb E[(q - D)^+] + c_u\\mathbb E[(D - q)^+]$. Panetteria: $c_u = 9$, $c_o = 4$, domanda normale con media $100$ e deviazione standard $20$; $\\tilde q = 110{,}05$. Il costo atteso è $91{,}43$ € in $\\tilde q$ e $103{,}72$ € in $q = 100$. Che cosa mostra il confronto?",
+    "testo": "Newsvendor: quantità ordinata $q$ scelta prima di osservare la domanda aleatoria $D$ (funzione di ripartizione $F$); costo unitario di underage $c_u$ (domanda non servita) e di overage $c_o$ (unità invenduta); si minimizza $c_o\\mathbb E[(q - D)^+] + c_u\\mathbb E[(D - q)^+]$. Panetteria: $c_u = 9$, $c_o = 4$, 10 scenari equiprobabili di domanda con media $100$; $\\tilde q = 110$. Il costo atteso è $183$ € in $\\tilde q$ e $195$ € in $q = 100$. Che cosa mostra il confronto?",
     "opzioni": [
-     "Che il modello normale qui è inadeguato",
-     "Che ordinare la media costa circa $12$ € in più a ciclo",
+     "Che gli scenari qui sono inadeguati",
+     "Che ordinare la media costa $12$ € in più a ciclo",
      "Che le due quantità sono equivalenti",
      "Che l'ottimo dovrebbe stare sotto la media"
     ],
-    "spiegazione": "Ordinare il 69º percentile invece della media fa risparmiare $103{,}72 - 91{,}43 \\approx 12{,}3$ € a ciclo: il guadagno della regola del quantile."
+    "spiegazione": "Ordinare il 7° scenario invece della media fa risparmiare $195 - 183 = 12$ € a ciclo: è il valore della soluzione stocastica (VSS)."
    },
    "en": {
-    "testo": "Newsvendor: order quantity $q$ chosen before observing the random demand $D$ (distribution function $F$); unit underage cost $c_u$ (demand left unmet) and overage cost $c_o$ (unit left unsold); minimize $c_o\\mathbb E[(q - D)^+] + c_u\\mathbb E[(D - q)^+]$. Bakery: $c_u = 9$, $c_o = 4$, demand normal with mean $100$ and standard deviation $20$; $\\tilde q = 110.05$. The expected cost is $91.43$ € at $\\tilde q$ and $103.72$ € at $q = 100$. What does the comparison show?",
+    "testo": "Newsvendor: order quantity $q$ chosen before observing the random demand $D$ (distribution function $F$); unit underage cost $c_u$ (demand left unmet) and overage cost $c_o$ (unit left unsold); minimize $c_o\\mathbb E[(q - D)^+] + c_u\\mathbb E[(D - q)^+]$. Bakery: $c_u = 9$, $c_o = 4$, 10 equally likely demand scenarios with mean $100$; $\\tilde q = 110$. The expected cost is $183$ € at $\\tilde q$ and $195$ € at $q = 100$. What does the comparison show?",
     "opzioni": [
-     "That the normal model is inadequate here",
-     "That ordering the mean costs about $12$ € more per cycle",
+     "That the scenarios are inadequate here",
+     "That ordering the mean costs $12$ € more per cycle",
      "That the two quantities are equivalent",
      "That the optimum should be below the mean"
     ],
-    "spiegazione": "Ordering the 69th percentile instead of the mean saves $103.72 - 91.43 \\approx 12.3$ € per cycle: the gain of using the quantile rule."
+    "spiegazione": "Ordering the 7th scenario instead of the mean saves $195 - 183 = 12$ € per cycle: it is the value of the stochastic solution (VSS)."
    }
   },
   {
@@ -5441,24 +5441,24 @@
    },
    "corretta": 3,
    "it": {
-    "testo": "Newsvendor: quantità ordinata $q$ scelta prima di osservare la domanda aleatoria $D$ (funzione di ripartizione $F$); costo unitario di underage $c_u$ (domanda non servita) e di overage $c_o$ (unità invenduta); si minimizza $c_o\\mathbb E[(q - D)^+] + c_u\\mathbb E[(D - q)^+]$. Caso della panetteria: la $q$ ottima si stima da $k$ scenari di domanda campionati, con 30 repliche per ogni $k$. Che cosa succede con pochi scenari?",
+    "testo": "Newsvendor: quantità ordinata $q$ scelta prima di osservare la domanda aleatoria $D$ (funzione di ripartizione $F$); costo unitario di underage $c_u$ (domanda non servita) e di overage $c_o$ (unità invenduta); si minimizza $c_o\\mathbb E[(q - D)^+] + c_u\\mathbb E[(D - q)^+]$. Caso della panetteria: in un'illustrazione a parte la $q$ ottima si stima da $k$ scenari estratti da una normale di media $100$ e deviazione standard $20$, con 30 repliche per ogni $k$. Che cosa succede con pochi scenari?",
     "opzioni": [
-     "La stima è distorta verso la media",
+     "La stima coincide sempre con il quantile teorico",
      "La stima è esatta ma lenta da calcolare",
      "L'LP diventa inammissibile",
      "La decisione è instabile"
     ],
-    "spiegazione": "Gli scenari sono anch'essi un campione, e la decisione eredita la loro varianza: sotto i 100 scenari circa la $q$ ottima balla di $\\pm 3$ unità fra una replica e l'altra."
+    "spiegazione": "Gli scenari sono anch'essi un campione, e la decisione eredita la loro varianza: con $10$ scenari la $q$ ottima balla di $\\pm 6$ unità fra una replica e l'altra, con $100$ di $\\pm 3$."
    },
    "en": {
-    "testo": "Newsvendor: order quantity $q$ chosen before observing the random demand $D$ (distribution function $F$); unit underage cost $c_u$ (demand left unmet) and overage cost $c_o$ (unit left unsold); minimize $c_o\\mathbb E[(q - D)^+] + c_u\\mathbb E[(D - q)^+]$. Bakery case: the optimal $q$ is estimated from $k$ sampled demand scenarios, 30 replications for each $k$. What happens with few scenarios?",
+    "testo": "Newsvendor: order quantity $q$ chosen before observing the random demand $D$ (distribution function $F$); unit underage cost $c_u$ (demand left unmet) and overage cost $c_o$ (unit left unsold); minimize $c_o\\mathbb E[(q - D)^+] + c_u\\mathbb E[(D - q)^+]$. Bakery case: in a separate illustration the optimal $q$ is estimated from $k$ scenarios drawn from a normal with mean $100$ and standard deviation $20$, 30 replications for each $k$. What happens with few scenarios?",
     "opzioni": [
-     "The estimate is biased toward the mean",
+     "The estimate always equals the theoretical quantile",
      "The estimate is exact but slow to compute",
      "The LP becomes infeasible",
      "The decision is unstable"
     ],
-    "spiegazione": "Scenarios are themselves a sample, and the decision inherits their variance: below about 100 scenarios the optimal $q$ moves by $\\pm 3$ units between replications."
+    "spiegazione": "Scenarios are themselves a sample, and the decision inherits their variance: with $10$ scenarios the optimal $q$ moves by $\\pm 6$ units between replications, with $100$ by $\\pm 3$."
    }
   },
   {
@@ -5471,21 +5471,21 @@
    },
    "corretta": 0,
    "it": {
-    "testo": "LP a scenari del newsvendor: domande $d_s$ con probabilità $w_s$ ($s = 1, \\dots, k$); variabili $q \\ge 0$, eccedenza $o_s \\ge q - d_s$ e carenza $u_s \\ge d_s - q$, con $o_s, u_s \\ge 0$; si minimizza $\\sum_s w_s(c_oo_s + c_uu_s)$. Con $k = 600$ scenari equiprobabili l'LP dà $q = 108{,}61$ e il quantile empirico al $69{,}23\\%$ degli scenari è $108{,}60$. Perché coincidono?",
+    "testo": "LP a scenari del newsvendor: domande $d_s$ con probabilità $w_s$ ($s = 1, \\dots, k$); variabili $q \\ge 0$, eccedenza $o_s \\ge q - d_s$ e carenza $u_s \\ge d_s - q$, con $o_s, u_s \\ge 0$; si minimizza $\\sum_s w_s(c_oo_s + c_uu_s)$. Con i $k = 10$ scenari equiprobabili del caso di studio ($50, 60, \\dots, 130$ e $190$) l'LP dà $q = 110$, e $110$ è anche il più piccolo scenario con $F(d_s) \\ge 9/13$. Perché coincidono?",
     "opzioni": [
      "Un teorema: l'LP dà un quantile empirico",
      "Per caso: con altri dati sarebbero diversi",
-     "Perché gli scenari sono estratti da una normale",
+     "Perché gli scenari sono equidistanti",
      "Perché l'LP arrotonda $q$ allo scenario più vicino"
     ],
     "spiegazione": "L'LP a scenari minimizza il costo atteso sotto la distribuzione empirica, e a essa si applica la regola del quantile: l'ottimo è un quantile empirico al rapporto critico (qui $9/13$)."
    },
    "en": {
-    "testo": "Scenario LP of the newsvendor: demands $d_s$ with probabilities $w_s$ ($s = 1, \\dots, k$); variables $q \\ge 0$, overage $o_s \\ge q - d_s$ and underage $u_s \\ge d_s - q$, with $o_s, u_s \\ge 0$; minimize $\\sum_s w_s(c_oo_s + c_uu_s)$. With $k = 600$ equiprobable scenarios the LP gives $q = 108.61$ and the empirical $69.23\\%$ quantile of the scenarios is $108.60$. Why do they coincide?",
+    "testo": "Scenario LP of the newsvendor: demands $d_s$ with probabilities $w_s$ ($s = 1, \\dots, k$); variables $q \\ge 0$, overage $o_s \\ge q - d_s$ and underage $u_s \\ge d_s - q$, with $o_s, u_s \\ge 0$; minimize $\\sum_s w_s(c_oo_s + c_uu_s)$. With the $k = 10$ equally likely scenarios of the case study ($50, 60, \\dots, 130$ and $190$) the LP gives $q = 110$, and $110$ is also the smallest scenario with $F(d_s) \\ge 9/13$. Why do they coincide?",
     "opzioni": [
      "A theorem: the LP gives an empirical quantile",
      "By chance: with other data they would differ",
-     "Because the scenarios were drawn from a normal distribution",
+     "Because the scenarios are equally spaced",
      "Because the LP rounds $q$ to the nearest scenario"
     ],
     "spiegazione": "The scenario LP minimizes the expected cost under the empirical distribution, and the quantile rule applies to it: the optimum is an empirical quantile at the critical ratio (here $9/13$)."
@@ -5531,24 +5531,24 @@
    },
    "corretta": 0,
    "it": {
-    "testo": "Newsvendor: quantità ordinata $q$ scelta prima di osservare la domanda aleatoria $D$ (funzione di ripartizione $F$); costo unitario di underage $c_u$ (domanda non servita) e di overage $c_o$ (unità invenduta); si minimizza $c_o\\mathbb E[(q - D)^+] + c_u\\mathbb E[(D - q)^+]$. Caso della panetteria ($\\tilde q = 110$): un livello di servizio di ciclo del $95\\%$ ($\\mathbb P(D \\le q) = 0{,}95$) richiede $q = 132{,}9$ e costa $+45{,}59$ € a ciclo. Quanto costa un **fill rate** del $95\\%$ (quota di domanda servita in media)?",
+    "testo": "Newsvendor: quantità ordinata $q$ scelta prima di osservare la domanda aleatoria $D$ (funzione di ripartizione $F$); costo unitario di underage $c_u$ (domanda non servita) e di overage $c_o$ (unità invenduta); si minimizza $c_o\\mathbb E[(q - D)^+] + c_u\\mathbb E[(D - q)^+]$. Caso della panetteria ($\\tilde q = 110$, 10 scenari): un livello di servizio di ciclo del $95\\%$ ($\\mathbb P(D \\le q) \\ge 0{,}95$) obbliga a coprire lo scenario eccezionale, $q = 190$, e costa $+177$ € a ciclo. Quanto costa un **fill rate** del $95\\%$ (quota di domanda servita in media)?",
     "opzioni": [
-     "Quasi nulla: in $\\tilde q$ il fill rate è già del $96\\%$",
-     "Gli stessi $45{,}59$ €: le due misure coincidono",
+     "Molto meno: basta $q = 140$, $+42$ € a ciclo",
+     "Gli stessi $177$ €: le due misure coincidono",
      "Di più, perché il fill rate è più severo",
      "Non si può calcolare con questo modello"
     ],
-    "spiegazione": "In $\\tilde q$ la probabilità di non andare in rottura è solo il $69\\%$ ma il fill rate è già del $96\\%$: promettere il 95% di fill rate è quasi gratis, promettere il 95% di probabilità di copertura totale costa caro. Lo SLA va letto bene."
+    "spiegazione": "In $\\tilde q = 110$ la probabilità di non andare in rottura è il $70\\%$ e il fill rate è già l'$89\\%$; per il $95\\%$ di fill rate la carenza attesa deve scendere a $5$ pezzi, e basta $q = 140$. Le due promesse costano in modo molto diverso: lo SLA va letto bene."
    },
    "en": {
-    "testo": "Newsvendor: order quantity $q$ chosen before observing the random demand $D$ (distribution function $F$); unit underage cost $c_u$ (demand left unmet) and overage cost $c_o$ (unit left unsold); minimize $c_o\\mathbb E[(q - D)^+] + c_u\\mathbb E[(D - q)^+]$. Bakery case ($\\tilde q = 110$): a cycle service level of $95\\%$ ($\\mathbb P(D \\le q) = 0.95$) requires $q = 132.9$ and costs $+45.59$ € per cycle. What does a $95\\%$ **fill rate** (share of demand served on average) cost?",
+    "testo": "Newsvendor: order quantity $q$ chosen before observing the random demand $D$ (distribution function $F$); unit underage cost $c_u$ (demand left unmet) and overage cost $c_o$ (unit left unsold); minimize $c_o\\mathbb E[(q - D)^+] + c_u\\mathbb E[(D - q)^+]$. Bakery case ($\\tilde q = 110$, 10 scenarios): a cycle service level of $95\\%$ ($\\mathbb P(D \\le q) \\ge 0.95$) forces one to cover the exceptional scenario, $q = 190$, and costs $+177$ € per cycle. What does a $95\\%$ **fill rate** (share of demand served on average) cost?",
     "opzioni": [
-     "Almost nothing: at $\\tilde q$ the fill rate is already $96\\%$",
-     "The same $45.59$ €: the two measures coincide",
+     "Much less: $q = 140$ suffices, $+42$ € per cycle",
+     "The same $177$ €: the two measures coincide",
      "More, because the fill rate is stricter",
      "It cannot be computed with this model"
     ],
-    "spiegazione": "At $\\tilde q$ the probability of no stock-out is only $69\\%$ but the fill rate is already $96\\%$: promising a 95% fill rate is almost free, promising 95% probability of full coverage is expensive. Read the service-level agreement carefully."
+    "spiegazione": "At $\\tilde q = 110$ the probability of no stock-out is $70\\%$ and the fill rate is already $89\\%$; for a $95\\%$ fill rate the expected shortage must drop to $5$ pieces, and $q = 140$ suffices. The two promises cost very differently: read the service-level agreement carefully."
    }
   },
   {
@@ -5561,24 +5561,24 @@
    },
    "corretta": 2,
    "it": {
-    "testo": "Newsvendor: quantità ordinata $q$ scelta prima di osservare la domanda aleatoria $D$ (funzione di ripartizione $F$); costo unitario di underage $c_u$ (domanda non servita) e di overage $c_o$ (unità invenduta); si minimizza $c_o\\mathbb E[(q - D)^+] + c_u\\mathbb E[(D - q)^+]$. Caso della panetteria: livelli di servizio di ciclo del $90\\%$, $95\\%$, $99\\%$ richiedono $q = 125{,}6$, $132{,}9$, $146{,}5$ e costano $+23{,}4$, $+45{,}6$, $+95{,}6$ € a ciclo rispetto all'ottimo economico. Come cresce il costo?",
+    "testo": "Newsvendor: quantità ordinata $q$ scelta prima di osservare la domanda aleatoria $D$ (funzione di ripartizione $F$); costo unitario di underage $c_u$ (domanda non servita) e di overage $c_o$ (unità invenduta); si minimizza $c_o\\mathbb E[(q - D)^+] + c_u\\mathbb E[(D - q)^+]$. Caso della panetteria (10 scenari): livelli di servizio di ciclo del $90\\%$ e del $95\\%$ richiedono $q = 130$ e $q = 190$ e costano $+15$ e $+177$ € a ciclo rispetto all'ottimo economico. Come cresce il costo?",
     "opzioni": [
      "Linearmente nel livello di servizio",
-     "Diminuisce oltre il $95\\%$",
+     "Diminuisce oltre il $90\\%$",
      "Sempre più in fretta verso il 100%",
      "Non dipende dal livello di servizio"
     ],
-    "spiegazione": "Ogni punto di servizio in più richiede un quantile più alto della domanda, nella coda destra sottile: il costo aggiuntivo quasi raddoppia da 90% a 95% e di nuovo a 99%."
+    "spiegazione": "Ogni punto di servizio in più richiede un quantile più alto della domanda: per passare dal $90\\%$ al $95\\%$ bisogna coprire lo scenario eccezionale da $190$, e il costo aggiuntivo passa da $15$ a $177$ €."
    },
    "en": {
-    "testo": "Newsvendor: order quantity $q$ chosen before observing the random demand $D$ (distribution function $F$); unit underage cost $c_u$ (demand left unmet) and overage cost $c_o$ (unit left unsold); minimize $c_o\\mathbb E[(q - D)^+] + c_u\\mathbb E[(D - q)^+]$. Bakery case: cycle service levels $90\\%$, $95\\%$, $99\\%$ require $q = 125.6$, $132.9$, $146.5$ and cost $+23.4$, $+45.6$, $+95.6$ € per cycle over the economic optimum. How does the cost grow?",
+    "testo": "Newsvendor: order quantity $q$ chosen before observing the random demand $D$ (distribution function $F$); unit underage cost $c_u$ (demand left unmet) and overage cost $c_o$ (unit left unsold); minimize $c_o\\mathbb E[(q - D)^+] + c_u\\mathbb E[(D - q)^+]$. Bakery case (10 scenarios): cycle service levels of $90\\%$ and $95\\%$ require $q = 130$ and $q = 190$ and cost $+15$ and $+177$ € per cycle over the economic optimum. How does the cost grow?",
     "opzioni": [
      "Linearly in the service level",
-     "It decreases after $95\\%$",
+     "It decreases after $90\\%$",
      "Faster and faster near 100%",
      "It does not depend on the service level"
     ],
-    "spiegazione": "Each extra point of service needs a higher quantile of demand, in the thin right tail: the extra cost almost doubles from 90% to 95% and again to 99%."
+    "spiegazione": "Each extra point of service needs a higher quantile of demand: to go from $90\\%$ to $95\\%$ one must cover the exceptional scenario of $190$, and the extra cost goes from $15$ to $177$ €."
    }
   },
   {
@@ -5598,7 +5598,7 @@
      "$1$: l'ottimo non va mai in rottura",
      "$c_u/(c_u + c_o)$"
     ],
-    "spiegazione": "Per definizione $F(\\tilde q) = c_u/(c_u + c_o)$: il livello di servizio di ciclo dell'ottimo economico è il rapporto critico ($69\\%$ nella panetteria). Chiedere di più costa."
+    "spiegazione": "Per definizione, con $F$ continua, $F(\\tilde q) = c_u/(c_u + c_o)$: il livello di servizio di ciclo dell'ottimo economico è il rapporto critico. Con domanda discreta è il primo valore di $F$ che lo raggiunge: nella panetteria $F(110) = 0{,}7 \\ge 9/13$. Chiedere di più costa."
    },
    "en": {
     "testo": "Newsvendor: order quantity $q$ chosen before observing the random demand $D$ (distribution function $F$); unit underage cost $c_u$ (demand left unmet) and overage cost $c_o$ (unit left unsold); minimize $c_o\\mathbb E[(q - D)^+] + c_u\\mathbb E[(D - q)^+]$. At the optimal order $\\tilde q$ of the quantile rule, what is the probability of **not** running out of stock, $\\mathbb P(D \\le \\tilde q)$?",
@@ -5608,7 +5608,7 @@
      "$1$: the optimum never runs out",
      "$c_u/(c_u + c_o)$"
     ],
-    "spiegazione": "By definition $F(\\tilde q) = c_u/(c_u + c_o)$: the cycle service level of the economic optimum is the critical ratio ($69\\%$ in the bakery). Demanding more costs extra."
+    "spiegazione": "By definition, with $F$ continuous, $F(\\tilde q) = c_u/(c_u + c_o)$: the cycle service level of the economic optimum is the critical ratio. With discrete demand it is the first value of $F$ that reaches it: in the bakery $F(110) = 0.7 \\ge 9/13$. Demanding more costs extra."
    }
   },
   {
@@ -5621,24 +5621,24 @@
    },
    "corretta": 1,
    "it": {
-    "testo": "Newsvendor: quantità ordinata $q$ scelta prima di osservare la domanda aleatoria $D$ (funzione di ripartizione $F$); costo unitario di underage $c_u$ (domanda non servita) e di overage $c_o$ (unità invenduta); si minimizza $c_o\\mathbb E[(q - D)^+] + c_u\\mathbb E[(D - q)^+]$. Una panetteria avversa al rischio minimizza $(1-r)\\mathbb E[\\text{costo}] + r\\,\\mathrm{CVaR}_{0{,}90}(\\text{costo})$. Con $r = 0$: costo medio $88{,}33$, CVaR $245{,}93$; con $r = 0{,}25$: $90{,}37$ e $230{,}14$; con $r = 1$: $94{,}87$ e $225{,}26$. Che cosa mostrano i numeri?",
+    "testo": "Newsvendor: quantità ordinata $q$ scelta prima di osservare la domanda aleatoria $D$ (funzione di ripartizione $F$); costo unitario di underage $c_u$ (domanda non servita) e di overage $c_o$ (unità invenduta); si minimizza $c_o\\mathbb E[(q - D)^+] + c_u\\mathbb E[(D - q)^+]$. Una panetteria avversa al rischio minimizza $(1-r)\\mathbb E[\\text{costo}] + r\\,\\mathrm{CVaR}_{0{,}8}(\\text{costo})$ sui 10 scenari. Con $r = 0$: $q = 110$, costo medio $183$, CVaR $480$; con $r = 0{,}25$: $q = 120$, $184$ e $455$; con $r = 1$: $q = 150$, $252$ e $380$. Che cosa mostrano i numeri?",
     "opzioni": [
      "La protezione cresce linearmente con $r$",
-     "Gran parte arriva già con $r = 0{,}25$",
+     "Il primo passo dà molta protezione per poco",
      "Il CVaR non dipende da $r$",
      "Con $r = 1$ il costo medio diminuisce"
     ],
-    "spiegazione": "Da $r = 0$ a $0{,}25$ il CVaR scende di $15{,}8$ € per $2$ € di costo medio; andare fino a $r = 1$ fa guadagnare meno di $5$ € in più: la frontiera è ripida all'inizio e piatta dopo."
+    "spiegazione": "Da $r = 0$ a $0{,}25$ il CVaR scende di $25$ € per $1$ € di costo medio; andare fino a $r = 1$ toglie altri $75$ € di CVaR ma costa $68$ € di costo medio."
    },
    "en": {
-    "testo": "Newsvendor: order quantity $q$ chosen before observing the random demand $D$ (distribution function $F$); unit underage cost $c_u$ (demand left unmet) and overage cost $c_o$ (unit left unsold); minimize $c_o\\mathbb E[(q - D)^+] + c_u\\mathbb E[(D - q)^+]$. A risk-averse bakery minimizes $(1-r)\\mathbb E[\\text{cost}] + r\\,\\mathrm{CVaR}_{0.90}(\\text{cost})$. With $r = 0$: mean cost $88.33$, CVaR $245.93$; with $r = 0.25$: $90.37$ and $230.14$; with $r = 1$: $94.87$ and $225.26$. What do the numbers show?",
+    "testo": "Newsvendor: order quantity $q$ chosen before observing the random demand $D$ (distribution function $F$); unit underage cost $c_u$ (demand left unmet) and overage cost $c_o$ (unit left unsold); minimize $c_o\\mathbb E[(q - D)^+] + c_u\\mathbb E[(D - q)^+]$. A risk-averse bakery minimizes $(1-r)\\mathbb E[\\text{cost}] + r\\,\\mathrm{CVaR}_{0.8}(\\text{cost})$ over the 10 scenarios. With $r = 0$: $q = 110$, mean cost $183$, CVaR $480$; with $r = 0.25$: $q = 120$, $184$ and $455$; with $r = 1$: $q = 150$, $252$ and $380$. What do the numbers show?",
     "opzioni": [
      "Protection grows linearly with $r$",
-     "Most of it comes already at $r = 0.25$",
+     "The first step buys much protection cheaply",
      "The CVaR does not depend on $r$",
      "With $r = 1$ the mean cost decreases"
     ],
-    "spiegazione": "From $r = 0$ to $0.25$ the CVaR drops by $15.8$ € for $2$ € of mean cost; going on to $r = 1$ gains less than $5$ € more: the frontier is steep at first and flat afterwards."
+    "spiegazione": "From $r = 0$ to $0.25$ the CVaR drops by $25$ € for $1$ € of mean cost; going on to $r = 1$ removes another $75$ € of CVaR but costs $68$ € of mean cost."
    }
   },
   {
@@ -5658,7 +5658,7 @@
      "Per stimare la distribuzione della domanda",
      "La media nasconde i rari disastri"
     ],
-    "spiegazione": "Il costo atteso pesa allo stesso modo tutti gli scenari; il CVaR guarda la media del peggiore $10\\%$, così il decisore può scambiare un po' di costo medio con protezione dalle code cattive."
+    "spiegazione": "Il costo atteso pesa allo stesso modo tutti gli scenari; il CVaR$_{0{,}8}$ guarda la media dei 2 scenari più costosi su 10, così il decisore può scambiare un po' di costo medio con protezione dalle code cattive."
    },
    "en": {
     "testo": "Newsvendor: order quantity $q$ chosen before observing the random demand $D$ (distribution function $F$); unit underage cost $c_u$ (demand left unmet) and overage cost $c_o$ (unit left unsold); minimize $c_o\\mathbb E[(q - D)^+] + c_u\\mathbb E[(D - q)^+]$. Why does the newsvendor chapter add a CVaR term to the expected cost?",
@@ -5668,7 +5668,7 @@
      "To estimate the demand distribution",
      "The mean hides rare disasters"
     ],
-    "spiegazione": "The expected cost weighs all scenarios equally; the CVaR looks at the mean of the worst $10\\%$, so the decision maker can trade a little mean cost for protection against bad tails."
+    "spiegazione": "The expected cost weighs all scenarios equally; the CVaR$_{0.8}$ looks at the mean of the 2 most expensive scenarios out of 10, so the decision maker can trade a little mean cost for protection against bad tails."
    }
   },
   {
@@ -5681,24 +5681,24 @@
    },
    "corretta": 2,
    "it": {
-    "testo": "Newsvendor: quantità ordinata $q$ scelta prima di osservare la domanda aleatoria $D$ (funzione di ripartizione $F$); costo unitario di underage $c_u$ (domanda non servita) e di overage $c_o$ (unità invenduta); si minimizza $c_o\\mathbb E[(q - D)^+] + c_u\\mathbb E[(D - q)^+]$. Nel newsvendor media–CVaR del laboratorio l'ordine avverso al rischio passa da $108{,}6$ ($r = 0$) a $116{,}2$ ($r = 1$). Perché qui l'avversione al rischio alza l'ordine?",
+    "testo": "Newsvendor: quantità ordinata $q$ scelta prima di osservare la domanda aleatoria $D$ (funzione di ripartizione $F$); costo unitario di underage $c_u$ (domanda non servita) e di overage $c_o$ (unità invenduta); si minimizza $c_o\\mathbb E[(q - D)^+] + c_u\\mathbb E[(D - q)^+]$. Nel newsvendor media–CVaR del laboratorio l'ordine avverso al rischio passa da $110$ ($r = 0$) a $150$ ($r = 1$). Perché qui l'avversione al rischio alza l'ordine?",
     "opzioni": [
      "Perché l'invenduto diventa meno caro",
      "Perché la domanda media cresce con $r$",
      "Gli scenari peggiori sono rotture",
      "Perché il CVaR ignora il costo di underage"
     ],
-    "spiegazione": "Con $c_u = 9 > c_o = 4$ gli scenari più costosi sono quelli di domanda alta con vendite perse; proteggersi da essi vuol dire ordinare di più."
+    "spiegazione": "Con $c_u = 9 > c_o = 4$ lo scenario più costoso è quello eccezionale da $190$, con $80$ vendite perse; proteggersi vuol dire ordinare di più, finché a $q = 150$ il costo degli invenduti nello scenario da $60$ lo pareggia."
    },
    "en": {
-    "testo": "Newsvendor: order quantity $q$ chosen before observing the random demand $D$ (distribution function $F$); unit underage cost $c_u$ (demand left unmet) and overage cost $c_o$ (unit left unsold); minimize $c_o\\mathbb E[(q - D)^+] + c_u\\mathbb E[(D - q)^+]$. In the mean–CVaR newsvendor of the lab, the risk-averse order goes from $108.6$ ($r = 0$) to $116.2$ ($r = 1$). Why does risk aversion raise the order here?",
+    "testo": "Newsvendor: order quantity $q$ chosen before observing the random demand $D$ (distribution function $F$); unit underage cost $c_u$ (demand left unmet) and overage cost $c_o$ (unit left unsold); minimize $c_o\\mathbb E[(q - D)^+] + c_u\\mathbb E[(D - q)^+]$. In the mean–CVaR newsvendor of the lab, the risk-averse order goes from $110$ ($r = 0$) to $150$ ($r = 1$). Why does risk aversion raise the order here?",
     "opzioni": [
      "Because leftovers become cheaper",
      "Because the mean demand grows with $r$",
      "The worst scenarios are stock-outs",
      "Because the CVaR ignores the underage cost"
     ],
-    "spiegazione": "With $c_u = 9 > c_o = 4$ the most expensive scenarios are those with high demand and lost sales; protecting against them means ordering more."
+    "spiegazione": "With $c_u = 9 > c_o = 4$ the most expensive scenario is the exceptional one of $190$, with $80$ lost sales; protecting against it means ordering more, until at $q = 150$ the cost of the unsold units in the scenario of $60$ matches it."
    }
   },
   {
@@ -5711,24 +5711,24 @@
    },
    "corretta": 0,
    "it": {
-    "testo": "Newsvendor: quantità ordinata $q$ scelta prima di osservare la domanda aleatoria $D$ (funzione di ripartizione $F$); costo unitario di underage $c_u$ (domanda non servita) e di overage $c_o$ (unità invenduta); si minimizza $c_o\\mathbb E[(q - D)^+] + c_u\\mathbb E[(D - q)^+]$. Tre dolci con domande correlate a $\\rho = 0{,}7$ (le feste vanno bene o male per tutti). Che cosa implica la forte correlazione positiva per il rischio del piano congiunto?",
+    "testo": "Newsvendor: quantità ordinata $q$ scelta prima di osservare la domanda aleatoria $D$ (funzione di ripartizione $F$); costo unitario di underage $c_u$ (domanda non servita) e di overage $c_o$ (unità invenduta); si minimizza $c_o\\mathbb E[(q - D)^+] + c_u\\mathbb E[(D - q)^+]$. Tre dolci sugli stessi 10 scenari, con domande legate (le stagioni buone e cattive lo sono per tutti). Che cosa implica il legame per il rischio del piano congiunto?",
     "opzioni": [
-     "Niente diversificazione: falliscono insieme",
+     "Niente diversificazione: perdono insieme",
      "Elimina il rischio, per compensazione",
      "Rende inattivo il vincolo di budget",
-     "Nulla: per il newsvendor la correlazione non conta"
+     "Cambia le quantità di costo atteso minimo"
     ],
-    "spiegazione": "Con correlazione alta gli scenari cattivi colpiscono tutti i prodotti insieme; trattarli come indipendenti sottostimerebbe il rischio del piano."
+    "spiegazione": "Il costo atteso di ogni dolce dipende solo dalle sue domande, quindi le quantità ottime non cambiano; il legame conta per le code: gli scenari cattivi colpiscono tutti i dolci insieme. Con le domande del torrone in ordine inverso il costo totale medio dei 2 scenari peggiori scende da $1015$ a $978$ €."
    },
    "en": {
-    "testo": "Newsvendor: order quantity $q$ chosen before observing the random demand $D$ (distribution function $F$); unit underage cost $c_u$ (demand left unmet) and overage cost $c_o$ (unit left unsold); minimize $c_o\\mathbb E[(q - D)^+] + c_u\\mathbb E[(D - q)^+]$. Three cakes with demands correlated at $\\rho = 0.7$ (holidays go well or badly for all of them). What does the strong positive correlation imply for the risk of the joint plan?",
+    "testo": "Newsvendor: order quantity $q$ chosen before observing the random demand $D$ (distribution function $F$); unit underage cost $c_u$ (demand left unmet) and overage cost $c_o$ (unit left unsold); minimize $c_o\\mathbb E[(q - D)^+] + c_u\\mathbb E[(D - q)^+]$. Three cakes on the same 10 scenarios, with linked demands (good and bad seasons are good and bad for all of them). What does the link imply for the risk of the joint plan?",
     "opzioni": [
-     "No diversification: they fail together",
+     "No diversification: they lose together",
      "It removes the risk, by compensation",
      "It makes the budget constraint inactive",
-     "Nothing: correlation does not matter for the newsvendor"
+     "It changes the minimum expected cost quantities"
     ],
-    "spiegazione": "With high correlation the bad scenarios hit all products at once; treating them as independent would underestimate the risk of the plan."
+    "spiegazione": "The expected cost of each cake depends only on its own demands, so the optimal quantities do not change; the link matters for the tails: the bad scenarios hit all cakes at once. With the demands of torrone in reverse order the mean total cost of the 2 worst scenarios drops from $1015$ to $978$ €."
    }
   },
   {
@@ -5741,24 +5741,24 @@
    },
    "corretta": 2,
    "it": {
-    "testo": "Newsvendor: quantità ordinata $q$ scelta prima di osservare la domanda aleatoria $D$ (funzione di ripartizione $F$); costo unitario di underage $c_u$ (domanda non servita) e di overage $c_o$ (unità invenduta); si minimizza $c_o\\mathbb E[(q - D)^+] + c_u\\mathbb E[(D - q)^+]$. Tre dolci, budget condiviso di $1200$ €: panettone $111{,}1 \\to 99{,}3$, pandoro $91{,}5 \\to 75{,}4$, torrone $65{,}9 \\to 56{,}8$ (senza $\\to$ con budget). Come vengono tagliate le quantità?",
+    "testo": "Newsvendor: quantità ordinata $q$ scelta prima di osservare la domanda aleatoria $D$ (funzione di ripartizione $F$); costo unitario di underage $c_u$ (domanda non servita) e di overage $c_o$ (unità invenduta); si minimizza $c_o\\mathbb E[(q - D)^+] + c_u\\mathbb E[(D - q)^+]$. Tre dolci, budget condiviso di $1250$ €: panettone $110 \\to 101{,}67$, pandoro $90 \\to 80$, torrone $70 \\to 60$ (senza $\\to$ con budget). Come vengono tagliate le quantità?",
     "opzioni": [
      "Tutte della stessa percentuale",
      "Tutte dello stesso numero di unità",
      "Non in proporzione, prodotto per prodotto",
      "Si taglia solo il prodotto più caro"
     ],
-    "spiegazione": "I tagli sono dell'$11\\%$, del $18\\%$ e del $14\\%$: il moltiplicatore del budget agisce come un costo aggiuntivo per euro speso, che pesa diversamente su ogni prodotto secondo i suoi costi."
+    "spiegazione": "I tagli sono dell'$8\\%$, dell'$11\\%$ e del $14\\%$: il moltiplicatore del budget agisce come un costo aggiuntivo per euro speso, che pesa diversamente su ogni prodotto secondo i suoi costi e i suoi scenari."
    },
    "en": {
-    "testo": "Newsvendor: order quantity $q$ chosen before observing the random demand $D$ (distribution function $F$); unit underage cost $c_u$ (demand left unmet) and overage cost $c_o$ (unit left unsold); minimize $c_o\\mathbb E[(q - D)^+] + c_u\\mathbb E[(D - q)^+]$. Three cakes, shared budget of $1200$ €: panettone $111.1 \\to 99.3$, pandoro $91.5 \\to 75.4$, torrone $65.9 \\to 56.8$ (without $\\to$ with budget). How are the quantities cut?",
+    "testo": "Newsvendor: order quantity $q$ chosen before observing the random demand $D$ (distribution function $F$); unit underage cost $c_u$ (demand left unmet) and overage cost $c_o$ (unit left unsold); minimize $c_o\\mathbb E[(q - D)^+] + c_u\\mathbb E[(D - q)^+]$. Three cakes, shared budget of $1250$ €: panettone $110 \\to 101.67$, pandoro $90 \\to 80$, torrone $70 \\to 60$ (without $\\to$ with budget). How are the quantities cut?",
     "opzioni": [
      "All by the same percentage",
      "All by the same number of units",
      "Not proportionally, product by product",
      "Only the most expensive product is cut"
     ],
-    "spiegazione": "Cuts are $11\\%$, $18\\%$ and $14\\%$: the budget multiplier acts as an extra cost per euro spent, which weighs differently on each product according to its costs."
+    "spiegazione": "Cuts are $8\\%$, $11\\%$ and $14\\%$: the budget multiplier acts as an extra cost per euro spent, which weighs differently on each product according to its costs and its scenarios."
    }
   },
   {

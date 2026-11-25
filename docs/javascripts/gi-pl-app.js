@@ -4,7 +4,7 @@
  *   pl-produzione  cap. 4: piano ottimo, scorte, prezzi ombra della capacità
  *   pl-ricarica-ev cap. 5: ricarica notturna a costo minimo
  *   pl-dea         cap. 6: efficienza, peer e target di una filiale (CCR/BCC, 4 indicatori o personale→prestiti)
- *   pl-newsvendor  cap. 7: costo atteso e CVaR sui 600 scenari, ordine ottimo
+ *   pl-newsvendor  cap. 8: costo atteso e CVaR sui 10 scenari, ordine ottimo
  *   pl-regressione cap. 10: scarti assoluti e quantile, punti trascinabili
  *
  * I modelli (puri) stanno in gi-pl-modelli.js, i risolutori e le ricette «a voci» in gi-ott.js.
@@ -533,26 +533,34 @@
       "With \\(k = 30\\) kW hours 3 and 4 are binding and one more kW is worth 2 c€ in each: which van moves its charging, and to which hour? Raise \\(k\\): from 36 kW no hour is binding any more and the cost drops to 7.92 €. Lower it: at 29 kW hour 5 becomes binding too, at 23 kW the problem is infeasible: why? Why is the shadow price of the energy of van 2 equal to \\(0.15/r\\)? Set the prices of hours 1 and 2 to × 0.8: what changes in the plan of van 1? Raise them up to × 2: the plan does not change, but the cost and the shadow price of van 2 grow: why? Finally raise the energy: beyond × 1.45 there is no plan any more."),
   };
 
-  // ================================================================ newsvendor (cap. 7)
-  const ALFA = 0.9;
+  // ================================================================ newsvendor (cap. 8)
+  /** livello del CVaR dello script (alpha_cv = 0,8: con 10 scenari la coda sono i 2 più costosi) */
+  const ALFA = () => DD().newsvendor.alfa;
+  const PESI_NV = [0, 0.25, 0.5, 0.75, 1];
   const vNewsvendor = {
     etichetta: T("Newsvendor a scenari", "Scenario newsvendor"),
     cursori: [
       { nome: "p", min: 8, max: 30, step: 0.5, val: 15, fmt: (x) => euro(x, 1),
         descr: T("prezzo di vendita di un'unità: \\(c_u = p - c\\), \\(c_o = c - v\\) con \\(c = 6\\) €, \\(v = 2\\) €", "selling price of one unit: \\(c_u = p - c\\), \\(c_o = c - v\\) with \\(c = 6\\) €, \\(v = 2\\) €") },
       { nome: "r", min: 0, max: 1, step: 0.05, val: 0, fmt: (x) => nt(x, 2),
-        descr: T("avversione al rischio: peso del CVaR\\(_\\alpha\\) del costo (\\(\\alpha = 0{,}9\\))", "risk aversion: weight of the CVaR\\(_\\alpha\\) of the cost (\\(\\alpha = 0.9\\))") },
+        descr: T("peso del rischio: peso del CVaR\\(_\\alpha\\) del costo (\\(\\alpha = 0{,}8\\): i 2 scenari più costosi su 10)", "risk weight: weight of the CVaR\\(_\\alpha\\) of the cost (\\(\\alpha = 0.8\\): the 2 most expensive scenarios out of 10)") },
     ],
     calcola(v) {
-      const R = PL().newsvendor(v[0], v[1], ALFA);
+      const R = PL().newsvendor(v[0], v[1], ALFA());
       const qs = [];
-      for (let k = 0; k <= 130; k++) qs.push(40 + k);
+      for (let q = 50; q <= 190; q += 1) qs.push(q);
       R.curve = { q: qs, media: qs.map(R.f.media), cv: qs.map(R.f.cv), ob: qs.map(R.f.obiettivo) };
+      R.front = PESI_NV.map((r) => { const x = PL().newsvendor(v[0], r, ALFA()); return { r, q: x.q, media: x.media, cv: x.cvar }; });
+      // con r = 0 e f* k intero l'ottimo non è unico: ogni q fra due scenari consecutivi
+      const fk = R.alfaStar * R.d.length;
+      R.pari = v[1] === 0 && Math.abs(fk - Math.round(fk)) < 1e-9;
+      R.posto = Math.ceil(fk - 1e-9);
       return R;
     },
     formula(R, v, st) {
-      const N = DD().newsvendor, d = N.domanda, k = d.length, lam = st.col("b", "r");
-      const ks = PER("s", "k");
+      const N = DD().newsvendor, d = N.domanda, k = d.length, A = N.alfa, L = v[1];
+      const Co = N.c - N.v, Cu = v[0] - N.c, coda = Math.round((1 - A) * k);
+      const lam = st.col("b", "r"), ks = PER("s", "k");
       const sim = `\\min ~~ (1-${lam}) \\sum_{s=1}^{k} w_s \\bigl( c_o\\, o_s + ${st.col("a", "c_u")}\\, u_s \\bigr) & & \\\\
         + ${lam} \\Bigl( \\eta + \\tfrac{1}{1-\\alpha} \\sum_{s=1}^{k} w_s\\, \\xi_s \\Bigr) & & \\\\
         ${SA()} \\quad o_s &\\ge q - d_s, & ${ks}, \\\\
@@ -561,81 +569,122 @@
         q &\\ge 0, & \\\\
         \\eta &\\gtreqless 0, & \\\\
         o_s,\\ u_s,\\ \\xi_s &\\ge 0, & ${ks}.`;
-      const Co = N.c - N.v, Cu = v[0] - N.c, L = v[1], S3 = [0, 1];
-      const vars = ["q", "\\eta"];
-      S3.forEach((s) => vars.push(`o_{${s + 1}}`, `u_{${s + 1}}`, `\\xi_{${s + 1}}`));
+      // tutto il modello numerico: una colonna per tipo di variabile, le righe di ogni scenario con i suoi nomi;
+      // con r = 0, eta e xi_s non entrano nella funzione obiettivo e restano fuori (21 variabili, 20 vincoli)
+      const rischio = L > 0;
+      const vars = rischio ? ["q", "\\eta", "o_s", "u_s", "\\xi_s"] : ["q", "o_s", "u_s"];
+      const iq = 0, ie = rischio ? 1 : -1, io = rischio ? 2 : 1, iu = io + 1, ix = rischio ? 4 : -1;
       const z = () => new Array(vars.length).fill(0), ob = z();
-      ob[1] = L;
-      S3.forEach((s) => { ob[2 + 3 * s] = (1 - L) * Co / k; ob[3 + 3 * s] = (1 - L) * Cu / k; ob[4 + 3 * s] = L / ((1 - ALFA) * k); });
-      const righe = [{ lab: MIN, c: ob, cifre: 4, rel: "+\\,\\cdots" }];
-      S3.forEach((s) => {
-        const a = z(), b = z(), c = z(), o = 2 + 3 * s;
-        a[0] = 1; a[o] = -1; b[0] = 1; b[o + 1] = 1; c[1] = 1; c[o] = -Co; c[o + 1] = -Cu; c[o + 2] = 1;
-        righe.push({ lab: s ? "" : SA(), c: a, rel: "<=", rhs: n(d[s], 2) }, { c: b, rel: ">=", rhs: n(d[s], 2) }, { c, rel: ">=", rhs: "0" });
+      if (rischio) { ob[ie] = L; ob[ix] = L / ((1 - A) * k); }
+      ob[io] = (1 - L) * Co / k; ob[iu] = (1 - L) * Cu / k;
+      const somma = (x) => `\\textstyle\\sum_{s=1}^{${k}} ${x}`;
+      const righe = [{ lab: MIN, c: ob, cifre: 4, nomi: vars.map((x, j) => (j === io || j === iu || j === ix ? somma(x) : x)) }];
+      d.forEach((ds, s) => {
+        const nomi = vars.map((x) => x.replace("_s", `_{${s + 1}}`));
+        const a = z(), b = z();
+        a[iq] = 1; a[io] = -1; b[iq] = 1; b[iu] = 1;
+        righe.push({ lab: s ? "" : SA(), nomi, c: a, rel: "<=", rhs: n(ds, 0), segue: true },
+          { nomi, c: b, rel: ">=", rhs: n(ds, 0), segue: rischio });
+        if (rischio) { const c = z(); c[ie] = 1; c[io] = -Co; c[iu] = -Cu; c[ix] = 1; righe.push({ nomi, c, rel: ">=", rhs: "0" }); }
       });
-      righe.push({ puntini: true }, { dominio: [1], rel: "><", rhs: "0" }, { dominio: vars.map((x, j) => j).filter((j) => j !== 1), rel: ">=", rhs: "0" });
-      const num = blocco(T(`Scenari 1 e 2, con \\(d_1, d_2\\) a destra; gli scenari \\(s = 3, \\dots, ${k}\\) aggiungono colonne \\(o_s, u_s, \\xi_s\\) e righe analoghe`,
-        `Scenarios 1 and 2, with \\(d_1, d_2\\) on the right; scenarios \\(s = 3, \\dots, ${k}\\) add columns \\(o_s, u_s, \\xi_s\\) and analogous rows`), griglia(vars, righe), "plm-stretto");
-      const [dMin, dMax, dMed] = DV.rng(d, 1);
+      const tutte = vars.map((x, j) => j).filter((j) => j !== ie);
+      if (rischio) righe.push({ dominio: [ie], rel: "><", rhs: "0" });
+      righe.push({ dominio: tutte, rel: ">=", rhs: `0, \\quad s = 1, \\dots, ${k}` });
+      const num = blocco(rischio
+        ? T(`Funzione obiettivo e, per ogni scenario \\(s = 1, \\dots, ${k}\\), le righe di eccedenza, di carenza e del CVaR (a destra \\(d_s\\)): ${3 * k + 2} variabili, ${3 * k} vincoli`,
+          `Objective function and, for each scenario \\(s = 1, \\dots, ${k}\\), the overage, underage and CVaR rows (on the right \\(d_s\\)): ${3 * k + 2} variables, ${3 * k} constraints`)
+        : T(`Funzione obiettivo e, per ogni scenario \\(s = 1, \\dots, ${k}\\), le righe di eccedenza e di carenza (a destra \\(d_s\\)): ${2 * k + 1} variabili, ${2 * k} vincoli`,
+          `Objective function and, for each scenario \\(s = 1, \\dots, ${k}\\), the overage and underage rows (on the right \\(d_s\\)): ${2 * k + 1} variables, ${2 * k} constraints`), griglia(vars, righe));
+      const TABS = DV.tabelle(DV.tab(T(`Scenari equiprobabili (\\(w_s = 1/${k}\\)): domanda \\(d_s\\) (unità)`, `Equally likely scenarios (\\(w_s = 1/${k}\\)): demand \\(d_s\\) (units)`),
+        ["\\(s\\)", ...d.map((x, s) => String(s + 1))], [["\\(d_s\\)", ...d.map((x) => DV.t(x, 0))]]));
       return modelloDi("newsvendor")(T(`<b>Il problema.</b> Decidiamo quante unità ordinare prima di osservare la domanda, descritta da scenari equiprobabili. Le unità invendute e le vendite perse hanno un costo. L'obiettivo combina il costo atteso e il CVaR\\(_\\alpha\\) del costo, il costo medio negli scenari peggiori. I vincoli: in ogni scenario le unità invendute e la domanda non servita misurano la differenza fra ordine e domanda, e l'eccesso misura la parte del costo oltre la soglia.` +
         `<br><b>Variabili:</b> \\(q\\): quantità ordinata (unità); \\(o_s\\): unità invendute nello scenario \\(s\\); \\(u_s\\): domanda non servita nello scenario \\(s\\) (unità); \\(\\eta\\): soglia di costo nella formula del CVaR, libera di segno (€); \\(\\xi_s\\): parte del costo dello scenario \\(s\\) che supera la soglia \\(\\eta\\) (€).` +
-        `<br><b>Dati:</b> \\(k = ${k}\\): numero di scenari equiprobabili; \\(d_s\\): domanda nello scenario \\(s\\) (unità), estratta da una distribuzione normale di media ${n(N.mu, 0)} e deviazione standard ${n(N.sigma, 0)}: valori da \\(${dMin}\\) a \\(${dMax}\\), media \\(${dMed}\\); \\(w_s = 1/${k}\\): probabilità dello scenario \\(s\\); \\(p = ${DV.f(v[0], 1)}\\) €: prezzo di vendita di un'unità; \\(c = ${n(N.c, 0)}\\) €: costo d'acquisto di un'unità; \\(v = ${n(N.v, 0)}\\) €: valore di recupero di un'unità invenduta; \\(c_u = p - c = ${DV.f(Cu, 2)}\\) €: costo di una vendita persa; \\(c_o = c - v = ${DV.f(Co, 2)}\\) €: costo di un'unità invenduta; \\(r = ${DV.f(L, 2)}\\): peso del rischio, da 0 a 1: l'obiettivo è \\((1-r)\\) volte il costo atteso più \\(r\\) volte il CVaR\\(_\\alpha\\); \\(\\alpha = 0{,}9\\): livello di confidenza; il CVaR\\(_\\alpha\\) (valore a rischio condizionato) è il costo medio nella frazione \\(1 - \\alpha\\) degli scenari peggiori, qui i ${Math.round((1 - ALFA) * k)} scenari più costosi su ${k}.`,
+        `<br><b>Dati:</b> \\(k = ${k}\\): numero di scenari equiprobabili; \\(d_s\\): domanda nello scenario \\(s\\): \\(${DV.L(d, 0)}\\) unità, nove stagioni regolari e una eccezionale (media \\(${DV.f(R.mediaDom, 1)}\\)); \\(w_s = 1/${k}\\): probabilità dello scenario \\(s\\); \\(p = ${DV.f(v[0], 1)}\\) €: prezzo di vendita di un'unità; \\(c = ${n(N.c, 0)}\\) €: costo d'acquisto di un'unità; \\(v = ${n(N.v, 0)}\\) €: valore di recupero di un'unità invenduta; \\(c_u = p - c = ${DV.f(Cu, 2)}\\) €: costo di una vendita persa; \\(c_o = c - v = ${DV.f(Co, 2)}\\) €: costo di un'unità invenduta; \\(r = ${DV.f(L, 2)}\\): peso del rischio, da 0 a 1: l'obiettivo è \\((1-r)\\) volte il costo atteso più \\(r\\) volte il CVaR\\(_\\alpha\\); \\(\\alpha = ${DV.f(A, 2)}\\): livello di confidenza; il CVaR\\(_\\alpha\\) (valore a rischio condizionato) è il costo medio nella frazione \\(1 - \\alpha\\) degli scenari peggiori, qui i ${coda} scenari più costosi su ${k}.` + TABS,
       `<b>The problem.</b> We decide how many units to order before observing demand, described by equally likely scenarios. Unsold units and lost sales have a cost. The objective combines the expected cost and the CVaR\\(_\\alpha\\) of the cost, the average cost in the worst scenarios. The constraints: in each scenario the unsold units and the unmet demand measure the difference between order and demand, and the excess measures the part of the cost above the threshold.` +
         `<br><b>Variables:</b> \\(q\\): quantity ordered (units); \\(o_s\\): unsold units in scenario \\(s\\); \\(u_s\\): unmet demand in scenario \\(s\\) (units); \\(\\eta\\): cost threshold in the CVaR formula, free in sign (€); \\(\\xi_s\\): part of the cost of scenario \\(s\\) above the threshold \\(\\eta\\) (€).` +
-        `<br><b>Data:</b> \\(k = ${k}\\): number of equally likely scenarios; \\(d_s\\): demand in scenario \\(s\\) (units), drawn from a normal distribution with mean ${n(N.mu, 0)} and standard deviation ${n(N.sigma, 0)}: values from \\(${dMin}\\) to \\(${dMax}\\), mean \\(${dMed}\\); \\(w_s = 1/${k}\\): probability of scenario \\(s\\); \\(p = ${DV.f(v[0], 1)}\\) €: selling price of one unit; \\(c = ${n(N.c, 0)}\\) €: purchase cost of one unit; \\(v = ${n(N.v, 0)}\\) €: salvage value of an unsold unit; \\(c_u = p - c = ${DV.f(Cu, 2)}\\) €: cost of a lost sale; \\(c_o = c - v = ${DV.f(Co, 2)}\\) €: cost of an unsold unit; \\(r = ${DV.f(L, 2)}\\): risk weight, from 0 to 1: the objective is \\((1-r)\\) times the expected cost plus \\(r\\) times the CVaR\\(_\\alpha\\); \\(\\alpha = 0.9\\): confidence level; the CVaR\\(_\\alpha\\) (conditional value at risk) is the average cost in the worst fraction \\(1 - \\alpha\\) of the scenarios, here the ${Math.round((1 - ALFA) * k)} most expensive scenarios out of ${k}.`),
+        `<br><b>Data:</b> \\(k = ${k}\\): number of equally likely scenarios; \\(d_s\\): demand in scenario \\(s\\): \\(${DV.L(d, 0)}\\) units, nine regular seasons and an exceptional one (mean \\(${DV.f(R.mediaDom, 1)}\\)); \\(w_s = 1/${k}\\): probability of scenario \\(s\\); \\(p = ${DV.f(v[0], 1)}\\) €: selling price of one unit; \\(c = ${n(N.c, 0)}\\) €: purchase cost of one unit; \\(v = ${n(N.v, 0)}\\) €: salvage value of an unsold unit; \\(c_u = p - c = ${DV.f(Cu, 2)}\\) €: cost of a lost sale; \\(c_o = c - v = ${DV.f(Co, 2)}\\) €: cost of an unsold unit; \\(r = ${DV.f(L, 2)}\\): risk weight, from 0 to 1: the objective is \\((1-r)\\) times the expected cost plus \\(r\\) times the CVaR\\(_\\alpha\\); \\(\\alpha = ${DV.f(A, 2)}\\): confidence level; the CVaR\\(_\\alpha\\) (conditional value at risk) is the average cost in the worst fraction \\(1 - \\alpha\\) of the scenarios, here the ${coda} most expensive scenarios out of ${k}.` + TABS),
       sim, num,
-      T(`Coefficienti: \\(c_o = c - v = ${n(Co, 2)}\\), \\(c_u = p - c = ${n(Cu, 2)}\\); nella funzione obiettivo \\(o_s\\) ha \\((1-r)\\,c_o/${k}\\), \\(u_s\\) ha \\((1-r)\\,c_u/${k}\\), \\(\\xi_s\\) ha \\(r/((1-\\alpha) \\cdot ${k})\\), \\(\\eta\\) ha \\(r\\).`,
-        `Coefficients: \\(c_o = c - v = ${n(Co, 2)}\\), \\(c_u = p - c = ${n(Cu, 2)}\\); in the objective function \\(o_s\\) has \\((1-r)\\,c_o/${k}\\), \\(u_s\\) has \\((1-r)\\,c_u/${k}\\), \\(\\xi_s\\) has \\(r/((1-\\alpha) \\cdot ${k})\\), \\(\\eta\\) has \\(r\\).`));
+      rischio
+        ? T(`Coefficienti della funzione obiettivo: \\(\\eta\\) ha \\(r\\), ogni \\(o_s\\) ha \\((1-r)\\,c_o/${k}\\), ogni \\(u_s\\) ha \\((1-r)\\,c_u/${k}\\), ogni \\(\\xi_s\\) ha \\(r/((1-\\alpha) \\cdot ${k}) = r/${n((1 - A) * k, 0)}\\). Nella riga del CVaR, \\(\\xi_s \\ge c_o\\, o_s + c_u\\, u_s - \\eta\\) è scritta con le variabili a sinistra.`,
+          `Coefficients of the objective function: \\(\\eta\\) has \\(r\\), each \\(o_s\\) has \\((1-r)\\,c_o/${k}\\), each \\(u_s\\) has \\((1-r)\\,c_u/${k}\\), each \\(\\xi_s\\) has \\(r/((1-\\alpha) \\cdot ${k}) = r/${n((1 - A) * k, 0)}\\). In the CVaR row, \\(\\xi_s \\ge c_o\\, o_s + c_u\\, u_s - \\eta\\) is written with the variables on the left.`)
+        : T(`Coefficienti della funzione obiettivo: ogni \\(o_s\\) ha \\(c_o/${k}\\), ogni \\(u_s\\) ha \\(c_u/${k}\\). Con \\(r = 0\\), \\(\\eta\\) e \\(\\xi_s\\) non entrano nella funzione obiettivo: restano il costo atteso e le ${2 * k} righe di eccedenza e di carenza. Con \\(r > 0\\) si aggiungono \\(\\eta\\), le \\(\\xi_s\\) e le ${k} righe del CVaR.`,
+          `Coefficients of the objective function: each \\(o_s\\) has \\(c_o/${k}\\), each \\(u_s\\) has \\(c_u/${k}\\). With \\(r = 0\\), \\(\\eta\\) and \\(\\xi_s\\) do not enter the objective function: what remains is the expected cost and the ${2 * k} overage and underage rows. With \\(r > 0\\), \\(\\eta\\), the \\(\\xi_s\\) and the ${k} CVaR rows are added.`));
     },
     disegna(crea, R, v, C, S) {
-      // come la figura del capitolo (cap08_frontiera): costo medio contro CVaR al variare del peso r, qui per il prezzo p scelto
-      const F = FIG(), pesi = [0, 0.25, 0.5, 0.75, 1];
-      const pti = pesi.map((r) => { const q = PL().newsvendor(v[0], r, ALFA); return { r, q: q.q, media: q.media, cv: q.cvar }; });
-      const xs = [...pti.map((p) => p.cv), R.cvar], ys = [...pti.map((p) => p.media), R.media];
+      // in alto: costo atteso, CVaR e funzione obiettivo in funzione di q, con le domande d_s; in basso la frontiera
+      // del capitolo (cap08_frontiera): costo medio contro CVaR al variare del peso r, per il prezzo p scelto
+      const F = FIG(), A = ALFA(), gap = 66, hTot = S.H - MF.basso - MF.alto - gap, hTop = hTot * 0.52;
+      const cu = R.curve, ymax = Math.max(...cu.cv, ...cu.media) * 1.08;
+      const P1 = figura(crea, { X0: MF.sx, X1: S.W - MF.dx, Y0: S.H - MF.alto - hTop, Y1: S.H - MF.alto, xa: 45, xb: 195, ya: 0, yb: ymax,
+        titolo: T("Costo atteso e CVaR del costo in funzione di q", "Expected cost and CVaR of the cost as functions of q"),
+        nx: T("quantità ordinata q (pallini grigi: le domande dₛ)", "order quantity q (grey dots: the demands dₛ)"), ny: T("costo (€)", "cost (€)") }, C, { nTx: 8, nTy: 4 });
+      R.d.forEach((ds) => M.pallino(crea, P1.X(ds), P1.Y(0), { size: 3.5, fillColor: F.grigio, strokeColor: F.grigio }));
+      lineaPunti(crea, P1, cu.q, cu.media, F.teal, { punti: false });
+      lineaPunti(crea, P1, cu.q, cu.cv, F.rosso, { punti: false, dash: 2 });
+      if (v[1] > 0 && v[1] < 1) lineaPunti(crea, P1, cu.q, cu.ob, F.arancio, { punti: false, spessore: 2.6 });
+      M.linea(crea, P1.X(R.q), P1.Y(0), P1.X(R.q), P1.Y(ymax * 0.97), { strokeColor: F.arancio, strokeWidth: 1.6, dash: 1 });
+      M.pallino(crea, P1.X(R.q), P1.Y(R.obiettivo), { size: 6, fillColor: F.arancio, strokeColor: F.arancio });
+      const voci1 = [[F.teal, T("costo atteso", "expected cost"), "linea"], [F.rosso, T(`CVaR del costo, α = ${nt(A, 1)}`, `CVaR of the cost, α = ${nt(A, 1)}`), "tratteggio"]];
+      if (v[1] > 0 && v[1] < 1) voci1.push([F.arancio, T(`(1 − r) · costo atteso + r · CVaR, r = ${nt(v[1], 2)}`, `(1 − r) · expected cost + r · CVaR, r = ${nt(v[1], 2)}`), "linea"]);
+      voci1.push([F.arancio, T(`ordine ottimo q* = ${nt(R.q, 1)}`, `optimal order q* = ${nt(R.q, 1)}`), "punto"]);
+      legendaIn(crea, P1, voci1, C, "dx");
+      const pti = R.front, xs = [...pti.map((p) => p.cv), R.cvar], ys = [...pti.map((p) => p.media), R.media];
       const dx = Math.max(1, Math.max(...xs) - Math.min(...xs)), dy = Math.max(0.5, Math.max(...ys) - Math.min(...ys));
-      const P = figura(crea, { X0: MF.sx, X1: S.W - MF.dx, Y0: MF.basso, Y1: S.H - MF.alto,
-        xa: Math.min(...xs) - dx * 0.06, xb: Math.max(...xs) + dx * 0.32, ya: Math.min(...ys) - dy * 0.08, yb: Math.max(...ys) + dy * 0.1,
+      const P = figura(crea, { X0: MF.sx, X1: S.W - MF.dx, Y0: MF.basso, Y1: S.H - MF.alto - hTop - gap,
+        xa: Math.min(...xs) - dx * 0.06, xb: Math.max(...xs) + dx * 0.45, ya: Math.min(...ys) - dy * 0.1, yb: Math.max(...ys) + dy * 0.18,
         titolo: T("Frontiera costo medio – rischio di coda", "Mean cost – tail risk frontier"),
-        nx: T("CVaRα del costo, α = 0,9 (€)", "CVaRα of the cost, α = 0.9 (€)"), ny: T("costo medio (€)", "mean cost (€)") }, C, { nTx: 6, nTy: 5 });
+        nx: T(`CVaRα del costo, α = ${nt(A, 1)} (€)`, `CVaRα of the cost, α = ${nt(A, 1)} (€)`), ny: T("costo medio (€)", "mean cost (€)") }, C, { nTx: 6, nTy: 4 });
       lineaPunti(crea, P, pti.map((p) => p.cv), pti.map((p) => p.media), F.teal, { r: 4.5 });
-      pti.forEach((p) => M.scritta(crea, P.X(p.cv) + 8, P.Y(p.media), `r = ${T(p.r.toFixed(2).replace(".", ","), p.r.toFixed(2))}: q = ${nt(p.q, 0)}`, { anchorX: "left", fontSize: 11, strokeColor: C.testo }));
+      // i pesi con lo stesso ordine (stesso punto) in un'unica etichetta, come nella figura del capitolo
+      const gruppi = [];
+      pti.forEach((p) => { const g = gruppi.find((x) => Math.abs(x.q - p.q) < 1e-6); if (g) g.r.push(p.r); else gruppi.push({ q: p.q, cv: p.cv, media: p.media, r: [p.r] }); });
+      gruppi.forEach((g, j) => M.scritta(crea, P.X(g.cv) + 8, P.Y(g.media) + (j === 0 || j === gruppi.length - 1 ? 0 : 9),
+        `r = ${g.r.map((r) => nt(r, 2)).join(T("; ", ", "))}: q = ${nt(g.q, 0)}`, { anchorX: "left", fontSize: 11, strokeColor: C.testo }));
       M.pallino(crea, P.X(R.cvar), P.Y(R.media), { size: 7, fillColor: "none", fillOpacity: 0, strokeColor: F.arancio, strokeWidth: 3 });
       legendaIn(crea, P, [[F.teal, T("frontiera (r = 0; 0,25; 0,5; 0,75; 1)", "frontier (r = 0, 0.25, 0.5, 0.75, 1)"), "lineaPunti"],
         [F.arancio, T(`ordine ottimo con r = ${nt(v[1], 2)}: q* = ${nt(R.q, 1)}`, `optimal order with r = ${nt(v[1], 2)}: q* = ${nt(R.q, 1)}`), "punto"]], C, "dx");
     },
-    legenda: () => { const F = FIG(); return [[F.teal, T("ogni punto è l'ordine ottimo \\(q^*\\) per un peso \\(r\\): costo atteso e CVaR\\(_\\alpha\\) del costo, \\(\\alpha = 0{,}9\\)", "each point is the optimal order \\(q^*\\) for a weight \\(r\\): expected cost and CVaR\\(_\\alpha\\) of the cost, \\(\\alpha = 0.9\\)"), ""],
+    legenda: () => { const F = FIG(); return [[F.teal, T("costo atteso in funzione di \\(q\\); in basso, ogni punto è l'ordine ottimo \\(q^*\\) per un peso \\(r\\)", "expected cost as a function of \\(q\\); below, each point is the optimal order \\(q^*\\) for a weight \\(r\\)"), ""],
+      [F.rosso, T("CVaR\\(_\\alpha\\) del costo, \\(\\alpha = 0{,}8\\): il costo medio dei 2 scenari più costosi", "CVaR\\(_\\alpha\\) of the cost, \\(\\alpha = 0.8\\): the mean cost of the 2 most expensive scenarios"), "dashed"],
       [F.arancio, T("l'ordine ottimo con il peso \\(r\\) del cursore", "the optimal order with the slider weight \\(r\\)"), "punto"]]; },
     letture(R, v, st, C) {
       const vss = R.costoMedia - R.media;
       return `<div>${T("Frattile critico", "Critical fractile")} \\(f^* = c_u/(c_u + c_o) = ${n(R.Cu, 1)}/${n(R.Cu + R.Co, 1)} = ${n(R.alfaStar, 4)}\\)</div>` +
         M.tab(["", T("costo atteso (€)", "exp. cost (€)"), "CVaR\\(_\\alpha\\) (€)"], [
           [M.tinta(C.blu, T("ordine ottimo \\(\\tilde q\\)", "optimal order \\(\\tilde q\\)")), nt(R.media, 2), nt(R.cvar, 2)],
-          [T("\\(q = 100\\), la media", "\\(q = 100\\), the mean"), nt(R.costoMedia, 2), nt(R.f.cv(100), 2)],
+          [T(`\\(q = ${n(R.mediaDom, 0)}\\), la media`, `\\(q = ${n(R.mediaDom, 0)}\\), the mean`), nt(R.costoMedia, 2), nt(R.f.cv(R.mediaDom), 2)],
         ]) +
-        `<div style="margin-top:.3em">${v[1] === 0 ? T(`L'LP sceglie come \\(\\tilde q\\) il quantile empirico al ${nt(100 * R.alfaStar, 2)}% della domanda. ` +
-          `Ordinare la media costerebbe ${euro(vss)} in più a ciclo (VSS, valore della soluzione stocastica).`, `The LP picks as \\(\\tilde q\\) the empirical quantile at ${nt(100 * R.alfaStar, 2)}% of demand. ` +
+        `<div style="margin-top:.3em">${v[1] === 0 ? T(`L'LP sceglie come \\(\\tilde q\\) il ${R.posto}° dei ${R.d.length} scenari in ordine crescente: il più piccolo \\(d_s\\) con \\(F(d_s) \\ge f^*\\). ` +
+          (R.pari ? `Qui \\(f^* = ${n(R.alfaStar, 1)}\\) esatto: ogni \\(q\\) fra il ${R.posto}° e il ${R.posto + 1}° scenario ha lo stesso costo atteso. ` : "") +
+          `Ordinare la media costerebbe ${euro(vss)} in più a ciclo (VSS, valore della soluzione stocastica).`,
+          `The LP picks as \\(\\tilde q\\) the ${R.posto}${["st", "nd", "rd"][R.posto - 1] || "th"} of the ${R.d.length} scenarios in increasing order: the smallest \\(d_s\\) with \\(F(d_s) \\ge f^*\\). ` +
+          (R.pari ? `Here \\(f^* = ${n(R.alfaStar, 1)}\\) exactly: every \\(q\\) between two consecutive scenarios there has the same expected cost. ` : "") +
           `Ordering the mean would cost ${euro(vss)} more per cycle (VSS, value of the stochastic solution).`)
           : T("Con \\(r > 0\\) si ordina di più: si paga in costo medio per proteggersi dagli scenari di coda.", "With \\(r > 0\\) one orders more: one pays in average cost to be protected from the tail scenarios.")}</div>`;
     },
-    soluzione(R, v) {
-      // õ_s, ũ_s, ξ̃_s dei 600 scenari in sintesi: in quanti scenari sono positive, media e massimo
-      const k = R.d.length, q = R.q, r = v[1];
+    soluzione(R, v, st, C) {
+      // tutte le variabili, scenario per scenario: õ_s, ũ_s, il costo e, con r > 0, ξ̃_s; in rosso i 2 scenari della coda
+      const k = R.d.length, q = R.q, r = v[1], A = ALFA();
       const o = R.d.map((d) => Math.max(0, q - d)), u = R.d.map((d) => Math.max(0, d - q));
-      const costi = o.map((x, s) => R.Co * x + R.Cu * u[s]), eta = O.vaR(costi, ALFA), xi = costi.map((c) => Math.max(0, c - eta));
-      const riga = (nome, a, c = 1) => { const pos = a.filter((x) => x > 1e-9); return [nome, `${pos.length} / ${k}`, nt(a.reduce((s, x) => s + x, 0) / k, c), pos.length ? nt(Math.max(...pos), c) : "—"]; };
-      const righe = [riga(T("\\(\\tilde o_s\\): invendute (unità)", "\\(\\tilde o_s\\): unsold (units)"), o), riga(T("\\(\\tilde u_s\\): domanda non servita (unità)", "\\(\\tilde u_s\\): unmet demand (units)"), u)];
-      if (r > 0) righe.push(riga(T("\\(\\tilde\\xi_s\\): costo oltre \\(\\tilde\\eta\\) (€)", "\\(\\tilde\\xi_s\\): cost above \\(\\tilde\\eta\\) (€)"), xi, 2));
+      const costi = o.map((x, s) => R.Co * x + R.Cu * u[s]), eta = O.vaR(costi, A), xi = costi.map((c) => Math.max(0, c - eta));
+      const coda = Math.round((1 - A) * k), soglia = costi.slice().sort((a, b) => b - a)[coda - 1];
+      const rosso = (s, testo) => (costi[s] >= soglia - 1e-9 ? M.tinta(C.rosso, testo) : testo);
+      const righe = [["\\(d_s\\)", ...R.d.map((x) => nt(x, 0))],
+        ["\\(\\tilde o_s\\)", ...o.map((x) => SOL.z(x, 1))], ["\\(\\tilde u_s\\)", ...u.map((x) => SOL.z(x, 1))],
+        [T("costo (€)", "cost (€)"), ...costi.map((x, s) => rosso(s, nt(x, 1)))]];
+      if (r > 0) righe.push(["\\(\\tilde\\xi_s\\) (€)", ...xi.map((x) => SOL.z(x, 1))]);
       return SOL.blocco(`${T("Valore ottimo", "Optimal value")}: <b>${euro(R.obiettivo)}</b> ` +
         (r > 0 ? T(`(\\(1 - r\\) volte il costo atteso più \\(r\\) volte il CVaR\\(_\\alpha\\))`, `(\\(1 - r\\) times the expected cost plus \\(r\\) times the CVaR\\(_\\alpha\\))`) : T("(costo atteso)", "(expected cost)")) +
         `<br>\\(\\tilde q = ${n(q, 2)}\\) ${T("unità", "units")} · ` +
         (r > 0 ? `\\(\\tilde\\eta = ${n(eta, 2)}\\) € ${T("(un VaR\\(_\\alpha\\) del costo)", "(a VaR\\(_\\alpha\\) of the cost)")}`
           : T("con \\(r = 0\\), \\(\\eta\\) e \\(\\xi_s\\) non entrano nella funzione obiettivo", "with \\(r = 0\\), \\(\\eta\\) and \\(\\xi_s\\) do not enter the objective function")), [
-        SOL.tab(T(`Variabili di scenario, in sintesi sui ${k} scenari`, `Scenario variables, summarized over the ${k} scenarios`),
-          [T("variabile", "variable"), T("positiva in", "positive in"), T("media", "mean"), T("massimo", "maximum")], righe),
-      ]);
+        SOL.tab(T(`Variabili di scenario: scenario \\(s\\) per colonna; in rosso il costo dei ${coda} scenari più costosi (la coda del CVaR\\(_\\alpha\\))`,
+          `Scenario variables: scenario \\(s\\) by column; in red the cost of the ${coda} most expensive scenarios (the tail of the CVaR\\(_\\alpha\\))`),
+          ["\\(s\\)", ...R.d.map((x, s) => String(s + 1))], righe),
+      ], T("«—»: valore nullo.", "«—»: zero value."));
     },
-    domanda: T("Con \\(r = 0\\) muovi \\(p\\): l'ordine ottimo segue il frattile critico \\(f^*\\). Poi porta \\(r\\) a 1: di quanto cresce \\(q^*\\), di quanto il costo medio, di quanto scende il CVaR?",
-      "With \\(r = 0\\) move \\(p\\): the optimal order follows the critical fractile \\(f^*\\). Then set \\(r\\) to 1: how much does \\(q^*\\) grow, how much the average cost, how much does the CVaR drop?"),
+    domanda: T("Con \\(p = 15\\) e \\(r = 0\\) l'ordine ottimo è \\(\\tilde q = 110\\), il 7° dei 10 scenari: perché proprio il 7°, con \\(f^* = 9/13 \\approx 0{,}69\\)? Porta \\(p\\) a 15,5: \\(\\tilde q\\) salta a 120. Quale soglia ha superato \\(f^*\\), e a quale prezzo esatto? Scendi a \\(p = 12\\): ogni ordine fra 100 e 110 ha lo stesso costo atteso, perché? Torna a \\(p = 15\\) e alza \\(r\\): con \\(r = 0{,}05\\) l'ordine sale a 120, da \\(r = 0{,}40\\) a 130, da \\(r = 0{,}55\\) a 150. Quanto costa in media ogni passo e quanto scende il CVaR? Perché con \\(r = 1\\) l'ordine si ferma a 150? Guarda i costi in rosso nel blocco della soluzione.",
+      "With \\(p = 15\\) and \\(r = 0\\) the optimal order is \\(\\tilde q = 110\\), the 7th of the 10 scenarios: why exactly the 7th, with \\(f^* = 9/13 \\approx 0.69\\)? Set \\(p\\) to 15.5: \\(\\tilde q\\) jumps to 120. Which threshold has \\(f^*\\) crossed, and at which exact price? Go down to \\(p = 12\\): every order between 100 and 110 has the same expected cost, why? Go back to \\(p = 15\\) and raise \\(r\\): with \\(r = 0.05\\) the order rises to 120, from \\(r = 0.40\\) to 130, from \\(r = 0.55\\) to 150. How much does each step cost on average and how much does the CVaR drop? Why does the order stop at 150 with \\(r = 1\\)? Look at the costs in red in the solution block."),
   };
 
   // ================================================================ DEA (cap. 6)

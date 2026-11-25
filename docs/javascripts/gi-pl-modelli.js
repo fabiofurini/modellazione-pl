@@ -6,7 +6,7 @@
  *   produzione(fCap, fDom, fGiac) cap. 4: LP a costo minimo; piano, scorte, prezzi ombra della capacità
  *                                (fGiac: un fattore per tutti i prodotti o un vettore, uno per prodotto)
  *   dea(o, vrs, vista)           cap. 6: forma di inviluppo orientata all'input (CCR/BCC), poi gli scarti
- *   newsvendor(p, lam, alfa)     cap. 7: LP a scenari con avversione al rischio (1-lam) E + lam CVaR
+ *   newsvendor(p, lam, alfa)     cap. 8: LP a scenari con avversione al rischio (1-lam) E + lam CVaR
  *   regressione(dati, tau)       cap. 10: regressione quantile (tau = 1/2: scarti assoluti)
  */
 (function () {
@@ -119,7 +119,7 @@
   }
 
   // ---------------------------------------------------------------- cap. 7
-  function newsvendor(p = 15, lam = 0, alfa = 0.9) {
+  function newsvendor(p = 15, lam = 0, alfa = D().newsvendor.alfa) {
     const N = D().newsvendor, d = N.domanda, n = d.length;
     const Cu = p - N.c, Co = N.c - N.v;
     const costi = (q) => d.map((x) => (x < q ? Co * (q - x) : Cu * (x - q)));
@@ -136,7 +136,7 @@
     const quant = (a) => { const s = d.slice().sort((u, v) => u - v); return s[Math.ceil(a * n - 1e-9) - 1]; };
     return {
       q, Cu, Co, alfaStar: Cu / (Cu + Co), media: media(q), cvar: cv(q), obiettivo: obiettivo(q),
-      mediaDom: d.reduce((s, v) => s + v, 0) / n, costoMedia: media(N.mu), quantile: quant(Cu / (Cu + Co)),
+      mediaDom: d.reduce((s, v) => s + v, 0) / n, costoMedia: media(d.reduce((s, v) => s + v, 0) / n), quantile: quant(Cu / (Cu + Co)),
       f: { media, cv, obiettivo }, d,
     };
   }
