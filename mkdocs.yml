@@ -140,9 +140,9 @@ extra_javascript:
   - javascripts/interattivi.js?v=a6cfeda578
   - javascripts/gi-comune.js?v=74d7bb93a0
   - javascripts/gi-ott.js?v=04048d2032
-  - javascripts/gi-pl-dati.js?v=aac06a36a8
-  - javascripts/gi-pl-modelli.js?v=574e57b3ed
-  - javascripts/gi-pl-app.js?v=33907848f6
+  - javascripts/gi-pl-dati.js?v=5d01671bf0
+  - javascripts/gi-pl-modelli.js?v=a80ee914fe
+  - javascripts/gi-pl-app.js?v=e9ba8a286e
   - javascripts/gi-pl-finanza.js?v=7d819ec28d
   - javascripts/gi-pl-tecniche.js?v=e869c0a94f
   - javascripts/quiz.js?v=be7fae2b85

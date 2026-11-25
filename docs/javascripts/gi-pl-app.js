@@ -82,10 +82,10 @@
     crea("curve", [xs.map(P.X), ys.map(P.Y)], { strokeColor: col, strokeWidth: opz.spessore || 2.2, dash: opz.dash || 0, fixed: true, highlight: false });
     if (opz.punti !== false) xs.forEach((x, k) => M.pallino(crea, P.X(x), P.Y(ys[k]), { size: opz.r || 3.5, fillColor: col, strokeColor: col }));
   };
-  /** gradini centrati sui punti (matplotlib drawstyle="steps-mid") */
+  /** gradini larghi 1 centrati sui punti x0, x0 + 1, ... (matplotlib stairs / drawstyle="steps-mid") */
   const gradini = (crea, P, ys, col, opz = {}) => {
-    const xs = [], yy = [];
-    ys.forEach((y, t) => { xs.push(t - 0.5, t + 0.5); yy.push(y, y); });
+    const xs = [], yy = [], x0 = opz.x0 || 0;
+    ys.forEach((y, t) => { xs.push(x0 + t - 0.5, x0 + t + 0.5); yy.push(y, y); });
     crea("curve", [xs.map(P.X), yy.map(P.Y)], { strokeColor: col, strokeWidth: opz.spessore || 2.4, dash: opz.dash || 0, fixed: true, highlight: false });
   };
   /** margini dei pannelli-figura: spazio a sinistra e in basso per le etichette degli assi, in alto per il titolo */
@@ -418,112 +418,119 @@
   };
 
   // ================================================================ ricarica EV (cap. 5)
-  const ORDINE_ORE = [...Array(12).keys()].map((k) => k + 12).concat([...Array(12).keys()]);
-  const VEICOLO = (C) => [C.a, C.b, C.c, C.d, C.e, C.viola];
+  /* Ore t = 1, ..., m del capitolo (l'ora t va dalle t−1 alle t); nei dati e nel modello JS l'indice è t−1.
+   * Il furgone è collegato nell'ora t se arrivo < t ≤ partenza (arrivo e partenza sono ore dell'orologio). */
+  const evColl = (x, t) => x.arrivo < t && t <= x.partenza;
+  const evOre = () => DD().ev.prezzo.map((p, k) => k + 1);
+  const evCare = () => PL().ricaricaEv.ORE_CARE.map((k) => k + 1);
+  const evPrezzo = (t, v) => DD().ev.prezzo[t - 1] * (evCare().includes(t) ? v[2] / 100 : 1);
   const vEv = {
     etichetta: T("Ricarica di veicoli elettrici", "Electric vehicle charging"),
     cursori: [
-      { nome: "k", min: 80, max: 160, step: 5, val: 120, fmt: (x) => nt(x, 0) + " kW",
-        descr: T("potenza massima prelevabile dal contatore", "maximum power drawn from the meter") },
-      { nome: T("\\text{energia totale}", "\\text{total energy}"), min: 60, max: 130, step: 5, val: 100,
+      { nome: "k", min: 20, max: 40, step: 1, val: 30, fmt: (x) => nt(x, 0) + " kW",
+        descr: T("potenza massima prelevabile dal contatore in ogni ora", "maximum power drawn from the meter in every hour") },
+      { nome: T("\\text{energia totale}", "\\text{total energy}"), min: 60, max: 150, step: 5, val: 100,
         fmt: (x) => `${mig(DD().ev.veicoli.reduce((t, q) => t + q.energia, 0) * x / 100)} kWh (${per(x)})`,
-        descr: T("moltiplica per lo stesso fattore le 6 energie richieste \\(e_v\\) (da 30 a 55 kWh per furgone)", "multiplies the 6 required energies \\(e_v\\) (30 to 55 kWh per van) by the same factor") },
-      { nome: T("c_t\\ \\text{serale}", "c_t\\ \\text{evening}"), min: 10, max: 200, step: 10, val: 100,
-        fmt: (x) => { const q = DD().ev.prezzo.slice(17, 21).map((y) => y * x / 100); return `${nt(Math.min(...q), 3)}–${nt(Math.max(...q), 3)} €/kWh`; },
-        descr: T("moltiplica per lo stesso fattore i prezzi delle 4 ore dalle 17 alle 21", "multiplies the prices of the 4 hours from 5 pm to 9 pm by the same factor") },
+        descr: T("moltiplica per lo stesso fattore le 3 energie richieste \\(e_v\\) (36, 18 e 18 kWh)", "multiplies the 3 required energies \\(e_v\\) (36, 18 and 18 kWh) by the same factor") },
+      { nome: T("c_1,\\ c_2", "c_1,\\ c_2"), min: 30, max: 200, step: 10, val: 100,
+        fmt: (x) => `${evCare().map((t) => nt(DD().ev.prezzo[t - 1] * x / 100, 3)).join(T(" e ", " and "))} €/kWh (${per(x)})`,
+        descr: T("moltiplica per lo stesso fattore i prezzi delle ore 1 e 2 (dalle 0 alle 2, la coda del picco serale)", "multiplies the prices of hours 1 and 2 (midnight to 2 am, the tail of the evening peak) by the same factor") },
     ],
     calcola: (v) => PL().ricaricaEv(v[0], v[1] / 100, v[2] / 100),
     formula(R, v, st) {
-      const E = DD().ev, V = E.veicoli, nV = V.length;
+      const E = DD().ev, V = E.veicoli, nV = V.length, ore = evOre(), nT = ore.length;
       const vt = `${PER("v", "n")},~${PER("t", "m")}`;
       const sim = `\\min ~~ \\sum_{v=1}^{n} \\sum_{t=1}^{m} ${st.col("c", "c_t")}\\, d\\, x_{vt} & & \\\\
         ${SA()} \\quad r \\sum_{t=1}^{m} d\\, x_{vt} &\\ge ${st.col("b", "e_v")}, & ${PER("v", "n")}, \\\\
         \\sum_{v=1}^{n} x_{vt} + b_t &\\le ${st.col("a", "k")}, & ${PER("t", "m")}, \\\\
         x_{vt} &\\le a_{vt}\\, \\bar p_v, & ${vt}, \\\\
         x_{vt} &\\ge 0, & ${vt}.`;
-      const coll = (x, t) => x.arrivo <= t || t < x.partenza;
-      const prezzo = (t) => E.prezzo[t] * (t >= 17 && t <= 20 ? v[2] / 100 : 1);
-      const ore = (x) => ORDINE_ORE.filter((t) => coll(x, t));
       const xv = (j, t) => `x_{${j + 1},${t}}`;
-      // un blocco per furgone (le sue ore di collegamento in colonna), poi il blocco della rete
+      // un blocco per furgone (le sue ore di collegamento in colonna), poi il blocco della rete (d = 1 h)
       let num = "";
       V.forEach((x, j) => {
-        const hh = ore(x), vars = hh.map((t) => xv(j, t)), tutte = vars.map((q, k) => k);
-        num += blocco(T(`Furgone ${j + 1}, collegato dalle ${x.arrivo} alle ${x.partenza}: costo, energia, potenza del caricatore`,
-          `Van ${j + 1}, plugged in from ${x.arrivo}:00 to ${x.partenza}:00: cost, energy, charger power`), grigliaLunga(vars, [
-          { lab: j ? "" : MIN, c: hh.map(prezzo), piu: j > 0, cifre: 3 },
+        const hh = ore.filter((t) => evColl(x, t)), vars = hh.map((t) => xv(j, t)), tutte = vars.map((q, k) => k);
+        num += blocco(T(`Furgone ${j + 1}, collegato dalle ${x.arrivo} alle ${x.partenza} (ore ${hh[0]}–${hh[hh.length - 1]}): costo, energia, potenza del caricatore`,
+          `Van ${j + 1}, plugged in from ${x.arrivo}:00 to ${x.partenza}:00 (hours ${hh[0]}–${hh[hh.length - 1]}): cost, energy, charger power`), griglia(vars, [
+          { lab: j ? "" : MIN, c: hh.map((t) => evPrezzo(t, v)), piu: j > 0, cifre: 3 },
           { lab: j ? "" : SA(), c: hh.map(() => E.eta), rel: ">=", rhs: n(x.energia * v[1] / 100, 1) },
           { dominio: tutte, rel: "<=", rhs: n(x.pmax, 1) },
           { dominio: tutte, rel: ">=", rhs: "0" },
-        ], 5));
+        ]));
       });
-      const reteR = ORDINE_ORE.filter((t) => V.some((x) => coll(x, t)))
-        .map((t) => ({ nomi: V.map((x, j) => xv(j, t)), c: V.map((x) => (coll(x, t) ? 1 : 0)), rel: "<=", rhs: n(v[0] - E.base[t], 1) }));
-      num += blocco(T("Rete: una riga per ora, una colonna per furgone; a destra \\(k - b_t\\)", "Grid: one row per hour, one column per van; on the right \\(k - b_t\\)"),
+      const reteR = ore.map((t) => ({ nomi: V.map((x, j) => xv(j, t)), c: V.map((x) => (evColl(x, t) ? 1 : 0)), rel: "<=", rhs: n(v[0] - E.base[t - 1], 1) }));
+      num += blocco(T(`Rete: una riga per ora, una colonna per furgone; a destra \\(k - b_t\\) con \\(k = ${n(v[0], 0)}\\)`, `Grid: one row per hour, one column per van; on the right \\(k - b_t\\) with \\(k = ${n(v[0], 0)}\\)`),
         griglia(V.map((x, j) => `x_{${j + 1},t}`), reteR));
-      const tabOre = (h) => DV.tab(T(`Ore ${h[0]}–${h[h.length - 1]}: prezzo \\(c_t\\) (€/kWh) e carico di base \\(b_t\\) (kW)`, `Hours ${h[0]}–${h[h.length - 1]}: price \\(c_t\\) (€/kWh) and base load \\(b_t\\) (kW)`),
-        ["\\(t\\)", ...h.map(String)], [["\\(c_t\\)", ...h.map((t) => DV.t(prezzo(t), 3))], ["\\(b_t\\)", ...h.map((t) => DV.t(E.base[t], 0))]]);
-      const ore12 = [...Array(12).keys()];
-      const TABS = DV.tabelle(tabOre(ore12), tabOre(ore12.map((t) => t + 12)),
-        DV.tab(T("Furgoni: ore di collegamento (\\(a_{vt} = 1\\)), energia \\(e_v\\) (kWh), potenza \\(\\bar p_v\\) (kW)", "Vans: plug-in hours (\\(a_{vt} = 1\\)), energy \\(e_v\\) (kWh), power \\(\\bar p_v\\) (kW)"),
-          ["\\(v\\)", T("collegato", "plugged in"), "\\(e_v\\)", "\\(\\bar p_v\\)"],
-          V.map((x, j) => [String(j + 1), T(`dalle ${x.arrivo} alle ${x.partenza}`, `${x.arrivo}:00–${x.partenza}:00`), DV.t(x.energia * v[1] / 100, 1), DV.t(x.pmax, 1)])));
-      return modelloDi("ev")(T(`<b>Il problema.</b> Decidiamo con quale potenza ricaricare ogni furgone elettrico in ogni ora della giornata. L'obiettivo è la minima spesa per l'energia. I vincoli: ogni furgone riceve l'energia richiesta prima della partenza, tenendo conto delle perdite di ricarica; si ricarica solo quando è collegato e sotto la potenza del suo caricatore; il prelievo totale, carico dell'edificio compreso, resta sotto la potenza del contatore.` +
+      const TABS = DV.tabelle(
+        DV.tab(T("Ore: prezzo \\(c_t\\) (€/kWh) e carico di base \\(b_t\\) (kW)", "Hours: price \\(c_t\\) (€/kWh) and base load \\(b_t\\) (kW)"),
+          ["\\(t\\)", ...ore.map(String)], [[T("dalle–alle", "from–to"), ...ore.map((t) => `${t - 1}–${t}`)],
+            ["\\(c_t\\)", ...ore.map((t) => DV.t(evPrezzo(t, v), 3))], ["\\(b_t\\)", ...ore.map((t) => DV.t(E.base[t - 1], 0))]]),
+        DV.tab(T("Furgoni: collegamento \\(a_{vt}\\), energia \\(e_v\\) (kWh), potenza \\(\\bar p_v\\) (kW)", "Vans: plug-in \\(a_{vt}\\), energy \\(e_v\\) (kWh), power \\(\\bar p_v\\) (kW)"),
+          ["\\(v \\backslash t\\)", ...ore.map(String), "\\(e_v\\)", "\\(\\bar p_v\\)"],
+          V.map((x, j) => [String(j + 1), ...ore.map((t) => (evColl(x, t) ? "1" : "0")), DV.t(x.energia * v[1] / 100, 1), DV.t(x.pmax, 1)])));
+      return modelloDi("ev")(T(`<b>Il problema.</b> Decidiamo con quale potenza ricaricare ogni furgone elettrico in ogni ora della notte. L'obiettivo è la minima spesa per l'energia. I vincoli: ogni furgone riceve l'energia richiesta prima della partenza, tenendo conto delle perdite di ricarica; si ricarica solo quando è collegato e sotto la potenza del suo caricatore; il prelievo totale, carico dell'edificio compreso, resta sotto la potenza del contatore.` +
         `<br><b>Variabili:</b> \\(x_{vt}\\): potenza assegnata al furgone \\(v\\) nell'ora \\(t\\) (kW).` +
-        `<br><b>Dati:</b> \\(n = ${nV}\\): numero di furgoni; \\(m = 24\\): numero di ore della giornata; \\(d = 1\\) h: durata di un'ora; \\(c_t\\): prezzo dell'energia nell'ora \\(t\\) (€/kWh, tabella qui sotto); \\(e_v\\): energia richiesta dal furgone \\(v\\) entro la partenza (kWh, tabella); \\(r = ${n(E.eta, 2)}\\): rendimento della ricarica, la quota dell'energia prelevata che arriva in batteria; \\(a_{vt}\\): 1 se il furgone \\(v\\) è collegato nell'ora \\(t\\), 0 altrimenti (tabella); \\(\\bar p_v\\): potenza del caricatore del furgone \\(v\\) (kW, tabella); \\(b_t\\): carico di base dell'edificio nell'ora \\(t\\) (kW, tabella); \\(k = ${n(v[0], 0)}\\) kW: potenza massima prelevabile dal contatore.` + TABS,
-      `<b>The problem.</b> We decide the power at which each electric van is charged in each hour of the day. The objective is the minimum energy expenditure. The constraints: each van receives the required energy before departure, taking charging losses into account; it charges only while plugged in and below the power of its charger; the total draw, including the building load, stays below the power of the meter.` +
+        `<br><b>Dati:</b> \\(n = ${nV}\\): numero di furgoni; \\(m = ${nT}\\): numero di ore, dalle 0 alle ${nT} (l'ora \\(t\\) va dalle \\(t-1\\) alle \\(t\\)); \\(d = 1\\) h: durata di un'ora; \\(c_t\\): prezzo dell'energia nell'ora \\(t\\): \\(${DV.L(ore.map((t) => evPrezzo(t, v)), 3)}\\) €/kWh; \\(e_v\\): energia richiesta dal furgone \\(v\\) entro la partenza: \\(${DV.L(V.map((x) => x.energia * v[1] / 100), 1)}\\) kWh; \\(r = ${n(E.eta, 2)}\\): rendimento della ricarica, la quota dell'energia prelevata che arriva in batteria; \\(a_{vt}\\): 1 se il furgone \\(v\\) è collegato nell'ora \\(t\\), 0 altrimenti (tabella qui sotto); \\(\\bar p_v\\): potenza del caricatore del furgone \\(v\\): \\(${DV.L(V.map((x) => x.pmax), 1)}\\) kW; \\(b_t\\): carico di base dell'edificio nell'ora \\(t\\): \\(${DV.L(E.base, 0)}\\) kW; \\(k = ${n(v[0], 0)}\\) kW: potenza massima prelevabile dal contatore.` + TABS,
+      `<b>The problem.</b> We decide the power at which each electric van is charged in each hour of the night. The objective is the minimum energy expenditure. The constraints: each van receives the required energy before departure, taking charging losses into account; it charges only while plugged in and below the power of its charger; the total draw, including the building load, stays below the power of the meter.` +
         `<br><b>Variables:</b> \\(x_{vt}\\): power assigned to van \\(v\\) in hour \\(t\\) (kW).` +
-        `<br><b>Data:</b> \\(n = ${nV}\\): number of vans; \\(m = 24\\): number of hours in the day; \\(d = 1\\) h: length of an hour; \\(c_t\\): energy price in hour \\(t\\) (€/kWh, table below); \\(e_v\\): energy required by van \\(v\\) before departure (kWh, table); \\(r = ${n(E.eta, 2)}\\): charging efficiency, the share of the energy drawn that reaches the battery; \\(a_{vt}\\): 1 if van \\(v\\) is plugged in during hour \\(t\\), 0 otherwise (table); \\(\\bar p_v\\): power of the charger of van \\(v\\) (kW, table); \\(b_t\\): base load of the building in hour \\(t\\) (kW, table); \\(k = ${n(v[0], 0)}\\) kW: maximum power drawn from the meter.` + TABS),
+        `<br><b>Data:</b> \\(n = ${nV}\\): number of vans; \\(m = ${nT}\\): number of hours, from midnight to ${nT} am (hour \\(t\\) runs from \\(t-1\\) to \\(t\\)); \\(d = 1\\) h: length of an hour; \\(c_t\\): energy price in hour \\(t\\): \\(${DV.L(ore.map((t) => evPrezzo(t, v)), 3)}\\) €/kWh; \\(e_v\\): energy required by van \\(v\\) before departure: \\(${DV.L(V.map((x) => x.energia * v[1] / 100), 1)}\\) kWh; \\(r = ${n(E.eta, 2)}\\): charging efficiency, the share of the energy drawn that reaches the battery; \\(a_{vt}\\): 1 if van \\(v\\) is plugged in during hour \\(t\\), 0 otherwise (table below); \\(\\bar p_v\\): power of the charger of van \\(v\\): \\(${DV.L(V.map((x) => x.pmax), 1)}\\) kW; \\(b_t\\): base load of the building in hour \\(t\\): \\(${DV.L(E.base, 0)}\\) kW; \\(k = ${n(v[0], 0)}\\) kW: maximum power drawn from the meter.` + TABS),
       sim, num,
-      T("Le ore sono quelle dell'orologio (\\(x_{1,18}\\): furgone 1 alle 18). Nelle ore in cui un furgone non è collegato (\\(a_{vt} = 0\\)) la sua variabile vale 0 e non compare. La funzione obiettivo è la somma delle righe di costo dei sei blocchi.",
-        "Hours are clock hours (\\(x_{1,18}\\): van 1 at 6 pm). In the hours when a van is not plugged in (\\(a_{vt} = 0\\)) its variable is 0 and does not appear. The objective function is the sum of the cost rows of the six blocks."));
+      T("\\(x_{1,4}\\): furgone 1 nell'ora 4, dalle 3 alle 4. Nelle ore in cui un furgone non è collegato (\\(a_{vt} = 0\\)) la sua variabile vale 0 e non compare. La funzione obiettivo è la somma delle righe di costo dei tre blocchi.",
+        "\\(x_{1,4}\\): van 1 in hour 4, from 3 to 4 am. In the hours when a van is not plugged in (\\(a_{vt} = 0\\)) its variable is 0 and does not appear. The objective function is the sum of the cost rows of the three blocks."));
     },
     disegna(crea, R, v, C, S) {
-      if (R.stato !== "ottimo") return avviso(crea, S, C, T("Inammissibile: con questo limite i furgoni non si ricaricano in tempo", "Infeasible: with this limit the vans cannot be charged in time"));
-      // come la figura del capitolo (cap06_profili): prezzo orario sopra, profilo di prelievo sotto, ore 0–23
-      const E = DD().ev, F = FIG(), ore = [...Array(24).keys()], gap = 62;
+      if (R.stato !== "ottimo") return avviso(crea, S, C, T("Inammissibile: con questi dati i furgoni non si ricaricano in tempo", "Infeasible: with these data the vans cannot be charged in time"));
+      // come la figura del capitolo (cap06_profili): prezzo orario sopra, profilo di prelievo sotto, ore 1–6
+      const E = DD().ev, F = FIG(), ore = evOre(), nT = ore.length, gap = 62;
       const hTot = S.H - MF.basso - MF.alto - gap, hTop = hTot * 0.42;
-      const fx = (u) => (u % 5 === 0 ? String(u) : "");
-      const A = figura(crea, { X0: MF.sx, X1: S.W - MF.dx, Y0: S.H - MF.alto - hTop, Y1: S.H - MF.alto, xa: -1.2, xb: 24.2, ya: 0,
-        yb: Math.max(...R.prezzo) * 100 * 1.08, titolo: T("Prezzo orario dell'energia", "Hourly energy price"), ny: T("prezzo cₜ (c€/kWh)", "price cₜ (c€/kWh)") }, C, { nTx: 0, nTy: 4 });
-      ore.forEach((t) => M.rett(crea, A.X(t - 0.4), A.Y(0), A.X(t + 0.4), A.Y(R.prezzo[t] * 100), { fillColor: F.grigio, fillOpacity: 0.55, strokeColor: "none", strokeWidth: 0 }));
+      const fx = (u) => (Number.isInteger(u) && u >= 1 && u <= nT ? String(u) : "");
+      const A = figura(crea, { X0: MF.sx, X1: S.W - MF.dx, Y0: S.H - MF.alto - hTop, Y1: S.H - MF.alto, xa: 0.4, xb: nT + 0.6, ya: 0,
+        yb: Math.max(...R.prezzo) * 100 * 1.12, titolo: T("Prezzo orario dell'energia", "Hourly energy price"), ny: T("prezzo cₜ (c€/kWh)", "price cₜ (c€/kWh)") }, C, { nTx: nT, nTy: 4, fx });
+      ore.forEach((t) => M.rett(crea, A.X(t - 0.4), A.Y(0), A.X(t + 0.4), A.Y(R.prezzo[t - 1] * 100), { fillColor: F.grigio, fillOpacity: 0.55, strokeColor: "none", strokeWidth: 0 }));
       const yb = Math.max(R.C, ...R.tot) * 1.45;
-      const B = figura(crea, { X0: MF.sx, X1: S.W - MF.dx, Y0: MF.basso, Y1: S.H - MF.alto - hTop - gap, xa: -1.2, xb: 24.2, ya: 0, yb,
-        titolo: T("Profilo di prelievo dalla rete", "Power withdrawn from the grid"), nx: T("ora del giorno", "hour of the day"),
-        ny: T("prelievo totale (kW)", "total withdrawal (kW)") }, C, { nTx: 6, nTy: 4, fx });
-      lineaPunti(crea, B, ore, E.base, F.grigio, { dash: 2, punti: false, spessore: 1.8 });
-      gradini(crea, B, R.tot, F.teal);
-      M.linea(crea, B.X(-1.2), B.Y(R.C), B.X(24.2), B.Y(R.C), { strokeColor: F.rosso, strokeWidth: 2, dash: 1 });
+      const B = figura(crea, { X0: MF.sx, X1: S.W - MF.dx, Y0: MF.basso, Y1: S.H - MF.alto - hTop - gap, xa: 0.4, xb: nT + 0.6, ya: 0, yb,
+        titolo: T("Profilo di prelievo dalla rete", "Power withdrawn from the grid"), nx: T("ora t (dalle t − 1 alle t)", "hour t (from t − 1 to t)"),
+        ny: T("prelievo totale (kW)", "total withdrawal (kW)") }, C, { nTx: nT, nTy: 4, fx });
+      gradini(crea, B, E.base, F.grigio, { x0: 1, dash: 2, spessore: 1.8 });
+      gradini(crea, B, R.tot, F.teal, { x0: 1 });
+      M.linea(crea, B.X(0.4), B.Y(R.C), B.X(nT + 0.6), B.Y(R.C), { strokeColor: F.rosso, strokeWidth: 2, dash: 1 });
+      // ore sature: il prelievo tocca k
+      ore.forEach((t) => { if (Math.abs(R.ombraRete[t - 1]) > 1e-9) M.scritta(crea, B.X(t), B.Y(R.C) + 3, T("satura", "binding"), { anchorY: "bottom", fontSize: 11, strokeColor: F.rosso }); });
       // stesse voci della figura (che mostra anche il peak shaving, min z, qui non calcolato)
       legendaIn(crea, B, [[F.grigio, T("carico di base bₜ", "base load bₜ"), "tratteggio"], [F.teal, T("costo minimo", "minimum cost"), "linea"],
         [F.rosso, T(`potenza del contatore k = ${nt(R.C, 0)} kW`, `meter power k = ${nt(R.C, 0)} kW`), "punteggiata"]], C, "dx");
     },
     legenda: () => { const F = FIG(); return [[F.grigio, T("prezzo dell'energia \\(c_t\\) (barre) e carico di base \\(b_t\\) dell'edificio (tratteggio)", "energy price \\(c_t\\) (bars) and building base load \\(b_t\\) (dashed)"), "pieno"],
       [F.teal, T("prelievo totale \\(b_t + \\sum_v x_{vt}\\) del piano a costo minimo", "total draw \\(b_t + \\sum_v x_{vt}\\) of the minimum-cost plan"), ""],
-      [F.rosso, T("potenza del contatore \\(k\\)", "meter power \\(k\\)"), "dotted"]]; },
+      [F.rosso, T("potenza del contatore \\(k\\); satura: vincolo di rete attivo", "meter power \\(k\\); binding: grid constraint active"), "dotted"]]; },
     letture(R, v, st, C) {
-      if (R.stato !== "ottimo") return M.tinta(C.rosso, T("Inammissibile.", "Infeasible."));
+      if (R.stato !== "ottimo") return M.tinta(C.rosso, T("Inammissibile.", "Infeasible.")) + " " +
+        T("L'energia richiesta non entra nelle ore di collegamento sotto il limite \\(k\\): il simplesso si ferma alla fase 1.",
+          "The required energy does not fit in the plug-in hours below the limit \\(k\\): the simplex stops in phase 1.");
       const E = DD().ev;
-      const righe = E.veicoli.map((x, j) => [x.nome, `${x.arrivo}–${x.partenza}`, nt(x.energia * v[1] / 100, 1), tx(n(R.ombraEnergia[j] * 100, 2))]);
+      const righe = E.veicoli.map((x, j) => [String(j + 1), `${x.arrivo}–${x.partenza}`, nt(x.energia * v[1] / 100, 1), tx(n(R.ombraEnergia[j] * 100, 2))]);
       const sature = R.ombraRete.map((y, t) => (Math.abs(y) > 1e-9 ? t : -1)).filter((t) => t >= 0);
+      const totK = -R.ombraRete.reduce((s, y) => s + y, 0);
       return `<div>${T("Picco di prelievo", "Peak withdrawal")}: ${nt(R.picco, 1)} kW</div>` +
-        M.tab([T("furgone", "van"), T("ore", "hours"), "kWh", T("ombra c€/kWh", "shadow c€/kWh")], righe) +
-        `<div style="margin-top:.3em">${sature.length ? T("Limite di rete saturo alle ore ", "Grid limit binding at hours ") + sature.join(", ") +
-          T(": un kW in più lì vale ", ": one more kW there is worth ") + sature.map((t) => nt(-R.ombraRete[t] * 100, 1)).join(", ") + " c€."
+        `<div>${T("Prezzi ombra dell'energia \\(e_v\\) (c€ per kWh)", "Shadow prices of the energy \\(e_v\\) (c€ per kWh)")}</div>` +
+        M.tab([T("furgone", "van"), T("dalle–alle", "from–to"), "kWh", T("prezzo ombra", "shadow price")], righe) +
+        `<div style="margin-top:.3em">${sature.length ? T("Limite di rete saturo nelle ore ", "Grid limit binding in hours ") + sature.map((t) => t + 1).join(", ") +
+          T(": un kW in più lì vale ", ": one more kW there is worth ") + sature.map((t) => nt(-R.ombraRete[t] * 100, 1)).join(", ") + " c€; " +
+          T("un kW in più di \\(k\\), in tutte le ore, vale ", "one more kW of \\(k\\), in every hour, is worth ") + nt(totK * 100, 1) + " c€."
           : T("Il limite di rete non è mai saturo: ogni furgone carica nelle sue ore più economiche.", "The grid limit is never binding: every van charges in its cheapest hours.")}</div>`;
     },
     soluzione(R) {
       if (R.stato !== "ottimo") return "";
-      const V = DD().ev.veicoli, coll = (x, t) => x.arrivo <= t || t < x.partenza;
-      const ore = ORDINE_ORE.filter((t) => V.some((x) => coll(x, t)));
-      const righe = V.map((x, j) => [String(j + 1), ...ore.map((t) => (coll(x, t) ? SOL.z(R.x[j][t], 1) : "")), nt(R.x[j].reduce((s, q) => s + q, 0), 1)]);
+      const V = DD().ev.veicoli, ore = evOre();
+      const righe = V.map((x, j) => [String(j + 1), ...ore.map((t) => (evColl(x, t) ? SOL.z(R.x[j][t - 1], 1) : "")), nt(R.x[j].reduce((s, q) => s + q, 0), 1)]);
+      righe.push([T("prelievo", "draw"), ...ore.map((t) => nt(R.tot[t - 1], 1)), ""]);
       return SOL.blocco(`${T("Costo ottimo", "Optimal cost")}: <b>${euro(R.costo)}</b>`, [
-        SOL.tab(T("Potenza \\(\\tilde x_{vt}\\) (kW): furgone \\(v\\) per riga, ora \\(t\\) per colonna, solo nelle ore in cui è collegato", "Power \\(\\tilde x_{vt}\\) (kW): van \\(v\\) by row, hour \\(t\\) by column, only in the hours when it is plugged in"),
+        SOL.tab(T("Potenza \\(\\tilde x_{vt}\\) (kW): furgone \\(v\\) per riga, ora \\(t\\) per colonna, solo nelle ore in cui è collegato; in fondo il prelievo totale \\(b_t + \\sum_v \\tilde x_{vt}\\)", "Power \\(\\tilde x_{vt}\\) (kW): van \\(v\\) by row, hour \\(t\\) by column, only in the hours when it is plugged in; at the bottom the total draw \\(b_t + \\sum_v \\tilde x_{vt}\\)"),
           [tx("v \\backslash t"), ...ore.map(String), T("kWh prelevati", "kWh drawn")], righe),
       ], T("«—»: valore nullo; casella vuota: furgone non collegato.", "«—»: zero value; empty cell: van not plugged in."));
     },
-    domanda: T("Abbassa \\(k\\) a 90 kW: in quali ore il limite diventa saturo e quanto sale il costo? Porta i prezzi serali sotto 0,1 €/kWh: da quando i furgoni caricano anche la sera? Perché il prezzo ombra dell'energia di un furgone è il prezzo della sua ora più cara usata, diviso per \\(r\\)?",
-      "Lower \\(k\\) to 90 kW: in which hours does the limit become binding and how much does the cost grow? Bring the evening prices below 0.1 €/kWh: from when do the vans also charge in the evening? Why is the shadow price of a van's energy the price of its most expensive hour used, divided by \\(r\\)?"),
+    domanda: T("Con \\(k = 30\\) kW le ore 3 e 4 sono sature e un kW in più vale 2 c€ in ciascuna: quale furgone sposta la ricarica, e in quale ora? Alza \\(k\\): da 36 kW nessuna ora è più satura e il costo scende a 7,92 €. Abbassalo: a 29 kW si satura anche l'ora 5, a 23 kW il problema è inammissibile: perché? Perché il prezzo ombra dell'energia del furgone 2 vale \\(0{,}15/r\\)? Porta i prezzi delle ore 1 e 2 a × 0,8: che cosa cambia nel piano del furgone 1? Alzali fino a × 2: il piano non cambia, ma il costo e il prezzo ombra del furgone 2 crescono: perché? Infine aumenta l'energia: oltre × 1,45 il piano non esiste più.",
+      "With \\(k = 30\\) kW hours 3 and 4 are binding and one more kW is worth 2 c€ in each: which van moves its charging, and to which hour? Raise \\(k\\): from 36 kW no hour is binding any more and the cost drops to 7.92 €. Lower it: at 29 kW hour 5 becomes binding too, at 23 kW the problem is infeasible: why? Why is the shadow price of the energy of van 2 equal to \\(0.15/r\\)? Set the prices of hours 1 and 2 to × 0.8: what changes in the plan of van 1? Raise them up to × 2: the plan does not change, but the cost and the shadow price of van 2 grow: why? Finally raise the energy: beyond × 1.45 there is no plan any more."),
   };
 
   // ================================================================ newsvendor (cap. 7)

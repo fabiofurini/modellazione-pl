@@ -47,7 +47,7 @@ e delle dispense. Scegli un'app: si apre a tutta pagina.
 
     ---
 
-    Sei furgoni da ricaricare di notte: la ricarica insegue le ore economiche finché il limite del contatore lo permette. Cambia il limite e il fabbisogno e guarda profilo, costo e prezzi ombra.
+    Tre furgoni da ricaricare nelle sei ore dalle 0 alle 6: la ricarica insegue le ore economiche finché il limite del contatore lo permette. Cambia il limite, il fabbisogno e i prezzi e guarda profilo, costo e prezzi ombra.
 
     [Apri l'app →](ricarica-ev.md)
 

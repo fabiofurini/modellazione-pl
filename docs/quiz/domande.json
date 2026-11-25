@@ -911,24 +911,24 @@
    },
    "corretta": 1,
    "it": {
-    "testo": "LP di ricarica EV: potenza $x_{vt}$ al veicolo $v$ nell'ora $t$ (1 h), prezzo dell'energia $c_t$, dato di disponibilità $a_{vt} \\in \\{0,1\\}$, potenza del caricatore $\\bar p_v$, energia richiesta $e_v$, rendimento $r$, carico di base $b_t$, limite del contatore $k$; si minimizza $\\sum_{v,t}c_tx_{vt}$. Nel caso di studio il prezzo ombra del vincolo di energia di un veicolo è $0{,}0947 = 0{,}09/r$ €/kWh. Che cosa rappresenta?",
+    "testo": "LP di ricarica EV: potenza $x_{vt}$ al veicolo $v$ nell'ora $t$ (1 h), prezzo dell'energia $c_t$, dato di disponibilità $a_{vt} \\in \\{0,1\\}$, potenza del caricatore $\\bar p_v$, energia richiesta $e_v$, rendimento $r$, carico di base $b_t$, limite del contatore $k$; si minimizza $\\sum_{v,t}c_tx_{vt}$. Nel caso di studio il prezzo ombra del vincolo di energia del furgone 1 è $0{,}1444 = 0{,}13/r$ €/kWh. Che cosa rappresenta?",
     "opzioni": [
      "Il prezzo medio dell'energia nella notte",
      "Il prezzo dell'ora marginale del veicolo, diviso per $r$",
-     "Il prezzo dell'energia nel picco serale",
+     "Il prezzo dell'energia nelle prime ore, le più care",
      "Il costo orario della capacità del contatore $k$"
     ],
-    "spiegazione": "Il kWh marginale si compra nell'ora più economica ancora libera nella finestra del veicolo; un kWh in più nella batteria richiede $1/r$ kWh dalla rete al prezzo di quell'ora."
+    "spiegazione": "Il kWh marginale si compra nell'ora più cara che il veicolo usa sotto la potenza del caricatore (per il furgone 1 l'ora 6, a $0{,}13$ €/kWh); un kWh in più nella batteria richiede $1/r$ kWh dalla rete al prezzo di quell'ora."
    },
    "en": {
-    "testo": "EV charging LP: power $x_{vt}$ to vehicle $v$ in hour $t$ (1 h), energy price $c_t$, availability datum $a_{vt} \\in \\{0,1\\}$, charger power $\\bar p_v$, required energy $e_v$, efficiency $r$, base load $b_t$, meter limit $k$; minimize $\\sum_{v,t}c_tx_{vt}$. In the case study the shadow price of the energy constraint of one vehicle is $0.0947 = 0.09/r$ €/kWh. What does it represent?",
+    "testo": "EV charging LP: power $x_{vt}$ to vehicle $v$ in hour $t$ (1 h), energy price $c_t$, availability datum $a_{vt} \\in \\{0,1\\}$, charger power $\\bar p_v$, required energy $e_v$, efficiency $r$, base load $b_t$, meter limit $k$; minimize $\\sum_{v,t}c_tx_{vt}$. In the case study the shadow price of the energy constraint of van 1 is $0.1444 = 0.13/r$ €/kWh. What does it represent?",
     "opzioni": [
      "The average energy price of the night",
      "The price of the vehicle's marginal hour, divided by $r$",
-     "The energy price of the evening peak",
+     "The energy price of the first, most expensive hours",
      "The hourly cost of the meter capacity $k$"
     ],
-    "spiegazione": "The marginal kWh is bought in the cheapest hour still free in the vehicle's window; one more kWh in the battery needs $1/r$ kWh from the grid at that hour's price."
+    "spiegazione": "The marginal kWh is bought in the most expensive hour the vehicle uses below the power of its charger (for van 1 hour 6, at $0.13$ €/kWh); one more kWh in the battery needs $1/r$ kWh from the grid at that hour's price."
    }
   },
   {
@@ -971,24 +971,24 @@
    },
    "corretta": 0,
    "it": {
-    "testo": "LP di ricarica EV: potenza $x_{vt}$ al veicolo $v$ nell'ora $t$ (1 h), prezzo dell'energia $c_t$, dato di disponibilità $a_{vt} \\in \\{0,1\\}$, potenza del caricatore $\\bar p_v$, energia richiesta $e_v$, rendimento $r$, carico di base $b_t$, limite del contatore $k$; si minimizza $\\sum_{v,t}c_tx_{vt}$. Il peak shaving minimizza il prelievo di picco $z$. Nel caso di studio il minimax puro (picco 68 kW) spende $27{,}79$ €, mentre minimizzare costo $+\\,0{,}2\\,z$ raggiunge lo stesso picco con $22{,}15$ €. Qual è la lezione?",
+    "testo": "LP di ricarica EV: potenza $x_{vt}$ al veicolo $v$ nell'ora $t$ (1 h), prezzo dell'energia $c_t$, dato di disponibilità $a_{vt} \\in \\{0,1\\}$, potenza del caricatore $\\bar p_v$, energia richiesta $e_v$, rendimento $r$, carico di base $b_t$, limite del contatore $k$; si minimizza $\\sum_{v,t}c_tx_{vt}$. Il peak shaving minimizza il prelievo di picco $z$. Nel caso di studio il picco minimo è $23{,}7$ kW, e ogni piano con questo picco costa $9{,}47$ €. Perché il costo è lo stesso per tutti?",
     "opzioni": [
-     "Con due obiettivi, ottimizzarne uno solo spreca l'altro",
-     "Il minimax puro è sempre la scelta migliore per il contatore",
-     "Il peak shaving non conviene mai al gestore",
-     "Il costo dell'energia non dipende dal picco"
+     "Il prelievo è piatto e il costo dipende solo dal prelievo orario",
+     "Il minimax puro sceglie sempre il piano più economico",
+     "I prezzi dell'energia sono uguali in tutte le sei ore",
+     "Al picco minimo il contatore non vincola più la ricarica"
     ],
-    "spiegazione": "Il minimax puro è degenere rispetto al costo: fra le soluzioni con picco minimo ne restituisce una qualsiasi. L'obiettivo pesato sceglie la più economica."
+    "spiegazione": "Al picco minimo ogni ora preleva $142/6 \\approx 23{,}7$ kW (62 kWh di base e 80 per i furgoni divisi per le 6 ore), e il costo $\\sum_t c_t(\\text{prelievo}_t - b_t)$ è allora determinato. In generale il minimax puro restituisce una qualsiasi fra le soluzioni con picco minimo: l'obiettivo pesato costo $+\\,w\\,z$ sceglie la più economica."
    },
    "en": {
-    "testo": "EV charging LP: power $x_{vt}$ to vehicle $v$ in hour $t$ (1 h), energy price $c_t$, availability datum $a_{vt} \\in \\{0,1\\}$, charger power $\\bar p_v$, required energy $e_v$, efficiency $r$, base load $b_t$, meter limit $k$; minimize $\\sum_{v,t}c_tx_{vt}$. Peak shaving minimizes the peak draw $z$. In the case study the pure minimax (peak 68 kW) spends $27.79$ €, while minimizing cost $+\\,0.2\\,z$ reaches the same peak for $22.15$ €. What is the lesson?",
+    "testo": "EV charging LP: power $x_{vt}$ to vehicle $v$ in hour $t$ (1 h), energy price $c_t$, availability datum $a_{vt} \\in \\{0,1\\}$, charger power $\\bar p_v$, required energy $e_v$, efficiency $r$, base load $b_t$, meter limit $k$; minimize $\\sum_{v,t}c_tx_{vt}$. Peak shaving minimizes the peak draw $z$. In the case study the minimum peak is $23.7$ kW, and every plan with this peak costs $9.47$ €. Why is the cost the same for all of them?",
     "opzioni": [
-     "With two objectives, optimizing one alone wastes the other",
-     "The pure minimax is always the best choice for the meter",
-     "Peak shaving is never convenient for the operator",
-     "The energy cost does not depend on the peak"
+     "The draw is flat and the cost depends only on the hourly draw",
+     "The pure minimax always picks the cheapest plan",
+     "The energy prices are the same in all six hours",
+     "At the minimum peak the meter no longer limits charging"
     ],
-    "spiegazione": "The pure minimax is degenerate in the cost: among the solutions with minimum peak it returns an arbitrary one. The weighted objective picks the cheapest."
+    "spiegazione": "At the minimum peak every hour draws $142/6 \\approx 23.7$ kW (62 kWh of base load and 80 for the vans divided by the 6 hours), so the cost $\\sum_t c_t(\\text{draw}_t - b_t)$ is fixed. In general the pure minimax returns any of the solutions with minimum peak: the weighted objective cost $+\\,w\\,z$ picks the cheapest."
    }
   },
   {
@@ -3041,24 +3041,24 @@
    },
    "corretta": 0,
    "it": {
-    "testo": "LP di ricarica EV: potenza $x_{vt}$ al veicolo $v$ nell'ora $t$ (1 h), prezzo dell'energia $c_t$, dato di disponibilità $a_{vt} \\in \\{0,1\\}$, potenza del caricatore $\\bar p_v$, energia richiesta $e_v$, rendimento $r$, carico di base $b_t$, limite del contatore $k$; si minimizza $\\sum_{v,t}c_tx_{vt}$. Nel caso di studio ($r = 0{,}95$) i prezzi ombra dei vincoli di energia valgono $0{,}0842$ €/kWh per i furgoni V2, V3, V6 e $0{,}0947$ per V1, V4, V5. Perché sono diversi?",
+    "testo": "LP di ricarica EV: potenza $x_{vt}$ al veicolo $v$ nell'ora $t$ (1 h), prezzo dell'energia $c_t$, dato di disponibilità $a_{vt} \\in \\{0,1\\}$, potenza del caricatore $\\bar p_v$, energia richiesta $e_v$, rendimento $r$, carico di base $b_t$, limite del contatore $k$; si minimizza $\\sum_{v,t}c_tx_{vt}$. Nel caso di studio ($r = 0{,}9$) i prezzi ombra dei vincoli di energia valgono $0{,}1444$, $0{,}1667$ e $0{,}1000$ €/kWh per i furgoni 1, 2 e 3. Perché sono diversi?",
     "opzioni": [
-     "Le finestre sono diverse: l'ora libera più economica costa $0{,}08$ per alcuni, $0{,}09$ per altri",
-     "Perché i furgoni hanno batterie $e_v$ diverse",
-     "Perché il contatore è saturo solo per V1, V4, V5",
-     "Perché $r$ è diverso fra i due gruppi"
+     "Le ore marginali sono diverse: costano $0{,}13$, $0{,}15$ e $0{,}09$",
+     "Perché i furgoni richiedono energie $e_v$ diverse",
+     "Perché il contatore è saturo solo per il furgone 2",
+     "Perché il rendimento $r$ è diverso per ogni furgone"
     ],
-    "spiegazione": "$0{,}0842 = 0{,}08/r$ e $0{,}0947 = 0{,}09/r$: i furgoni la cui finestra copre le ore a $0{,}08$ comprano lì il kWh marginale; gli altri arrivano tardi o partono presto."
+    "spiegazione": "$0{,}1444 = 0{,}13/r$, $0{,}1667 = 0{,}15/r$ e $0{,}1000 = 0{,}09/r$: il furgone 1 completa la ricarica nell'ora 6, il furgone 2 (che parte alle 3) nell'ora 2, il furgone 3 (che rientra alle 3) nell'ora 5."
    },
    "en": {
-    "testo": "EV charging LP: power $x_{vt}$ to vehicle $v$ in hour $t$ (1 h), energy price $c_t$, availability datum $a_{vt} \\in \\{0,1\\}$, charger power $\\bar p_v$, required energy $e_v$, efficiency $r$, base load $b_t$, meter limit $k$; minimize $\\sum_{v,t}c_tx_{vt}$. In the case study ($r = 0.95$) the shadow prices of the energy constraints are $0.0842$ €/kWh for vans V2, V3, V6 and $0.0947$ for V1, V4, V5. Why do they differ?",
+    "testo": "EV charging LP: power $x_{vt}$ to vehicle $v$ in hour $t$ (1 h), energy price $c_t$, availability datum $a_{vt} \\in \\{0,1\\}$, charger power $\\bar p_v$, required energy $e_v$, efficiency $r$, base load $b_t$, meter limit $k$; minimize $\\sum_{v,t}c_tx_{vt}$. In the case study ($r = 0.9$) the shadow prices of the energy constraints are $0.1444$, $0.1667$ and $0.1000$ €/kWh for vans 1, 2 and 3. Why do they differ?",
     "opzioni": [
-     "Their windows differ: the cheapest free hour costs $0.08$ for some, $0.09$ for others",
-     "Because the vans have different batteries $e_v$",
-     "Because the meter is saturated only for V1, V4, V5",
-     "Because $r$ differs between the two groups"
+     "Their marginal hours differ: they cost $0.13$, $0.15$ and $0.09$",
+     "Because the vans require different energies $e_v$",
+     "Because the meter is binding only for van 2",
+     "Because the efficiency $r$ differs from van to van"
     ],
-    "spiegazione": "$0.0842 = 0.08/r$ and $0.0947 = 0.09/r$: vans whose windows cover the hours at $0.08$ buy their marginal kWh there; the others arrive late or leave early."
+    "spiegazione": "$0.1444 = 0.13/r$, $0.1667 = 0.15/r$ and $0.1000 = 0.09/r$: van 1 completes its charge in hour 6, van 2 (which leaves at 3 am) in hour 2, van 3 (back at 3 am) in hour 5."
    }
   },
   {
@@ -3071,24 +3071,24 @@
    },
    "corretta": 1,
    "it": {
-    "testo": "LP di ricarica EV: potenza $x_{vt}$ al veicolo $v$ nell'ora $t$ (1 h), prezzo dell'energia $c_t$, dato di disponibilità $a_{vt} \\in \\{0,1\\}$, potenza del caricatore $\\bar p_v$, energia richiesta $e_v$, rendimento $r$, carico di base $b_t$, limite del contatore $k$; si minimizza $\\sum_{v,t}c_tx_{vt}$. Nel caso di studio il costo notturno è $20{,}36$ € con limite del contatore $k = 120$ kW, $21{,}09$ € con $k = 80$, e il modello è inammissibile con $k = 60$ o $65$ kW. Perché inammissibile?",
+    "testo": "LP di ricarica EV: potenza $x_{vt}$ al veicolo $v$ nell'ora $t$ (1 h), prezzo dell'energia $c_t$, dato di disponibilità $a_{vt} \\in \\{0,1\\}$, potenza del caricatore $\\bar p_v$, energia richiesta $e_v$, rendimento $r$, carico di base $b_t$, limite del contatore $k$; si minimizza $\\sum_{v,t}c_tx_{vt}$. Nel caso di studio il costo notturno è $8{,}06$ € con limite del contatore $k = 30$ kW, $9{,}32$ € con $k = 24$, e il modello è inammissibile con $k = 23$ kW. Perché inammissibile?",
     "opzioni": [
      "Perché i prezzi dell'energia diventano negativi",
-     "Perché i veicoli non possono ricevere la loro energia nelle loro finestre",
-     "Perché il solver richiede $k \\ge 70$",
+     "L'energia richiesta non entra sotto il limite",
+     "Perché il solver richiede $k \\ge 24$",
      "Perché la variabile di peak shaving diventa negativa"
     ],
-    "spiegazione": "Un limite troppo basso lascia troppa poca potenza nelle ore in cui i furgoni sono collegati: i requisiti di energia non si possono soddisfare tutti."
+    "spiegazione": "Nelle 6 ore vanno prelevati 142 kWh (62 di base e 80 per i furgoni): sotto la media $142/6 \\approx 23{,}7$ kW il contatore lascia troppa poca potenza e i requisiti di energia non si possono soddisfare tutti."
    },
    "en": {
-    "testo": "EV charging LP: power $x_{vt}$ to vehicle $v$ in hour $t$ (1 h), energy price $c_t$, availability datum $a_{vt} \\in \\{0,1\\}$, charger power $\\bar p_v$, required energy $e_v$, efficiency $r$, base load $b_t$, meter limit $k$; minimize $\\sum_{v,t}c_tx_{vt}$. In the case study the nightly cost is $20.36$ € with meter limit $k = 120$ kW, $21.09$ € with $k = 80$, and the model is infeasible with $k = 60$ or $65$ kW. Why infeasible?",
+    "testo": "EV charging LP: power $x_{vt}$ to vehicle $v$ in hour $t$ (1 h), energy price $c_t$, availability datum $a_{vt} \\in \\{0,1\\}$, charger power $\\bar p_v$, required energy $e_v$, efficiency $r$, base load $b_t$, meter limit $k$; minimize $\\sum_{v,t}c_tx_{vt}$. In the case study the nightly cost is $8.06$ € with meter limit $k = 30$ kW, $9.32$ € with $k = 24$, and the model is infeasible with $k = 23$ kW. Why infeasible?",
     "opzioni": [
      "Because the energy prices become negative",
-     "Because the vehicles cannot get their energy within their windows",
-     "Because the solver needs $k \\ge 70$",
+     "The required energy does not fit under the limit",
+     "Because the solver needs $k \\ge 24$",
      "Because the peak-shaving variable becomes negative"
     ],
-    "spiegazione": "Too low a meter limit leaves too little power in the hours when the vans are plugged in: the energy requirements cannot all be met."
+    "spiegazione": "In the 6 hours 142 kWh must be drawn (62 of base load and 80 for the vans): below the average $142/6 \\approx 23.7$ kW the meter leaves too little power and the energy requirements cannot all be met."
    }
   },
   {
@@ -3101,24 +3101,24 @@
    },
    "corretta": 3,
    "it": {
-    "testo": "LP di ricarica EV: potenza $x_{vt}$ al veicolo $v$ nell'ora $t$ (1 h), prezzo dell'energia $c_t$, dato di disponibilità $a_{vt} \\in \\{0,1\\}$, potenza del caricatore $\\bar p_v$, energia richiesta $e_v$, rendimento $r$, carico di base $b_t$, limite del contatore $k$; si minimizza $\\sum_{v,t}c_tx_{vt}$. Minimizzando costo $+\\,w z$ ($z$ = prelievo di picco) per $w$ crescente, il caso di studio trova: $w = 0$: costo $20{,}36$ €, picco $103{,}4$ kW; $w = 0{,}1$: $21{,}39$ €, $74{,}9$ kW; $w = 0{,}2$: $22{,}15$ €, $68{,}0$ kW. Che cosa mostra?",
+    "testo": "LP di ricarica EV: potenza $x_{vt}$ al veicolo $v$ nell'ora $t$ (1 h), prezzo dell'energia $c_t$, dato di disponibilità $a_{vt} \\in \\{0,1\\}$, potenza del caricatore $\\bar p_v$, energia richiesta $e_v$, rendimento $r$, carico di base $b_t$, limite del contatore $k$; si minimizza $\\sum_{v,t}c_tx_{vt}$. Minimizzando costo $+\\,w z$ ($z$ = prelievo di picco) per $w$ crescente, il caso di studio trova: $w = 0$: costo $8{,}06$ €, picco $30{,}0$ kW; $w = 0{,}2$: $8{,}60$ €, $25{,}6$ kW; $w = 0{,}5$: $9{,}47$ €, $23{,}7$ kW. Che cosa mostra?",
     "opzioni": [
      "Ridurre il picco è molto costoso",
      "Picco e costo non interagiscono",
      "Il minimo costo puro ha già il picco minimo",
-     "Grandi tagli del picco costano poco: $-28\\%$ per circa un euro"
+     "Il picco cala del $15\\%$ per 54 centesimi"
     ],
-    "spiegazione": "La frontiera dei compromessi è ripida all'inizio: tagliare il picco da 103 a 75 kW costa circa un euro a notte, arrivare a 68 kW meno di due."
+    "spiegazione": "La frontiera dei compromessi è ripida all'inizio: tagliare il picco da 30 a 29 kW costa 4 centesimi a notte, da 30 a $25{,}6$ kW 54 centesimi; il picco minimo, $23{,}7$ kW, costa $1{,}41$ € in più."
    },
    "en": {
-    "testo": "EV charging LP: power $x_{vt}$ to vehicle $v$ in hour $t$ (1 h), energy price $c_t$, availability datum $a_{vt} \\in \\{0,1\\}$, charger power $\\bar p_v$, required energy $e_v$, efficiency $r$, base load $b_t$, meter limit $k$; minimize $\\sum_{v,t}c_tx_{vt}$. Minimizing cost $+\\,w z$ ($z$ = peak draw) for growing $w$, the case study finds: $w = 0$: cost $20.36$ €, peak $103.4$ kW; $w = 0.1$: $21.39$ €, $74.9$ kW; $w = 0.2$: $22.15$ €, $68.0$ kW. What does this show?",
+    "testo": "EV charging LP: power $x_{vt}$ to vehicle $v$ in hour $t$ (1 h), energy price $c_t$, availability datum $a_{vt} \\in \\{0,1\\}$, charger power $\\bar p_v$, required energy $e_v$, efficiency $r$, base load $b_t$, meter limit $k$; minimize $\\sum_{v,t}c_tx_{vt}$. Minimizing cost $+\\,w z$ ($z$ = peak draw) for growing $w$, the case study finds: $w = 0$: cost $8.06$ €, peak $30.0$ kW; $w = 0.2$: $8.60$ €, $25.6$ kW; $w = 0.5$: $9.47$ €, $23.7$ kW. What does this show?",
     "opzioni": [
      "Cutting the peak is very expensive",
      "Peak and cost do not interact",
      "The pure cost minimum already has the minimum peak",
-     "Large peak cuts cost little: $-28\\%$ for about one euro"
+     "The peak drops by $15\\%$ for 54 cents"
     ],
-    "spiegazione": "The trade-off frontier is steep at first: cutting the peak from 103 to 75 kW costs about one euro per night, getting to 68 kW less than two."
+    "spiegazione": "The trade-off frontier is steep at first: cutting the peak from 30 to 29 kW costs 4 cents per night, from 30 to $25.6$ kW 54 cents; the minimum peak, $23.7$ kW, costs $1.41$ € more."
    }
   },
   {
@@ -7421,24 +7421,24 @@
    },
    "corretta": 3,
    "it": {
-    "testo": "LP di ricarica EV: potenza $x_{vt}$ al veicolo $v$ nell'ora $t$ (1 h), prezzo dell'energia $c_t$, disponibilità $a_{vt} \\in \\{0, 1\\}$, potenza del caricatore $\\bar p_v$, energia richiesta $e_v$, rendimento $r$, carico di base $b_t$, limite del contatore $k$; si minimizza $\\sum_{v,t}c_tx_{vt}$ con $r\\sum_tx_{vt} \\ge e_v$, $x_{vt} \\le \\bar p_va_{vt}$, $\\sum_vx_{vt} + b_t \\le k$. Caso di studio: sei furgoni con finestre notturne diverse, prezzi orari stilizzati con picco serale, carico di base dell'edificio, contatore $k = 120$ kW, $r = 0{,}95$. Perché il vincolo di energia si scrive $r\\sum_tx_{vt} \\ge e_v$?",
+    "testo": "LP di ricarica EV: potenza $x_{vt}$ al veicolo $v$ nell'ora $t$ (1 h), prezzo dell'energia $c_t$, disponibilità $a_{vt} \\in \\{0, 1\\}$, potenza del caricatore $\\bar p_v$, energia richiesta $e_v$, rendimento $r$, carico di base $b_t$, limite del contatore $k$; si minimizza $\\sum_{v,t}c_tx_{vt}$ con $r\\sum_tx_{vt} \\ge e_v$, $x_{vt} \\le \\bar p_va_{vt}$, $\\sum_vx_{vt} + b_t \\le k$. Caso di studio: tre furgoni con finestre diverse nelle sei ore dalle 0 alle 6, prezzi orari alti nelle prime ore, carico di base dell'edificio, contatore $k = 30$ kW, $r = 0{,}9$. Perché il vincolo di energia si scrive $r\\sum_tx_{vt} \\ge e_v$?",
     "opzioni": [
      "Perché $r$ converte i kWh in euro",
      "Perché il contatore assorbe $r$ della potenza",
      "Perché il prezzo comprende le tasse",
      "Solo una quota $r$ arriva in batteria"
     ],
-    "spiegazione": "Con $r = 0{,}95$ un veicolo deve prelevare $e_v/0{,}95$ kWh dalla rete; per questo il suo duale è il prezzo dell'ora diviso per $r$."
+    "spiegazione": "Con $r = 0{,}9$ un veicolo deve prelevare $e_v/0{,}9$ kWh dalla rete (40 kWh per i 36 del furgone 1); per questo il suo duale è il prezzo dell'ora diviso per $r$."
    },
    "en": {
-    "testo": "EV charging LP: power $x_{vt}$ to vehicle $v$ in hour $t$ (1 h), energy price $c_t$, availability $a_{vt} \\in \\{0, 1\\}$, charger power $\\bar p_v$, required energy $e_v$, efficiency $r$, base load $b_t$, meter limit $k$; minimize $\\sum_{v,t}c_tx_{vt}$ with $r\\sum_tx_{vt} \\ge e_v$, $x_{vt} \\le \\bar p_va_{vt}$, $\\sum_vx_{vt} + b_t \\le k$. Case study: six vans with different night windows, stylized hourly prices with an evening peak, base load of the building, meter $k = 120$ kW, $r = 0.95$. Why does the energy constraint read $r\\sum_tx_{vt} \\ge e_v$?",
+    "testo": "EV charging LP: power $x_{vt}$ to vehicle $v$ in hour $t$ (1 h), energy price $c_t$, availability $a_{vt} \\in \\{0, 1\\}$, charger power $\\bar p_v$, required energy $e_v$, efficiency $r$, base load $b_t$, meter limit $k$; minimize $\\sum_{v,t}c_tx_{vt}$ with $r\\sum_tx_{vt} \\ge e_v$, $x_{vt} \\le \\bar p_va_{vt}$, $\\sum_vx_{vt} + b_t \\le k$. Case study: three vans with different windows in the six hours from midnight to 6 am, hourly prices high in the first hours, base load of the building, meter $k = 30$ kW, $r = 0.9$. Why does the energy constraint read $r\\sum_tx_{vt} \\ge e_v$?",
     "opzioni": [
      "Because $r$ converts kWh into euros",
      "Because the meter takes $r$ of the power",
      "Because the price includes taxes",
      "Only a share $r$ reaches the battery"
     ],
-    "spiegazione": "With $r = 0.95$ a vehicle must draw $e_v/0.95$ kWh from the grid; that is why its dual is the hour price divided by $r$."
+    "spiegazione": "With $r = 0.9$ a vehicle must draw $e_v/0.9$ kWh from the grid (40 kWh for the 36 of van 1); that is why its dual is the hour price divided by $r$."
    }
   },
   {
@@ -7511,24 +7511,24 @@
    },
    "corretta": 1,
    "it": {
-    "testo": "LP di ricarica EV: potenza $x_{vt}$ al veicolo $v$ nell'ora $t$ (1 h), prezzo dell'energia $c_t$, disponibilità $a_{vt} \\in \\{0, 1\\}$, potenza del caricatore $\\bar p_v$, energia richiesta $e_v$, rendimento $r$, carico di base $b_t$, limite del contatore $k$; si minimizza $\\sum_{v,t}c_tx_{vt}$ con $r\\sum_tx_{vt} \\ge e_v$, $x_{vt} \\le \\bar p_va_{vt}$, $\\sum_vx_{vt} + b_t \\le k$. Risultati del caso: costo minimo $20{,}36$ €/notte con picco di prelievo $103{,}4$ kW (limite 120); il picco più basso possibile è $68{,}0$ kW. Che cosa fa il piano di costo minimo?",
+    "testo": "LP di ricarica EV: potenza $x_{vt}$ al veicolo $v$ nell'ora $t$ (1 h), prezzo dell'energia $c_t$, disponibilità $a_{vt} \\in \\{0, 1\\}$, potenza del caricatore $\\bar p_v$, energia richiesta $e_v$, rendimento $r$, carico di base $b_t$, limite del contatore $k$; si minimizza $\\sum_{v,t}c_tx_{vt}$ con $r\\sum_tx_{vt} \\ge e_v$, $x_{vt} \\le \\bar p_va_{vt}$, $\\sum_vx_{vt} + b_t \\le k$. Risultati del caso: costo minimo $8{,}06$ €/notte con picco di prelievo $30{,}0$ kW (limite 30, raggiunto nelle ore 3 e 4); il picco più basso possibile è $23{,}7$ kW. Che cosa fa il piano di costo minimo?",
     "opzioni": [
      "Distribuisce la ricarica in modo uniforme nella notte",
      "Carica nelle ore economiche",
-     "Carica solo durante il picco serale",
-     "Tiene il prelievo a 68 kW"
+     "Carica soprattutto nelle prime ore, le più care",
+     "Tiene il prelievo a 23,7 kW"
     ],
-    "spiegazione": "Minimizzare solo il costo dell'energia spinge ogni veicolo nelle ore economiche, quindi il prelievo totale arriva a 103 kW; il peak shaving lo distribuisce e resta a 68 kW."
+    "spiegazione": "Minimizzare solo il costo dell'energia spinge ogni veicolo nelle ore economiche, fino al limite del contatore nelle ore 3 e 4; il peak shaving distribuisce la ricarica e tiene il prelievo piatto a $23{,}7$ kW."
    },
    "en": {
-    "testo": "EV charging LP: power $x_{vt}$ to vehicle $v$ in hour $t$ (1 h), energy price $c_t$, availability $a_{vt} \\in \\{0, 1\\}$, charger power $\\bar p_v$, required energy $e_v$, efficiency $r$, base load $b_t$, meter limit $k$; minimize $\\sum_{v,t}c_tx_{vt}$ with $r\\sum_tx_{vt} \\ge e_v$, $x_{vt} \\le \\bar p_va_{vt}$, $\\sum_vx_{vt} + b_t \\le k$. Case results: minimum cost $20.36$ €/night with a peak draw of $103.4$ kW (limit 120); the smallest possible peak is $68.0$ kW. What does the cost-minimizing plan do?",
+    "testo": "EV charging LP: power $x_{vt}$ to vehicle $v$ in hour $t$ (1 h), energy price $c_t$, availability $a_{vt} \\in \\{0, 1\\}$, charger power $\\bar p_v$, required energy $e_v$, efficiency $r$, base load $b_t$, meter limit $k$; minimize $\\sum_{v,t}c_tx_{vt}$ with $r\\sum_tx_{vt} \\ge e_v$, $x_{vt} \\le \\bar p_va_{vt}$, $\\sum_vx_{vt} + b_t \\le k$. Case results: minimum cost $8.06$ €/night with a peak draw of $30.0$ kW (limit 30, reached in hours 3 and 4); the smallest possible peak is $23.7$ kW. What does the cost-minimizing plan do?",
     "opzioni": [
      "It spreads the charging evenly over the night",
      "It charges in the cheap hours",
-     "It charges only during the evening peak",
-     "It keeps the draw at 68 kW"
+     "It charges mostly in the first, most expensive hours",
+     "It keeps the draw at 23.7 kW"
     ],
-    "spiegazione": "Minimizing only the energy cost pushes every vehicle into the cheap hours, so the total draw peaks at 103 kW; peak shaving spreads it and stays at 68 kW."
+    "spiegazione": "Minimizing only the energy cost pushes every vehicle into the cheap hours, up to the meter limit in hours 3 and 4; peak shaving spreads the charging and keeps the draw flat at $23.7$ kW."
    }
   },
   {
@@ -8471,24 +8471,24 @@
    },
    "corretta": 0,
    "it": {
-    "testo": "LP di ricarica EV (si minimizza il costo dell'energia, limite del contatore $\\sum_vx_{vt} + b_t \\le k$): costo notturno $21{,}93$ € con $k = 70$ kW, $21{,}09$ con $80$, $20{,}63$ con $90$, $20{,}36$ con $120$; inammissibile a $60$–$65$. Perché i risparmi per kW in più si riducono al crescere di $k$?",
+    "testo": "LP di ricarica EV (si minimizza il costo dell'energia, limite del contatore $\\sum_vx_{vt} + b_t \\le k$): costo notturno $9{,}32$ € con $k = 24$ kW, $8{,}52$ con $26$, $8{,}22$ con $28$, $8{,}06$ con $30$, $7{,}98$ con $32$, $7{,}92$ con $35$; inammissibile a $23$. Perché i risparmi per kW in più si riducono al crescere di $k$?",
     "opzioni": [
      "Il valore di un LP è convesso nel RHS",
      "I prezzi dell'energia scendono di notte",
      "Le batterie si riempiono con $k$ alto",
      "È rumore numerico"
     ],
-    "spiegazione": "Per un minimo $\\tilde z(k)$ è convessa e, per un vincolo $\\le$, non crescente: la sua pendenza (il prezzo ombra del contatore) sale verso zero al crescere di $k$, finché il contatore smette di vincolare."
+    "spiegazione": "Per un minimo $\\tilde z(k)$ è convessa e, per un vincolo $\\le$, non crescente: la sua pendenza (il prezzo ombra del contatore) sale verso zero al crescere di $k$; da 36 kW il contatore smette di vincolare."
    },
    "en": {
-    "testo": "EV charging LP (minimize energy cost, meter limit $\\sum_vx_{vt} + b_t \\le k$): night cost $21.93$ € at $k = 70$ kW, $21.09$ at $80$, $20.63$ at $90$, $20.36$ at $120$; infeasible at $60$–$65$. Why do the savings per extra kW shrink as $k$ grows?",
+    "testo": "EV charging LP (minimize energy cost, meter limit $\\sum_vx_{vt} + b_t \\le k$): night cost $9.32$ € at $k = 24$ kW, $8.52$ at $26$, $8.22$ at $28$, $8.06$ at $30$, $7.98$ at $32$, $7.92$ at $35$; infeasible at $23$. Why do the savings per extra kW shrink as $k$ grows?",
     "opzioni": [
      "An LP's value is convex in a RHS",
      "Energy prices fall during the night",
      "The batteries get full at high $k$",
      "It is numerical noise"
     ],
-    "spiegazione": "For a minimum, $\\tilde z(k)$ is convex and, for a $\\le$ constraint, non-increasing: its slope (the shadow price of the meter) rises toward zero as $k$ grows and the meter stops binding."
+    "spiegazione": "For a minimum, $\\tilde z(k)$ is convex and, for a $\\le$ constraint, non-increasing: its slope (the shadow price of the meter) rises toward zero as $k$ grows; from 36 kW on the meter stops binding."
    }
   },
   {

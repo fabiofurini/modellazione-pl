@@ -100,23 +100,51 @@ ammesso ma mai conveniente (il prezzo è positivo): all'ottimo vale con uguaglia
 
 ## Caso di studio
 
-Sei furgoni con finestre notturne diverse, contatore $k = 120$ kW, $r = 0{,}95$.
+Tre furgoni ($n = 3$) nelle sei ore dalle 0 alle 6 ($m = 6$, $d = 1$ h, l'ora $t$ va
+dalle $t-1$ alle $t$), contatore $k = 30$ kW, rendimento $r = 0{,}9$ (dati in
+`dati/ev_prezzi_base.csv` e `dati/ev_flotta.csv`). Le variabili sono 18, ma 6 valgono
+0 perché il furgone non è collegato ($a_{vt} = 0$): restano 12 variabili, 3 vincoli
+di energia e 6 vincoli di rete.
+
+| ora $t$ | 1 | 2 | 3 | 4 | 5 | 6 |
+|---|---|---|---|---|---|---|
+| dalle–alle | 0–1 | 1–2 | 2–3 | 3–4 | 4–5 | 5–6 |
+| $c_t$ (€/kWh) | 0,20 | 0,15 | 0,11 | 0,07 | 0,09 | 0,13 |
+| $b_t$ (kW) | 14 | 12 | 10 | 8 | 8 | 10 |
+
+| Furgone $v$ | collegato | ore con $a_{vt} = 1$ | $e_v$ (kWh) | $e_v/r$ (kWh prelevati) | $\bar p_v$ (kW) |
+|---|---|---|---|---|---|
+| 1 | dalle 0 alle 6 | 1–6 | 36 | 40 | 11 |
+| 2 | dalle 0 alle 3 | 1–3 | 18 | 20 | 11 |
+| 3 | dalle 3 alle 6 | 4–6 | 18 | 20 | 16 |
+
+Senza il limite del contatore ogni furgone caricherebbe nelle sue ore più economiche e
+il prelievo arriverebbe a 35 kW nell'ora 4 (8 di base, 11 del furgone 1, 16 del
+furgone 3): con $k = 30$ kW una parte della ricarica deve spostarsi.
 
 ```text
-Costo minimo   : 20,36 EUR/notte   picco di prelievo 103,4 kW (limite 120)
-Peak shaving   : picco minimo possibile 68,0 kW
-Prezzi ombra del fabbisogno (EUR/kWh):
-  V1 0,0947   V2 0,0842   V3 0,0842   V4 0,0947   V5 0,0947   V6 0,0842
+Costo minimo   : 8,06 EUR/notte   picco di prelievo 30,0 kW (limite 30)
+Potenza x[v,t] (kW), ore t = 1..6:
+  V1:   0,0   0,0   9,0  11,0  11,0   9,0
+  V2:   0,0   9,0  11,0     .     .     .
+  V3:     .     .     .  11,0   9,0   0,0
+Prezzi ombra del fabbisogno (EUR/kWh):  V1 0,1444   V2 0,1667   V3 0,1000
+Prezzi ombra della rete (EUR/kW)     :  ore 3 e 4: 0,02   altre ore: 0
+Peak shaving   : picco minimo possibile 23,7 kW
 ```
 
 ![Profili di prelievo](img/cap06_profili.png)
 
-I prezzi ombra del fabbisogno valgono $0{,}0842 = 0{,}08/r$ oppure
-$0{,}0947 = 0{,}09/r$: sono i prezzi delle **ore marginali** di ciascun veicolo
-(l'ora più economica ancora libera nella sua finestra), corretti per il rendimento.
-V2, V3 e V6 hanno finestre che coprono le ore a $0{,}08$; V1, V4 e V5 arrivano tardi
-o partono presto e la loro ora marginale costa $0{,}09$. Un kWh di fabbisogno in più
-costa quindi 8,4–9,5 centesimi a seconda del veicolo.
+Le ore 3 e 4 sono sature: il prelievo tocca i 30 kW del contatore. I prezzi ombra del
+fabbisogno valgono $0{,}1444 = 0{,}13/r$, $0{,}1667 = 0{,}15/r$ e $0{,}1000 = 0{,}09/r$:
+sono i prezzi delle **ore marginali** di ciascun furgone (l'ora più cara che usa sotto
+la potenza del caricatore), corretti per il rendimento. Il furgone 1 completa la
+ricarica nell'ora 6, il furgone 2 nell'ora 2, il furgone 3 nell'ora 5.
+
+Anche i prezzi ombra della rete sono differenze di prezzo fra due ore. Un kW in più
+nell'ora 3 permette al furgone 1 di spostare un kWh dall'ora 6 all'ora 3
+($0{,}13 - 0{,}11 = 0{,}02$ €); un kW in più nell'ora 4 permette al furgone 3 di
+spostarlo dall'ora 5 all'ora 4 ($0{,}09 - 0{,}07 = 0{,}02$ €).
 
 ## Sensitività
 
@@ -124,18 +152,24 @@ costa quindi 8,4–9,5 centesimi a seconda del veicolo.
 
 ```text
 Compromesso costo + w*picco:
-  w = 0,00: costo 20,36  picco 103,4     w = 0,20: costo 22,15  picco 68,0
-  w = 0,05: costo 20,69  picco  86,5     w = 0,50: costo 22,15  picco 68,0
-  w = 0,10: costo 21,39  picco  74,9
+  w = 0,00: costo 8,06  picco 30,0     w = 0,15: costo 8,45  picco 26,3
+  w = 0,05: costo 8,10  picco 29,0     w = 0,20: costo 8,60  picco 25,6
+  w = 0,10: costo 8,10  picco 29,0     w = 0,50: costo 9,47  picco 23,7
 Capacita' del contatore:
-  k = 60, 65 kW: INAMMISSIBILE     k = 80: 21,09     k = 120: 20,36
-  k = 70 kW    : 21,93             k = 90: 20,63
+  k = 23 kW: INAMMISSIBILE     k = 28: 8,22     k = 32: 7,98
+  k = 24 kW: 9,32              k = 30: 8,06     k = 35: 7,92
+  k = 26 kW: 8,52
 ```
 
-Tagliare il picco da 103 a 75 kW (−28%) costa solo un euro a notte; arrivare a 68 kW
-ne costa meno di due. Il minimax puro (picco 68) senza termine di costo spenderebbe
-27,79 €: il compromesso con $w = 0{,}2$ ottiene lo *stesso* picco a 22,15 € — mai
-ottimizzare un solo obiettivo quando ce ne sono due.
+Tagliare il picco da 30 a 29 kW costa 4 centesimi a notte; scendere a 25,6 kW (−15%)
+ne costa 54. Il picco minimo, 23,7 kW, costa 9,47 € (+1,41 €): il prelievo è piatto,
+cioè i 142 kWh della notte (62 di base e 80 per i furgoni) divisi per le 6 ore. Il
+costo dipende solo dal prelievo di ogni ora, quindi tutti i piani con il picco minimo
+costano 9,47 €.
+
+Con il contatore succede lo stesso: da 35 a 30 kW la spesa sale di 14 centesimi, da 30
+a 24 kW di 1,26 €. Sotto 23,7 kW il problema è inammissibile, perché nemmeno il
+prelievo piatto entra sotto il limite.
 
 !!! warning "Un bug istruttivo (capitato davvero)"
     Nel vincolo `quicksum(x) + base[t] <= C` Gurobi sposta la costante nel termine
@@ -174,8 +208,8 @@ Lo stesso codice è disponibile come notebook — [`notebooks/lab06_ricarica_ev.
     ```python
     """Capitolo 6 — Ricarica intelligente di veicoli elettrici (LP).
 
-    Caso di studio: deposito aziendale con 6 furgoni elettrici da ricaricare
-    durante la notte; prezzi orari dell'energia; carico di base dell'edificio.
+    Caso di studio: deposito aziendale con 3 furgoni elettrici da ricaricare
+    nelle 6 ore dalle 0 alle 6; prezzi orari dell'energia; carico di base dell'edificio.
 
     Contenuto:
       1. LP a costo minimo: la ricarica insegue le ore economiche
@@ -184,7 +218,6 @@ Lo stesso codice è disponibile come notebook — [`notebooks/lab06_ricarica_ev.
       4. Prezzi ombra: capacità di rete e fabbisogno energetico
     """
     import gurobipy as gp
-    import numpy as np
     import pandas as pd
     from gurobipy import GRB
 
@@ -194,26 +227,25 @@ Lo stesso codice è disponibile come notebook — [`notebooks/lab06_ricarica_ev.
     # ----------------------------------------------------------------------
     # 1. DATI
     # ----------------------------------------------------------------------
-    ore = list(range(24))                      # ora t = [t, t+1)
-    # prezzo €/kWh: alto di giorno e nel picco serale, basso di notte
-    prezzo = np.array([0.09, 0.08, 0.07, 0.07, 0.08, 0.10, 0.14, 0.18, 0.20, 0.19,
-                       0.17, 0.16, 0.15, 0.15, 0.16, 0.18, 0.21, 0.24, 0.26, 0.24,
-                       0.20, 0.15, 0.12, 0.10])
+    ore = list(range(1, 7))                    # ora t = dalle t-1 alle t (t = 1: dalle 0 alle 1)
+    # prezzo €/kWh: alto nelle prime ore (coda del picco serale), minimo dalle 3 alle 4
+    prezzo = pd.Series([0.20, 0.15, 0.11, 0.07, 0.09, 0.13], index=ore)
     # carico di base dell'edificio (kW)
-    base = np.array([22, 20, 19, 19, 20, 24, 35, 48, 60, 63, 65, 64,
-                     62, 61, 62, 64, 66, 68, 62, 55, 45, 36, 30, 25], dtype=float)
+    base = pd.Series([14.0, 12.0, 10.0, 8.0, 8.0, 10.0], index=ore)
 
-    veicoli = [f"V{k}" for k in range(1, 7)]
-    # (ora arrivo, ora partenza, energia richiesta kWh, potenza max kW)
+    veicoli = ["V1", "V2", "V3"]
+    # (ora di arrivo, ora di partenza, energia richiesta kWh, potenza max kW)
     flotta = {
-        "V1": (18, 7, 46, 11), "V2": (19, 6, 38, 11), "V3": (20, 8, 55, 22),
-        "V4": (17, 6, 30, 7.4), "V5": (21, 7, 42, 11), "V6": (22, 8, 50, 22),
+        "V1": (0, 6, 36, 11),     # collegato tutta la notte
+        "V2": (0, 3, 18, 11),     # parte alle 3 per il primo turno
+        "V3": (3, 6, 18, 16),     # rientra alle 3 dall'ultimo turno
     }
-    eta = 0.95            # rendimento di carica
-    C_rete = 120.0        # potenza massima prelevabile dal contatore (kW)
+    eta = 0.9             # rendimento di carica
+    C_rete = 30.0         # potenza massima prelevabile dal contatore (kW)
 
-    disp = {(v, t): 1 if (flotta[v][0] <= t or t < flotta[v][1]) else 0
-            for v in veicoli for t in ore}      # finestre a cavallo della mezzanotte
+    # collegato nell'ora t (dalle t-1 alle t) se è arrivato entro le t-1 e parte alle t o più tardi
+    disp = {(v, t): 1 if flotta[v][0] < t <= flotta[v][1] else 0
+            for v in veicoli for t in ore}
 
     salva_dati(pd.DataFrame({"ora": ore, "prezzo": prezzo, "carico_base": base}), "ev_prezzi_base")
     salva_dati(pd.DataFrame([(v, *flotta[v]) for v in veicoli],
@@ -236,7 +268,7 @@ Lo stesso codice è disponibile come notebook — [`notebooks/lab06_ricarica_ev.
 
 
     def profilo(x):
-        return np.array([sum(x[v, t].X for v in veicoli) for t in ore])
+        return pd.Series([sum(x[v, t].X for v in veicoli) for t in ore], index=ore)
 
 
     # ----------------------------------------------------------------------
@@ -252,9 +284,14 @@ Lo stesso codice è disponibile come notebook — [`notebooks/lab06_ricarica_ev.
     picco_costo = (prof_costo + base).max()
     print(f"Costo di ricarica: {costo_min:.2f} €   picco di prelievo: {picco_costo:.1f} kW "
           f"(limite {C_rete:.0f})")
+    print("\nPotenza x[v, t] (kW), ore t = 1..6:")
+    for v in veicoli:
+        print(f"  {v}: " + "  ".join(f"{x[v, t].X:5.1f}" if disp[v, t] else "    ." for t in ore))
     print("\nPrezzi ombra del fabbisogno (costo marginale di 1 kWh in più per veicolo):")
     for v in veicoli:
         print(f"  {v}: {v_ene[v].Pi:.4f} €/kWh")
+    print("Prezzi ombra della rete (risparmio per 1 kW in più nell'ora t):")
+    print("  " + "  ".join(f"t={t}: {abs(v_rete[t].Pi):.3f}" for t in ore))
 
     # ----------------------------------------------------------------------
     # 3. PEAK SHAVING (minimax) e COMPROMESSO COSTO-PICCO
@@ -273,7 +310,7 @@ Lo stesso codice è disponibile come notebook — [`notebooks/lab06_ricarica_ev.
 
     intestazione("Compromesso: costo + w · picco")
     compromessi = []
-    for rho in [0, 0.05, 0.1, 0.2, 0.5, 1.0, 2.0]:
+    for rho in [0, 0.05, 0.1, 0.15, 0.2, 0.5, 1.0]:
         mc, xc, _, _ = costruisci()
         zc = mc.addVar(name="picco")
         mc.addConstrs((gp.quicksum(xc[v, t] for v in veicoli) + base[t] <= zc for t in ore))
@@ -291,7 +328,7 @@ Lo stesso codice è disponibile come notebook — [`notebooks/lab06_ricarica_ev.
     intestazione("Sensitività: capacità della connessione alla rete")
     # attenzione: nel vincolo "somma x + base[t] <= C" Gurobi sposta la costante base[t]
     # nel termine noto; il RHS memorizzato è C - base[t], quindi va aggiornato così:
-    for CC in [60, 65, 70, 80, 90, 120]:
+    for CC in [23, 24, 26, 28, 30, 32, 35]:
         ms, xs_, _, vr = costruisci()
         for t in ore:
             vr[t].RHS = CC - base[t]
@@ -308,20 +345,29 @@ Lo stesso codice è disponibile come notebook — [`notebooks/lab06_ricarica_ev.
                             "totcosto": base + prof_costo, "totpicco": base + prof_picco}),
               "cap06_profili")
     salva_dat(pd.DataFrame(compromessi, columns=["rho", "costo", "picco"]), "cap06_frontiera")
+    # gradini larghi un'ora per pgfplots (const plot): bordi 0,5; 1,5; ...; 6,5, l'ultimo valore ripetuto
+    bordi = [t - 0.5 for t in ore] + [ore[-1] + 0.5]
+
+
+    def gradino(serie):
+        return list(serie) + [serie.iloc[-1]]
+
+
+    salva_dat(pd.DataFrame({"x": bordi, "base": gradino(base), "totcosto": gradino(base + prof_costo),
+                            "totpicco": gradino(base + prof_picco)}), "cap06_gradini")
 
     fig, (ax1, ax2) = plt.subplots(2, 1, figsize=(8.2, 6.4), sharex=True)
     ax1.bar(ore, prezzo * 100, color=GRIGIO, alpha=0.6)
     ax1.set_ylabel("prezzo $c_t$ (c€/kWh)")
     ax1.set_title("Prezzo orario dell'energia")
     # stesse voci, colori e titolo dell'app del laboratorio; legenda sopra il limite del contatore
-    ax2.plot(ore, base, color=GRIGIO, ls="--", label="carico di base $b_t$")
-    ax2.plot(ore, base + prof_costo, color=TEAL, lw=2, drawstyle="steps-mid",
-             label="costo minimo")
-    ax2.plot(ore, base + prof_picco, color=ARANCIO, lw=2, drawstyle="steps-mid",
-             label="peak shaving")
+    # una colonna per ora: gradini larghi un'ora, dalle t-1 alle t (bordi come sopra)
+    ax2.stairs(base, bordi, baseline=None, color=GRIGIO, ls="--", label="carico di base $b_t$")
+    ax2.stairs(base + prof_costo, bordi, baseline=None, color=TEAL, lw=2, label="costo minimo")
+    ax2.stairs(base + prof_picco, bordi, baseline=None, color=ARANCIO, lw=2, label="peak shaving")
     ax2.axhline(C_rete, color=ROSSO, ls=":", label=f"potenza del contatore $k$ = {C_rete:.0f} kW")
     ax2.set_ylim(0, C_rete * 1.45)
-    ax2.set_xlabel("ora del giorno"); ax2.set_ylabel("prelievo totale (kW)")
+    ax2.set_xticks(ore); ax2.set_xlabel("ora $t$ (dalle $t-1$ alle $t$)"); ax2.set_ylabel("prelievo totale (kW)")
     ax2.set_title("Profilo di prelievo dalla rete")
     ax2.legend(fontsize=8, ncol=2, loc="upper right")
     salva_figura(fig, "cap06_profili")
@@ -331,9 +377,9 @@ Lo stesso codice è disponibile come notebook — [`notebooks/lab06_ricarica_ev.
     ax.plot(comp["picco"], comp["costo"], "-o", color=TEAL)
     # i pesi con lo stesso punto (stesso picco e costo) in un'unica etichetta
     gruppi = comp.groupby([comp["picco"].round(3), comp["costo"].round(4)], sort=False)
-    for (pk, cc), g in gruppi:
+    for k, ((pk, cc), g) in enumerate(gruppi):
         pesi = "; ".join(f"{w:.2f}".replace(".", ",") for w in g["rho"])
-        ax.annotate(f"$w$ = {pesi}", (pk, cc), textcoords="offset points", xytext=(8, -3),
+        ax.annotate(f"$w$ = {pesi}", (pk, cc), textcoords="offset points", xytext=(8, -3 if k == 0 else 4),
                     fontsize=8)
     ax.set_xlim(comp["picco"].min() - 3, comp["picco"].max() + 6)
     ax.set_xlabel("picco di prelievo (kW)")
@@ -346,10 +392,10 @@ Lo stesso codice è disponibile come notebook — [`notebooks/lab06_ricarica_ev.
 
 ## Esercizi
 
-1. $e_1: 46 \to 47$ kWh: costo $+0{,}0947 = 0{,}09/0{,}95$ (verificato).
-2. V3 arriva alle 23: come cambiano costo e picco?
+1. $e_1: 36 \to 37$ kWh: costo da 8,06 a 8,2044 €, $+0{,}1444 = 0{,}13/0{,}9$ (verificato).
+2. Il furgone 3 rientra alle 4 invece che alle 3: come cambiano costo, ore sature e prezzi ombra?
 3. Frontiera costo-emissioni con intensità carbonica oraria $g_t$.
-4. Capacità minima ammissibile per bisezione: $\tilde k = 68$ kW.
+4. Capacità minima ammissibile per bisezione: $\tilde k = 142/6 \approx 23{,}67$ kW.
 
 <!-- laboratorio-interattivo: sezione generata da genera_laboratorio.py -->
 

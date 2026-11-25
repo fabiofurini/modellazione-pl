@@ -48,11 +48,14 @@
 
   // ---------------------------------------------------------------- cap. 5
   /** ricarica a costo minimo: x_vt potenza (0 <= x_vt <= pmax_v se collegato), eta sum_t x_vt >= E_v,
-   *  sum_v x_vt + base_t <= C. Le x dei veicoli non collegati non entrano nel modello (sono 0). */
-  function ricaricaEv(C = null, fEne = 1, fPrezzoSera = 1) {
-    const E = D().ev, nT = 24, V = E.veicoli, Cr = C == null ? E.C : C;
-    const coll = (v, t) => v.arrivo <= t || t < v.partenza;
-    const prezzo = E.prezzo.map((p, t) => (t >= 17 && t <= 20 ? p * fPrezzoSera : p));
+   *  sum_v x_vt + base_t <= C. Le x dei veicoli non collegati non entrano nel modello (sono 0).
+   *  Le ore sono t = 0, ..., m-1 (l'ora t+1 del capitolo, dalle t alle t+1): il veicolo è collegato se
+   *  arrivo <= t < partenza. fPrezzoCare moltiplica i prezzi delle ore ORE_CARE (le ore 1 e 2, dalle 0 alle 2). */
+  const ORE_CARE = [0, 1];
+  function ricaricaEv(C = null, fEne = 1, fPrezzoCare = 1) {
+    const E = D().ev, nT = E.prezzo.length, V = E.veicoli, Cr = C == null ? E.C : C;
+    const coll = (v, t) => v.arrivo <= t && t < v.partenza;
+    const prezzo = E.prezzo.map((p, t) => (ORE_CARE.includes(t) ? p * fPrezzoCare : p));
     const vars = [];
     V.forEach((v, k) => { for (let t = 0; t < nT; t++) if (coll(v, t)) vars.push([k, t]); });
     const n = vars.length, c = vars.map(([, t]) => prezzo[t]), A = [], rel = [], b = [];
@@ -149,6 +152,7 @@
     });
   }
 
+  ricaricaEv.ORE_CARE = ORE_CARE;
   W.GI_PL = { produzione, ricaricaEv, dea, newsvendor, regressione };
   if (typeof module !== "undefined" && module.exports) module.exports = W.GI_PL;
 })();

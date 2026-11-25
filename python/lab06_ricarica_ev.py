@@ -1,7 +1,7 @@
 """Capitolo 6 — Ricarica intelligente di veicoli elettrici (LP).
 
-Caso di studio: deposito aziendale con 6 furgoni elettrici da ricaricare
-durante la notte; prezzi orari dell'energia; carico di base dell'edificio.
+Caso di studio: deposito aziendale con 3 furgoni elettrici da ricaricare
+nelle 6 ore dalle 0 alle 6; prezzi orari dell'energia; carico di base dell'edificio.
 
 Contenuto:
   1. LP a costo minimo: la ricarica insegue le ore economiche
@@ -10,7 +10,6 @@ Contenuto:
   4. Prezzi ombra: capacità di rete e fabbisogno energetico
 """
 import gurobipy as gp
-import numpy as np
 import pandas as pd
 from gurobipy import GRB
 
@@ -20,26 +19,25 @@ from stile import (ARANCIO, GRIGIO, ROSSO, TEAL, intestazione, plt, salva_dat, s
 # ----------------------------------------------------------------------
 # 1. DATI
 # ----------------------------------------------------------------------
-ore = list(range(24))                      # ora t = [t, t+1)
-# prezzo €/kWh: alto di giorno e nel picco serale, basso di notte
-prezzo = np.array([0.09, 0.08, 0.07, 0.07, 0.08, 0.10, 0.14, 0.18, 0.20, 0.19,
-                   0.17, 0.16, 0.15, 0.15, 0.16, 0.18, 0.21, 0.24, 0.26, 0.24,
-                   0.20, 0.15, 0.12, 0.10])
+ore = list(range(1, 7))                    # ora t = dalle t-1 alle t (t = 1: dalle 0 alle 1)
+# prezzo €/kWh: alto nelle prime ore (coda del picco serale), minimo dalle 3 alle 4
+prezzo = pd.Series([0.20, 0.15, 0.11, 0.07, 0.09, 0.13], index=ore)
 # carico di base dell'edificio (kW)
-base = np.array([22, 20, 19, 19, 20, 24, 35, 48, 60, 63, 65, 64,
-                 62, 61, 62, 64, 66, 68, 62, 55, 45, 36, 30, 25], dtype=float)
+base = pd.Series([14.0, 12.0, 10.0, 8.0, 8.0, 10.0], index=ore)
 
-veicoli = [f"V{k}" for k in range(1, 7)]
-# (ora arrivo, ora partenza, energia richiesta kWh, potenza max kW)
+veicoli = ["V1", "V2", "V3"]
+# (ora di arrivo, ora di partenza, energia richiesta kWh, potenza max kW)
 flotta = {
-    "V1": (18, 7, 46, 11), "V2": (19, 6, 38, 11), "V3": (20, 8, 55, 22),
-    "V4": (17, 6, 30, 7.4), "V5": (21, 7, 42, 11), "V6": (22, 8, 50, 22),
+    "V1": (0, 6, 36, 11),     # collegato tutta la notte
+    "V2": (0, 3, 18, 11),     # parte alle 3 per il primo turno
+    "V3": (3, 6, 18, 16),     # rientra alle 3 dall'ultimo turno
 }
-eta = 0.95            # rendimento di carica
-C_rete = 120.0        # potenza massima prelevabile dal contatore (kW)
+eta = 0.9             # rendimento di carica
+C_rete = 30.0         # potenza massima prelevabile dal contatore (kW)
 
-disp = {(v, t): 1 if (flotta[v][0] <= t or t < flotta[v][1]) else 0
-        for v in veicoli for t in ore}      # finestre a cavallo della mezzanotte
+# collegato nell'ora t (dalle t-1 alle t) se è arrivato entro le t-1 e parte alle t o più tardi
+disp = {(v, t): 1 if flotta[v][0] < t <= flotta[v][1] else 0
+        for v in veicoli for t in ore}
 
 salva_dati(pd.DataFrame({"ora": ore, "prezzo": prezzo, "carico_base": base}), "ev_prezzi_base")
 salva_dati(pd.DataFrame([(v, *flotta[v]) for v in veicoli],
@@ -62,7 +60,7 @@ def costruisci():
 
 
 def profilo(x):
-    return np.array([sum(x[v, t].X for v in veicoli) for t in ore])
+    return pd.Series([sum(x[v, t].X for v in veicoli) for t in ore], index=ore)
 
 
 # ----------------------------------------------------------------------
@@ -78,9 +76,14 @@ costo_min = m.ObjVal
 picco_costo = (prof_costo + base).max()
 print(f"Costo di ricarica: {costo_min:.2f} €   picco di prelievo: {picco_costo:.1f} kW "
       f"(limite {C_rete:.0f})")
+print("\nPotenza x[v, t] (kW), ore t = 1..6:")
+for v in veicoli:
+    print(f"  {v}: " + "  ".join(f"{x[v, t].X:5.1f}" if disp[v, t] else "    ." for t in ore))
 print("\nPrezzi ombra del fabbisogno (costo marginale di 1 kWh in più per veicolo):")
 for v in veicoli:
     print(f"  {v}: {v_ene[v].Pi:.4f} €/kWh")
+print("Prezzi ombra della rete (risparmio per 1 kW in più nell'ora t):")
+print("  " + "  ".join(f"t={t}: {abs(v_rete[t].Pi):.3f}" for t in ore))
 
 # ----------------------------------------------------------------------
 # 3. PEAK SHAVING (minimax) e COMPROMESSO COSTO-PICCO
@@ -99,7 +102,7 @@ print(f"Picco minimo possibile: {mp.ObjVal:.1f} kW   costo: {costo_picco:.2f} �
 
 intestazione("Compromesso: costo + w · picco")
 compromessi = []
-for rho in [0, 0.05, 0.1, 0.2, 0.5, 1.0, 2.0]:
+for rho in [0, 0.05, 0.1, 0.15, 0.2, 0.5, 1.0]:
     mc, xc, _, _ = costruisci()
     zc = mc.addVar(name="picco")
     mc.addConstrs((gp.quicksum(xc[v, t] for v in veicoli) + base[t] <= zc for t in ore))
@@ -117,7 +120,7 @@ salva_dati(pd.DataFrame(compromessi, columns=["rho", "costo", "picco"]), "ev_com
 intestazione("Sensitività: capacità della connessione alla rete")
 # attenzione: nel vincolo "somma x + base[t] <= C" Gurobi sposta la costante base[t]
 # nel termine noto; il RHS memorizzato è C - base[t], quindi va aggiornato così:
-for CC in [60, 65, 70, 80, 90, 120]:
+for CC in [23, 24, 26, 28, 30, 32, 35]:
     ms, xs_, _, vr = costruisci()
     for t in ore:
         vr[t].RHS = CC - base[t]
@@ -134,20 +137,29 @@ salva_dat(pd.DataFrame({"ora": ore, "prezzo_cent": prezzo * 100, "base": base,
                         "totcosto": base + prof_costo, "totpicco": base + prof_picco}),
           "cap06_profili")
 salva_dat(pd.DataFrame(compromessi, columns=["rho", "costo", "picco"]), "cap06_frontiera")
+# gradini larghi un'ora per pgfplots (const plot): bordi 0,5; 1,5; ...; 6,5, l'ultimo valore ripetuto
+bordi = [t - 0.5 for t in ore] + [ore[-1] + 0.5]
+
+
+def gradino(serie):
+    return list(serie) + [serie.iloc[-1]]
+
+
+salva_dat(pd.DataFrame({"x": bordi, "base": gradino(base), "totcosto": gradino(base + prof_costo),
+                        "totpicco": gradino(base + prof_picco)}), "cap06_gradini")
 
 fig, (ax1, ax2) = plt.subplots(2, 1, figsize=(8.2, 6.4), sharex=True)
 ax1.bar(ore, prezzo * 100, color=GRIGIO, alpha=0.6)
 ax1.set_ylabel("prezzo $c_t$ (c€/kWh)")
 ax1.set_title("Prezzo orario dell'energia")
 # stesse voci, colori e titolo dell'app del laboratorio; legenda sopra il limite del contatore
-ax2.plot(ore, base, color=GRIGIO, ls="--", label="carico di base $b_t$")
-ax2.plot(ore, base + prof_costo, color=TEAL, lw=2, drawstyle="steps-mid",
-         label="costo minimo")
-ax2.plot(ore, base + prof_picco, color=ARANCIO, lw=2, drawstyle="steps-mid",
-         label="peak shaving")
+# una colonna per ora: gradini larghi un'ora, dalle t-1 alle t (bordi come sopra)
+ax2.stairs(base, bordi, baseline=None, color=GRIGIO, ls="--", label="carico di base $b_t$")
+ax2.stairs(base + prof_costo, bordi, baseline=None, color=TEAL, lw=2, label="costo minimo")
+ax2.stairs(base + prof_picco, bordi, baseline=None, color=ARANCIO, lw=2, label="peak shaving")
 ax2.axhline(C_rete, color=ROSSO, ls=":", label=f"potenza del contatore $k$ = {C_rete:.0f} kW")
 ax2.set_ylim(0, C_rete * 1.45)
-ax2.set_xlabel("ora del giorno"); ax2.set_ylabel("prelievo totale (kW)")
+ax2.set_xticks(ore); ax2.set_xlabel("ora $t$ (dalle $t-1$ alle $t$)"); ax2.set_ylabel("prelievo totale (kW)")
 ax2.set_title("Profilo di prelievo dalla rete")
 ax2.legend(fontsize=8, ncol=2, loc="upper right")
 salva_figura(fig, "cap06_profili")
@@ -157,9 +169,9 @@ fig, ax = plt.subplots()
 ax.plot(comp["picco"], comp["costo"], "-o", color=TEAL)
 # i pesi con lo stesso punto (stesso picco e costo) in un'unica etichetta
 gruppi = comp.groupby([comp["picco"].round(3), comp["costo"].round(4)], sort=False)
-for (pk, cc), g in gruppi:
+for k, ((pk, cc), g) in enumerate(gruppi):
     pesi = "; ".join(f"{w:.2f}".replace(".", ",") for w in g["rho"])
-    ax.annotate(f"$w$ = {pesi}", (pk, cc), textcoords="offset points", xytext=(8, -3),
+    ax.annotate(f"$w$ = {pesi}", (pk, cc), textcoords="offset points", xytext=(8, -3 if k == 0 else 4),
                 fontsize=8)
 ax.set_xlim(comp["picco"].min() - 3, comp["picco"].max() + 6)
 ax.set_xlabel("picco di prelievo (kW)")
