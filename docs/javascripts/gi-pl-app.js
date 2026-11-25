@@ -132,11 +132,11 @@
       { nome: T("\\text{capacità totale}", "\\text{total capacity}"), min: 95, max: 130, step: 1, val: 100,
         fmt: (x) => `${mig(somma2(DD().produzione.cap) * x / 100)} ${T("ore", "hours")} (${per(x)})`,
         descr: T("moltiplica per lo stesso fattore le 6 capacità mensili \\(b_t\\) (420 o 460 ore macchina)", "multiplies the 6 monthly capacities \\(b_t\\) (420 or 460 machine hours) by the same factor") },
-      { nome: T("\\text{giacenza}\\ h_{it}", "\\text{holding}\\ h_{it}"), min: 25, max: 300, step: 25, val: 100,
-        fmt: (x) => DD().produzione.ch.map((h) => nt(h * x / 100, 2)).join(" / ") + " €",
-        descr: T("costo di giacenza per unità e mese dei prodotti 1, 2, 3", "holding cost per unit and month of products 1, 2, 3") },
+      { nome: T("\\text{giacenza}\\ h_{3t}", "\\text{holding}\\ h_{3t}"), min: 25, max: 300, step: 25, val: 100,
+        fmt: (x) => `${nt(DD().produzione.ch[2] * x / 100, 2)} €`,
+        descr: T("costo di giacenza del prodotto 3 per unità e mese (prodotti 1 e 2: 0,8 e 1,2 €)", "holding cost of product 3 per unit and month (products 1 and 2: 0.8 and 1.2 €)") },
     ],
-    calcola: (v) => PL().produzione(v[1] / 100, v[0] / 100, v[2] / 100),
+    calcola: (v) => PL().produzione(v[1] / 100, v[0] / 100, [1, 1, v[2] / 100]),
     formula(R, v, st) {
       const P = DD().produzione, nI = P.prodotti.length, nT = P.mesi.length;
       const it = `${PER("i", "n")},~${PER("t", "m")}`;
@@ -153,7 +153,7 @@
       for (let i = 0; i < nI; i++) for (let h = 0; h < 2; h++) {
         const I = i + 1, t0 = h ? meta : 0, t1 = h ? nT : meta, vars = [], ob = [];
         if (h) { vars.push(`s_{${I},${t0}}`); ob.push(0); }
-        for (let t = t0 + 1; t <= t1; t++) { vars.push(`x_{${I},${t}}`, `s_{${I},${t}}`); ob.push(P.cp[i], P.ch[i] * fH); }
+        for (let t = t0 + 1; t <= t1; t++) { vars.push(`x_{${I},${t}}`, `s_{${I},${t}}`); ob.push(P.cp[i], P.ch[i] * (i === 2 ? fH : 1)); }
         const primo = i === 0 && h === 0, sh = h ? 1 : 0;
         const righe = [{ lab: primo ? MIN : "", c: ob, piu: !primo, cifre: 3 }];
         for (let t = t0; t < t1; t++) {
@@ -209,15 +209,16 @@
       const righe = R.ombra.map((y, t) => [String(t + 1), `${nt(R.ore[t], 0)}/${nt(R.cap[t], 0)}`, tx(n(y, 3)),
         `[${nt(R.lo[t], 0)}, ${isFinite(R.up[t]) ? nt(R.up[t], 0) : "∞"}]`]);
       const att = R.ombra.map((y, t) => (Math.abs(y) > 1e-9 ? t : -1)).filter((t) => t >= 0);
-      return `<div>${T("Costo ottimo", "Optimal cost")}: <b>${euro(R.costo)}</b></div>` +
+      const Pd = DD().produzione, giac = R.s.reduce((tot, riga, i) => tot + riga.reduce((a, x) => a + x, 0) * Pd.ch[i] * (i === 2 ? v[2] / 100 : 1), 0);
+      return `<div>${T("Costo ottimo", "Optimal cost")}: <b>${euro(R.costo)}</b>, ${T("di cui giacenza", "of which holding")} <b>${euro(giac)}</b></div>` +
         M.tab([T("mese", "month"), T("ore", "hours"), T("prezzo ombra", "shadow price"), T("valido per \\(b_t\\) in", "valid for \\(b_t\\) in")], righe, att.length ? att[att.length - 1] : -1, C.rosso) +
         `<div style="margin-top:.3em">${T("Un'ora in più nel mese", "One more hour in month")} ${att.length ? att[att.length - 1] + 1 : "—"} ` +
         `${T("fa risparmiare", "saves")} ${att.length ? euro(-R.ombra[att[att.length - 1]], 3) : "0 €"}: ` +
         T("i prezzi ombra crescono verso la fine, perché un'ora tardi evita giacenze accumulate prima.",
           "the shadow prices grow towards the end, because a late hour avoids inventory built up earlier.") + "</div>";
     },
-    domanda: T("Il mese 1 ha prezzo ombra nullo: perché? Porta la capacità a × 1,10: quali mesi smettono di essere saturi? Sotto × 0,97 il piano non esiste più: perché? Poi triplica il costo di giacenza: il piano non cambia, i prezzi ombra sì. Perché?",
-      "Month 1 has a zero shadow price: why? Set capacity to × 1.10: which months stop being binding? Below × 0.97 there is no plan any more: why? Then triple the holding cost: the plan does not change, the shadow prices do. Why?"),
+    domanda: T("Il mese 1 ha prezzo ombra nullo: perché? Porta la capacità a × 1,10: quali mesi smettono di essere saturi? Sotto × 0,97 il piano non esiste più: perché? Poi alza la giacenza \\(h_{3t}\\) del prodotto 3: fino a 1,8 € il piano non cambia ma il costo e i prezzi ombra sì; oltre, le scorte passano al prodotto 2. Perché proprio 1,8 €?",
+      "Month 1 has a zero shadow price: why? Set capacity to × 1.10: which months stop being binding? Below × 0.97 there is no plan any more: why? Then raise the holding cost \\(h_{3t}\\) of product 3: up to 1.8 € the plan does not change but the cost and the shadow prices do; beyond it, the inventory moves to product 2. Why exactly 1.8 €?"),
   };
 
   // ================================================================ ricarica EV (cap. 5)
@@ -231,7 +232,7 @@
       { nome: T("\\text{energia totale}", "\\text{total energy}"), min: 60, max: 130, step: 5, val: 100,
         fmt: (x) => `${mig(DD().ev.veicoli.reduce((t, q) => t + q.energia, 0) * x / 100)} kWh (${per(x)})`,
         descr: T("moltiplica per lo stesso fattore le 6 energie richieste \\(e_v\\) (da 30 a 55 kWh per furgone)", "multiplies the 6 required energies \\(e_v\\) (30 to 55 kWh per van) by the same factor") },
-      { nome: T("\\pi_t\\ \\text{serale}", "\\pi_t\\ \\text{evening}"), min: 50, max: 200, step: 10, val: 100,
+      { nome: T("\\pi_t\\ \\text{serale}", "\\pi_t\\ \\text{evening}"), min: 10, max: 200, step: 10, val: 100,
         fmt: (x) => { const q = DD().ev.prezzo.slice(17, 21).map((y) => y * x / 100); return `${nt(Math.min(...q), 3)}–${nt(Math.max(...q), 3)} €/kWh`; },
         descr: T("moltiplica per lo stesso fattore i prezzi delle 4 ore dalle 17 alle 21", "multiplies the prices of the 4 hours from 5 pm to 9 pm by the same factor") },
     ],
@@ -299,8 +300,8 @@
           T(": un kW in più lì vale ", ": one more kW there is worth ") + sature.map((t) => nt(-R.ombraRete[t] * 100, 1)).join(", ") + " c€."
           : T("Il limite di rete non è mai saturo: ogni furgone carica nelle sue ore più economiche.", "The grid limit is never binding: every van charges in its cheapest hours.")}</div>`;
     },
-    domanda: T("Abbassa \\(k\\) a 90 kW: in quali ore il limite diventa saturo e quanto sale il costo? Perché il prezzo ombra dell'energia di un furgone è il prezzo della sua ora più cara usata, diviso per \\(\\eta\\)?",
-      "Lower \\(k\\) to 90 kW: in which hours does the limit become binding and how much does the cost grow? Why is the shadow price of a van's energy the price of its most expensive hour used, divided by \\(\\eta\\)?"),
+    domanda: T("Abbassa \\(k\\) a 90 kW: in quali ore il limite diventa saturo e quanto sale il costo? Porta i prezzi serali sotto 0,1 €/kWh: da quando i furgoni caricano anche la sera? Perché il prezzo ombra dell'energia di un furgone è il prezzo della sua ora più cara usata, diviso per \\(\\eta\\)?",
+      "Lower \\(k\\) to 90 kW: in which hours does the limit become binding and how much does the cost grow? Bring the evening prices below 0.1 €/kWh: from when do the vans also charge in the evening? Why is the shadow price of a van's energy the price of its most expensive hour used, divided by \\(\\eta\\)?"),
   };
 
   // ================================================================ newsvendor (cap. 7)

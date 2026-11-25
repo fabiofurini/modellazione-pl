@@ -4,6 +4,7 @@
  * (python/test_laboratorio.py), che confronta i numeri con Gurobi.
  *
  *   produzione(fCap, fDom, fGiac) cap. 4: LP a costo minimo; piano, scorte, prezzi ombra della capacità
+ *                                (fGiac: un fattore per tutti i prodotti o un vettore, uno per prodotto)
  *   dea(o, vrs, vista)           cap. 6: forma di inviluppo orientata all'input (CCR/BCC), poi gli scarti
  *   newsvendor(p, lam, alfa)     cap. 7: LP a scenari con avversione al rischio (1-lam) E + lam CVaR
  *   regressione(dati, tau)       cap. 10: regressione quantile (tau = 1/2: scarti assoluti)
@@ -18,7 +19,7 @@
     const P = D().produzione, nI = P.prodotti.length, nT = P.mesi.length;
     const ix = (i, t) => i * nT + t, is = (i, t) => nI * nT + i * nT + t, nv = 2 * nI * nT;
     const c = new Array(nv).fill(0), A = [], rel = [], b = [];
-    for (let i = 0; i < nI; i++) for (let t = 0; t < nT; t++) { c[ix(i, t)] = P.cp[i]; c[is(i, t)] = P.ch[i] * fGiac; }
+    for (let i = 0; i < nI; i++) for (let t = 0; t < nT; t++) { c[ix(i, t)] = P.cp[i]; c[is(i, t)] = P.ch[i] * (Array.isArray(fGiac) ? fGiac[i] : fGiac); }
     const dom = P.domanda.map((r) => r.map((v) => v * fDom));
     for (let i = 0; i < nI; i++) for (let t = 0; t < nT; t++) {
       const a = new Array(nv).fill(0);
