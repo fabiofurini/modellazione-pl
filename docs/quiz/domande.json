@@ -851,22 +851,22 @@
    },
    "corretta": 0,
    "it": {
-    "testo": "LP di ricarica EV: potenza $x_{vt}$ al veicolo $v$ nell'ora $t$ (1 h), prezzo dell'energia $\\pi_t$, dato di disponibilità $a_{vt} \\in \\{0,1\\}$, potenza del caricatore $\\bar p_v$, energia richiesta $e_v$, rendimento $\\eta$, carico di base $b_t$, limite del contatore $k$; si minimizza $\\sum_{v,t}\\pi_tx_{vt}$. Perché il modello non ha bisogno di variabili binarie?",
+    "testo": "LP di ricarica EV: potenza $x_{vt}$ al veicolo $v$ nell'ora $t$ (1 h), prezzo dell'energia $c_t$, dato di disponibilità $a_{vt} \\in \\{0,1\\}$, potenza del caricatore $\\bar p_v$, energia richiesta $e_v$, rendimento $r$, carico di base $b_t$, limite del contatore $k$; si minimizza $\\sum_{v,t}c_tx_{vt}$. Perché il modello non ha bisogno di variabili binarie?",
     "opzioni": [
      "La disponibilità $a_{vt}$ è un dato osservato e la decisione (quanta potenza) è continua",
      "Gurobi non gestisce variabili binarie in modelli di questa dimensione",
      "Tutti i veicoli sono collegati in ogni ora della notte",
-     "I prezzi dell'energia $\\pi_t$ sono uguali in tutte le ore"
+     "I prezzi dell'energia $c_t$ sono uguali in tutte le ore"
     ],
     "spiegazione": "Il vincolo $x_{vt} \\le a_{vt}\\,\\bar p_v$ azzera la potenza nelle ore di assenza: non serve alcuna decisione acceso/spento."
    },
    "en": {
-    "testo": "EV charging LP: power $x_{vt}$ to vehicle $v$ in hour $t$ (1 h), energy price $\\pi_t$, availability datum $a_{vt} \\in \\{0,1\\}$, charger power $\\bar p_v$, required energy $e_v$, efficiency $\\eta$, base load $b_t$, meter limit $k$; minimize $\\sum_{v,t}\\pi_tx_{vt}$. Why does the model need no binary variables?",
+    "testo": "EV charging LP: power $x_{vt}$ to vehicle $v$ in hour $t$ (1 h), energy price $c_t$, availability datum $a_{vt} \\in \\{0,1\\}$, charger power $\\bar p_v$, required energy $e_v$, efficiency $r$, base load $b_t$, meter limit $k$; minimize $\\sum_{v,t}c_tx_{vt}$. Why does the model need no binary variables?",
     "opzioni": [
      "Availability $a_{vt}$ is an observed datum and the decision (how much power) is continuous",
      "Gurobi cannot handle binary variables in models of this size",
      "All the vehicles are plugged in during every hour of the night",
-     "The energy prices $\\pi_t$ are the same in every hour"
+     "The energy prices $c_t$ are the same in every hour"
     ],
     "spiegazione": "The constraint $x_{vt} \\le a_{vt}\\,\\bar p_v$ sets the power to zero in the hours of absence: no on/off decision is needed."
    }
@@ -881,24 +881,24 @@
    },
    "corretta": 2,
    "it": {
-    "testo": "LP di ricarica EV: potenza $x_{vt}$ al veicolo $v$ nell'ora $t$ (1 h), prezzo dell'energia $\\pi_t$, dato di disponibilità $a_{vt} \\in \\{0,1\\}$, potenza del caricatore $\\bar p_v$, energia richiesta $e_v$, rendimento $\\eta$, carico di base $b_t$, limite del contatore $k$; si minimizza $\\sum_{v,t}\\pi_tx_{vt}$. Il vincolo di energia del veicolo $v$ è $\\eta\\sum_t x_{vt} \\ge e_v$. Perché all'ottimo vale con l'uguaglianza?",
+    "testo": "LP di ricarica EV: potenza $x_{vt}$ al veicolo $v$ nell'ora $t$ (1 h), prezzo dell'energia $c_t$, dato di disponibilità $a_{vt} \\in \\{0,1\\}$, potenza del caricatore $\\bar p_v$, energia richiesta $e_v$, rendimento $r$, carico di base $b_t$, limite del contatore $k$; si minimizza $\\sum_{v,t}c_tx_{vt}$. Il vincolo di energia del veicolo $v$ è $r\\sum_t x_{vt} \\ge e_v$. Perché all'ottimo vale con l'uguaglianza?",
     "opzioni": [
-     "Perché $\\eta < 1$ obbliga a prelevare energia in più",
+     "Perché $r < 1$ obbliga a prelevare energia in più",
      "Perché il vincolo del contatore è sempre saturo",
      "Perché i prezzi sono positivi: energia in più aggiunge solo costo",
      "Perché le finestre di ricarica sono disgiunte"
     ],
-    "spiegazione": "Caricare più del necessario è permesso ma non conviene mai: con $\\pi_t > 0$ ogni kWh in più aumenta solo il costo, quindi il requisito si soddisfa esattamente."
+    "spiegazione": "Caricare più del necessario è permesso ma non conviene mai: con $c_t > 0$ ogni kWh in più aumenta solo il costo, quindi il requisito si soddisfa esattamente."
    },
    "en": {
-    "testo": "EV charging LP: power $x_{vt}$ to vehicle $v$ in hour $t$ (1 h), energy price $\\pi_t$, availability datum $a_{vt} \\in \\{0,1\\}$, charger power $\\bar p_v$, required energy $e_v$, efficiency $\\eta$, base load $b_t$, meter limit $k$; minimize $\\sum_{v,t}\\pi_tx_{vt}$. The energy constraint of vehicle $v$ is $\\eta\\sum_t x_{vt} \\ge e_v$. Why does it hold with equality at the optimum?",
+    "testo": "EV charging LP: power $x_{vt}$ to vehicle $v$ in hour $t$ (1 h), energy price $c_t$, availability datum $a_{vt} \\in \\{0,1\\}$, charger power $\\bar p_v$, required energy $e_v$, efficiency $r$, base load $b_t$, meter limit $k$; minimize $\\sum_{v,t}c_tx_{vt}$. The energy constraint of vehicle $v$ is $r\\sum_t x_{vt} \\ge e_v$. Why does it hold with equality at the optimum?",
     "opzioni": [
-     "Because $\\eta < 1$ forces extra energy to be drawn",
+     "Because $r < 1$ forces extra energy to be drawn",
      "Because the meter constraint is always saturated",
      "Because prices are positive: extra energy only adds cost",
      "Because the charging windows are disjoint"
     ],
-    "spiegazione": "Charging more than necessary is allowed but never worthwhile: with $\\pi_t > 0$ any extra kWh only increases the cost, so the requirement is met exactly."
+    "spiegazione": "Charging more than necessary is allowed but never worthwhile: with $c_t > 0$ any extra kWh only increases the cost, so the requirement is met exactly."
    }
   },
   {
@@ -911,24 +911,24 @@
    },
    "corretta": 1,
    "it": {
-    "testo": "LP di ricarica EV: potenza $x_{vt}$ al veicolo $v$ nell'ora $t$ (1 h), prezzo dell'energia $\\pi_t$, dato di disponibilità $a_{vt} \\in \\{0,1\\}$, potenza del caricatore $\\bar p_v$, energia richiesta $e_v$, rendimento $\\eta$, carico di base $b_t$, limite del contatore $k$; si minimizza $\\sum_{v,t}\\pi_tx_{vt}$. Nel caso di studio il prezzo ombra del vincolo di energia di un veicolo è $0{,}0947 = 0{,}09/\\eta$ €/kWh. Che cosa rappresenta?",
+    "testo": "LP di ricarica EV: potenza $x_{vt}$ al veicolo $v$ nell'ora $t$ (1 h), prezzo dell'energia $c_t$, dato di disponibilità $a_{vt} \\in \\{0,1\\}$, potenza del caricatore $\\bar p_v$, energia richiesta $e_v$, rendimento $r$, carico di base $b_t$, limite del contatore $k$; si minimizza $\\sum_{v,t}c_tx_{vt}$. Nel caso di studio il prezzo ombra del vincolo di energia di un veicolo è $0{,}0947 = 0{,}09/r$ €/kWh. Che cosa rappresenta?",
     "opzioni": [
      "Il prezzo medio dell'energia nella notte",
-     "Il prezzo dell'ora marginale del veicolo, diviso per $\\eta$",
+     "Il prezzo dell'ora marginale del veicolo, diviso per $r$",
      "Il prezzo dell'energia nel picco serale",
      "Il costo orario della capacità del contatore $k$"
     ],
-    "spiegazione": "Il kWh marginale si compra nell'ora più economica ancora libera nella finestra del veicolo; un kWh in più nella batteria richiede $1/\\eta$ kWh dalla rete al prezzo di quell'ora."
+    "spiegazione": "Il kWh marginale si compra nell'ora più economica ancora libera nella finestra del veicolo; un kWh in più nella batteria richiede $1/r$ kWh dalla rete al prezzo di quell'ora."
    },
    "en": {
-    "testo": "EV charging LP: power $x_{vt}$ to vehicle $v$ in hour $t$ (1 h), energy price $\\pi_t$, availability datum $a_{vt} \\in \\{0,1\\}$, charger power $\\bar p_v$, required energy $e_v$, efficiency $\\eta$, base load $b_t$, meter limit $k$; minimize $\\sum_{v,t}\\pi_tx_{vt}$. In the case study the shadow price of the energy constraint of one vehicle is $0.0947 = 0.09/\\eta$ €/kWh. What does it represent?",
+    "testo": "EV charging LP: power $x_{vt}$ to vehicle $v$ in hour $t$ (1 h), energy price $c_t$, availability datum $a_{vt} \\in \\{0,1\\}$, charger power $\\bar p_v$, required energy $e_v$, efficiency $r$, base load $b_t$, meter limit $k$; minimize $\\sum_{v,t}c_tx_{vt}$. In the case study the shadow price of the energy constraint of one vehicle is $0.0947 = 0.09/r$ €/kWh. What does it represent?",
     "opzioni": [
      "The average energy price of the night",
-     "The price of the vehicle's marginal hour, divided by $\\eta$",
+     "The price of the vehicle's marginal hour, divided by $r$",
      "The energy price of the evening peak",
      "The hourly cost of the meter capacity $k$"
     ],
-    "spiegazione": "The marginal kWh is bought in the cheapest hour still free in the vehicle's window; one more kWh in the battery needs $1/\\eta$ kWh from the grid at that hour's price."
+    "spiegazione": "The marginal kWh is bought in the cheapest hour still free in the vehicle's window; one more kWh in the battery needs $1/r$ kWh from the grid at that hour's price."
    }
   },
   {
@@ -941,24 +941,24 @@
    },
    "corretta": 3,
    "it": {
-    "testo": "LP di ricarica EV: potenza $x_{vt}$ al veicolo $v$ nell'ora $t$ (1 h), prezzo dell'energia $\\pi_t$, dato di disponibilità $a_{vt} \\in \\{0,1\\}$, potenza del caricatore $\\bar p_v$, energia richiesta $e_v$, rendimento $\\eta$, carico di base $b_t$, limite del contatore $k$; si minimizza $\\sum_{v,t}\\pi_tx_{vt}$. Come si formula la variante di peak shaving (minimizzare il prelievo orario massimo dalla rete)?",
+    "testo": "LP di ricarica EV: potenza $x_{vt}$ al veicolo $v$ nell'ora $t$ (1 h), prezzo dell'energia $c_t$, dato di disponibilità $a_{vt} \\in \\{0,1\\}$, potenza del caricatore $\\bar p_v$, energia richiesta $e_v$, rendimento $r$, carico di base $b_t$, limite del contatore $k$; si minimizza $\\sum_{v,t}c_tx_{vt}$. Come si formula la variante di peak shaving (minimizzare il prelievo orario massimo dalla rete)?",
     "opzioni": [
      "Aggiungendo una variabile binaria per ogni ora di picco",
      "Minimizzando $\\sum_v\\sum_t x_{vt}^2$",
-     "Fissando la potenza di ogni veicolo a $e_v/(\\eta\\, m)$",
+     "Fissando la potenza di ogni veicolo a $e_v/(r\\, m)$",
      "Minimizzando $z$ soggetto a $\\sum_v x_{vt} + b_t \\le z$ per ogni ora $t$"
     ],
-    "spiegazione": "La variabile ausiliaria $z$ è il prelievo di picco; la variante multiobiettivo minimizza costo $+\\,\\rho\\, z$."
+    "spiegazione": "La variabile ausiliaria $z$ è il prelievo di picco; la variante multiobiettivo minimizza costo $+\\,w\\, z$."
    },
    "en": {
-    "testo": "EV charging LP: power $x_{vt}$ to vehicle $v$ in hour $t$ (1 h), energy price $\\pi_t$, availability datum $a_{vt} \\in \\{0,1\\}$, charger power $\\bar p_v$, required energy $e_v$, efficiency $\\eta$, base load $b_t$, meter limit $k$; minimize $\\sum_{v,t}\\pi_tx_{vt}$. How is the peak-shaving variant (minimize the highest hourly draw from the grid) formulated?",
+    "testo": "EV charging LP: power $x_{vt}$ to vehicle $v$ in hour $t$ (1 h), energy price $c_t$, availability datum $a_{vt} \\in \\{0,1\\}$, charger power $\\bar p_v$, required energy $e_v$, efficiency $r$, base load $b_t$, meter limit $k$; minimize $\\sum_{v,t}c_tx_{vt}$. How is the peak-shaving variant (minimize the highest hourly draw from the grid) formulated?",
     "opzioni": [
      "Adding a binary variable for each peak hour",
      "Minimizing $\\sum_v\\sum_t x_{vt}^2$",
-     "Fixing the power of every vehicle to $e_v/(\\eta\\, m)$",
+     "Fixing the power of every vehicle to $e_v/(r\\, m)$",
      "Minimizing $z$ subject to $\\sum_v x_{vt} + b_t \\le z$ for every hour $t$"
     ],
-    "spiegazione": "The auxiliary variable $z$ is the peak draw; the multi-objective variant minimizes cost $+\\,\\rho\\, z$."
+    "spiegazione": "The auxiliary variable $z$ is the peak draw; the multi-objective variant minimizes cost $+\\,w\\, z$."
    }
   },
   {
@@ -971,7 +971,7 @@
    },
    "corretta": 0,
    "it": {
-    "testo": "LP di ricarica EV: potenza $x_{vt}$ al veicolo $v$ nell'ora $t$ (1 h), prezzo dell'energia $\\pi_t$, dato di disponibilità $a_{vt} \\in \\{0,1\\}$, potenza del caricatore $\\bar p_v$, energia richiesta $e_v$, rendimento $\\eta$, carico di base $b_t$, limite del contatore $k$; si minimizza $\\sum_{v,t}\\pi_tx_{vt}$. Il peak shaving minimizza il prelievo di picco $z$. Nel caso di studio il minimax puro (picco 68 kW) spende $27{,}79$ €, mentre minimizzare costo $+\\,0{,}2\\,z$ raggiunge lo stesso picco con $22{,}15$ €. Qual è la lezione?",
+    "testo": "LP di ricarica EV: potenza $x_{vt}$ al veicolo $v$ nell'ora $t$ (1 h), prezzo dell'energia $c_t$, dato di disponibilità $a_{vt} \\in \\{0,1\\}$, potenza del caricatore $\\bar p_v$, energia richiesta $e_v$, rendimento $r$, carico di base $b_t$, limite del contatore $k$; si minimizza $\\sum_{v,t}c_tx_{vt}$. Il peak shaving minimizza il prelievo di picco $z$. Nel caso di studio il minimax puro (picco 68 kW) spende $27{,}79$ €, mentre minimizzare costo $+\\,0{,}2\\,z$ raggiunge lo stesso picco con $22{,}15$ €. Qual è la lezione?",
     "opzioni": [
      "Con due obiettivi, ottimizzarne uno solo spreca l'altro",
      "Il minimax puro è sempre la scelta migliore per il contatore",
@@ -981,7 +981,7 @@
     "spiegazione": "Il minimax puro è degenere rispetto al costo: fra le soluzioni con picco minimo ne restituisce una qualsiasi. L'obiettivo pesato sceglie la più economica."
    },
    "en": {
-    "testo": "EV charging LP: power $x_{vt}$ to vehicle $v$ in hour $t$ (1 h), energy price $\\pi_t$, availability datum $a_{vt} \\in \\{0,1\\}$, charger power $\\bar p_v$, required energy $e_v$, efficiency $\\eta$, base load $b_t$, meter limit $k$; minimize $\\sum_{v,t}\\pi_tx_{vt}$. Peak shaving minimizes the peak draw $z$. In the case study the pure minimax (peak 68 kW) spends $27.79$ €, while minimizing cost $+\\,0.2\\,z$ reaches the same peak for $22.15$ €. What is the lesson?",
+    "testo": "EV charging LP: power $x_{vt}$ to vehicle $v$ in hour $t$ (1 h), energy price $c_t$, availability datum $a_{vt} \\in \\{0,1\\}$, charger power $\\bar p_v$, required energy $e_v$, efficiency $r$, base load $b_t$, meter limit $k$; minimize $\\sum_{v,t}c_tx_{vt}$. Peak shaving minimizes the peak draw $z$. In the case study the pure minimax (peak 68 kW) spends $27.79$ €, while minimizing cost $+\\,0.2\\,z$ reaches the same peak for $22.15$ €. What is the lesson?",
     "opzioni": [
      "With two objectives, optimizing one alone wastes the other",
      "The pure minimax is always the best choice for the meter",
@@ -1001,20 +1001,20 @@
    },
    "corretta": 2,
    "it": {
-    "testo": "LP di ricarica EV: potenza $x_{vt}$ al veicolo $v$ nell'ora $t$ (1 h), prezzo dell'energia $\\pi_t$, dato di disponibilità $a_{vt} \\in \\{0,1\\}$, potenza del caricatore $\\bar p_v$, energia richiesta $e_v$, rendimento $\\eta$, carico di base $b_t$, limite del contatore $k$; si minimizza $\\sum_{v,t}\\pi_tx_{vt}$. Un'analisi di sensitività sul limite del contatore $k$ dà lo stesso costo per ogni valore di $k$, anche molto piccolo. Che cosa va sospettato per primo?",
+    "testo": "LP di ricarica EV: potenza $x_{vt}$ al veicolo $v$ nell'ora $t$ (1 h), prezzo dell'energia $c_t$, dato di disponibilità $a_{vt} \\in \\{0,1\\}$, potenza del caricatore $\\bar p_v$, energia richiesta $e_v$, rendimento $r$, carico di base $b_t$, limite del contatore $k$; si minimizza $\\sum_{v,t}c_tx_{vt}$. Un'analisi di sensitività sul limite del contatore $k$ dà lo stesso costo per ogni valore di $k$, anche molto piccolo. Che cosa va sospettato per primo?",
     "opzioni": [
      "Che il modello sia inammissibile per $k$ piccolo",
-     "Che i prezzi dell'energia $\\pi_t$ siano sbagliati",
+     "Che i prezzi dell'energia $c_t$ siano sbagliati",
      "Il nostro codice, per esempio `RHS = nuovaC` su un vincolo che memorizza `C - base[t]`",
      "Un bug di Gurobi"
     ],
     "spiegazione": "È successo davvero preparando il caso di studio: quando un'analisi di sensitività non cambia nulla, si sospetta il codice prima del modello."
    },
    "en": {
-    "testo": "EV charging LP: power $x_{vt}$ to vehicle $v$ in hour $t$ (1 h), energy price $\\pi_t$, availability datum $a_{vt} \\in \\{0,1\\}$, charger power $\\bar p_v$, required energy $e_v$, efficiency $\\eta$, base load $b_t$, meter limit $k$; minimize $\\sum_{v,t}\\pi_tx_{vt}$. A sensitivity analysis on the meter limit $k$ gives the same cost for every value of $k$, even very small ones. What should be suspected first?",
+    "testo": "EV charging LP: power $x_{vt}$ to vehicle $v$ in hour $t$ (1 h), energy price $c_t$, availability datum $a_{vt} \\in \\{0,1\\}$, charger power $\\bar p_v$, required energy $e_v$, efficiency $r$, base load $b_t$, meter limit $k$; minimize $\\sum_{v,t}c_tx_{vt}$. A sensitivity analysis on the meter limit $k$ gives the same cost for every value of $k$, even very small ones. What should be suspected first?",
     "opzioni": [
      "That the model is infeasible for small $k$",
-     "That the energy prices $\\pi_t$ are wrong",
+     "That the energy prices $c_t$ are wrong",
      "Our own code, e.g. `RHS = nuovaC` on a constraint storing `C - base[t]`",
      "A bug in Gurobi"
     ],
@@ -1031,9 +1031,9 @@
    },
    "corretta": 1,
    "it": {
-    "testo": "LP di ricarica EV: potenza $x_{vt}$ al veicolo $v$ nell'ora $t$ (1 h), prezzo dell'energia $\\pi_t$, dato di disponibilità $a_{vt} \\in \\{0,1\\}$, potenza del caricatore $\\bar p_v$, energia richiesta $e_v$, rendimento $\\eta$, carico di base $b_t$, limite del contatore $k$; si minimizza $\\sum_{v,t}\\pi_tx_{vt}$. Quali vincoli accoppiano i veicoli fra loro?",
+    "testo": "LP di ricarica EV: potenza $x_{vt}$ al veicolo $v$ nell'ora $t$ (1 h), prezzo dell'energia $c_t$, dato di disponibilità $a_{vt} \\in \\{0,1\\}$, potenza del caricatore $\\bar p_v$, energia richiesta $e_v$, rendimento $r$, carico di base $b_t$, limite del contatore $k$; si minimizza $\\sum_{v,t}c_tx_{vt}$. Quali vincoli accoppiano i veicoli fra loro?",
     "opzioni": [
-     "I vincoli di energia $\\eta\\sum_t x_{vt} \\ge e_v$",
+     "I vincoli di energia $r\\sum_t x_{vt} \\ge e_v$",
      "I vincoli del contatore $\\sum_v x_{vt} + b_t \\le k$, uno per ora",
      "I limiti del caricatore $x_{vt} \\le a_{vt}\\bar p_v$",
      "I vincoli di non negatività $x_{vt} \\ge 0$"
@@ -1041,9 +1041,9 @@
     "spiegazione": "Senza il limite del contatore ogni veicolo si ottimizzerebbe da solo; i vincoli orari del contatore li mettono in competizione per la potenza."
    },
    "en": {
-    "testo": "EV charging LP: power $x_{vt}$ to vehicle $v$ in hour $t$ (1 h), energy price $\\pi_t$, availability datum $a_{vt} \\in \\{0,1\\}$, charger power $\\bar p_v$, required energy $e_v$, efficiency $\\eta$, base load $b_t$, meter limit $k$; minimize $\\sum_{v,t}\\pi_tx_{vt}$. Which constraints couple the vehicles to one another?",
+    "testo": "EV charging LP: power $x_{vt}$ to vehicle $v$ in hour $t$ (1 h), energy price $c_t$, availability datum $a_{vt} \\in \\{0,1\\}$, charger power $\\bar p_v$, required energy $e_v$, efficiency $r$, base load $b_t$, meter limit $k$; minimize $\\sum_{v,t}c_tx_{vt}$. Which constraints couple the vehicles to one another?",
     "opzioni": [
-     "The energy constraints $\\eta\\sum_t x_{vt} \\ge e_v$",
+     "The energy constraints $r\\sum_t x_{vt} \\ge e_v$",
      "The meter constraints $\\sum_v x_{vt} + b_t \\le k$, one per hour",
      "The charger limits $x_{vt} \\le a_{vt}\\bar p_v$",
      "The non-negativity constraints $x_{vt} \\ge 0$"
@@ -1061,9 +1061,9 @@
    },
    "corretta": 3,
    "it": {
-    "testo": "LP di ricarica EV: potenza $x_{vt}$ al veicolo $v$ nell'ora $t$ (1 h), prezzo dell'energia $\\pi_t$, dato di disponibilità $a_{vt} \\in \\{0,1\\}$, potenza del caricatore $\\bar p_v$, energia richiesta $e_v$, rendimento $\\eta$, carico di base $b_t$, limite del contatore $k$; si minimizza $\\sum_{v,t}\\pi_tx_{vt}$. In quali condizioni il prezzo ombra del vincolo di energia del veicolo $v$ è pari a $\\pi_t/\\eta$ per una delle sue ore $t$?",
+    "testo": "LP di ricarica EV: potenza $x_{vt}$ al veicolo $v$ nell'ora $t$ (1 h), prezzo dell'energia $c_t$, dato di disponibilità $a_{vt} \\in \\{0,1\\}$, potenza del caricatore $\\bar p_v$, energia richiesta $e_v$, rendimento $r$, carico di base $b_t$, limite del contatore $k$; si minimizza $\\sum_{v,t}c_tx_{vt}$. In quali condizioni il prezzo ombra del vincolo di energia del veicolo $v$ è pari a $c_t/r$ per una delle sue ore $t$?",
     "opzioni": [
-     "Quando tutte le ore della notte hanno lo stesso prezzo $\\pi_t$",
+     "Quando tutte le ore della notte hanno lo stesso prezzo $c_t$",
      "Quando il veicolo $v$ è collegato in una sola ora della notte",
      "Quando il vincolo del contatore è attivo in ogni ora $t$",
      "Quando nell'ora $t$ è collegato e nessun limite di potenza è saturo"
@@ -1071,9 +1071,9 @@
     "spiegazione": "Il kWh marginale si può allora comprare esattamente nell'ora $t$; se quell'ora fosse satura, il duale includerebbe anche il valore del limite attivo."
    },
    "en": {
-    "testo": "EV charging LP: power $x_{vt}$ to vehicle $v$ in hour $t$ (1 h), energy price $\\pi_t$, availability datum $a_{vt} \\in \\{0,1\\}$, charger power $\\bar p_v$, required energy $e_v$, efficiency $\\eta$, base load $b_t$, meter limit $k$; minimize $\\sum_{v,t}\\pi_tx_{vt}$. Under which conditions is the shadow price of the energy constraint of vehicle $v$ equal to $\\pi_t/\\eta$ for one of its hours $t$?",
+    "testo": "EV charging LP: power $x_{vt}$ to vehicle $v$ in hour $t$ (1 h), energy price $c_t$, availability datum $a_{vt} \\in \\{0,1\\}$, charger power $\\bar p_v$, required energy $e_v$, efficiency $r$, base load $b_t$, meter limit $k$; minimize $\\sum_{v,t}c_tx_{vt}$. Under which conditions is the shadow price of the energy constraint of vehicle $v$ equal to $c_t/r$ for one of its hours $t$?",
     "opzioni": [
-     "When all the hours of the night have the same price $\\pi_t$",
+     "When all the hours of the night have the same price $c_t$",
      "When vehicle $v$ is plugged in during one single hour",
      "When the meter constraint is active in every hour $t$",
      "When in hour $t$ it is plugged in and no power limit is saturated"
@@ -1488,7 +1488,7 @@
      "zero",
      "un quantile alto della domanda"
     ],
-    "spiegazione": "$\\alpha = c_u/(c_u + c_o)$ è vicino a $1$ e $\\tilde q = F^{-1}(\\alpha)$. Con i deperibili ($c_o$ alto) si ordina poco."
+    "spiegazione": "$f = c_u/(c_u + c_o)$ è vicino a $1$ e $\\tilde q = F^{-1}(f)$. Con i deperibili ($c_o$ alto) si ordina poco."
    },
    "en": {
     "testo": "Newsvendor: order quantity $q$ before observing the random demand $D$ (distribution function $F$); unit underage cost $c_u$ (demand left unmet) and overage cost $c_o$ (unit left unsold); minimize $c_o\\mathbb E[(q - D)^+] + c_u\\mathbb E[(D - q)^+]$. If running short costs much more than running long ($c_u \\gg c_o$), the optimal quantity $\\tilde q$ is:",
@@ -1498,7 +1498,7 @@
      "zero",
      "a high quantile of the demand"
     ],
-    "spiegazione": "$\\alpha = c_u/(c_u + c_o)$ is close to $1$ and $\\tilde q = F^{-1}(\\alpha)$. With perishable goods (high $c_o$) one orders little."
+    "spiegazione": "$f = c_u/(c_u + c_o)$ is close to $1$ and $\\tilde q = F^{-1}(f)$. With perishable goods (high $c_o$) one orders little."
    }
   },
   {
@@ -1511,7 +1511,7 @@
    },
    "corretta": 0,
    "it": {
-    "testo": "Newsvendor: quantità ordinata $q$ prima di osservare la domanda aleatoria $D$ (funzione di ripartizione $F$); costo unitario di underage $c_u$ (domanda non servita) e di overage $c_o$ (unità invenduta); si minimizza $c_o\\mathbb E[(q - D)^+] + c_u\\mathbb E[(D - q)^+]$. LP a scenari: domanda $d_s$ con probabilità $\\pi_s$; l'overage è una variabile $o_s$ con $o_s \\ge q - d_s$, $o_s \\ge 0$ e termine $\\pi_sc_oo_s$ nel costo da minimizzare. Perché all'ottimo vale $o_s = (q - d_s)^+$ senza variabili binarie?",
+    "testo": "Newsvendor: quantità ordinata $q$ prima di osservare la domanda aleatoria $D$ (funzione di ripartizione $F$); costo unitario di underage $c_u$ (domanda non servita) e di overage $c_o$ (unità invenduta); si minimizza $c_o\\mathbb E[(q - D)^+] + c_u\\mathbb E[(D - q)^+]$. LP a scenari: domanda $d_s$ con probabilità $w_s$; l'overage è una variabile $o_s$ con $o_s \\ge q - d_s$, $o_s \\ge 0$ e termine $w_sc_oo_s$ nel costo da minimizzare. Perché all'ottimo vale $o_s = (q - d_s)^+$ senza variabili binarie?",
     "opzioni": [
      "Il suo costo positivo spinge $o_s$ giù fino al maggiore dei suoi due limiti inferiori",
      "Perché all'ottimo $q$ è maggiore di ogni domanda $d_s$",
@@ -1521,7 +1521,7 @@
     "spiegazione": "Questo trucco delle parti positive ritorna identico nel CVaR (gli eccessi $\\xi_s$) e nella regressione quantile."
    },
    "en": {
-    "testo": "Newsvendor: order quantity $q$ before observing the random demand $D$ (distribution function $F$); unit underage cost $c_u$ (demand left unmet) and overage cost $c_o$ (unit left unsold); minimize $c_o\\mathbb E[(q - D)^+] + c_u\\mathbb E[(D - q)^+]$. Scenario LP: demand $d_s$ with probability $\\pi_s$; the overage is a variable $o_s$ with $o_s \\ge q - d_s$, $o_s \\ge 0$ and term $\\pi_sc_oo_s$ in the minimized cost. Why does $o_s = (q - d_s)^+$ hold at the optimum without binary variables?",
+    "testo": "Newsvendor: order quantity $q$ before observing the random demand $D$ (distribution function $F$); unit underage cost $c_u$ (demand left unmet) and overage cost $c_o$ (unit left unsold); minimize $c_o\\mathbb E[(q - D)^+] + c_u\\mathbb E[(D - q)^+]$. Scenario LP: demand $d_s$ with probability $w_s$; the overage is a variable $o_s$ with $o_s \\ge q - d_s$, $o_s \\ge 0$ and term $w_sc_oo_s$ in the minimized cost. Why does $o_s = (q - d_s)^+$ hold at the optimum without binary variables?",
     "opzioni": [
      "Its positive cost pushes $o_s$ down to the larger of its two lower bounds",
      "Because $q$ is larger than every demand $d_s$ at the optimum",
@@ -1608,7 +1608,7 @@
      "$110$, fra i due più grandi",
      "$120$, lo scenario più grande"
     ],
-    "spiegazione": "$\\alpha = 9/13 = 0{,}6923$ e $F(100) = 2/3 < \\alpha$: il più piccolo $q$ con $F(q) \\ge \\alpha$ è $120$. Verifica: $C(120) = 80$ contro $C(100) = 86{,}7$."
+    "spiegazione": "$f = 9/13 = 0{,}6923$ e $F(100) = 2/3 < f$: il più piccolo $q$ con $F(q) \\ge f$ è $120$. Verifica: $C(120) = 80$ contro $C(100) = 86{,}7$."
    },
    "en": {
     "testo": "Newsvendor: order quantity $q$ before observing the random demand $D$ (distribution function $F$); unit underage cost $c_u$ (demand left unmet) and overage cost $c_o$ (unit left unsold); minimize $c_o\\mathbb E[(q - D)^+] + c_u\\mathbb E[(D - q)^+]$. Three equally likely demand scenarios $D \\in \\{80, 100, 120\\}$, $c_u = 9$, $c_o = 4$. What is the optimal quantity?",
@@ -1618,7 +1618,7 @@
      "$110$, between the two largest",
      "$120$, the largest scenario"
     ],
-    "spiegazione": "$\\alpha = 9/13 = 0.6923$ and $F(100) = 2/3 < \\alpha$: the smallest $q$ with $F(q) \\ge \\alpha$ is $120$. Check: $C(120) = 80$ against $C(100) = 86.7$."
+    "spiegazione": "$f = 9/13 = 0.6923$ and $F(100) = 2/3 < f$: the smallest $q$ with $F(q) \\ge f$ is $120$. Check: $C(120) = 80$ against $C(100) = 86.7$."
    }
   },
   {
@@ -1668,7 +1668,7 @@
      "Annullare la derivata del costo atteso; $D$ normale",
      "Unità marginale: rende $c_u$ con prob. $F(q)$, costa $c_o$ con prob. $1 - F(q)$"
     ],
-    "spiegazione": "Conviene ordinare un'unità in più finché $c_u(1 - F(q)) \\ge c_oF(q)$; la continuità di $F$ rende raggiungibile l'uguaglianza. Non serve la normalità; con domanda discreta si prende il più piccolo $q$ con $F(q) \\ge \\alpha$."
+    "spiegazione": "Conviene ordinare un'unità in più finché $c_u(1 - F(q)) \\ge c_oF(q)$; la continuità di $F$ rende raggiungibile l'uguaglianza. Non serve la normalità; con domanda discreta si prende il più piccolo $q$ con $F(q) \\ge f$."
    },
    "en": {
     "testo": "Newsvendor: order quantity $q$ before observing the random demand $D$ (distribution function $F$); unit underage cost $c_u$ (demand left unmet) and overage cost $c_o$ (unit left unsold); minimize $c_o\\mathbb E[(q - D)^+] + c_u\\mathbb E[(D - q)^+]$. Which argument and assumptions give the quantile rule $F(\\tilde q) = c_u/(c_u + c_o)$?",
@@ -1678,7 +1678,7 @@
      "Setting the derivative of the expected cost to zero; $D$ normal",
      "Marginal unit: gains $c_u$ w.p. $F(q)$, costs $c_o$ w.p. $1 - F(q)$"
     ],
-    "spiegazione": "It pays to order one more unit while $c_u(1 - F(q)) \\ge c_oF(q)$; continuity of $F$ makes the equality attainable. No normality is needed; with discrete demand one takes the smallest $q$ with $F(q) \\ge \\alpha$."
+    "spiegazione": "It pays to order one more unit while $c_u(1 - F(q)) \\ge c_oF(q)$; continuity of $F$ makes the equality attainable. No normality is needed; with discrete demand one takes the smallest $q$ with $F(q) \\ge f$."
    }
   },
   {
@@ -1691,24 +1691,24 @@
    },
    "corretta": 1,
    "it": {
-    "testo": "Newsvendor: quantità ordinata $q$ prima di osservare la domanda aleatoria $D$ (funzione di ripartizione $F$); costo unitario di underage $c_u$ (domanda non servita) e di overage $c_o$ (unità invenduta); si minimizza $c_o\\mathbb E[(q - D)^+] + c_u\\mathbb E[(D - q)^+]$. LP a scenari con domande $d_s$ di probabilità $\\pi_s$ e variabili di overage $o_s \\ge q - d_s$, $o_s \\ge 0$. Che cosa serve perché all'ottimo valga $o_s = (q - d_s)^+$?",
+    "testo": "Newsvendor: quantità ordinata $q$ prima di osservare la domanda aleatoria $D$ (funzione di ripartizione $F$); costo unitario di underage $c_u$ (domanda non servita) e di overage $c_o$ (unità invenduta); si minimizza $c_o\\mathbb E[(q - D)^+] + c_u\\mathbb E[(D - q)^+]$. LP a scenari con domande $d_s$ di probabilità $w_s$ e variabili di overage $o_s \\ge q - d_s$, $o_s \\ge 0$. Che cosa serve perché all'ottimo valga $o_s = (q - d_s)^+$?",
     "opzioni": [
      "Che ogni scenario abbia domanda maggiore di $q$",
-     "Che il coefficiente $\\pi_s\\,c_o$ di $o_s$ nell'obiettivo da minimizzare sia positivo",
+     "Che il coefficiente $w_s\\,c_o$ di $o_s$ nell'obiettivo da minimizzare sia positivo",
      "Che $o_s$ sia dichiarata come variabile libera",
      "Che il problema sia di massimo"
     ],
-    "spiegazione": "Se $\\pi_sc_o > 0$, ogni $o_s$ sopra $\\max\\{q - d_s, 0\\}$ si potrebbe abbassare riducendo il costo. Con coefficiente nullo o negativo il trucco non funziona."
+    "spiegazione": "Se $w_sc_o > 0$, ogni $o_s$ sopra $\\max\\{q - d_s, 0\\}$ si potrebbe abbassare riducendo il costo. Con coefficiente nullo o negativo il trucco non funziona."
    },
    "en": {
-    "testo": "Newsvendor: order quantity $q$ before observing the random demand $D$ (distribution function $F$); unit underage cost $c_u$ (demand left unmet) and overage cost $c_o$ (unit left unsold); minimize $c_o\\mathbb E[(q - D)^+] + c_u\\mathbb E[(D - q)^+]$. Scenario LP with demands $d_s$ of probability $\\pi_s$ and overage variables $o_s \\ge q - d_s$, $o_s \\ge 0$. What is needed for $o_s = (q - d_s)^+$ to hold at the optimum?",
+    "testo": "Newsvendor: order quantity $q$ before observing the random demand $D$ (distribution function $F$); unit underage cost $c_u$ (demand left unmet) and overage cost $c_o$ (unit left unsold); minimize $c_o\\mathbb E[(q - D)^+] + c_u\\mathbb E[(D - q)^+]$. Scenario LP with demands $d_s$ of probability $w_s$ and overage variables $o_s \\ge q - d_s$, $o_s \\ge 0$. What is needed for $o_s = (q - d_s)^+$ to hold at the optimum?",
     "opzioni": [
      "That every scenario has demand larger than $q$",
-     "That the coefficient $\\pi_s\\,c_o$ of $o_s$ in the minimized objective be positive",
+     "That the coefficient $w_s\\,c_o$ of $o_s$ in the minimized objective be positive",
      "That $o_s$ be declared as a free variable",
      "That the problem be a maximization"
     ],
-    "spiegazione": "If $\\pi_sc_o > 0$, any $o_s$ above $\\max\\{q - d_s, 0\\}$ could be lowered, reducing the cost. With a zero or negative coefficient the trick fails."
+    "spiegazione": "If $w_sc_o > 0$, any $o_s$ above $\\max\\{q - d_s, 0\\}$ could be lowered, reducing the cost. With a zero or negative coefficient the trick fails."
    }
   },
   {
@@ -1781,7 +1781,7 @@
    },
    "corretta": 3,
    "it": {
-    "testo": "LP di Rockafellar–Uryasev per una perdita con scenari $s$ di probabilità $\\pi_s$ e perdita $\\ell_s(\\mathbf x)$: $\\min\\ \\eta + \\frac{1}{1-\\alpha}\\sum_s\\pi_s\\xi_s$ soggetto a $\\xi_s \\ge \\ell_s(\\mathbf x) - \\eta$, $\\xi_s \\ge 0$, $\\mathbf x \\in X$. Come va dichiarata in gurobipy la variabile soglia $\\eta$?",
+    "testo": "LP di Rockafellar–Uryasev per una perdita con scenari $s$ di probabilità $w_s$ e perdita $\\ell_s(\\mathbf x)$: $\\min\\ \\eta + \\frac{1}{1-\\alpha}\\sum_s w_s\\xi_s$ soggetto a $\\xi_s \\ge \\ell_s(\\mathbf x) - \\eta$, $\\xi_s \\ge 0$, $\\mathbf x \\in X$. Come va dichiarata in gurobipy la variabile soglia $\\eta$?",
     "opzioni": [
      "Con i limiti predefiniti di `addVar`",
      "Come variabile binaria",
@@ -1791,7 +1791,7 @@
     "spiegazione": "$\\eta \\gtreqless 0$ nel modello; il default `lb=0` imporrebbe $\\eta \\ge 0$, un errore frequente in laboratorio."
    },
    "en": {
-    "testo": "Rockafellar–Uryasev LP for a loss with scenarios $s$ of probability $\\pi_s$ and loss $\\ell_s(\\mathbf x)$: $\\min\\ \\eta + \\frac{1}{1-\\alpha}\\sum_s\\pi_s\\xi_s$ subject to $\\xi_s \\ge \\ell_s(\\mathbf x) - \\eta$, $\\xi_s \\ge 0$, $\\mathbf x \\in X$. How must the threshold variable $\\eta$ be declared in gurobipy?",
+    "testo": "Rockafellar–Uryasev LP for a loss with scenarios $s$ of probability $w_s$ and loss $\\ell_s(\\mathbf x)$: $\\min\\ \\eta + \\frac{1}{1-\\alpha}\\sum_s w_s\\xi_s$ subject to $\\xi_s \\ge \\ell_s(\\mathbf x) - \\eta$, $\\xi_s \\ge 0$, $\\mathbf x \\in X$. How must the threshold variable $\\eta$ be declared in gurobipy?",
     "opzioni": [
      "With the default bounds of `addVar`",
      "As a binary variable",
@@ -1811,7 +1811,7 @@
    },
    "corretta": 1,
    "it": {
-    "testo": "LP di Rockafellar–Uryasev per una perdita con scenari $s$ di probabilità $\\pi_s$ e perdita $\\ell_s(\\mathbf x)$: $\\min\\ \\eta + \\frac{1}{1-\\alpha}\\sum_s\\pi_s\\xi_s$ soggetto a $\\xi_s \\ge \\ell_s(\\mathbf x) - \\eta$, $\\xi_s \\ge 0$, $\\mathbf x \\in X$. Con $\\alpha = 0{,}99$ e solo $k = 220$ scenari equiprobabili, perché il CVaR stimato è poco affidabile?",
+    "testo": "LP di Rockafellar–Uryasev per una perdita con scenari $s$ di probabilità $w_s$ e perdita $\\ell_s(\\mathbf x)$: $\\min\\ \\eta + \\frac{1}{1-\\alpha}\\sum_s w_s\\xi_s$ soggetto a $\\xi_s \\ge \\ell_s(\\mathbf x) - \\eta$, $\\xi_s \\ge 0$, $\\mathbf x \\in X$. Con $\\alpha = 0{,}99$ e solo $k = 220$ scenari equiprobabili, perché il CVaR stimato è poco affidabile?",
     "opzioni": [
      "Perché l'LP diventa non convesso per $\\alpha$ vicino a $1$",
      "Perché la coda contiene solo 2–3 scenari",
@@ -1821,7 +1821,7 @@
     "spiegazione": "La coda di massa $0{,}01$ contiene $2{,}2$ scenari: la stima è quasi rumore. Regola pratica: almeno alcune decine di scenari oltre il quantile."
    },
    "en": {
-    "testo": "Rockafellar–Uryasev LP for a loss with scenarios $s$ of probability $\\pi_s$ and loss $\\ell_s(\\mathbf x)$: $\\min\\ \\eta + \\frac{1}{1-\\alpha}\\sum_s\\pi_s\\xi_s$ subject to $\\xi_s \\ge \\ell_s(\\mathbf x) - \\eta$, $\\xi_s \\ge 0$, $\\mathbf x \\in X$. With $\\alpha = 0.99$ and only $k = 220$ equally likely scenarios, why is the estimated CVaR unreliable?",
+    "testo": "Rockafellar–Uryasev LP for a loss with scenarios $s$ of probability $w_s$ and loss $\\ell_s(\\mathbf x)$: $\\min\\ \\eta + \\frac{1}{1-\\alpha}\\sum_s w_s\\xi_s$ subject to $\\xi_s \\ge \\ell_s(\\mathbf x) - \\eta$, $\\xi_s \\ge 0$, $\\mathbf x \\in X$. With $\\alpha = 0.99$ and only $k = 220$ equally likely scenarios, why is the estimated CVaR unreliable?",
     "opzioni": [
      "Because the LP becomes non-convex for $\\alpha$ close to $1$",
      "Because the tail contains only 2–3 scenarios",
@@ -1901,7 +1901,7 @@
    },
    "corretta": 1,
    "it": {
-    "testo": "LP di Rockafellar–Uryasev per una perdita con scenari $s$ di probabilità $\\pi_s$ e perdita $\\ell_s(\\mathbf x)$: $\\min\\ \\eta + \\frac{1}{1-\\alpha}\\sum_s\\pi_s\\xi_s$ soggetto a $\\xi_s \\ge \\ell_s(\\mathbf x) - \\eta$, $\\xi_s \\ge 0$, $\\mathbf x \\in X$. Quale affermazione è corretta?",
+    "testo": "LP di Rockafellar–Uryasev per una perdita con scenari $s$ di probabilità $w_s$ e perdita $\\ell_s(\\mathbf x)$: $\\min\\ \\eta + \\frac{1}{1-\\alpha}\\sum_s w_s\\xi_s$ soggetto a $\\xi_s \\ge \\ell_s(\\mathbf x) - \\eta$, $\\xi_s \\ge 0$, $\\mathbf x \\in X$. Quale affermazione è corretta?",
     "opzioni": [
      "All'ottimo $\\eta$ è la perdita attesa e il valore è il VaR",
      "All'ottimo $\\eta$ è un VaR e il valore ottimo è il CVaR",
@@ -1911,7 +1911,7 @@
     "spiegazione": "Minimizzare su $\\eta$ bilancia soglia ed eccessi: il punto di equilibrio è il quantile di livello $\\alpha$. Con distribuzioni discrete il VaR può non essere unico ($\\tilde\\eta$ è un VaR)."
    },
    "en": {
-    "testo": "Rockafellar–Uryasev LP for a loss with scenarios $s$ of probability $\\pi_s$ and loss $\\ell_s(\\mathbf x)$: $\\min\\ \\eta + \\frac{1}{1-\\alpha}\\sum_s\\pi_s\\xi_s$ subject to $\\xi_s \\ge \\ell_s(\\mathbf x) - \\eta$, $\\xi_s \\ge 0$, $\\mathbf x \\in X$. Which statement is correct?",
+    "testo": "Rockafellar–Uryasev LP for a loss with scenarios $s$ of probability $w_s$ and loss $\\ell_s(\\mathbf x)$: $\\min\\ \\eta + \\frac{1}{1-\\alpha}\\sum_s w_s\\xi_s$ subject to $\\xi_s \\ge \\ell_s(\\mathbf x) - \\eta$, $\\xi_s \\ge 0$, $\\mathbf x \\in X$. Which statement is correct?",
     "opzioni": [
      "At the optimum $\\eta$ is the expected loss and the value is the VaR",
      "At the optimum $\\eta$ is a VaR and the optimal value is the CVaR",
@@ -1961,7 +1961,7 @@
    },
    "corretta": 2,
    "it": {
-    "testo": "LP di Rockafellar–Uryasev per una perdita con scenari $s$ di probabilità $\\pi_s$ e perdita $\\ell_s(\\mathbf x)$: $\\min\\ \\eta + \\frac{1}{1-\\alpha}\\sum_s\\pi_s\\xi_s$ soggetto a $\\xi_s \\ge \\ell_s(\\mathbf x) - \\eta$, $\\xi_s \\ge 0$, $\\mathbf x \\in X$. Sotto quali ipotesi l'intero modello è un LP?",
+    "testo": "LP di Rockafellar–Uryasev per una perdita con scenari $s$ di probabilità $w_s$ e perdita $\\ell_s(\\mathbf x)$: $\\min\\ \\eta + \\frac{1}{1-\\alpha}\\sum_s w_s\\xi_s$ soggetto a $\\xi_s \\ge \\ell_s(\\mathbf x) - \\eta$, $\\xi_s \\ge 0$, $\\mathbf x \\in X$. Sotto quali ipotesi l'intero modello è un LP?",
     "opzioni": [
      "Scenari equiprobabili e $\\alpha = 0{,}9$",
      "Perdite di scenario con distribuzione normale",
@@ -1971,7 +1971,7 @@
     "spiegazione": "Con $X$ poliedrale e perdite lineari tutti i vincoli e l'obiettivo sono lineari; la soglia $\\eta$ è libera e gli eccessi non negativi. 2000 è solo il limite della licenza di Colab."
    },
    "en": {
-    "testo": "Rockafellar–Uryasev LP for a loss with scenarios $s$ of probability $\\pi_s$ and loss $\\ell_s(\\mathbf x)$: $\\min\\ \\eta + \\frac{1}{1-\\alpha}\\sum_s\\pi_s\\xi_s$ subject to $\\xi_s \\ge \\ell_s(\\mathbf x) - \\eta$, $\\xi_s \\ge 0$, $\\mathbf x \\in X$. Under which assumptions is the whole model an LP?",
+    "testo": "Rockafellar–Uryasev LP for a loss with scenarios $s$ of probability $w_s$ and loss $\\ell_s(\\mathbf x)$: $\\min\\ \\eta + \\frac{1}{1-\\alpha}\\sum_s w_s\\xi_s$ subject to $\\xi_s \\ge \\ell_s(\\mathbf x) - \\eta$, $\\xi_s \\ge 0$, $\\mathbf x \\in X$. Under which assumptions is the whole model an LP?",
     "opzioni": [
      "Equally likely scenarios and $\\alpha = 0.9$",
      "Normally distributed scenario losses",
@@ -1991,9 +1991,9 @@
    },
    "corretta": 0,
    "it": {
-    "testo": "LP di Rockafellar–Uryasev per una perdita con scenari $s$ di probabilità $\\pi_s$ e perdita $\\ell_s(\\mathbf x)$: $\\min\\ \\eta + \\frac{1}{1-\\alpha}\\sum_s\\pi_s\\xi_s$ soggetto a $\\xi_s \\ge \\ell_s(\\mathbf x) - \\eta$, $\\xi_s \\ge 0$, $\\mathbf x \\in X$. Perché all'ottimo vale $\\xi_s = (\\ell_s - \\eta)^+$, per ogni scenario con $\\pi_s > 0$?",
+    "testo": "LP di Rockafellar–Uryasev per una perdita con scenari $s$ di probabilità $w_s$ e perdita $\\ell_s(\\mathbf x)$: $\\min\\ \\eta + \\frac{1}{1-\\alpha}\\sum_s w_s\\xi_s$ soggetto a $\\xi_s \\ge \\ell_s(\\mathbf x) - \\eta$, $\\xi_s \\ge 0$, $\\mathbf x \\in X$. Perché all'ottimo vale $\\xi_s = (\\ell_s - \\eta)^+$, per ogni scenario con $w_s > 0$?",
     "opzioni": [
-     "$\\xi_s$ ha costo $\\pi_s/(1-\\alpha) > 0$ e limiti inferiori $\\ell_s - \\eta$ e $0$",
+     "$\\xi_s$ ha costo $w_s/(1-\\alpha) > 0$ e limiti inferiori $\\ell_s - \\eta$ e $0$",
      "Perché la soglia $\\eta$ è una variabile libera",
      "Perché $\\alpha < 1$ rende il problema limitato",
      "Perché le perdite $\\ell_s$ sono positive"
@@ -2001,9 +2001,9 @@
     "spiegazione": "Stesso trucco delle parti positive del newsvendor: l'obiettivo spinge ogni $\\xi_s$ giù fino al maggiore dei suoi due limiti inferiori."
    },
    "en": {
-    "testo": "Rockafellar–Uryasev LP for a loss with scenarios $s$ of probability $\\pi_s$ and loss $\\ell_s(\\mathbf x)$: $\\min\\ \\eta + \\frac{1}{1-\\alpha}\\sum_s\\pi_s\\xi_s$ subject to $\\xi_s \\ge \\ell_s(\\mathbf x) - \\eta$, $\\xi_s \\ge 0$, $\\mathbf x \\in X$. Why does $\\xi_s = (\\ell_s - \\eta)^+$ hold at the optimum, for every scenario with $\\pi_s > 0$?",
+    "testo": "Rockafellar–Uryasev LP for a loss with scenarios $s$ of probability $w_s$ and loss $\\ell_s(\\mathbf x)$: $\\min\\ \\eta + \\frac{1}{1-\\alpha}\\sum_s w_s\\xi_s$ subject to $\\xi_s \\ge \\ell_s(\\mathbf x) - \\eta$, $\\xi_s \\ge 0$, $\\mathbf x \\in X$. Why does $\\xi_s = (\\ell_s - \\eta)^+$ hold at the optimum, for every scenario with $w_s > 0$?",
     "opzioni": [
-     "$\\xi_s$ has cost $\\pi_s/(1-\\alpha) > 0$ and lower bounds $\\ell_s - \\eta$ and $0$",
+     "$\\xi_s$ has cost $w_s/(1-\\alpha) > 0$ and lower bounds $\\ell_s - \\eta$ and $0$",
      "Because the threshold $\\eta$ is a free variable",
      "Because $\\alpha < 1$ makes the problem bounded",
      "Because the losses $\\ell_s$ are positive"
@@ -3011,21 +3011,21 @@
    },
    "corretta": 2,
    "it": {
-    "testo": "Ricarica EV, un veicolo, due ore: servono $e = 10$ kWh ($\\eta = 1$), prezzi $\\pi_1 = 0{,}12$ e $\\pi_2 = 0{,}20$ €/kWh, potenza del caricatore $\\bar p = 8$ kW, quindi carica 8 kWh nell'ora 1 e 2 nell'ora 2 (ore di 1 h, quindi kW e kWh coincidono). Quanto farebbe risparmiare un kW di potenza in più nell'ora 1?",
+    "testo": "Ricarica EV, un veicolo, due ore: servono $e = 10$ kWh ($r = 1$), prezzi $c_1 = 0{,}12$ e $c_2 = 0{,}20$ €/kWh, potenza del caricatore $\\bar p = 8$ kW, quindi carica 8 kWh nell'ora 1 e 2 nell'ora 2 (ore di 1 h, quindi kW e kWh coincidono). Quanto farebbe risparmiare un kW di potenza in più nell'ora 1?",
     "opzioni": [
      "$0{,}20$ €, il prezzo dell'ora 2",
      "$0{,}12$ €, il prezzo dell'ora 1",
-     "$0{,}08$ €, la differenza di prezzo $\\pi_2 - \\pi_1$",
+     "$0{,}08$ €, la differenza di prezzo $c_2 - c_1$",
      "Nulla, perché il requisito è già soddisfatto"
     ],
     "spiegazione": "Un kW in più nell'ora 1 sposta un kWh dall'ora cara a quella economica: risparmio $0{,}20 - 0{,}12 = 0{,}08$ €. È il valore (assoluto) del duale del limite di potenza."
    },
    "en": {
-    "testo": "EV charging, one vehicle, two hours: it needs $e = 10$ kWh ($\\eta = 1$), prices $\\pi_1 = 0.12$ and $\\pi_2 = 0.20$ €/kWh, charger power $\\bar p = 8$ kW, so it charges 8 kWh in hour 1 and 2 in hour 2 (hours of 1 h, so kW and kWh coincide). How much would one more kW of charger power in hour 1 save?",
+    "testo": "EV charging, one vehicle, two hours: it needs $e = 10$ kWh ($r = 1$), prices $c_1 = 0.12$ and $c_2 = 0.20$ €/kWh, charger power $\\bar p = 8$ kW, so it charges 8 kWh in hour 1 and 2 in hour 2 (hours of 1 h, so kW and kWh coincide). How much would one more kW of charger power in hour 1 save?",
     "opzioni": [
      "$0.20$ €, the price of hour 2",
      "$0.12$ €, the price of hour 1",
-     "$0.08$ €, the price difference $\\pi_2 - \\pi_1$",
+     "$0.08$ €, the price difference $c_2 - c_1$",
      "Nothing, since the requirement is already met"
     ],
     "spiegazione": "One more kW in hour 1 moves one kWh from the expensive to the cheap hour: saving $0.20 - 0.12 = 0.08$ €. That is the (absolute) value of the dual of the power limit."
@@ -3041,24 +3041,24 @@
    },
    "corretta": 0,
    "it": {
-    "testo": "LP di ricarica EV: potenza $x_{vt}$ al veicolo $v$ nell'ora $t$ (1 h), prezzo dell'energia $\\pi_t$, dato di disponibilità $a_{vt} \\in \\{0,1\\}$, potenza del caricatore $\\bar p_v$, energia richiesta $e_v$, rendimento $\\eta$, carico di base $b_t$, limite del contatore $k$; si minimizza $\\sum_{v,t}\\pi_tx_{vt}$. Nel caso di studio ($\\eta = 0{,}95$) i prezzi ombra dei vincoli di energia valgono $0{,}0842$ €/kWh per i furgoni V2, V3, V6 e $0{,}0947$ per V1, V4, V5. Perché sono diversi?",
+    "testo": "LP di ricarica EV: potenza $x_{vt}$ al veicolo $v$ nell'ora $t$ (1 h), prezzo dell'energia $c_t$, dato di disponibilità $a_{vt} \\in \\{0,1\\}$, potenza del caricatore $\\bar p_v$, energia richiesta $e_v$, rendimento $r$, carico di base $b_t$, limite del contatore $k$; si minimizza $\\sum_{v,t}c_tx_{vt}$. Nel caso di studio ($r = 0{,}95$) i prezzi ombra dei vincoli di energia valgono $0{,}0842$ €/kWh per i furgoni V2, V3, V6 e $0{,}0947$ per V1, V4, V5. Perché sono diversi?",
     "opzioni": [
      "Le finestre sono diverse: l'ora libera più economica costa $0{,}08$ per alcuni, $0{,}09$ per altri",
      "Perché i furgoni hanno batterie $e_v$ diverse",
      "Perché il contatore è saturo solo per V1, V4, V5",
-     "Perché $\\eta$ è diverso fra i due gruppi"
+     "Perché $r$ è diverso fra i due gruppi"
     ],
-    "spiegazione": "$0{,}0842 = 0{,}08/\\eta$ e $0{,}0947 = 0{,}09/\\eta$: i furgoni la cui finestra copre le ore a $0{,}08$ comprano lì il kWh marginale; gli altri arrivano tardi o partono presto."
+    "spiegazione": "$0{,}0842 = 0{,}08/r$ e $0{,}0947 = 0{,}09/r$: i furgoni la cui finestra copre le ore a $0{,}08$ comprano lì il kWh marginale; gli altri arrivano tardi o partono presto."
    },
    "en": {
-    "testo": "EV charging LP: power $x_{vt}$ to vehicle $v$ in hour $t$ (1 h), energy price $\\pi_t$, availability datum $a_{vt} \\in \\{0,1\\}$, charger power $\\bar p_v$, required energy $e_v$, efficiency $\\eta$, base load $b_t$, meter limit $k$; minimize $\\sum_{v,t}\\pi_tx_{vt}$. In the case study ($\\eta = 0.95$) the shadow prices of the energy constraints are $0.0842$ €/kWh for vans V2, V3, V6 and $0.0947$ for V1, V4, V5. Why do they differ?",
+    "testo": "EV charging LP: power $x_{vt}$ to vehicle $v$ in hour $t$ (1 h), energy price $c_t$, availability datum $a_{vt} \\in \\{0,1\\}$, charger power $\\bar p_v$, required energy $e_v$, efficiency $r$, base load $b_t$, meter limit $k$; minimize $\\sum_{v,t}c_tx_{vt}$. In the case study ($r = 0.95$) the shadow prices of the energy constraints are $0.0842$ €/kWh for vans V2, V3, V6 and $0.0947$ for V1, V4, V5. Why do they differ?",
     "opzioni": [
      "Their windows differ: the cheapest free hour costs $0.08$ for some, $0.09$ for others",
      "Because the vans have different batteries $e_v$",
      "Because the meter is saturated only for V1, V4, V5",
-     "Because $\\eta$ differs between the two groups"
+     "Because $r$ differs between the two groups"
     ],
-    "spiegazione": "$0.0842 = 0.08/\\eta$ and $0.0947 = 0.09/\\eta$: vans whose windows cover the hours at $0.08$ buy their marginal kWh there; the others arrive late or leave early."
+    "spiegazione": "$0.0842 = 0.08/r$ and $0.0947 = 0.09/r$: vans whose windows cover the hours at $0.08$ buy their marginal kWh there; the others arrive late or leave early."
    }
   },
   {
@@ -3071,7 +3071,7 @@
    },
    "corretta": 1,
    "it": {
-    "testo": "LP di ricarica EV: potenza $x_{vt}$ al veicolo $v$ nell'ora $t$ (1 h), prezzo dell'energia $\\pi_t$, dato di disponibilità $a_{vt} \\in \\{0,1\\}$, potenza del caricatore $\\bar p_v$, energia richiesta $e_v$, rendimento $\\eta$, carico di base $b_t$, limite del contatore $k$; si minimizza $\\sum_{v,t}\\pi_tx_{vt}$. Nel caso di studio il costo notturno è $20{,}36$ € con limite del contatore $k = 120$ kW, $21{,}09$ € con $k = 80$, e il modello è inammissibile con $k = 60$ o $65$ kW. Perché inammissibile?",
+    "testo": "LP di ricarica EV: potenza $x_{vt}$ al veicolo $v$ nell'ora $t$ (1 h), prezzo dell'energia $c_t$, dato di disponibilità $a_{vt} \\in \\{0,1\\}$, potenza del caricatore $\\bar p_v$, energia richiesta $e_v$, rendimento $r$, carico di base $b_t$, limite del contatore $k$; si minimizza $\\sum_{v,t}c_tx_{vt}$. Nel caso di studio il costo notturno è $20{,}36$ € con limite del contatore $k = 120$ kW, $21{,}09$ € con $k = 80$, e il modello è inammissibile con $k = 60$ o $65$ kW. Perché inammissibile?",
     "opzioni": [
      "Perché i prezzi dell'energia diventano negativi",
      "Perché i veicoli non possono ricevere la loro energia nelle loro finestre",
@@ -3081,7 +3081,7 @@
     "spiegazione": "Un limite troppo basso lascia troppa poca potenza nelle ore in cui i furgoni sono collegati: i requisiti di energia non si possono soddisfare tutti."
    },
    "en": {
-    "testo": "EV charging LP: power $x_{vt}$ to vehicle $v$ in hour $t$ (1 h), energy price $\\pi_t$, availability datum $a_{vt} \\in \\{0,1\\}$, charger power $\\bar p_v$, required energy $e_v$, efficiency $\\eta$, base load $b_t$, meter limit $k$; minimize $\\sum_{v,t}\\pi_tx_{vt}$. In the case study the nightly cost is $20.36$ € with meter limit $k = 120$ kW, $21.09$ € with $k = 80$, and the model is infeasible with $k = 60$ or $65$ kW. Why infeasible?",
+    "testo": "EV charging LP: power $x_{vt}$ to vehicle $v$ in hour $t$ (1 h), energy price $c_t$, availability datum $a_{vt} \\in \\{0,1\\}$, charger power $\\bar p_v$, required energy $e_v$, efficiency $r$, base load $b_t$, meter limit $k$; minimize $\\sum_{v,t}c_tx_{vt}$. In the case study the nightly cost is $20.36$ € with meter limit $k = 120$ kW, $21.09$ € with $k = 80$, and the model is infeasible with $k = 60$ or $65$ kW. Why infeasible?",
     "opzioni": [
      "Because the energy prices become negative",
      "Because the vehicles cannot get their energy within their windows",
@@ -3101,7 +3101,7 @@
    },
    "corretta": 3,
    "it": {
-    "testo": "LP di ricarica EV: potenza $x_{vt}$ al veicolo $v$ nell'ora $t$ (1 h), prezzo dell'energia $\\pi_t$, dato di disponibilità $a_{vt} \\in \\{0,1\\}$, potenza del caricatore $\\bar p_v$, energia richiesta $e_v$, rendimento $\\eta$, carico di base $b_t$, limite del contatore $k$; si minimizza $\\sum_{v,t}\\pi_tx_{vt}$. Minimizzando costo $+\\,\\rho z$ ($z$ = prelievo di picco) per $\\rho$ crescente, il caso di studio trova: $\\rho = 0$: costo $20{,}36$ €, picco $103{,}4$ kW; $\\rho = 0{,}1$: $21{,}39$ €, $74{,}9$ kW; $\\rho = 0{,}2$: $22{,}15$ €, $68{,}0$ kW. Che cosa mostra?",
+    "testo": "LP di ricarica EV: potenza $x_{vt}$ al veicolo $v$ nell'ora $t$ (1 h), prezzo dell'energia $c_t$, dato di disponibilità $a_{vt} \\in \\{0,1\\}$, potenza del caricatore $\\bar p_v$, energia richiesta $e_v$, rendimento $r$, carico di base $b_t$, limite del contatore $k$; si minimizza $\\sum_{v,t}c_tx_{vt}$. Minimizzando costo $+\\,w z$ ($z$ = prelievo di picco) per $w$ crescente, il caso di studio trova: $w = 0$: costo $20{,}36$ €, picco $103{,}4$ kW; $w = 0{,}1$: $21{,}39$ €, $74{,}9$ kW; $w = 0{,}2$: $22{,}15$ €, $68{,}0$ kW. Che cosa mostra?",
     "opzioni": [
      "Ridurre il picco è molto costoso",
      "Picco e costo non interagiscono",
@@ -3111,7 +3111,7 @@
     "spiegazione": "La frontiera dei compromessi è ripida all'inizio: tagliare il picco da 103 a 75 kW costa circa un euro a notte, arrivare a 68 kW meno di due."
    },
    "en": {
-    "testo": "EV charging LP: power $x_{vt}$ to vehicle $v$ in hour $t$ (1 h), energy price $\\pi_t$, availability datum $a_{vt} \\in \\{0,1\\}$, charger power $\\bar p_v$, required energy $e_v$, efficiency $\\eta$, base load $b_t$, meter limit $k$; minimize $\\sum_{v,t}\\pi_tx_{vt}$. Minimizing cost $+\\,\\rho z$ ($z$ = peak draw) for growing $\\rho$, the case study finds: $\\rho = 0$: cost $20.36$ €, peak $103.4$ kW; $\\rho = 0.1$: $21.39$ €, $74.9$ kW; $\\rho = 0.2$: $22.15$ €, $68.0$ kW. What does this show?",
+    "testo": "EV charging LP: power $x_{vt}$ to vehicle $v$ in hour $t$ (1 h), energy price $c_t$, availability datum $a_{vt} \\in \\{0,1\\}$, charger power $\\bar p_v$, required energy $e_v$, efficiency $r$, base load $b_t$, meter limit $k$; minimize $\\sum_{v,t}c_tx_{vt}$. Minimizing cost $+\\,w z$ ($z$ = peak draw) for growing $w$, the case study finds: $w = 0$: cost $20.36$ €, peak $103.4$ kW; $w = 0.1$: $21.39$ €, $74.9$ kW; $w = 0.2$: $22.15$ €, $68.0$ kW. What does this show?",
     "opzioni": [
      "Cutting the peak is very expensive",
      "Peak and cost do not interact",
@@ -3285,7 +3285,7 @@
     "opzioni": [
      "Perché la distribuzione normale è asimmetrica a destra",
      "Perché il valore di recupero è positivo",
-     "Perché $\\alpha = c_u/(c_u + c_o) = 9/13 > 1/2$",
+     "Perché $f = c_u/(c_u + c_o) = 9/13 > 1/2$",
      "Perché $c_o > c_u$"
     ],
     "spiegazione": "$c_u = p - c = 9$, $c_o = c - v = 4$: restare a corto costa di più, quindi il rapporto critico supera un mezzo e $\\tilde q = F^{-1}(0{,}6923)$ sta sopra la mediana $100$."
@@ -3295,7 +3295,7 @@
     "opzioni": [
      "Because the normal distribution is skewed to the right",
      "Because the salvage value is positive",
-     "Because $\\alpha = c_u/(c_u + c_o) = 9/13 > 1/2$",
+     "Because $f = c_u/(c_u + c_o) = 9/13 > 1/2$",
      "Because $c_o > c_u$"
     ],
     "spiegazione": "$c_u = p - c = 9$, $c_o = c - v = 4$: running short costs more, so the critical ratio exceeds one half and $\\tilde q = F^{-1}(0.6923)$ lies above the median $100$."
@@ -3311,24 +3311,24 @@
    },
    "corretta": 0,
    "it": {
-    "testo": "Newsvendor: quantità ordinata $q$ prima di osservare la domanda aleatoria $D$ (funzione di ripartizione $F$); costo unitario di underage $c_u$ (domanda non servita) e di overage $c_o$ (unità invenduta); si minimizza $c_o\\mathbb E[(q - D)^+] + c_u\\mathbb E[(D - q)^+]$. La domanda è normale con media $m$ e deviazione standard $\\sigma$, quindi $\\tilde q = m + z\\,\\sigma$ con $z = \\Phi^{-1}(\\alpha)$ ($\\Phi$ = funzione di ripartizione normale standard, $\\alpha = c_u/(c_u + c_o)$). Quando la scorta di sicurezza $z\\sigma$ è positiva?",
+    "testo": "Newsvendor: quantità ordinata $q$ prima di osservare la domanda aleatoria $D$ (funzione di ripartizione $F$); costo unitario di underage $c_u$ (domanda non servita) e di overage $c_o$ (unità invenduta); si minimizza $c_o\\mathbb E[(q - D)^+] + c_u\\mathbb E[(D - q)^+]$. La domanda è normale con media $m$ e deviazione standard $\\sigma$, quindi $\\tilde q = m + z\\,\\sigma$ con $z = \\Phi^{-1}(f)$ ($\\Phi$ = funzione di ripartizione normale standard, $f = c_u/(c_u + c_o)$). Quando la scorta di sicurezza $z\\sigma$ è positiva?",
     "opzioni": [
-     "Quando $c_u > c_o$, cioè $\\alpha > 1/2$",
-     "Quando $c_o > c_u$, cioè $\\alpha < 1/2$",
+     "Quando $c_u > c_o$, cioè $f > 1/2$",
+     "Quando $c_o > c_u$, cioè $f < 1/2$",
      "Sempre, perché $\\sigma > 0$",
      "Solo quando il valore di recupero è nullo"
     ],
-    "spiegazione": "$\\Phi^{-1}(\\alpha) > 0$ esattamente quando $\\alpha > 1/2$; con overage costoso ($c_o > c_u$) si ordina sotto la media."
+    "spiegazione": "$\\Phi^{-1}(f) > 0$ esattamente quando $f > 1/2$; con overage costoso ($c_o > c_u$) si ordina sotto la media."
    },
    "en": {
-    "testo": "Newsvendor: order quantity $q$ before observing the random demand $D$ (distribution function $F$); unit underage cost $c_u$ (demand left unmet) and overage cost $c_o$ (unit left unsold); minimize $c_o\\mathbb E[(q - D)^+] + c_u\\mathbb E[(D - q)^+]$. Demand is normal with mean $m$ and standard deviation $\\sigma$, so $\\tilde q = m + z\\,\\sigma$ with $z = \\Phi^{-1}(\\alpha)$ ($\\Phi$ = standard normal distribution function, $\\alpha = c_u/(c_u + c_o)$). When is the safety stock $z\\sigma$ positive?",
+    "testo": "Newsvendor: order quantity $q$ before observing the random demand $D$ (distribution function $F$); unit underage cost $c_u$ (demand left unmet) and overage cost $c_o$ (unit left unsold); minimize $c_o\\mathbb E[(q - D)^+] + c_u\\mathbb E[(D - q)^+]$. Demand is normal with mean $m$ and standard deviation $\\sigma$, so $\\tilde q = m + z\\,\\sigma$ with $z = \\Phi^{-1}(f)$ ($\\Phi$ = standard normal distribution function, $f = c_u/(c_u + c_o)$). When is the safety stock $z\\sigma$ positive?",
     "opzioni": [
-     "When $c_u > c_o$, i.e. $\\alpha > 1/2$",
-     "When $c_o > c_u$, i.e. $\\alpha < 1/2$",
+     "When $c_u > c_o$, i.e. $f > 1/2$",
+     "When $c_o > c_u$, i.e. $f < 1/2$",
      "Always, since $\\sigma > 0$",
      "Only when the salvage value is zero"
     ],
-    "spiegazione": "$\\Phi^{-1}(\\alpha) > 0$ exactly when $\\alpha > 1/2$; with expensive overage ($c_o > c_u$) one orders below the mean."
+    "spiegazione": "$\\Phi^{-1}(f) > 0$ exactly when $f > 1/2$; with expensive overage ($c_o > c_u$) one orders below the mean."
    }
   },
   {
@@ -3341,7 +3341,7 @@
    },
    "corretta": 3,
    "it": {
-    "testo": "Newsvendor: quantità ordinata $q$ prima di osservare la domanda aleatoria $D$ (funzione di ripartizione $F$); costo unitario di underage $c_u$ (domanda non servita) e di overage $c_o$ (unità invenduta); si minimizza $c_o\\mathbb E[(q - D)^+] + c_u\\mathbb E[(D - q)^+]$. Una panetteria avversa al rischio minimizza $(1-\\lambda)\\,\\mathbb E[\\text{costo}] + \\lambda\\,\\mathrm{CVaR}_{0{,}90}(\\text{costo})$. Nel caso di studio, quando $\\lambda$ va da $0$ a $1$, come cambia l'ordine?",
+    "testo": "Newsvendor: quantità ordinata $q$ prima di osservare la domanda aleatoria $D$ (funzione di ripartizione $F$); costo unitario di underage $c_u$ (domanda non servita) e di overage $c_o$ (unità invenduta); si minimizza $c_o\\mathbb E[(q - D)^+] + c_u\\mathbb E[(D - q)^+]$. Una panetteria avversa al rischio minimizza $(1-r)\\,\\mathbb E[\\text{costo}] + r\\,\\mathrm{CVaR}_{0{,}90}(\\text{costo})$. Nel caso di studio, quando $r$ va da $0$ a $1$, come cambia l'ordine?",
     "opzioni": [
      "Scende da $108{,}6$ a $101{,}2$: avversione al rischio vuol dire ordinare meno",
      "Resta $108{,}6$: il CVaR non dipende da $q$",
@@ -3351,7 +3351,7 @@
     "spiegazione": "Qui la coda costosa viene dalle rotture di stock ($c_u > c_o$), quindi proteggersi vuol dire ordinare di più: $6{,}5$ € in più in media tagliano di $21{,}4$ € il costo medio del peggior $10\\%$."
    },
    "en": {
-    "testo": "Newsvendor: order quantity $q$ before observing the random demand $D$ (distribution function $F$); unit underage cost $c_u$ (demand left unmet) and overage cost $c_o$ (unit left unsold); minimize $c_o\\mathbb E[(q - D)^+] + c_u\\mathbb E[(D - q)^+]$. A risk-averse bakery minimizes $(1-\\lambda)\\,\\mathbb E[\\text{cost}] + \\lambda\\,\\mathrm{CVaR}_{0.90}(\\text{cost})$. In the case study, as $\\lambda$ goes from $0$ to $1$, how does the order change?",
+    "testo": "Newsvendor: order quantity $q$ before observing the random demand $D$ (distribution function $F$); unit underage cost $c_u$ (demand left unmet) and overage cost $c_o$ (unit left unsold); minimize $c_o\\mathbb E[(q - D)^+] + c_u\\mathbb E[(D - q)^+]$. A risk-averse bakery minimizes $(1-r)\\,\\mathbb E[\\text{cost}] + r\\,\\mathrm{CVaR}_{0.90}(\\text{cost})$. In the case study, as $r$ goes from $0$ to $1$, how does the order change?",
     "opzioni": [
      "It falls from $108.6$ to $101.2$: risk aversion means ordering less",
      "It stays at $108.6$: the CVaR does not depend on $q$",
@@ -3461,24 +3461,24 @@
    },
    "corretta": 3,
    "it": {
-    "testo": "LP di Rockafellar–Uryasev per una perdita con scenari $s$ di probabilità $\\pi_s$ e perdita $\\ell_s(\\mathbf x)$: $\\min\\ \\eta + \\frac{1}{1-\\alpha}\\sum_s\\pi_s\\xi_s$ soggetto a $\\xi_s \\ge \\ell_s(\\mathbf x) - \\eta$, $\\xi_s \\ge 0$, $\\mathbf x \\in X$. Come si costruisce uno stress test in questo modello a scenari?",
+    "testo": "LP di Rockafellar–Uryasev per una perdita con scenari $s$ di probabilità $w_s$ e perdita $\\ell_s(\\mathbf x)$: $\\min\\ \\eta + \\frac{1}{1-\\alpha}\\sum_s w_s\\xi_s$ soggetto a $\\xi_s \\ge \\ell_s(\\mathbf x) - \\eta$, $\\xi_s \\ge 0$, $\\mathbf x \\in X$. Come si costruisce uno stress test in questo modello a scenari?",
     "opzioni": [
      "Alzando $\\alpha$ finché l'LP diventa inammissibile",
      "Dichiarando $\\eta$ non negativa",
      "Togliendo gli scenari con le perdite più grandi",
-     "Aggiungendo scenari estremi o alzandone le probabilità $\\pi_s$"
+     "Aggiungendo scenari estremi o alzandone le probabilità $w_s$"
     ],
-    "spiegazione": "Le probabilità $\\pi_s$ sono dati: ripesare gli scenari o aggiungerne di estremi mostra come reagiscono la decisione ottima e il CVaR a code più severe."
+    "spiegazione": "Le probabilità $w_s$ sono dati: ripesare gli scenari o aggiungerne di estremi mostra come reagiscono la decisione ottima e il CVaR a code più severe."
    },
    "en": {
-    "testo": "Rockafellar–Uryasev LP for a loss with scenarios $s$ of probability $\\pi_s$ and loss $\\ell_s(\\mathbf x)$: $\\min\\ \\eta + \\frac{1}{1-\\alpha}\\sum_s\\pi_s\\xi_s$ subject to $\\xi_s \\ge \\ell_s(\\mathbf x) - \\eta$, $\\xi_s \\ge 0$, $\\mathbf x \\in X$. How can a stress test be built into this scenario model?",
+    "testo": "Rockafellar–Uryasev LP for a loss with scenarios $s$ of probability $w_s$ and loss $\\ell_s(\\mathbf x)$: $\\min\\ \\eta + \\frac{1}{1-\\alpha}\\sum_s w_s\\xi_s$ subject to $\\xi_s \\ge \\ell_s(\\mathbf x) - \\eta$, $\\xi_s \\ge 0$, $\\mathbf x \\in X$. How can a stress test be built into this scenario model?",
     "opzioni": [
      "By raising $\\alpha$ until the LP becomes infeasible",
      "By declaring $\\eta$ non-negative",
      "By removing the scenarios with the largest losses",
-     "By adding extreme scenarios or raising their probabilities $\\pi_s$"
+     "By adding extreme scenarios or raising their probabilities $w_s$"
     ],
-    "spiegazione": "The probabilities $\\pi_s$ are data: reweighting scenarios or adding extreme ones shows how the optimal decision and the CVaR react to harsher tails."
+    "spiegazione": "The probabilities $w_s$ are data: reweighting scenarios or adding extreme ones shows how the optimal decision and the CVaR react to harsher tails."
    }
   },
   {
@@ -3791,24 +3791,24 @@
    },
    "corretta": 2,
    "it": {
-    "testo": "LP di ricarica EV: potenza $x_{vt}$ al veicolo $v$ nell'ora $t$ (1 h), prezzo dell'energia $\\pi_t$, dato di disponibilità $a_{vt} \\in \\{0,1\\}$, potenza del caricatore $\\bar p_v$, energia richiesta $e_v$, rendimento $\\eta$, carico di base $b_t$, limite del contatore $k$; si minimizza $\\sum_{v,t}\\pi_tx_{vt}$. Quale condizione sui dati è necessaria perché l'LP sia ammissibile, qualunque sia il limite del contatore?",
+    "testo": "LP di ricarica EV: potenza $x_{vt}$ al veicolo $v$ nell'ora $t$ (1 h), prezzo dell'energia $c_t$, dato di disponibilità $a_{vt} \\in \\{0,1\\}$, potenza del caricatore $\\bar p_v$, energia richiesta $e_v$, rendimento $r$, carico di base $b_t$, limite del contatore $k$; si minimizza $\\sum_{v,t}c_tx_{vt}$. Quale condizione sui dati è necessaria perché l'LP sia ammissibile, qualunque sia il limite del contatore?",
     "opzioni": [
      "$e_v \\le \\bar p_v$ per ogni veicolo $v$: basta un'ora di ricarica",
-     "$\\sum_t \\pi_t \\ge e_v$ per ogni veicolo $v$",
-     "$\\eta\\,\\bar p_v \\sum_t a_{vt} \\ge e_v$ per ogni veicolo $v$",
+     "$\\sum_t c_t \\ge e_v$ per ogni veicolo $v$",
+     "$r\\,\\bar p_v \\sum_t a_{vt} \\ge e_v$ per ogni veicolo $v$",
      "$k \\ge b_t$ soltanto nell'ora più cara"
     ],
-    "spiegazione": "Il veicolo $v$ può ricevere al più $\\eta\\,\\bar p_v$ kWh in ogni ora in cui è collegato: se $\\eta\\,\\bar p_v\\sum_t a_{vt} < e_v$ il suo vincolo di energia non può valere. Il contatore può rendere il modello inammissibile anche quando questa condizione vale."
+    "spiegazione": "Il veicolo $v$ può ricevere al più $r\\,\\bar p_v$ kWh in ogni ora in cui è collegato: se $r\\,\\bar p_v\\sum_t a_{vt} < e_v$ il suo vincolo di energia non può valere. Il contatore può rendere il modello inammissibile anche quando questa condizione vale."
    },
    "en": {
-    "testo": "EV charging LP: power $x_{vt}$ to vehicle $v$ in hour $t$ (1 h), energy price $\\pi_t$, availability datum $a_{vt} \\in \\{0,1\\}$, charger power $\\bar p_v$, required energy $e_v$, efficiency $\\eta$, base load $b_t$, meter limit $k$; minimize $\\sum_{v,t}\\pi_tx_{vt}$. Which condition on the data is necessary for the LP to be feasible, whatever the meter limit?",
+    "testo": "EV charging LP: power $x_{vt}$ to vehicle $v$ in hour $t$ (1 h), energy price $c_t$, availability datum $a_{vt} \\in \\{0,1\\}$, charger power $\\bar p_v$, required energy $e_v$, efficiency $r$, base load $b_t$, meter limit $k$; minimize $\\sum_{v,t}c_tx_{vt}$. Which condition on the data is necessary for the LP to be feasible, whatever the meter limit?",
     "opzioni": [
      "$e_v \\le \\bar p_v$ for every vehicle $v$: one hour of charging is enough",
-     "$\\sum_t \\pi_t \\ge e_v$ for every vehicle $v$",
-     "$\\eta\\,\\bar p_v \\sum_t a_{vt} \\ge e_v$ for every vehicle $v$",
+     "$\\sum_t c_t \\ge e_v$ for every vehicle $v$",
+     "$r\\,\\bar p_v \\sum_t a_{vt} \\ge e_v$ for every vehicle $v$",
      "$k \\ge b_t$ in the most expensive hour only"
     ],
-    "spiegazione": "Vehicle $v$ can receive at most $\\eta\\,\\bar p_v$ kWh in each hour in which it is plugged in: if $\\eta\\,\\bar p_v\\sum_t a_{vt} < e_v$ its energy constraint cannot hold. The meter can make the model infeasible even when this holds."
+    "spiegazione": "Vehicle $v$ can receive at most $r\\,\\bar p_v$ kWh in each hour in which it is plugged in: if $r\\,\\bar p_v\\sum_t a_{vt} < e_v$ its energy constraint cannot hold. The meter can make the model infeasible even when this holds."
    }
   },
   {
@@ -5351,22 +5351,22 @@
    },
    "corretta": 3,
    "it": {
-    "testo": "Newsvendor: quantità ordinata $q$ scelta prima di osservare la domanda aleatoria $D$ (funzione di ripartizione $F$); costo unitario di underage $c_u$ (domanda non servita) e di overage $c_o$ (unità invenduta); si minimizza $c_o\\mathbb E[(q - D)^+] + c_u\\mathbb E[(D - q)^+]$. Tre scenari equiprobabili $D \\in \\{80, 100, 120\\}$ con $c_u = 9$, $c_o = 4$, quindi $\\alpha^* = 9/13 \\approx 0{,}692$. Perché $q = 100$ non è ottimo secondo la regola del quantile discreta?",
+    "testo": "Newsvendor: quantità ordinata $q$ scelta prima di osservare la domanda aleatoria $D$ (funzione di ripartizione $F$); costo unitario di underage $c_u$ (domanda non servita) e di overage $c_o$ (unità invenduta); si minimizza $c_o\\mathbb E[(q - D)^+] + c_u\\mathbb E[(D - q)^+]$. Tre scenari equiprobabili $D \\in \\{80, 100, 120\\}$ con $c_u = 9$, $c_o = 4$, quindi $f^* = 9/13 \\approx 0{,}692$. Perché $q = 100$ non è ottimo secondo la regola del quantile discreta?",
     "opzioni": [
      "Perché $100$ è la media, mai ottima",
-     "Perché $F(100) = 1/3$ è molto sotto $\\alpha^*$",
-     "Perché $F(100) = 1 > \\alpha^*$",
-     "Perché $F(100) = 2/3 \\approx 0{,}667 < \\alpha^*$"
+     "Perché $F(100) = 1/3$ è molto sotto $f^*$",
+     "Perché $F(100) = 1 > f^*$",
+     "Perché $F(100) = 2/3 \\approx 0{,}667 < f^*$"
     ],
     "spiegazione": "La regola prende il più piccolo $q$ con $F(q) \\ge 0{,}692$: $F(80) = 1/3$, $F(100) = 2/3 < 0{,}692$, $F(120) = 1$, quindi $\\tilde q = 120$, coerente con il confronto diretto dei costi."
    },
    "en": {
-    "testo": "Newsvendor: order quantity $q$ chosen before observing the random demand $D$ (distribution function $F$); unit underage cost $c_u$ (demand left unmet) and overage cost $c_o$ (unit left unsold); minimize $c_o\\mathbb E[(q - D)^+] + c_u\\mathbb E[(D - q)^+]$. Three equiprobable scenarios $D \\in \\{80, 100, 120\\}$ with $c_u = 9$, $c_o = 4$, so $\\alpha^* = 9/13 \\approx 0.692$. Why is $q = 100$ not optimal according to the discrete quantile rule?",
+    "testo": "Newsvendor: order quantity $q$ chosen before observing the random demand $D$ (distribution function $F$); unit underage cost $c_u$ (demand left unmet) and overage cost $c_o$ (unit left unsold); minimize $c_o\\mathbb E[(q - D)^+] + c_u\\mathbb E[(D - q)^+]$. Three equiprobable scenarios $D \\in \\{80, 100, 120\\}$ with $c_u = 9$, $c_o = 4$, so $f^* = 9/13 \\approx 0.692$. Why is $q = 100$ not optimal according to the discrete quantile rule?",
     "opzioni": [
      "Because $100$ is the mean, never optimal",
-     "Because $F(100) = 1/3$ is far below $\\alpha^*$",
-     "Because $F(100) = 1 > \\alpha^*$",
-     "Because $F(100) = 2/3 \\approx 0.667 < \\alpha^*$"
+     "Because $F(100) = 1/3$ is far below $f^*$",
+     "Because $F(100) = 1 > f^*$",
+     "Because $F(100) = 2/3 \\approx 0.667 < f^*$"
     ],
     "spiegazione": "The rule takes the smallest $q$ with $F(q) \\ge 0.692$: $F(80) = 1/3$, $F(100) = 2/3 < 0.692$, $F(120) = 1$, so $\\tilde q = 120$, consistent with the direct cost comparison."
    }
@@ -5471,7 +5471,7 @@
    },
    "corretta": 0,
    "it": {
-    "testo": "LP a scenari del newsvendor: domande $d_s$ con probabilità $\\pi_s$ ($s = 1, \\dots, k$); variabili $q \\ge 0$, eccedenza $o_s \\ge q - d_s$ e carenza $u_s \\ge d_s - q$, con $o_s, u_s \\ge 0$; si minimizza $\\sum_s\\pi_s(c_oo_s + c_uu_s)$. Con $k = 600$ scenari equiprobabili l'LP dà $q = 108{,}61$ e il quantile empirico al $69{,}23\\%$ degli scenari è $108{,}60$. Perché coincidono?",
+    "testo": "LP a scenari del newsvendor: domande $d_s$ con probabilità $w_s$ ($s = 1, \\dots, k$); variabili $q \\ge 0$, eccedenza $o_s \\ge q - d_s$ e carenza $u_s \\ge d_s - q$, con $o_s, u_s \\ge 0$; si minimizza $\\sum_s w_s(c_oo_s + c_uu_s)$. Con $k = 600$ scenari equiprobabili l'LP dà $q = 108{,}61$ e il quantile empirico al $69{,}23\\%$ degli scenari è $108{,}60$. Perché coincidono?",
     "opzioni": [
      "Un teorema: l'LP dà un quantile empirico",
      "Per caso: con altri dati sarebbero diversi",
@@ -5481,7 +5481,7 @@
     "spiegazione": "L'LP a scenari minimizza il costo atteso sotto la distribuzione empirica, e a essa si applica la regola del quantile: l'ottimo è un quantile empirico al rapporto critico (qui $9/13$)."
    },
    "en": {
-    "testo": "Scenario LP of the newsvendor: demands $d_s$ with probabilities $\\pi_s$ ($s = 1, \\dots, k$); variables $q \\ge 0$, overage $o_s \\ge q - d_s$ and underage $u_s \\ge d_s - q$, with $o_s, u_s \\ge 0$; minimize $\\sum_s\\pi_s(c_oo_s + c_uu_s)$. With $k = 600$ equiprobable scenarios the LP gives $q = 108.61$ and the empirical $69.23\\%$ quantile of the scenarios is $108.60$. Why do they coincide?",
+    "testo": "Scenario LP of the newsvendor: demands $d_s$ with probabilities $w_s$ ($s = 1, \\dots, k$); variables $q \\ge 0$, overage $o_s \\ge q - d_s$ and underage $u_s \\ge d_s - q$, with $o_s, u_s \\ge 0$; minimize $\\sum_s w_s(c_oo_s + c_uu_s)$. With $k = 600$ equiprobable scenarios the LP gives $q = 108.61$ and the empirical $69.23\\%$ quantile of the scenarios is $108.60$. Why do they coincide?",
     "opzioni": [
      "A theorem: the LP gives an empirical quantile",
      "By chance: with other data they would differ",
@@ -5501,7 +5501,7 @@
    },
    "corretta": 2,
    "it": {
-    "testo": "LP a scenari del newsvendor: domande $d_s$ con probabilità $\\pi_s$ ($s = 1, \\dots, k$); variabili $q \\ge 0$, eccedenza $o_s \\ge q - d_s$ e carenza $u_s \\ge d_s - q$, con $o_s, u_s \\ge 0$; si minimizza $\\sum_s\\pi_s(c_oo_s + c_uu_s)$. Quante variabili e quanti vincoli (oltre alle non negatività) ha l'LP con $k$ scenari?",
+    "testo": "LP a scenari del newsvendor: domande $d_s$ con probabilità $w_s$ ($s = 1, \\dots, k$); variabili $q \\ge 0$, eccedenza $o_s \\ge q - d_s$ e carenza $u_s \\ge d_s - q$, con $o_s, u_s \\ge 0$; si minimizza $\\sum_s w_s(c_oo_s + c_uu_s)$. Quante variabili e quanti vincoli (oltre alle non negatività) ha l'LP con $k$ scenari?",
     "opzioni": [
      "$k$ variabili e $k$ vincoli",
      "$2k$ variabili e $k + 1$ vincoli",
@@ -5511,7 +5511,7 @@
     "spiegazione": "Variabili: $q$ più $o_s$ e $u_s$ per ogni scenario; vincoli: una definizione di eccedenza e una di carenza per scenario. L'unica vera decisione è $q$."
    },
    "en": {
-    "testo": "Scenario LP of the newsvendor: demands $d_s$ with probabilities $\\pi_s$ ($s = 1, \\dots, k$); variables $q \\ge 0$, overage $o_s \\ge q - d_s$ and underage $u_s \\ge d_s - q$, with $o_s, u_s \\ge 0$; minimize $\\sum_s\\pi_s(c_oo_s + c_uu_s)$. How many variables and constraints (besides nonnegativity) does the LP have with $k$ scenarios?",
+    "testo": "Scenario LP of the newsvendor: demands $d_s$ with probabilities $w_s$ ($s = 1, \\dots, k$); variables $q \\ge 0$, overage $o_s \\ge q - d_s$ and underage $u_s \\ge d_s - q$, with $o_s, u_s \\ge 0$; minimize $\\sum_s w_s(c_oo_s + c_uu_s)$. How many variables and constraints (besides nonnegativity) does the LP have with $k$ scenarios?",
     "opzioni": [
      "$k$ variables and $k$ constraints",
      "$2k$ variables and $k + 1$ constraints",
@@ -5621,24 +5621,24 @@
    },
    "corretta": 1,
    "it": {
-    "testo": "Newsvendor: quantità ordinata $q$ scelta prima di osservare la domanda aleatoria $D$ (funzione di ripartizione $F$); costo unitario di underage $c_u$ (domanda non servita) e di overage $c_o$ (unità invenduta); si minimizza $c_o\\mathbb E[(q - D)^+] + c_u\\mathbb E[(D - q)^+]$. Una panetteria avversa al rischio minimizza $(1-\\lambda)\\mathbb E[\\text{costo}] + \\lambda\\,\\mathrm{CVaR}_{0{,}90}(\\text{costo})$. Con $\\lambda = 0$: costo medio $88{,}33$, CVaR $245{,}93$; con $\\lambda = 0{,}25$: $90{,}37$ e $229{,}29$; con $\\lambda = 1$: $94{,}87$ e $224{,}56$. Che cosa mostrano i numeri?",
+    "testo": "Newsvendor: quantità ordinata $q$ scelta prima di osservare la domanda aleatoria $D$ (funzione di ripartizione $F$); costo unitario di underage $c_u$ (domanda non servita) e di overage $c_o$ (unità invenduta); si minimizza $c_o\\mathbb E[(q - D)^+] + c_u\\mathbb E[(D - q)^+]$. Una panetteria avversa al rischio minimizza $(1-r)\\mathbb E[\\text{costo}] + r\\,\\mathrm{CVaR}_{0{,}90}(\\text{costo})$. Con $r = 0$: costo medio $88{,}33$, CVaR $245{,}93$; con $r = 0{,}25$: $90{,}37$ e $229{,}29$; con $r = 1$: $94{,}87$ e $224{,}56$. Che cosa mostrano i numeri?",
     "opzioni": [
-     "La protezione cresce linearmente con $\\lambda$",
-     "Gran parte arriva già con $\\lambda = 0{,}25$",
-     "Il CVaR non dipende da $\\lambda$",
-     "Con $\\lambda = 1$ il costo medio diminuisce"
+     "La protezione cresce linearmente con $r$",
+     "Gran parte arriva già con $r = 0{,}25$",
+     "Il CVaR non dipende da $r$",
+     "Con $r = 1$ il costo medio diminuisce"
     ],
-    "spiegazione": "Da $\\lambda = 0$ a $0{,}25$ il CVaR scende di $16{,}6$ € per $2$ € di costo medio; andare fino a $\\lambda = 1$ fa guadagnare meno di $5$ € in più: la frontiera è ripida all'inizio e piatta dopo."
+    "spiegazione": "Da $r = 0$ a $0{,}25$ il CVaR scende di $16{,}6$ € per $2$ € di costo medio; andare fino a $r = 1$ fa guadagnare meno di $5$ € in più: la frontiera è ripida all'inizio e piatta dopo."
    },
    "en": {
-    "testo": "Newsvendor: order quantity $q$ chosen before observing the random demand $D$ (distribution function $F$); unit underage cost $c_u$ (demand left unmet) and overage cost $c_o$ (unit left unsold); minimize $c_o\\mathbb E[(q - D)^+] + c_u\\mathbb E[(D - q)^+]$. A risk-averse bakery minimizes $(1-\\lambda)\\mathbb E[\\text{cost}] + \\lambda\\,\\mathrm{CVaR}_{0.90}(\\text{cost})$. With $\\lambda = 0$: mean cost $88.33$, CVaR $245.93$; with $\\lambda = 0.25$: $90.37$ and $229.29$; with $\\lambda = 1$: $94.87$ and $224.56$. What do the numbers show?",
+    "testo": "Newsvendor: order quantity $q$ chosen before observing the random demand $D$ (distribution function $F$); unit underage cost $c_u$ (demand left unmet) and overage cost $c_o$ (unit left unsold); minimize $c_o\\mathbb E[(q - D)^+] + c_u\\mathbb E[(D - q)^+]$. A risk-averse bakery minimizes $(1-r)\\mathbb E[\\text{cost}] + r\\,\\mathrm{CVaR}_{0.90}(\\text{cost})$. With $r = 0$: mean cost $88.33$, CVaR $245.93$; with $r = 0.25$: $90.37$ and $229.29$; with $r = 1$: $94.87$ and $224.56$. What do the numbers show?",
     "opzioni": [
-     "Protection grows linearly with $\\lambda$",
-     "Most of it comes already at $\\lambda = 0.25$",
-     "The CVaR does not depend on $\\lambda$",
-     "With $\\lambda = 1$ the mean cost decreases"
+     "Protection grows linearly with $r$",
+     "Most of it comes already at $r = 0.25$",
+     "The CVaR does not depend on $r$",
+     "With $r = 1$ the mean cost decreases"
     ],
-    "spiegazione": "From $\\lambda = 0$ to $0.25$ the CVaR drops by $16.6$ € for $2$ € of mean cost; going on to $\\lambda = 1$ gains less than $5$ € more: the frontier is steep at first and flat afterwards."
+    "spiegazione": "From $r = 0$ to $0.25$ the CVaR drops by $16.6$ € for $2$ € of mean cost; going on to $r = 1$ gains less than $5$ € more: the frontier is steep at first and flat afterwards."
    }
   },
   {
@@ -5681,20 +5681,20 @@
    },
    "corretta": 2,
    "it": {
-    "testo": "Newsvendor: quantità ordinata $q$ scelta prima di osservare la domanda aleatoria $D$ (funzione di ripartizione $F$); costo unitario di underage $c_u$ (domanda non servita) e di overage $c_o$ (unità invenduta); si minimizza $c_o\\mathbb E[(q - D)^+] + c_u\\mathbb E[(D - q)^+]$. Nel newsvendor media–CVaR del laboratorio l'ordine avverso al rischio passa da $108{,}6$ ($\\lambda = 0$) a $116{,}2$ ($\\lambda = 1$). Perché qui l'avversione al rischio alza l'ordine?",
+    "testo": "Newsvendor: quantità ordinata $q$ scelta prima di osservare la domanda aleatoria $D$ (funzione di ripartizione $F$); costo unitario di underage $c_u$ (domanda non servita) e di overage $c_o$ (unità invenduta); si minimizza $c_o\\mathbb E[(q - D)^+] + c_u\\mathbb E[(D - q)^+]$. Nel newsvendor media–CVaR del laboratorio l'ordine avverso al rischio passa da $108{,}6$ ($r = 0$) a $116{,}2$ ($r = 1$). Perché qui l'avversione al rischio alza l'ordine?",
     "opzioni": [
      "Perché l'invenduto diventa meno caro",
-     "Perché la domanda media cresce con $\\lambda$",
+     "Perché la domanda media cresce con $r$",
      "Gli scenari peggiori sono rotture",
      "Perché il CVaR ignora il costo di underage"
     ],
     "spiegazione": "Con $c_u = 9 > c_o = 4$ gli scenari più costosi sono quelli di domanda alta con vendite perse; proteggersi da essi vuol dire ordinare di più."
    },
    "en": {
-    "testo": "Newsvendor: order quantity $q$ chosen before observing the random demand $D$ (distribution function $F$); unit underage cost $c_u$ (demand left unmet) and overage cost $c_o$ (unit left unsold); minimize $c_o\\mathbb E[(q - D)^+] + c_u\\mathbb E[(D - q)^+]$. In the mean–CVaR newsvendor of the lab, the risk-averse order goes from $108.6$ ($\\lambda = 0$) to $116.2$ ($\\lambda = 1$). Why does risk aversion raise the order here?",
+    "testo": "Newsvendor: order quantity $q$ chosen before observing the random demand $D$ (distribution function $F$); unit underage cost $c_u$ (demand left unmet) and overage cost $c_o$ (unit left unsold); minimize $c_o\\mathbb E[(q - D)^+] + c_u\\mathbb E[(D - q)^+]$. In the mean–CVaR newsvendor of the lab, the risk-averse order goes from $108.6$ ($r = 0$) to $116.2$ ($r = 1$). Why does risk aversion raise the order here?",
     "opzioni": [
      "Because leftovers become cheaper",
-     "Because the mean demand grows with $\\lambda$",
+     "Because the mean demand grows with $r$",
      "The worst scenarios are stock-outs",
      "Because the CVaR ignores the underage cost"
     ],
@@ -5921,7 +5921,7 @@
    },
    "corretta": 1,
    "it": {
-    "testo": "LP di Rockafellar–Uryasev per una perdita con scenari $s$ di probabilità $\\pi_s$ e perdita $\\ell_s(\\mathbf x)$, livello $\\alpha \\in (0, 1)$: $\\min\\ \\eta + \\frac{1}{1-\\alpha}\\sum_s\\pi_s\\xi_s$ soggetto a $\\xi_s \\ge \\ell_s(\\mathbf x) - \\eta$, $\\xi_s \\ge 0$, $\\mathbf x \\in X$, $\\eta$ libera. Sei perdite equiprobabili $\\{2, 4, 5, 7, 12, 20\\}$ (nessuna decisione $\\mathbf x$), $\\alpha = 0{,}80$: l'LP restituisce $\\eta^* = 12$. Quanto valgono gli eccessi $\\xi_s$ e il valore ottimo?",
+    "testo": "LP di Rockafellar–Uryasev per una perdita con scenari $s$ di probabilità $w_s$ e perdita $\\ell_s(\\mathbf x)$, livello $\\alpha \\in (0, 1)$: $\\min\\ \\eta + \\frac{1}{1-\\alpha}\\sum_s w_s\\xi_s$ soggetto a $\\xi_s \\ge \\ell_s(\\mathbf x) - \\eta$, $\\xi_s \\ge 0$, $\\mathbf x \\in X$, $\\eta$ libera. Sei perdite equiprobabili $\\{2, 4, 5, 7, 12, 20\\}$ (nessuna decisione $\\mathbf x$), $\\alpha = 0{,}80$: l'LP restituisce $\\eta^* = 12$. Quanto valgono gli eccessi $\\xi_s$ e il valore ottimo?",
     "opzioni": [
      "$\\xi = (0, 0, 0, 0, 0, 20)$, valore $28{,}67$",
      "$\\xi = (0, 0, 0, 0, 0, 8)$, valore $18{,}67$",
@@ -5931,7 +5931,7 @@
     "spiegazione": "$\\xi_s = (\\ell_s - 12)^+$: solo la perdita 20 supera la soglia, di 8. Valore $12 + \\frac{1}{0{,}2}\\cdot\\frac16\\cdot 8 = 18{,}67$: un solo LP dà VaR e CVaR, trattando correttamente la massa «a cavallo» del quantile."
    },
    "en": {
-    "testo": "Rockafellar–Uryasev LP for a loss with scenarios $s$ of probability $\\pi_s$ and loss $\\ell_s(\\mathbf x)$, level $\\alpha \\in (0, 1)$: $\\min\\ \\eta + \\frac{1}{1-\\alpha}\\sum_s\\pi_s\\xi_s$ subject to $\\xi_s \\ge \\ell_s(\\mathbf x) - \\eta$, $\\xi_s \\ge 0$, $\\mathbf x \\in X$, $\\eta$ free. Six equiprobable losses $\\{2, 4, 5, 7, 12, 20\\}$ (no decision $\\mathbf x$), $\\alpha = 0.80$: the LP returns $\\eta^* = 12$. What are the excesses $\\xi_s$ and the optimal value?",
+    "testo": "Rockafellar–Uryasev LP for a loss with scenarios $s$ of probability $w_s$ and loss $\\ell_s(\\mathbf x)$, level $\\alpha \\in (0, 1)$: $\\min\\ \\eta + \\frac{1}{1-\\alpha}\\sum_s w_s\\xi_s$ subject to $\\xi_s \\ge \\ell_s(\\mathbf x) - \\eta$, $\\xi_s \\ge 0$, $\\mathbf x \\in X$, $\\eta$ free. Six equiprobable losses $\\{2, 4, 5, 7, 12, 20\\}$ (no decision $\\mathbf x$), $\\alpha = 0.80$: the LP returns $\\eta^* = 12$. What are the excesses $\\xi_s$ and the optimal value?",
     "opzioni": [
      "$\\xi = (0, 0, 0, 0, 0, 20)$, value $28.67$",
      "$\\xi = (0, 0, 0, 0, 0, 8)$, value $18.67$",
@@ -5981,24 +5981,24 @@
    },
    "corretta": 3,
    "it": {
-    "testo": "Supply chain a due stadi con CVaR: il fornitore 1 è economico ma fragile (nel $12\\%$ degli scenari la sua disponibilità crolla al $30\\%$), il fornitore 2 caro ma affidabile. Quando il peso del rischio $\\lambda$ va da 0 a 1, che cosa succede alle capacità prenotate?",
+    "testo": "Supply chain a due stadi con CVaR: il fornitore 1 è economico ma fragile (nel $12\\%$ degli scenari la sua disponibilità crolla al $30\\%$), il fornitore 2 caro ma affidabile. Quando il peso del rischio $r$ va da 0 a 1, che cosa succede alle capacità prenotate?",
     "opzioni": [
      "Non cambiano: cambia solo il ricorso",
      "La capacità si sposta verso il fornitore 1",
      "Si riducono entrambe per tagliare il costo di prenotazione",
      "La capacità si sposta verso il fornitore affidabile 2"
     ],
-    "spiegazione": "Da $\\lambda = 0$ a $1$ il fornitore 1 passa da $161{,}5$ a $68{,}5$ e il fornitore 2 da $134{,}2$ a $236{,}9$: la protezione dagli scenari di guasto si compra con capacità affidabile."
+    "spiegazione": "Da $r = 0$ a $1$ il fornitore 1 passa da $161{,}5$ a $68{,}5$ e il fornitore 2 da $134{,}2$ a $236{,}9$: la protezione dagli scenari di guasto si compra con capacità affidabile."
    },
    "en": {
-    "testo": "Two-stage supply chain with CVaR: supplier 1 is cheap but fragile (in $12\\%$ of the scenarios its availability drops to $30\\%$), supplier 2 expensive but reliable. As the risk weight $\\lambda$ goes from 0 to 1, what happens to the booked capacities?",
+    "testo": "Two-stage supply chain with CVaR: supplier 1 is cheap but fragile (in $12\\%$ of the scenarios its availability drops to $30\\%$), supplier 2 expensive but reliable. As the risk weight $r$ goes from 0 to 1, what happens to the booked capacities?",
     "opzioni": [
      "They do not change: only the recourse changes",
      "Capacity moves toward supplier 1",
      "Both shrink to cut the booking cost",
      "Capacity moves toward the reliable supplier 2"
     ],
-    "spiegazione": "From $\\lambda = 0$ to $1$ supplier 1 goes from $161.5$ to $68.5$ and supplier 2 from $134.2$ to $236.9$: protection against the failure scenarios is bought with reliable capacity."
+    "spiegazione": "From $r = 0$ to $1$ supplier 1 goes from $161.5$ to $68.5$ and supplier 2 from $134.2$ to $236.9$: protection against the failure scenarios is bought with reliable capacity."
    }
   },
   {
@@ -6011,24 +6011,24 @@
    },
    "corretta": 1,
    "it": {
-    "testo": "Supply chain a due stadi con CVaR del laboratorio: da $\\lambda = 0$ a $\\lambda = 1$ il costo medio passa da $1724$ a $1906$ € e il $\\mathrm{CVaR}_{0{,}90}$ da $2902$ a $2139$ €; già con $\\lambda = 0{,}5$: $1803$ e $2217$. Come chiama la dispensa il costo medio in più pagato per la protezione?",
+    "testo": "Supply chain a due stadi con CVaR del laboratorio: da $r = 0$ a $r = 1$ il costo medio passa da $1724$ a $1906$ € e il $\\mathrm{CVaR}_{0{,}90}$ da $2902$ a $2139$ €; già con $r = 0{,}5$: $1803$ e $2217$. Come chiama la dispensa il costo medio in più pagato per la protezione?",
     "opzioni": [
      "Il valore della soluzione stocastica",
      "Il costo della resilienza",
      "Il prezzo dell'anarchia",
      "Il prezzo ombra della capacità"
     ],
-    "spiegazione": "Circa $+79$ € di costo medio comprano $-685$ € di CVaR (con $\\lambda = 0{,}5$): il costo della resilienza, il numero che serve in una discussione su dual sourcing o rishoring."
+    "spiegazione": "Circa $+79$ € di costo medio comprano $-685$ € di CVaR (con $r = 0{,}5$): il costo della resilienza, il numero che serve in una discussione su dual sourcing o rishoring."
    },
    "en": {
-    "testo": "Two-stage supply chain with CVaR of the lab: from $\\lambda = 0$ to $\\lambda = 1$ the mean cost goes from $1724$ to $1906$ € and the $\\mathrm{CVaR}_{0.90}$ from $2902$ to $2139$ €; already with $\\lambda = 0.5$: $1803$ and $2217$. How do the notes call the extra mean cost paid for the protection?",
+    "testo": "Two-stage supply chain with CVaR of the lab: from $r = 0$ to $r = 1$ the mean cost goes from $1724$ to $1906$ € and the $\\mathrm{CVaR}_{0.90}$ from $2902$ to $2139$ €; already with $r = 0.5$: $1803$ and $2217$. How do the notes call the extra mean cost paid for the protection?",
     "opzioni": [
      "The value of the stochastic solution",
      "The cost of resilience",
      "The price of anarchy",
      "The shadow price of the capacity"
     ],
-    "spiegazione": "About $+79$ € of mean cost buy $-685$ € of CVaR (at $\\lambda = 0.5$): the cost of resilience, the number needed in a discussion about dual sourcing or reshoring."
+    "spiegazione": "About $+79$ € of mean cost buy $-685$ € of CVaR (at $r = 0.5$): the cost of resilience, the number needed in a discussion about dual sourcing or reshoring."
    }
   },
   {
@@ -6041,7 +6041,7 @@
    },
    "corretta": 2,
    "it": {
-    "testo": "LP di Rockafellar–Uryasev per una perdita con scenari $s$ di probabilità $\\pi_s$ e perdita $\\ell_s(\\mathbf x)$, livello $\\alpha \\in (0, 1)$: $\\min\\ \\eta + \\frac{1}{1-\\alpha}\\sum_s\\pi_s\\xi_s$ soggetto a $\\xi_s \\ge \\ell_s(\\mathbf x) - \\eta$, $\\xi_s \\ge 0$, $\\mathbf x \\in X$, $\\eta$ libera. Con scenari discreti l'LP restituisce un $\\eta^*$ ottimo. Che cosa se ne può dire?",
+    "testo": "LP di Rockafellar–Uryasev per una perdita con scenari $s$ di probabilità $w_s$ e perdita $\\ell_s(\\mathbf x)$, livello $\\alpha \\in (0, 1)$: $\\min\\ \\eta + \\frac{1}{1-\\alpha}\\sum_s w_s\\xi_s$ soggetto a $\\xi_s \\ge \\ell_s(\\mathbf x) - \\eta$, $\\xi_s \\ge 0$, $\\mathbf x \\in X$, $\\eta$ libera. Con scenari discreti l'LP restituisce un $\\eta^*$ ottimo. Che cosa se ne può dire?",
     "opzioni": [
      "È sempre la perdita media",
      "È sempre unico e uguale alla perdita massima",
@@ -6051,7 +6051,7 @@
     "spiegazione": "All'ottimo $\\eta^*$ è un quantile $\\alpha$ della perdita; con distribuzioni discrete i minimi in $\\eta$ possono formare un intervallo, quindi $\\eta^*$ è *un* VaR. Il valore ottimo, il CVaR, è unico."
    },
    "en": {
-    "testo": "Rockafellar–Uryasev LP for a loss with scenarios $s$ of probability $\\pi_s$ and loss $\\ell_s(\\mathbf x)$, level $\\alpha \\in (0, 1)$: $\\min\\ \\eta + \\frac{1}{1-\\alpha}\\sum_s\\pi_s\\xi_s$ subject to $\\xi_s \\ge \\ell_s(\\mathbf x) - \\eta$, $\\xi_s \\ge 0$, $\\mathbf x \\in X$, $\\eta$ free. With discrete scenarios the LP returns some optimal $\\eta^*$. What can be said of it?",
+    "testo": "Rockafellar–Uryasev LP for a loss with scenarios $s$ of probability $w_s$ and loss $\\ell_s(\\mathbf x)$, level $\\alpha \\in (0, 1)$: $\\min\\ \\eta + \\frac{1}{1-\\alpha}\\sum_s w_s\\xi_s$ subject to $\\xi_s \\ge \\ell_s(\\mathbf x) - \\eta$, $\\xi_s \\ge 0$, $\\mathbf x \\in X$, $\\eta$ free. With discrete scenarios the LP returns some optimal $\\eta^*$. What can be said of it?",
     "opzioni": [
      "It is always the mean loss",
      "It is always unique and equal to the largest loss",
@@ -6071,7 +6071,7 @@
    },
    "corretta": 0,
    "it": {
-    "testo": "LP di Rockafellar–Uryasev per una perdita con scenari $s$ di probabilità $\\pi_s$ e perdita $\\ell_s(\\mathbf x)$, livello $\\alpha \\in (0, 1)$: $\\min\\ \\eta + \\frac{1}{1-\\alpha}\\sum_s\\pi_s\\xi_s$ soggetto a $\\xi_s \\ge \\ell_s(\\mathbf x) - \\eta$, $\\xi_s \\ge 0$, $\\mathbf x \\in X$, $\\eta$ libera. Analisi di sensitività del laboratorio: che effetto ci si aspetta alzando il livello di confidenza $\\alpha$?",
+    "testo": "LP di Rockafellar–Uryasev per una perdita con scenari $s$ di probabilità $w_s$ e perdita $\\ell_s(\\mathbf x)$, livello $\\alpha \\in (0, 1)$: $\\min\\ \\eta + \\frac{1}{1-\\alpha}\\sum_s w_s\\xi_s$ soggetto a $\\xi_s \\ge \\ell_s(\\mathbf x) - \\eta$, $\\xi_s \\ge 0$, $\\mathbf x \\in X$, $\\eta$ libera. Analisi di sensitività del laboratorio: che effetto ci si aspetta alzando il livello di confidenza $\\alpha$?",
     "opzioni": [
      "Meno scenari in coda: stima più rumorosa",
      "Un CVaR più piccolo",
@@ -6081,7 +6081,7 @@
     "spiegazione": "Un $\\alpha$ più alto guarda una coda più sottile: a parità di scenari ne restano meno oltre il quantile e la stima è più rumorosa; il CVaR stesso può solo crescere."
    },
    "en": {
-    "testo": "Rockafellar–Uryasev LP for a loss with scenarios $s$ of probability $\\pi_s$ and loss $\\ell_s(\\mathbf x)$, level $\\alpha \\in (0, 1)$: $\\min\\ \\eta + \\frac{1}{1-\\alpha}\\sum_s\\pi_s\\xi_s$ subject to $\\xi_s \\ge \\ell_s(\\mathbf x) - \\eta$, $\\xi_s \\ge 0$, $\\mathbf x \\in X$, $\\eta$ free. Sensitivity analysis of the lab: what is the expected effect of raising the confidence level $\\alpha$?",
+    "testo": "Rockafellar–Uryasev LP for a loss with scenarios $s$ of probability $w_s$ and loss $\\ell_s(\\mathbf x)$, level $\\alpha \\in (0, 1)$: $\\min\\ \\eta + \\frac{1}{1-\\alpha}\\sum_s w_s\\xi_s$ subject to $\\xi_s \\ge \\ell_s(\\mathbf x) - \\eta$, $\\xi_s \\ge 0$, $\\mathbf x \\in X$, $\\eta$ free. Sensitivity analysis of the lab: what is the expected effect of raising the confidence level $\\alpha$?",
     "opzioni": [
      "Fewer scenarios in the tail: noisier estimate",
      "A smaller CVaR",
@@ -7278,7 +7278,7 @@
      "Come prezzi delle ore marginali",
      "Come il rendimento delle batterie"
     ],
-    "spiegazione": "Un kWh in più per un veicolo finisce nella sua ora più economica ancora libera: il duale è il prezzo di quell'ora, corretto per il rendimento $\\eta$."
+    "spiegazione": "Un kWh in più per un veicolo finisce nella sua ora più economica ancora libera: il duale è il prezzo di quell'ora, corretto per il rendimento $r$."
    },
    "en": {
     "testo": "In the smart-charging chapter, how are the duals of the energy requirements read?",
@@ -7288,7 +7288,7 @@
      "As prices of marginal hours",
      "As the efficiency of the batteries"
     ],
-    "spiegazione": "One more kWh for a vehicle goes into its cheapest still-free hour: the dual is that hour's price, corrected by the efficiency $\\eta$."
+    "spiegazione": "One more kWh for a vehicle goes into its cheapest still-free hour: the dual is that hour's price, corrected by the efficiency $r$."
    }
   },
   {
@@ -7301,7 +7301,7 @@
    },
    "corretta": 2,
    "it": {
-    "testo": "LP di ricarica EV: potenza $x_{vt}$ al veicolo $v$ nell'ora $t$ (1 h), prezzo dell'energia $\\pi_t$, disponibilità $a_{vt} \\in \\{0, 1\\}$, potenza del caricatore $\\bar p_v$, energia richiesta $e_v$, rendimento $\\eta$, carico di base $b_t$, limite del contatore $k$; si minimizza $\\sum_{v,t}\\pi_tx_{vt}$ con $\\eta\\sum_tx_{vt} \\ge e_v$, $x_{vt} \\le \\bar p_va_{vt}$, $\\sum_vx_{vt} + b_t \\le k$. Un veicolo, due ore: $e = 10$ kWh, $\\eta = 1$, prezzi $0{,}10$ e $0{,}20$ €/kWh, potenza del caricatore $\\bar p = 8$ kW. Quanto valgono il costo e il prezzo ombra del fabbisogno?",
+    "testo": "LP di ricarica EV: potenza $x_{vt}$ al veicolo $v$ nell'ora $t$ (1 h), prezzo dell'energia $c_t$, disponibilità $a_{vt} \\in \\{0, 1\\}$, potenza del caricatore $\\bar p_v$, energia richiesta $e_v$, rendimento $r$, carico di base $b_t$, limite del contatore $k$; si minimizza $\\sum_{v,t}c_tx_{vt}$ con $r\\sum_tx_{vt} \\ge e_v$, $x_{vt} \\le \\bar p_va_{vt}$, $\\sum_vx_{vt} + b_t \\le k$. Un veicolo, due ore: $e = 10$ kWh, $r = 1$, prezzi $0{,}10$ e $0{,}20$ €/kWh, potenza del caricatore $\\bar p = 8$ kW. Quanto valgono il costo e il prezzo ombra del fabbisogno?",
     "opzioni": [
      "Costo $1{,}00$ €, prezzo ombra $0{,}10$",
      "Costo $2{,}00$ €, prezzo ombra $0{,}20$",
@@ -7311,7 +7311,7 @@
     "spiegazione": "8 kWh nell'ora economica, 2 in quella cara: $0{,}8 + 0{,}4 = 1{,}20$ €. L'11º kWh andrebbe nell'ora cara, quindi il duale è $0{,}20$ €/kWh."
    },
    "en": {
-    "testo": "EV charging LP: power $x_{vt}$ to vehicle $v$ in hour $t$ (1 h), energy price $\\pi_t$, availability $a_{vt} \\in \\{0, 1\\}$, charger power $\\bar p_v$, required energy $e_v$, efficiency $\\eta$, base load $b_t$, meter limit $k$; minimize $\\sum_{v,t}\\pi_tx_{vt}$ with $\\eta\\sum_tx_{vt} \\ge e_v$, $x_{vt} \\le \\bar p_va_{vt}$, $\\sum_vx_{vt} + b_t \\le k$. One vehicle, two hours: $e = 10$ kWh, $\\eta = 1$, prices $0.10$ and $0.20$ €/kWh, charger power $\\bar p = 8$ kW. What are the cost and the shadow price of the energy requirement?",
+    "testo": "EV charging LP: power $x_{vt}$ to vehicle $v$ in hour $t$ (1 h), energy price $c_t$, availability $a_{vt} \\in \\{0, 1\\}$, charger power $\\bar p_v$, required energy $e_v$, efficiency $r$, base load $b_t$, meter limit $k$; minimize $\\sum_{v,t}c_tx_{vt}$ with $r\\sum_tx_{vt} \\ge e_v$, $x_{vt} \\le \\bar p_va_{vt}$, $\\sum_vx_{vt} + b_t \\le k$. One vehicle, two hours: $e = 10$ kWh, $r = 1$, prices $0.10$ and $0.20$ €/kWh, charger power $\\bar p = 8$ kW. What are the cost and the shadow price of the energy requirement?",
     "opzioni": [
      "Cost $1.00$ €, shadow price $0.10$",
      "Cost $2.00$ €, shadow price $0.20$",
@@ -7331,7 +7331,7 @@
    },
    "corretta": 0,
    "it": {
-    "testo": "LP di ricarica EV: potenza $x_{vt}$ al veicolo $v$ nell'ora $t$ (1 h), prezzo dell'energia $\\pi_t$, disponibilità $a_{vt} \\in \\{0, 1\\}$, potenza del caricatore $\\bar p_v$, energia richiesta $e_v$, rendimento $\\eta$, carico di base $b_t$, limite del contatore $k$; si minimizza $\\sum_{v,t}\\pi_tx_{vt}$ con $\\eta\\sum_tx_{vt} \\ge e_v$, $x_{vt} \\le \\bar p_va_{vt}$, $\\sum_vx_{vt} + b_t \\le k$. Un veicolo, due ore, $e = 10$ kWh, prezzi $0{,}10$ e $0{,}20$ €/kWh, $\\bar p = 8$ kW: quanto vale un kW di potenza in più nell'ora 1?",
+    "testo": "LP di ricarica EV: potenza $x_{vt}$ al veicolo $v$ nell'ora $t$ (1 h), prezzo dell'energia $c_t$, disponibilità $a_{vt} \\in \\{0, 1\\}$, potenza del caricatore $\\bar p_v$, energia richiesta $e_v$, rendimento $r$, carico di base $b_t$, limite del contatore $k$; si minimizza $\\sum_{v,t}c_tx_{vt}$ con $r\\sum_tx_{vt} \\ge e_v$, $x_{vt} \\le \\bar p_va_{vt}$, $\\sum_vx_{vt} + b_t \\le k$. Un veicolo, due ore, $e = 10$ kWh, prezzi $0{,}10$ e $0{,}20$ €/kWh, $\\bar p = 8$ kW: quanto vale un kW di potenza in più nell'ora 1?",
     "opzioni": [
      "$0{,}10$ €: un kWh passa all'ora 1",
      "$0{,}20$ €: il prezzo dell'ora 2",
@@ -7341,7 +7341,7 @@
     "spiegazione": "Con $\\bar p = 9$ un kWh in più si carica a $0{,}10$ invece che a $0{,}20$: il risparmio è la differenza di prezzo, $0{,}10$ € per kW."
    },
    "en": {
-    "testo": "EV charging LP: power $x_{vt}$ to vehicle $v$ in hour $t$ (1 h), energy price $\\pi_t$, availability $a_{vt} \\in \\{0, 1\\}$, charger power $\\bar p_v$, required energy $e_v$, efficiency $\\eta$, base load $b_t$, meter limit $k$; minimize $\\sum_{v,t}\\pi_tx_{vt}$ with $\\eta\\sum_tx_{vt} \\ge e_v$, $x_{vt} \\le \\bar p_va_{vt}$, $\\sum_vx_{vt} + b_t \\le k$. One vehicle, two hours, $e = 10$ kWh, prices $0.10$ and $0.20$ €/kWh, $\\bar p = 8$ kW: what is one more kW of charger power worth in hour 1?",
+    "testo": "EV charging LP: power $x_{vt}$ to vehicle $v$ in hour $t$ (1 h), energy price $c_t$, availability $a_{vt} \\in \\{0, 1\\}$, charger power $\\bar p_v$, required energy $e_v$, efficiency $r$, base load $b_t$, meter limit $k$; minimize $\\sum_{v,t}c_tx_{vt}$ with $r\\sum_tx_{vt} \\ge e_v$, $x_{vt} \\le \\bar p_va_{vt}$, $\\sum_vx_{vt} + b_t \\le k$. One vehicle, two hours, $e = 10$ kWh, prices $0.10$ and $0.20$ €/kWh, $\\bar p = 8$ kW: what is one more kW of charger power worth in hour 1?",
     "opzioni": [
      "$0.10$ €: one kWh moves to hour 1",
      "$0.20$ €: the price of hour 2",
@@ -7361,7 +7361,7 @@
    },
    "corretta": 3,
    "it": {
-    "testo": "LP di ricarica EV: potenza $x_{vt}$ al veicolo $v$ nell'ora $t$ (1 h), prezzo dell'energia $\\pi_t$, disponibilità $a_{vt} \\in \\{0, 1\\}$, potenza del caricatore $\\bar p_v$, energia richiesta $e_v$, rendimento $\\eta$, carico di base $b_t$, limite del contatore $k$; si minimizza $\\sum_{v,t}\\pi_tx_{vt}$ con $\\eta\\sum_tx_{vt} \\ge e_v$, $x_{vt} \\le \\bar p_va_{vt}$, $\\sum_vx_{vt} + b_t \\le k$. Un veicolo, due ore, $e = 10$ kWh, prezzi $0{,}10$ e $0{,}20$ €/kWh, ma ora $\\bar p = 12$ kW. Quanto valgono costo e duali?",
+    "testo": "LP di ricarica EV: potenza $x_{vt}$ al veicolo $v$ nell'ora $t$ (1 h), prezzo dell'energia $c_t$, disponibilità $a_{vt} \\in \\{0, 1\\}$, potenza del caricatore $\\bar p_v$, energia richiesta $e_v$, rendimento $r$, carico di base $b_t$, limite del contatore $k$; si minimizza $\\sum_{v,t}c_tx_{vt}$ con $r\\sum_tx_{vt} \\ge e_v$, $x_{vt} \\le \\bar p_va_{vt}$, $\\sum_vx_{vt} + b_t \\le k$. Un veicolo, due ore, $e = 10$ kWh, prezzi $0{,}10$ e $0{,}20$ €/kWh, ma ora $\\bar p = 12$ kW. Quanto valgono costo e duali?",
     "opzioni": [
      "Costo $1{,}20$ €, duali qui invariati",
      "Costo $1{,}00$ €, duale dell'energia $0{,}20$",
@@ -7371,7 +7371,7 @@
     "spiegazione": "Tutti i 10 kWh stanno nell'ora economica: costo $1{,}00$ €; il kWh marginale va ancora nell'ora 1 (duale $0{,}10$) e il limite di potenza è lasco (duale $0$)."
    },
    "en": {
-    "testo": "EV charging LP: power $x_{vt}$ to vehicle $v$ in hour $t$ (1 h), energy price $\\pi_t$, availability $a_{vt} \\in \\{0, 1\\}$, charger power $\\bar p_v$, required energy $e_v$, efficiency $\\eta$, base load $b_t$, meter limit $k$; minimize $\\sum_{v,t}\\pi_tx_{vt}$ with $\\eta\\sum_tx_{vt} \\ge e_v$, $x_{vt} \\le \\bar p_va_{vt}$, $\\sum_vx_{vt} + b_t \\le k$. One vehicle, two hours, $e = 10$ kWh, prices $0.10$ and $0.20$ €/kWh, but now $\\bar p = 12$ kW. What are the cost and the duals?",
+    "testo": "EV charging LP: power $x_{vt}$ to vehicle $v$ in hour $t$ (1 h), energy price $c_t$, availability $a_{vt} \\in \\{0, 1\\}$, charger power $\\bar p_v$, required energy $e_v$, efficiency $r$, base load $b_t$, meter limit $k$; minimize $\\sum_{v,t}c_tx_{vt}$ with $r\\sum_tx_{vt} \\ge e_v$, $x_{vt} \\le \\bar p_va_{vt}$, $\\sum_vx_{vt} + b_t \\le k$. One vehicle, two hours, $e = 10$ kWh, prices $0.10$ and $0.20$ €/kWh, but now $\\bar p = 12$ kW. What are the cost and the duals?",
     "opzioni": [
      "Cost $1.20$ €, both duals unchanged here",
      "Cost $1.00$ €, energy dual $0.20$",
@@ -7391,7 +7391,7 @@
    },
    "corretta": 1,
    "it": {
-    "testo": "LP di ricarica EV: potenza $x_{vt}$ al veicolo $v$ nell'ora $t$ (1 h), prezzo dell'energia $\\pi_t$, disponibilità $a_{vt} \\in \\{0, 1\\}$, potenza del caricatore $\\bar p_v$, energia richiesta $e_v$, rendimento $\\eta$, carico di base $b_t$, limite del contatore $k$; si minimizza $\\sum_{v,t}\\pi_tx_{vt}$ con $\\eta\\sum_tx_{vt} \\ge e_v$, $x_{vt} \\le \\bar p_va_{vt}$, $\\sum_vx_{vt} + b_t \\le k$. Nel codice gurobipy la disponibilità non è un vincolo: `x[v, t].UB = P[v] * disp[v, t]`. Che cosa succede quando il veicolo $v$ non è collegato nell'ora $t$?",
+    "testo": "LP di ricarica EV: potenza $x_{vt}$ al veicolo $v$ nell'ora $t$ (1 h), prezzo dell'energia $c_t$, disponibilità $a_{vt} \\in \\{0, 1\\}$, potenza del caricatore $\\bar p_v$, energia richiesta $e_v$, rendimento $r$, carico di base $b_t$, limite del contatore $k$; si minimizza $\\sum_{v,t}c_tx_{vt}$ con $r\\sum_tx_{vt} \\ge e_v$, $x_{vt} \\le \\bar p_va_{vt}$, $\\sum_vx_{vt} + b_t \\le k$. Nel codice gurobipy la disponibilità non è un vincolo: `x[v, t].UB = P[v] * disp[v, t]`. Che cosa succede quando il veicolo $v$ non è collegato nell'ora $t$?",
     "opzioni": [
      "Il modello diventa inammissibile",
      "Il suo limite superiore è 0",
@@ -7401,7 +7401,7 @@
     "spiegazione": "Con `disp[v, t] = 0` il limite $x_{vt} \\le \\bar p_va_{vt}$ diventa $x_{vt} \\le 0$: le finestre di disponibilità si gestiscono con i limiti delle variabili."
    },
    "en": {
-    "testo": "EV charging LP: power $x_{vt}$ to vehicle $v$ in hour $t$ (1 h), energy price $\\pi_t$, availability $a_{vt} \\in \\{0, 1\\}$, charger power $\\bar p_v$, required energy $e_v$, efficiency $\\eta$, base load $b_t$, meter limit $k$; minimize $\\sum_{v,t}\\pi_tx_{vt}$ with $\\eta\\sum_tx_{vt} \\ge e_v$, $x_{vt} \\le \\bar p_va_{vt}$, $\\sum_vx_{vt} + b_t \\le k$. In the gurobipy code the availability is not a constraint: `x[v, t].UB = P[v] * disp[v, t]`. What happens when vehicle $v$ is not plugged in at hour $t$?",
+    "testo": "EV charging LP: power $x_{vt}$ to vehicle $v$ in hour $t$ (1 h), energy price $c_t$, availability $a_{vt} \\in \\{0, 1\\}$, charger power $\\bar p_v$, required energy $e_v$, efficiency $r$, base load $b_t$, meter limit $k$; minimize $\\sum_{v,t}c_tx_{vt}$ with $r\\sum_tx_{vt} \\ge e_v$, $x_{vt} \\le \\bar p_va_{vt}$, $\\sum_vx_{vt} + b_t \\le k$. In the gurobipy code the availability is not a constraint: `x[v, t].UB = P[v] * disp[v, t]`. What happens when vehicle $v$ is not plugged in at hour $t$?",
     "opzioni": [
      "The model becomes infeasible",
      "Its upper bound is 0",
@@ -7421,24 +7421,24 @@
    },
    "corretta": 3,
    "it": {
-    "testo": "LP di ricarica EV: potenza $x_{vt}$ al veicolo $v$ nell'ora $t$ (1 h), prezzo dell'energia $\\pi_t$, disponibilità $a_{vt} \\in \\{0, 1\\}$, potenza del caricatore $\\bar p_v$, energia richiesta $e_v$, rendimento $\\eta$, carico di base $b_t$, limite del contatore $k$; si minimizza $\\sum_{v,t}\\pi_tx_{vt}$ con $\\eta\\sum_tx_{vt} \\ge e_v$, $x_{vt} \\le \\bar p_va_{vt}$, $\\sum_vx_{vt} + b_t \\le k$. Caso di studio: sei furgoni con finestre notturne diverse, prezzi orari stilizzati con picco serale, carico di base dell'edificio, contatore $k = 120$ kW, $\\eta = 0{,}95$. Perché il vincolo di energia si scrive $\\eta\\sum_tx_{vt} \\ge e_v$?",
+    "testo": "LP di ricarica EV: potenza $x_{vt}$ al veicolo $v$ nell'ora $t$ (1 h), prezzo dell'energia $c_t$, disponibilità $a_{vt} \\in \\{0, 1\\}$, potenza del caricatore $\\bar p_v$, energia richiesta $e_v$, rendimento $r$, carico di base $b_t$, limite del contatore $k$; si minimizza $\\sum_{v,t}c_tx_{vt}$ con $r\\sum_tx_{vt} \\ge e_v$, $x_{vt} \\le \\bar p_va_{vt}$, $\\sum_vx_{vt} + b_t \\le k$. Caso di studio: sei furgoni con finestre notturne diverse, prezzi orari stilizzati con picco serale, carico di base dell'edificio, contatore $k = 120$ kW, $r = 0{,}95$. Perché il vincolo di energia si scrive $r\\sum_tx_{vt} \\ge e_v$?",
     "opzioni": [
-     "Perché $\\eta$ converte i kWh in euro",
-     "Perché il contatore assorbe $\\eta$ della potenza",
+     "Perché $r$ converte i kWh in euro",
+     "Perché il contatore assorbe $r$ della potenza",
      "Perché il prezzo comprende le tasse",
-     "Solo una quota $\\eta$ arriva in batteria"
+     "Solo una quota $r$ arriva in batteria"
     ],
-    "spiegazione": "Con $\\eta = 0{,}95$ un veicolo deve prelevare $e_v/0{,}95$ kWh dalla rete; per questo il suo duale è il prezzo dell'ora diviso per $\\eta$."
+    "spiegazione": "Con $r = 0{,}95$ un veicolo deve prelevare $e_v/0{,}95$ kWh dalla rete; per questo il suo duale è il prezzo dell'ora diviso per $r$."
    },
    "en": {
-    "testo": "EV charging LP: power $x_{vt}$ to vehicle $v$ in hour $t$ (1 h), energy price $\\pi_t$, availability $a_{vt} \\in \\{0, 1\\}$, charger power $\\bar p_v$, required energy $e_v$, efficiency $\\eta$, base load $b_t$, meter limit $k$; minimize $\\sum_{v,t}\\pi_tx_{vt}$ with $\\eta\\sum_tx_{vt} \\ge e_v$, $x_{vt} \\le \\bar p_va_{vt}$, $\\sum_vx_{vt} + b_t \\le k$. Case study: six vans with different night windows, stylized hourly prices with an evening peak, base load of the building, meter $k = 120$ kW, $\\eta = 0.95$. Why does the energy constraint read $\\eta\\sum_tx_{vt} \\ge e_v$?",
+    "testo": "EV charging LP: power $x_{vt}$ to vehicle $v$ in hour $t$ (1 h), energy price $c_t$, availability $a_{vt} \\in \\{0, 1\\}$, charger power $\\bar p_v$, required energy $e_v$, efficiency $r$, base load $b_t$, meter limit $k$; minimize $\\sum_{v,t}c_tx_{vt}$ with $r\\sum_tx_{vt} \\ge e_v$, $x_{vt} \\le \\bar p_va_{vt}$, $\\sum_vx_{vt} + b_t \\le k$. Case study: six vans with different night windows, stylized hourly prices with an evening peak, base load of the building, meter $k = 120$ kW, $r = 0.95$. Why does the energy constraint read $r\\sum_tx_{vt} \\ge e_v$?",
     "opzioni": [
-     "Because $\\eta$ converts kWh into euros",
-     "Because the meter takes $\\eta$ of the power",
+     "Because $r$ converts kWh into euros",
+     "Because the meter takes $r$ of the power",
      "Because the price includes taxes",
-     "Only a share $\\eta$ reaches the battery"
+     "Only a share $r$ reaches the battery"
     ],
-    "spiegazione": "With $\\eta = 0.95$ a vehicle must draw $e_v/0.95$ kWh from the grid; that is why its dual is the hour price divided by $\\eta$."
+    "spiegazione": "With $r = 0.95$ a vehicle must draw $e_v/0.95$ kWh from the grid; that is why its dual is the hour price divided by $r$."
    }
   },
   {
@@ -7451,7 +7451,7 @@
    },
    "corretta": 0,
    "it": {
-    "testo": "LP di ricarica EV: potenza $x_{vt}$ al veicolo $v$ nell'ora $t$ (1 h), prezzo dell'energia $\\pi_t$, disponibilità $a_{vt} \\in \\{0, 1\\}$, potenza del caricatore $\\bar p_v$, energia richiesta $e_v$, rendimento $\\eta$, carico di base $b_t$, limite del contatore $k$; si minimizza $\\sum_{v,t}\\pi_tx_{vt}$ con $\\eta\\sum_tx_{vt} \\ge e_v$, $x_{vt} \\le \\bar p_va_{vt}$, $\\sum_vx_{vt} + b_t \\le k$. Nel codice gurobipy i vincoli di energia e del contatore si conservano come `v_ene = m.addConstrs(...)` e `v_rete = m.addConstrs(...)`. Perché?",
+    "testo": "LP di ricarica EV: potenza $x_{vt}$ al veicolo $v$ nell'ora $t$ (1 h), prezzo dell'energia $c_t$, disponibilità $a_{vt} \\in \\{0, 1\\}$, potenza del caricatore $\\bar p_v$, energia richiesta $e_v$, rendimento $r$, carico di base $b_t$, limite del contatore $k$; si minimizza $\\sum_{v,t}c_tx_{vt}$ con $r\\sum_tx_{vt} \\ge e_v$, $x_{vt} \\le \\bar p_va_{vt}$, $\\sum_vx_{vt} + b_t \\le k$. Nel codice gurobipy i vincoli di energia e del contatore si conservano come `v_ene = m.addConstrs(...)` e `v_rete = m.addConstrs(...)`. Perché?",
     "opzioni": [
      "Per leggere duali e cambiare RHS",
      "Per cancellarli dopo la soluzione",
@@ -7461,7 +7461,7 @@
     "spiegazione": "I duali di `v_ene` sono i prezzi delle ore marginali; `v_rete` è il vincolo del contatore il cui `RHS` si cambia nell'analisi di sensitività (meno il carico di base!)."
    },
    "en": {
-    "testo": "EV charging LP: power $x_{vt}$ to vehicle $v$ in hour $t$ (1 h), energy price $\\pi_t$, availability $a_{vt} \\in \\{0, 1\\}$, charger power $\\bar p_v$, required energy $e_v$, efficiency $\\eta$, base load $b_t$, meter limit $k$; minimize $\\sum_{v,t}\\pi_tx_{vt}$ with $\\eta\\sum_tx_{vt} \\ge e_v$, $x_{vt} \\le \\bar p_va_{vt}$, $\\sum_vx_{vt} + b_t \\le k$. In the gurobipy code the energy and meter constraints are kept as `v_ene = m.addConstrs(...)` and `v_rete = m.addConstrs(...)`. Why?",
+    "testo": "EV charging LP: power $x_{vt}$ to vehicle $v$ in hour $t$ (1 h), energy price $c_t$, availability $a_{vt} \\in \\{0, 1\\}$, charger power $\\bar p_v$, required energy $e_v$, efficiency $r$, base load $b_t$, meter limit $k$; minimize $\\sum_{v,t}c_tx_{vt}$ with $r\\sum_tx_{vt} \\ge e_v$, $x_{vt} \\le \\bar p_va_{vt}$, $\\sum_vx_{vt} + b_t \\le k$. In the gurobipy code the energy and meter constraints are kept as `v_ene = m.addConstrs(...)` and `v_rete = m.addConstrs(...)`. Why?",
     "opzioni": [
      "To read duals and change RHS",
      "To delete them after the solve",
@@ -7481,7 +7481,7 @@
    },
    "corretta": 2,
    "it": {
-    "testo": "LP di ricarica EV: potenza $x_{vt}$ al veicolo $v$ nell'ora $t$ (1 h), prezzo dell'energia $\\pi_t$, disponibilità $a_{vt} \\in \\{0, 1\\}$, potenza del caricatore $\\bar p_v$, energia richiesta $e_v$, rendimento $\\eta$, carico di base $b_t$, limite del contatore $k$; si minimizza $\\sum_{v,t}\\pi_tx_{vt}$ con $\\eta\\sum_tx_{vt} \\ge e_v$, $x_{vt} \\le \\bar p_va_{vt}$, $\\sum_vx_{vt} + b_t \\le k$. Caso di studio: quali vincoli si scrivono come limiti delle variabili e quali come vincoli espliciti?",
+    "testo": "LP di ricarica EV: potenza $x_{vt}$ al veicolo $v$ nell'ora $t$ (1 h), prezzo dell'energia $c_t$, disponibilità $a_{vt} \\in \\{0, 1\\}$, potenza del caricatore $\\bar p_v$, energia richiesta $e_v$, rendimento $r$, carico di base $b_t$, limite del contatore $k$; si minimizza $\\sum_{v,t}c_tx_{vt}$ con $r\\sum_tx_{vt} \\ge e_v$, $x_{vt} \\le \\bar p_va_{vt}$, $\\sum_vx_{vt} + b_t \\le k$. Caso di studio: quali vincoli si scrivono come limiti delle variabili e quali come vincoli espliciti?",
     "opzioni": [
      "Tutti quanti come limiti delle variabili",
      "Tutti quanti come vincoli espliciti",
@@ -7491,7 +7491,7 @@
     "spiegazione": "$x_{vt} \\le \\bar p_va_{vt}$ riguarda una sola variabile, quindi è un limite; energia (una per veicolo) e contatore (uno per ora) coinvolgono somme di variabili."
    },
    "en": {
-    "testo": "EV charging LP: power $x_{vt}$ to vehicle $v$ in hour $t$ (1 h), energy price $\\pi_t$, availability $a_{vt} \\in \\{0, 1\\}$, charger power $\\bar p_v$, required energy $e_v$, efficiency $\\eta$, base load $b_t$, meter limit $k$; minimize $\\sum_{v,t}\\pi_tx_{vt}$ with $\\eta\\sum_tx_{vt} \\ge e_v$, $x_{vt} \\le \\bar p_va_{vt}$, $\\sum_vx_{vt} + b_t \\le k$. Case study: which constraints are written as variable bounds and which as explicit constraints?",
+    "testo": "EV charging LP: power $x_{vt}$ to vehicle $v$ in hour $t$ (1 h), energy price $c_t$, availability $a_{vt} \\in \\{0, 1\\}$, charger power $\\bar p_v$, required energy $e_v$, efficiency $r$, base load $b_t$, meter limit $k$; minimize $\\sum_{v,t}c_tx_{vt}$ with $r\\sum_tx_{vt} \\ge e_v$, $x_{vt} \\le \\bar p_va_{vt}$, $\\sum_vx_{vt} + b_t \\le k$. Case study: which constraints are written as variable bounds and which as explicit constraints?",
     "opzioni": [
      "All of them as variable bounds",
      "All of them as explicit constraints",
@@ -7511,7 +7511,7 @@
    },
    "corretta": 1,
    "it": {
-    "testo": "LP di ricarica EV: potenza $x_{vt}$ al veicolo $v$ nell'ora $t$ (1 h), prezzo dell'energia $\\pi_t$, disponibilità $a_{vt} \\in \\{0, 1\\}$, potenza del caricatore $\\bar p_v$, energia richiesta $e_v$, rendimento $\\eta$, carico di base $b_t$, limite del contatore $k$; si minimizza $\\sum_{v,t}\\pi_tx_{vt}$ con $\\eta\\sum_tx_{vt} \\ge e_v$, $x_{vt} \\le \\bar p_va_{vt}$, $\\sum_vx_{vt} + b_t \\le k$. Risultati del caso: costo minimo $20{,}36$ €/notte con picco di prelievo $103{,}4$ kW (limite 120); il picco più basso possibile è $68{,}0$ kW. Che cosa fa il piano di costo minimo?",
+    "testo": "LP di ricarica EV: potenza $x_{vt}$ al veicolo $v$ nell'ora $t$ (1 h), prezzo dell'energia $c_t$, disponibilità $a_{vt} \\in \\{0, 1\\}$, potenza del caricatore $\\bar p_v$, energia richiesta $e_v$, rendimento $r$, carico di base $b_t$, limite del contatore $k$; si minimizza $\\sum_{v,t}c_tx_{vt}$ con $r\\sum_tx_{vt} \\ge e_v$, $x_{vt} \\le \\bar p_va_{vt}$, $\\sum_vx_{vt} + b_t \\le k$. Risultati del caso: costo minimo $20{,}36$ €/notte con picco di prelievo $103{,}4$ kW (limite 120); il picco più basso possibile è $68{,}0$ kW. Che cosa fa il piano di costo minimo?",
     "opzioni": [
      "Distribuisce la ricarica in modo uniforme nella notte",
      "Carica nelle ore economiche",
@@ -7521,7 +7521,7 @@
     "spiegazione": "Minimizzare solo il costo dell'energia spinge ogni veicolo nelle ore economiche, quindi il prelievo totale arriva a 103 kW; il peak shaving lo distribuisce e resta a 68 kW."
    },
    "en": {
-    "testo": "EV charging LP: power $x_{vt}$ to vehicle $v$ in hour $t$ (1 h), energy price $\\pi_t$, availability $a_{vt} \\in \\{0, 1\\}$, charger power $\\bar p_v$, required energy $e_v$, efficiency $\\eta$, base load $b_t$, meter limit $k$; minimize $\\sum_{v,t}\\pi_tx_{vt}$ with $\\eta\\sum_tx_{vt} \\ge e_v$, $x_{vt} \\le \\bar p_va_{vt}$, $\\sum_vx_{vt} + b_t \\le k$. Case results: minimum cost $20.36$ €/night with a peak draw of $103.4$ kW (limit 120); the smallest possible peak is $68.0$ kW. What does the cost-minimizing plan do?",
+    "testo": "EV charging LP: power $x_{vt}$ to vehicle $v$ in hour $t$ (1 h), energy price $c_t$, availability $a_{vt} \\in \\{0, 1\\}$, charger power $\\bar p_v$, required energy $e_v$, efficiency $r$, base load $b_t$, meter limit $k$; minimize $\\sum_{v,t}c_tx_{vt}$ with $r\\sum_tx_{vt} \\ge e_v$, $x_{vt} \\le \\bar p_va_{vt}$, $\\sum_vx_{vt} + b_t \\le k$. Case results: minimum cost $20.36$ €/night with a peak draw of $103.4$ kW (limit 120); the smallest possible peak is $68.0$ kW. What does the cost-minimizing plan do?",
     "opzioni": [
      "It spreads the charging evenly over the night",
      "It charges in the cheap hours",
@@ -9041,7 +9041,7 @@
    },
    "corretta": 0,
    "it": {
-    "testo": "La checklist degli errori del corso Modellazione PL avverte di non scegliere i parametri ($\\tau$, $\\lambda$, il budget) guardando:",
+    "testo": "La checklist degli errori del corso Modellazione PL avverte di non scegliere i parametri ($\\tau$, $r$, il budget) guardando:",
     "opzioni": [
      "i dati usati per prendere la decisione",
      "il numero di vincoli del modello",
@@ -9051,7 +9051,7 @@
     "spiegazione": "Se i parametri si scelgono sugli stessi dati (o scenari) con cui si decide, la valutazione è ottimistica: servono dati di verifica separati."
    },
    "en": {
-    "testo": "The checklist of mistakes of the course LP Modelling warns against choosing the parameters ($\\tau$, $\\lambda$, the budget) by looking at:",
+    "testo": "The checklist of mistakes of the course LP Modelling warns against choosing the parameters ($\\tau$, $r$, the budget) by looking at:",
     "opzioni": [
      "the data used to make the decision",
      "the number of constraints of the model",
@@ -11141,24 +11141,24 @@
    },
    "corretta": 0,
    "it": {
-    "testo": "In un problema di miscelazione con $r$ materie prime, $x_\\ell \\ge 0$ è la quantità della materia prima $\\ell$ nella miscela. Come si scrive linearmente il requisito «la materia prima $j$ è almeno una frazione $\\alpha \\in (0,1)$ della miscela»?",
+    "testo": "In un problema di miscelazione con $r$ materie prime, $x_\\ell \\ge 0$ è la quantità della materia prima $\\ell$ nella miscela. Come si scrive linearmente il requisito «la materia prima $j$ è almeno una frazione $f \\in (0,1)$ della miscela»?",
     "opzioni": [
-     "$x_j \\ge \\alpha \\sum_{\\ell=1}^r x_\\ell$",
-     "$x_j / \\sum_{\\ell=1}^r x_\\ell \\ge \\alpha$",
-     "$x_j \\ge \\alpha$",
-     "$\\alpha\\,x_j \\ge \\sum_{\\ell=1}^r x_\\ell$"
+     "$x_j \\ge f \\sum_{\\ell=1}^r x_\\ell$",
+     "$x_j / \\sum_{\\ell=1}^r x_\\ell \\ge f$",
+     "$x_j \\ge f$",
+     "$f\\,x_j \\ge \\sum_{\\ell=1}^r x_\\ell$"
     ],
-    "spiegazione": "Si moltiplica per il denominatore, positivo; il rapporto non è lineare e $x_j \\ge \\alpha$ confonde quantità e frazione."
+    "spiegazione": "Si moltiplica per il denominatore, positivo; il rapporto non è lineare e $x_j \\ge f$ confonde quantità e frazione."
    },
    "en": {
-    "testo": "In a blending problem with $r$ raw materials, $x_\\ell \\ge 0$ is the quantity of raw material $\\ell$ in the blend. How is the requirement «raw material $j$ is at least a fraction $\\alpha \\in (0,1)$ of the blend» written linearly?",
+    "testo": "In a blending problem with $r$ raw materials, $x_\\ell \\ge 0$ is the quantity of raw material $\\ell$ in the blend. How is the requirement «raw material $j$ is at least a fraction $f \\in (0,1)$ of the blend» written linearly?",
     "opzioni": [
-     "$x_j \\ge \\alpha \\sum_{\\ell=1}^r x_\\ell$",
-     "$x_j / \\sum_{\\ell=1}^r x_\\ell \\ge \\alpha$",
-     "$x_j \\ge \\alpha$",
-     "$\\alpha\\,x_j \\ge \\sum_{\\ell=1}^r x_\\ell$"
+     "$x_j \\ge f \\sum_{\\ell=1}^r x_\\ell$",
+     "$x_j / \\sum_{\\ell=1}^r x_\\ell \\ge f$",
+     "$x_j \\ge f$",
+     "$f\\,x_j \\ge \\sum_{\\ell=1}^r x_\\ell$"
     ],
-    "spiegazione": "Both sides are multiplied by the denominator, which is positive; the ratio is not linear and $x_j \\ge \\alpha$ confuses quantity and fraction."
+    "spiegazione": "Both sides are multiplied by the denominator, which is positive; the ratio is not linear and $x_j \\ge f$ confuses quantity and fraction."
    }
   },
   {
@@ -12161,21 +12161,21 @@
    },
    "corretta": 1,
    "it": {
-    "testo": "Quale affermazione sul vincolo $\\frac{{\\boldsymbol a}'{\\boldsymbol x}}{{\\boldsymbol e}'{\\boldsymbol x}} \\le \\gamma$ con ${\\boldsymbol e}'{\\boldsymbol x} > 0$ è corretta?",
+    "testo": "Quale affermazione sul vincolo $\\frac{{\\boldsymbol a}'{\\boldsymbol x}}{{\\boldsymbol e}'{\\boldsymbol x}} \\le g$ con ${\\boldsymbol e}'{\\boldsymbol x} > 0$ è corretta?",
     "opzioni": [
-     "Equivale a $({\\boldsymbol a} + \\gamma{\\boldsymbol e})'{\\boldsymbol x} \\le 0$",
-     "Equivale a $({\\boldsymbol a} - \\gamma{\\boldsymbol e})'{\\boldsymbol x} \\le 0$",
-     "Equivale a ${\\boldsymbol a}'{\\boldsymbol x} \\le \\gamma$",
+     "Equivale a $({\\boldsymbol a} + g{\\boldsymbol e})'{\\boldsymbol x} \\le 0$",
+     "Equivale a $({\\boldsymbol a} - g{\\boldsymbol e})'{\\boldsymbol x} \\le 0$",
+     "Equivale a ${\\boldsymbol a}'{\\boldsymbol x} \\le g$",
      "Non si può linearizzare"
     ],
     "spiegazione": "Si moltiplicano i due membri per il denominatore positivo."
    },
    "en": {
-    "testo": "Which statement about the constraint $\\frac{{\\boldsymbol a}'{\\boldsymbol x}}{{\\boldsymbol e}'{\\boldsymbol x}} \\le \\gamma$ with ${\\boldsymbol e}'{\\boldsymbol x} > 0$ is correct?",
+    "testo": "Which statement about the constraint $\\frac{{\\boldsymbol a}'{\\boldsymbol x}}{{\\boldsymbol e}'{\\boldsymbol x}} \\le g$ with ${\\boldsymbol e}'{\\boldsymbol x} > 0$ is correct?",
     "opzioni": [
-     "It is equivalent to $({\\boldsymbol a} + \\gamma{\\boldsymbol e})'{\\boldsymbol x} \\le 0$",
-     "It equals $({\\boldsymbol a} - \\gamma{\\boldsymbol e})'{\\boldsymbol x} \\le 0$",
-     "It is equivalent to ${\\boldsymbol a}'{\\boldsymbol x} \\le \\gamma$",
+     "It is equivalent to $({\\boldsymbol a} + g{\\boldsymbol e})'{\\boldsymbol x} \\le 0$",
+     "It equals $({\\boldsymbol a} - g{\\boldsymbol e})'{\\boldsymbol x} \\le 0$",
+     "It is equivalent to ${\\boldsymbol a}'{\\boldsymbol x} \\le g$",
      "It cannot be linearized"
     ],
     "spiegazione": "Both sides are multiplied by the positive denominator."
@@ -12401,9 +12401,9 @@
    },
    "corretta": 1,
    "it": {
-    "testo": "Per linearizzare $\\frac{{\\boldsymbol a}'{\\boldsymbol x}}{{\\boldsymbol e}'{\\boldsymbol x}} \\ge \\gamma$ moltiplicando per il denominatore senza cambiare verso, quale ipotesi serve?",
+    "testo": "Per linearizzare $\\frac{{\\boldsymbol a}'{\\boldsymbol x}}{{\\boldsymbol e}'{\\boldsymbol x}} \\ge g$ moltiplicando per il denominatore senza cambiare verso, quale ipotesi serve?",
     "opzioni": [
-     "$0 \\le \\gamma \\le 1$, per ogni ${\\boldsymbol x}$",
+     "$0 \\le g \\le 1$, per ogni ${\\boldsymbol x}$",
      "${\\boldsymbol e}'{\\boldsymbol x} > 0$",
      "${\\boldsymbol a} \\ge {\\boldsymbol 0}$",
      "${\\boldsymbol x}$ a componenti intere"
@@ -12411,9 +12411,9 @@
     "spiegazione": "Con denominatore positivo il verso si conserva."
    },
    "en": {
-    "testo": "To linearize $\\frac{{\\boldsymbol a}'{\\boldsymbol x}}{{\\boldsymbol e}'{\\boldsymbol x}} \\ge \\gamma$ by multiplying by the denominator without changing direction, which assumption is needed?",
+    "testo": "To linearize $\\frac{{\\boldsymbol a}'{\\boldsymbol x}}{{\\boldsymbol e}'{\\boldsymbol x}} \\ge g$ by multiplying by the denominator without changing direction, which assumption is needed?",
     "opzioni": [
-     "$0 \\le \\gamma \\le 1$, for every ${\\boldsymbol x}$",
+     "$0 \\le g \\le 1$, for every ${\\boldsymbol x}$",
      "${\\boldsymbol e}'{\\boldsymbol x} > 0$",
      "${\\boldsymbol a} \\ge {\\boldsymbol 0}$",
      "${\\boldsymbol x}$ with integer components"

@@ -13,7 +13,7 @@ import numpy as np
 import pandas as pd
 from gurobipy import GRB
 
-from stile import (ARANCIO, GRIGIO, TEAL, intestazione, plt, salva_dat, salva_dati,
+from stile import (ARANCIO, GRIGIO, ROSSO, TEAL, VERDE, intestazione, plt, salva_dat, salva_dati,
                    salva_figura)
 
 # ----------------------------------------------------------------------
@@ -110,24 +110,47 @@ salva_dat(pd.DataFrame({
     "mese": mesi,
     **{f"x{i}": [x[i, t].X for t in mesi] for i in prodotti},
     **{f"s{i}": [s[i, t].X for t in mesi] for i in prodotti},
+    **{f"d{i}": [domanda[i, t] for t in mesi] for i in prodotti},
     "domtot": [sum(domanda[i, t] for i in prodotti) for t in mesi],
 }), "cap05_piano")
 
-fig, (ax1, ax2) = plt.subplots(1, 2, figsize=(10.5, 4.0))
+fig = plt.figure(figsize=(10.5, 8.4))
+gs = fig.add_gridspec(2, 2, height_ratios=[1, 1], hspace=0.42, wspace=0.28)
+ax1 = fig.add_subplot(gs[0, :])           # 1. ore macchina a_i x_it impilate e capacità b_t
+ax2 = fig.add_subplot(gs[1, 0])           # 2. produzione x_it e domanda d_it per prodotto
+ax3 = fig.add_subplot(gs[1, 1])           # 3. scorte s_it
+colori = {i: c for i, c in zip(prodotti, [TEAL, ROSSO, VERDE])}
+sotto = np.zeros(len(mesi))
+for i in prodotti:
+    ore_i = np.array([ore_unit[i] * x[i, t].X for t in mesi])
+    ax1.bar(mesi, ore_i, bottom=sotto, width=0.6, color=colori[i], label=f"prodotto {i}: ore macchina $a_{i} x_{{{i}t}}$")
+    sotto += ore_i
+for k, t in enumerate(mesi):
+    ax1.hlines(capacita[t], t - 0.4, t + 0.4, colors=ROSSO, linestyles="--", lw=1.8,
+               label="capacità $b_t$ (ore disponibili)" if k == 0 else None)
+    if sotto[k] >= capacita[t] - 1e-6:
+        ax1.text(t, capacita[t] + 8, "satura", ha="center", fontsize=8, color=ROSSO)
+ax1.plot([], [], " ", label="satura: vincolo di capacità attivo (tutte le ore usate)")      # voce di sola legenda
+ax1.set_ylim(0, max(capacita.values()) * 1.12)
+ax1.set_xlabel("mese"); ax1.set_ylabel("ore")
+ax1.set_title("Ore macchina usate per prodotto e capacità (l'altezza della barra è il totale del mese)")
+ax1.legend(fontsize=8, loc="upper left", bbox_to_anchor=(1.01, 1.0))   # fuori a destra: non copre le barre
 larg = 0.26
 for k, i in enumerate(prodotti):
-    prod = [x[i, t].X for t in mesi]
-    ax1.bar([t + (k - 1) * larg for t in mesi], prod, width=larg, label=f"prodotto {i}")
-ax1.plot(mesi, [sum(domanda[i, t] for i in prodotti) for t in mesi], "o--",
-         color=GRIGIO, label="domanda totale")
-ax1.set_xlabel("mese"); ax1.set_ylabel("unità")
-ax1.set_title("Piano di produzione ottimo (LP)")
-ax1.legend(fontsize=8)
+    ax2.bar([t + (k - 1) * larg for t in mesi], [x[i, t].X for t in mesi], width=larg, color=colori[i],
+            label=f"prodotto {i}: produzione $x_{{{i}t}}$")
+for k, i in enumerate(prodotti):
+    ax2.plot([t + (k - 1) * larg for t in mesi], [domanda[i, t] for t in mesi], "--", marker="D", ms=4,
+             color=colori[i], mfc="white", lw=1.2, label=f"prodotto {i}: domanda $d_{{{i}t}}$")
+ax2.set_ylim(0, max(domanda.values()) * 1.6)
+ax2.set_xlabel("mese"); ax2.set_ylabel("unità")
+ax2.set_title("Produzione e domanda per prodotto")
+ax2.legend(fontsize=7, ncol=2, loc="upper left")
 for i in prodotti:
-    ax2.plot(mesi, [s[i, t].X for i2, t in [(i, t) for t in mesi]], marker="o", label=f"prodotto {i}")
-ax2.set_xlabel("mese"); ax2.set_ylabel("unità a scorta")
-ax2.set_title("Scorte di fine mese")
-ax2.legend(fontsize=8)
+    ax3.plot(mesi, [s[i, t].X for t in mesi], marker="o", color=colori[i], label=f"prodotto {i}")
+ax3.set_xlabel("mese"); ax3.set_ylabel("unità a scorta")
+ax3.set_title("Scorte di fine mese")
+ax3.legend(fontsize=8)
 salva_figura(fig, "cap05_piano_scorte")
 
 # sensitività: costo ottimo al variare della capacità uniforme

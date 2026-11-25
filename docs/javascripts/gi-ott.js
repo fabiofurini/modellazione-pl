@@ -527,7 +527,7 @@
       assi: false,
       legenda: (st) => {
         const C = M.COL(st), r = calcolo(st).rette;
-        return [[C.b, T("giorni normali", "normal days"), "punto"], ...(st.chiave() === "tutti" ? [[C.rosso, T("giorni di sciopero", "strike days"), "punto"]] : []),
+        return [[opz.colorePunti ? opz.colorePunti() : C.b, T("giorni normali", "normal days"), "punto"], ...(st.chiave() === "tutti" ? [[C.rosso, T("giorni di sciopero", "strike days"), "punto"]] : []),
           ...r.map((q) => [q.colore, q.nome, q.stile && q.stile.dash ? "dashed" : ""])];
       },
       monta(board, st) {
@@ -540,7 +540,9 @@
         board.create("axis", [[7.5, 0], [8.5, 0]], Object.assign({}, ax, { ticks: Object.assign({}, ax.ticks, { ticksDistance: 2, minorTicks: 0 }) }));
         board.create("axis", [[7.5, 0], [7.5, 1]], Object.assign({}, ax, { ticks: Object.assign({}, ax.ticks, { ticksDistance: 50, minorTicks: 0 }) }));
         board.create("text", [36.6, -4, T("temperatura (°C)", "temperature (°C)")], { anchorX: "right", anchorY: "top", fixed: true, highlight: false, fontSize: 12, strokeColor: C.muted });
-        board.create("text", [7.8, 244, T("domanda (pezzi)", "demand (pieces)")], { anchorX: "left", anchorY: "top", fixed: true, highlight: false, fontSize: 12, strokeColor: C.muted });
+        board.create("text", [7.8, opz.titoloGrafico ? 226 : 244, T("domanda (pezzi)", "demand (pieces)")], { anchorX: "left", anchorY: "top", fixed: true, highlight: false, fontSize: 12, strokeColor: C.muted });
+        // titolo nello stile delle figure dei capitoli (facoltativo)
+        if (opz.titoloGrafico) board.create("text", [21.3, 246, opz.titoloGrafico()], { anchorX: "middle", anchorY: "top", fixed: true, highlight: false, fontSize: 13.5, cssStyle: "font-weight:700", strokeColor: opz.coloreTitolo ? opz.coloreTitolo() : C.testo });
         const prima = calcolo(st).rette;
         prima.forEach((r, k) => board.create("functiongraph", [(x) => { const q = calcolo(st).rette[k]; return q.w * x + q.b; }],
           Object.assign({ strokeColor: r.colore, strokeWidth: 3, highlight: false, fixed: true }, r.stile || {})));
@@ -551,7 +553,7 @@
           { name: "", fixed: true, size: 9, fillColor: "none", fillOpacity: 0, strokeColor: C.c, strokeWidth: 2.5, highlight: false, showInfobox: false, withLabel: false });
         D.punti.forEach((q) => {
           q.P = board.create("point", [q.t, q.y], {
-            name: "", size: q.sciopero ? 4 : 3, face: q.sciopero ? "x" : "o", strokeColor: q.sciopero ? C.rosso : C.b, fillColor: q.sciopero ? C.rosso : C.b,
+            name: "", size: q.sciopero ? 4 : 3, face: q.sciopero ? "x" : "o", strokeColor: q.sciopero ? C.rosso : (opz.colorePunti ? opz.colorePunti() : C.b), fillColor: q.sciopero ? C.rosso : (opz.colorePunti ? opz.colorePunti() : C.b),
             strokeWidth: q.sciopero ? 3 : 1, showInfobox: false, withLabel: false, highlightStrokeColor: C.a, highlightFillColor: C.a,
           });
           q.P.on("drag", () => { q.t = q.P.X(); q.y = q.P.Y(); });

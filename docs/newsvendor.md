@@ -70,9 +70,9 @@ Descrizione della funzione obiettivo e del vincolo:
 Se $F$ è continua, l'ottimo soddisfa la **regola del quantile**:
 
 $$
-F(\tilde q) = \alpha = \frac{c_u}{c_u + c_o}
+F(\tilde q) = f = \frac{c_u}{c_u + c_o}
 \qquad\Longrightarrow\qquad
-\tilde q = F^{-1}(\alpha).
+\tilde q = F^{-1}(f).
 $$
 
 Ragionamento marginale: la $q$-esima unità in più rende $c_u$ se la domanda la
@@ -82,7 +82,7 @@ $F(q) \le c_u/(c_u + c_o)$.
 
 !!! example "Esempio a mano (domanda discreta)"
     $D \in \{80, 100, 120\}$ equiprobabili, $c_u = 9$, $c_o = 4$ (quindi
-    $\alpha = 9/13 = 0{,}6923$): $C(80) = 180$, $C(100) = 86{,}7$,
+    $f = 9/13 = 0{,}6923$): $C(80) = 180$, $C(100) = 86{,}7$,
     $C(120) = \mathbf{80}$. Si ordina il **massimo**: con $c_u \gg c_o$ restare corti
     costa più del doppio che restare lunghi. (Regola discreta: il più piccolo $q$ con
     $F(q) \ge 0{,}6923$, cioè $\tilde q = 120$.)
@@ -105,8 +105,8 @@ costo atteso in q*: 91,43 EUR    in q = media: 103,72 EUR
 Quando $F$ non è nota in forma chiusa — il caso normale in azienda — si usano gli
 scenari. Nuovi dati del modello: il numero di scenari $k \in \mathbb{Z}_{\ge 1}$,
 indicizzati da $s \in \{1, 2, \dots, k\}$; per ogni scenario, la domanda
-$d_s \in \mathbb{Q}_{\ge 0}$ e la probabilità $\pi_s \in \mathbb{Q}_{\ge 0}$, con
-$\sum_{s=1}^{k} \pi_s = 1$. Oltre a $q$, introduciamo le seguenti $2\,k$ variabili
+$d_s \in \mathbb{Q}_{\ge 0}$ e la probabilità $w_s \in \mathbb{Q}_{\ge 0}$, con
+$\sum_{s=1}^{k} w_s = 1$. Oltre a $q$, introduciamo le seguenti $2\,k$ variabili
 non negative:
 
 $$
@@ -121,7 +121,7 @@ Usando queste variabili, un modello LP per il problema è il seguente:
 
 $$
 \begin{aligned}
-\min ~~ \sum_{s=1}^{k} \pi_s \bigl( c_o\, o_s + c_u\, u_s \bigr) & & \\
+\min ~~ \sum_{s=1}^{k} w_s \bigl( c_o\, o_s + c_u\, u_s \bigr) & & \\
 \text{soggetto a} \quad o_s &\ge q - d_s, & \forall s \in \{1, 2, \dots, k\}, \\
 u_s &\ge d_s - q, & \forall s \in \{1, 2, \dots, k\}, \\
 q &\ge 0, & \\
@@ -172,20 +172,20 @@ fill rate in q*: 96,06%   probabilita' di non-stockout in q*: 69,23%
     rate" è quasi gratis. Leggere bene lo SLA prima di firmarlo.
 
 Con la formulazione lineare del CVaR minimizziamo
-$(1-\lambda)\,\mathbb{E}[\text{costo}] + \lambda\, \mathrm{CVaR}_{0,90}(\text{costo})$:
+$(1-r)\,\mathbb{E}[\text{costo}] + r\, \mathrm{CVaR}_{0,90}(\text{costo})$:
 
 ```text
-lambda = 0,00: q = 108,61  costo medio 88,33  CVaR90 245,93
-lambda = 0,25: q = 112,45  costo medio 90,37  CVaR90 229,29
-lambda = 0,50: q = 114,48  costo medio 92,52  CVaR90 225,49
-lambda = 1,00: q = 116,17  costo medio 94,87  CVaR90 224,56
+r = 0,00: q = 108,61  costo medio 88,33  CVaR90 245,93
+r = 0,25: q = 112,45  costo medio 90,37  CVaR90 229,29
+r = 0,50: q = 114,48  costo medio 92,52  CVaR90 225,49
+r = 1,00: q = 116,17  costo medio 94,87  CVaR90 224,56
 ```
 
 ![Frontiera costo-CVaR](img/cap08_frontiera.png)
 
 Il decisore avverso al rischio ordina di più (da 108,6 a 116,2 unità): paga 6,5 € in
 più in media per tagliare di 21,4 € il costo medio dei peggiori 10% degli scenari. La
-gran parte della protezione si ottiene già con $\lambda = 0{,}25$: la frontiera è
+gran parte della protezione si ottiene già con $r = 0{,}25$: la frontiera è
 ripida all'inizio e piatta poi.
 
 ## Multiprodotto con budget condiviso
@@ -376,11 +376,11 @@ Lo stesso codice è disponibile come notebook — [`notebooks/lab08_newsvendor.i
         var_l = np.quantile(costi_l, alpha_cv)
         cvar_l = costi_l[costi_l >= var_l - 1e-9].mean()
         front.append((lam, q_l, cm, cvar_l))
-        print(f"  lambda = {lam:4.2f}: q = {q_l:7.2f}, costo medio = {cm:6.2f}, "
+        print(f"  r = {lam:4.2f}: q = {q_l:7.2f}, costo medio = {cm:6.2f}, "
               f"CVaR90 = {cvar_l:6.2f}")
     front = pd.DataFrame(front, columns=["lam", "q", "costo_medio", "cvar"])
     salva_dat(front, "cap08_frontiera_cvar")
-    print("Aumentando lambda si ordina di più: costa in media, protegge dagli scenari peggiori.")
+    print("Aumentando r si ordina di più: costa in media, protegge dagli scenari peggiori.")
 
     # ----------------------------------------------------------------------
     # 6. MULTIPRODOTTO CON BUDGET E DOMANDE CORRELATE
@@ -440,7 +440,7 @@ Lo stesso codice è disponibile come notebook — [`notebooks/lab08_newsvendor.i
     fig, ax = plt.subplots()
     ax.plot(front["cvar"], front["costo_medio"], "-o", color=TEAL)
     for _, r in front.iterrows():
-        ax.annotate(f"  $\\lambda$={r['lam']:.2f}, q={r['q']:.0f}", (r["cvar"], r["costo_medio"]),
+        ax.annotate(f"  $r$={r['lam']:.2f}, q={r['q']:.0f}", (r["cvar"], r["costo_medio"]),
                     fontsize=8)
     ax.set_xlabel("CVaR$_{0.90}$ del costo (€)"); ax.set_ylabel("costo medio (€)")
     ax.set_title("Frontiera costo medio - rischio di coda")
@@ -451,9 +451,9 @@ Lo stesso codice è disponibile come notebook — [`notebooks/lab08_newsvendor.i
 
 ## Esercizi
 
-1. Penalità $b = 3$ €: $\alpha = 0{,}75$, $\tilde q = 113{,}5$.
+1. Penalità $b = 3$ €: $f = 0{,}75$, $\tilde q = 113{,}5$.
 2. Scenari da 24 osservazioni storiche vs distribuzione stimata: quale consigliare?
-3. Deperibili ($v = -1$): $\alpha = 0{,}5625$, $\tilde q = 103{,}2$.
+3. Deperibili ($v = -1$): $f = 0{,}5625$, $\tilde q = 103{,}2$.
 4. EVPI: quanto vale al massimo una previsione perfetta? (88,33 €/ciclo.)
 5. Vincolo di fill rate al 98% vs cycle service level al 98%: confrontare.
 6. Multiprodotto con $\rho = 0$: perché il costo scende?

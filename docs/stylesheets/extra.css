@@ -67,6 +67,14 @@
 /* app del laboratorio: problema, modello simbolico e modello numerico sopra il grafico (gi-pl-app.js) */
 .gi-formula:has(.plm) { display: block; font-size: 1em; min-height: 0; overflow: visible; padding: .1em 0 .5em; }
 .md-typeset .plm-testo { margin: 0 0 .5em; font-size: .78rem; line-height: 1.45; }
+.md-typeset .plm-cap { margin: -.2em 0 .5em; font-size: .76rem; }
+.md-typeset .plm-evid { margin: 0 0 .5em; padding: .35em .6em; font-size: .76rem; line-height: 1.45;
+  border-left: 4px solid #CA6F1E; background: color-mix(in srgb, #CA6F1E 9%, transparent); border-radius: 0 4px 4px 0; }
+/* con il problema e il modello sopra (gi-pl-app.js) il grafico non si schiaccia: altezza fissa di 540px (tre pannelli nella produzione) */
+@media (min-width: 860px) {
+  .gi.gi-app-intera:has(.plm) { height: auto; }
+  .gi-app-intera:has(.plm) .gi-board { flex: 0 0 auto; height: 540px !important; }
+}
 .plm-sim { overflow-x: auto; overflow-y: hidden; text-align: center; font-size: .95em; padding: .2em 0 .3em; }
 .md-typeset details.plm-num { margin: .3em 0 0; font-size: .74rem; }
 .md-typeset details.plm-num > summary { font-weight: 600; }

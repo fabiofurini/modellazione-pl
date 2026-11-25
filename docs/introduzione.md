@@ -49,7 +49,7 @@ lineare sono nel modulo [Modellazione PNL](https://fabiofurini.github.io/modella
 
 In tutto il corso vale la stessa convenzione:
 
-- **scalari e indici**: lettere minuscole in corsivo ($x_{it}$, $b_t$, $\lambda$, $i$, $t$);
+- **scalari e indici**: lettere minuscole in corsivo ($x_{it}$, $b_t$, $k$, $i$, $t$);
 - **oggetti numerati**: prodotti, canali, titoli, veicoli, scenari sono numerati e gli indici corrono su insiemi enumerati esplicitamente, $i \in \{1, 2, \dots, n\}$;
 - **conteggi**: interi positivi ($n \in \mathbb{Z}_{\ge 1}$); **dati numerici**: valori razionali, $\mathbb{Q}_{> 0}$ o $\mathbb{Q}_{\ge 0}$;
 - **vettori**: minuscole in grassetto ($\boldsymbol{x}$), tutti colonna, con $\boldsymbol{a}'\boldsymbol{b}$ il prodotto scalare; **matrici**: maiuscole in grassetto ($\boldsymbol{A}$);

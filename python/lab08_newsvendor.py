@@ -142,11 +142,11 @@ for lam in [0, 0.25, 0.5, 0.75, 1.0]:
     var_l = np.quantile(costi_l, alpha_cv)
     cvar_l = costi_l[costi_l >= var_l - 1e-9].mean()
     front.append((lam, q_l, cm, cvar_l))
-    print(f"  lambda = {lam:4.2f}: q = {q_l:7.2f}, costo medio = {cm:6.2f}, "
+    print(f"  r = {lam:4.2f}: q = {q_l:7.2f}, costo medio = {cm:6.2f}, "
           f"CVaR90 = {cvar_l:6.2f}")
 front = pd.DataFrame(front, columns=["lam", "q", "costo_medio", "cvar"])
 salva_dat(front, "cap08_frontiera_cvar")
-print("Aumentando lambda si ordina di più: costa in media, protegge dagli scenari peggiori.")
+print("Aumentando r si ordina di più: costa in media, protegge dagli scenari peggiori.")
 
 # ----------------------------------------------------------------------
 # 6. MULTIPRODOTTO CON BUDGET E DOMANDE CORRELATE
@@ -206,7 +206,7 @@ salva_figura(fig, "cap08_quantile_stabilita")
 fig, ax = plt.subplots()
 ax.plot(front["cvar"], front["costo_medio"], "-o", color=TEAL)
 for _, r in front.iterrows():
-    ax.annotate(f"  $\\lambda$={r['lam']:.2f}, q={r['q']:.0f}", (r["cvar"], r["costo_medio"]),
+    ax.annotate(f"  $r$={r['lam']:.2f}, q={r['q']:.0f}", (r["cvar"], r["costo_medio"]),
                 fontsize=8)
 ax.set_xlabel("CVaR$_{0.90}$ del costo (€)"); ax.set_ylabel("costo medio (€)")
 ax.set_title("Frontiera costo medio - rischio di coda")

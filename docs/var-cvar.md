@@ -58,7 +58,7 @@ $$
 
 **Dati (input del modello).** Il numero di scenari $k \in \mathbb{Z}_{\ge 1}$,
 indicizzati da $s \in \{1, 2, \dots, k\}$; per ogni scenario, la probabilità
-$\pi_s \in \mathbb{Q}_{\ge 0}$ (con $\sum_{s=1}^{k} \pi_s = 1$) e la perdita
+$w_s \in \mathbb{Q}_{\ge 0}$ (con $\sum_{s=1}^{k} w_s = 1$) e la perdita
 $\ell_s(\boldsymbol x)$, funzione lineare del vettore delle decisioni
 $\boldsymbol x$, vincolato in un poliedro $X$; il livello di confidenza
 $\alpha \in (0, 1)$.
@@ -78,7 +78,7 @@ Usando queste variabili, il modello LP di Rockafellar–Uryasev è il seguente:
 
 $$
 \begin{aligned}
-\min ~~ \eta + \frac{1}{1-\alpha} \sum_{s=1}^{k} \pi_s\, \xi_s & & \\
+\min ~~ \eta + \frac{1}{1-\alpha} \sum_{s=1}^{k} w_s\, \xi_s & & \\
 \text{soggetto a} \quad \xi_s &\ge \ell_s(\boldsymbol x) - \eta, & \forall s \in \{1, 2, \dots, k\}, \\
 \boldsymbol x &\in X, & \\
 \eta &\gtreqless 0, & \\
@@ -139,9 +139,9 @@ sua disponibilità crolla al 30%); F2 è caro ma affidabile. Penalità di shorta
 **Dati.** Due fornitori indicizzati da $a \in \{1, 2\}$ con costi di prenotazione
 $c^{\mathrm{pre}}_a \in \mathbb{Q}_{>0}$ e di acquisto
 $c^{\mathrm{uso}}_a \in \mathbb{Q}_{>0}$; $k$ scenari $s \in \{1, 2, \dots, k\}$ con
-domanda $d_s \in \mathbb{Q}_{\ge 0}$ e disponibilità $\delta_{as} \in (0, 1]$ (il
+domanda $d_s \in \mathbb{Q}_{\ge 0}$ e disponibilità $q_{as} \in (0, 1]$ (il
 dato che modella il guasto); penalità di shortage $g \in \mathbb{Q}_{>0}$; peso del
-rischio $\lambda \in [0, 1]$ e livello $\alpha \in (0,1)$.
+rischio $r \in [0, 1]$ e livello $\alpha \in (0,1)$.
 
 **Variabili decisionali.** Le variabili non negative $x_a$ (capacità prenotata dal
 fornitore $a$, *di primo stadio*: uguale in tutti gli scenari), $f_{as}$ (acquisto
@@ -150,8 +150,8 @@ $s$), queste ultime *di ricorso*.
 
 $$
 \begin{aligned}
-\min ~~ (1-\lambda) \Bigl[ \sum_{a=1}^{2} c^{\mathrm{pre}}_a x_a + \sum_{s=1}^{k} \pi_s\, \phi_s \Bigr] + \lambda\, \mathrm{CVaR}_\alpha & & \\
-\text{soggetto a} \quad f_{as} &\le \delta_{as}\, x_a, & \forall a \in \{1, 2\},~\forall s \in \{1, 2, \dots, k\}, \\
+\min ~~ (1-r) \Bigl[ \sum_{a=1}^{2} c^{\mathrm{pre}}_a x_a + \sum_{s=1}^{k} w_s\, \phi_s \Bigr] + r\, \mathrm{CVaR}_\alpha & & \\
+\text{soggetto a} \quad f_{as} &\le q_{as}\, x_a, & \forall a \in \{1, 2\},~\forall s \in \{1, 2, \dots, k\}, \\
 f_{1s} + f_{2s} + u_s &\ge d_s, & \forall s \in \{1, 2, \dots, k\}, \\
 x_a,\ f_{as},\ u_s &\ge 0, & \forall a \in \{1, 2\},~\forall s \in \{1, 2, \dots, k\},
 \end{aligned}
@@ -163,11 +163,11 @@ linearizzato con le variabili $\eta$ e $\xi_s$ del modello di Rockafellar–Urya
 
 Descrizione della funzione obiettivo e dei vincoli:
 
-- la funzione obiettivo combina, con peso $\lambda$, il costo medio (prenotazioni più
+- la funzione obiettivo combina, con peso $r$, il costo medio (prenotazioni più
   valore atteso di acquisti e penalità) e il CVaR del costo totale;
 - i vincoli lineari di **capacità** impongono che nello scenario $s$ si possa usare il
   fornitore $a$ solo fino alla capacità prenotata $x_a$, ridotta dalla disponibilità
-  $\delta_{as}$ ($2\,k$ vincoli lineari);
+  $q_{as}$ ($2\,k$ vincoli lineari);
 - i vincoli lineari di **domanda** impongono di coprire $d_s$ con i flussi o, in
   mancanza, di conteggiarla come shortage $u_s$, che in obiettivo paga la penalità:
   il modello non è mai inammissibile, "compra" l'inammissibilità al prezzo della
@@ -176,16 +176,16 @@ Descrizione della funzione obiettivo e dei vincoli:
   modello.
 
 ```text
-lambda = 0,0: prenoto forn.1 161,5  forn.2 134,2
+r = 0,0: prenoto forn.1 161,5  forn.2 134,2
               costo medio 1.724   CVaR90 2.902   servizio 98,7%
-lambda = 0,5: prenoto forn.1  92,7  forn.2 212,7
+r = 0,5: prenoto forn.1  92,7  forn.2 212,7
               costo medio 1.803   CVaR90 2.217   servizio 99,9%
-lambda = 1,0: prenoto forn.1  68,5  forn.2 236,9
+r = 1,0: prenoto forn.1  68,5  forn.2 236,9
               costo medio 1.906   CVaR90 2.139   servizio 99,0%
 ```
 
 Il decisore neutrale compra dal fornitore economico e accetta che nel 12% degli
-scenari lo shortage faccia esplodere i costi (CVaR 2.902). Al crescere di $\lambda$
+scenari lo shortage faccia esplodere i costi (CVaR 2.902). Al crescere di $r$
 la capacità migra verso il fornitore affidabile: **+79 € di costo medio comprano
 −685 € di CVaR** — il costo della resilienza, quantificato.
 
@@ -194,8 +194,8 @@ la capacità migra verso il fornitore affidabile: **+79 € di costo medio compr
 | Parametro | Effetto atteso |
 |---|---|
 | $\alpha$ | più alto ⇒ coda più estrema stimata da meno scenari: servono più scenari per stime stabili |
-| $\lambda$ | controlla il compromesso prestazione media / protezione |
-| $\pi_s$ | scenari ripesati o stress test (aggiungere scenari estremi) |
+| $r$ | controlla il compromesso prestazione media / protezione |
+| $w_s$ | scenari ripesati o stress test (aggiungere scenari estremi) |
 | $k$ | stabilità statistica: ripetere con campioni diversi, come nel Newsvendor |
 
 !!! warning "Limiti statistici"
@@ -413,7 +413,7 @@ Lo stesso codice è disponibile come notebook — [`notebooks/lab09_var_cvar.ipy
         var_t = np.quantile(tot, 0.90)
         cvar_t = tot[tot >= var_t - 1e-9].mean()
         righe.append((lam, cap["F1"], cap["F2"], tot.mean(), cvar_t, serv.mean()))
-        print(f"  lambda = {lam:3.1f}: prenoto F1 = {cap['F1']:6.1f}, F2 = {cap['F2']:6.1f} | "
+        print(f"  r = {lam:3.1f}: prenoto F1 = {cap['F1']:6.1f}, F2 = {cap['F2']:6.1f} | "
               f"costo medio {tot.mean():8.2f}, CVaR90 {cvar_t:8.2f} | servizio medio {serv.mean():.1%}")
     res2 = pd.DataFrame(righe, columns=["lam", "F1", "F2", "costo_medio", "cvar", "servizio"])
     salva_dat(res2, "cap09_duestadi")
@@ -449,6 +449,6 @@ Lo stesso codice è disponibile come notebook — [`notebooks/lab09_var_cvar.ipy
    indipendenti) e verificare che il CVaR no.
 3. CVaR ottimo per $\alpha \in \{0{,}8;\, 0{,}9;\, 0{,}95;\, 0{,}99\}$: quando
    iniziano le instabilità?
-4. Forma vincolata $\max \sum_i \mu_i x_i$ soggetto a $\mathrm{CVaR} \le k$: stessa
+4. Forma vincolata $\max \sum_i m_i x_i$ soggetto a $\mathrm{CVaR} \le k$: stessa
    frontiera, duale = rendimento marginale del rischio.
 5. Stress test: scenario estremo con probabilità 1% — come cambia la prenotazione?

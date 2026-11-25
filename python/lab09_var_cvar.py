@@ -182,7 +182,7 @@ for lam in [0.0, 0.5, 1.0]:
     var_t = np.quantile(tot, 0.90)
     cvar_t = tot[tot >= var_t - 1e-9].mean()
     righe.append((lam, cap["F1"], cap["F2"], tot.mean(), cvar_t, serv.mean()))
-    print(f"  lambda = {lam:3.1f}: prenoto F1 = {cap['F1']:6.1f}, F2 = {cap['F2']:6.1f} | "
+    print(f"  r = {lam:3.1f}: prenoto F1 = {cap['F1']:6.1f}, F2 = {cap['F2']:6.1f} | "
           f"costo medio {tot.mean():8.2f}, CVaR90 {cvar_t:8.2f} | servizio medio {serv.mean():.1%}")
 res2 = pd.DataFrame(righe, columns=["lam", "F1", "F2", "costo_medio", "cvar", "servizio"])
 salva_dat(res2, "cap09_duestadi")

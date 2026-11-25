@@ -9,7 +9,7 @@
 Un vincolo della forma
 
 $$
-\frac{\sum_{j=1}^n a_{j} \, x_j}{\sum_{j=1}^n e_{j} \, x_j} \le \gamma ,
+\frac{\sum_{j=1}^n a_{j} \, x_j}{\sum_{j=1}^n e_{j} \, x_j} \le g ,
 \qquad
 \sum_{j=1}^n e_{j} \, x_j > 0 ,
 $$
@@ -23,7 +23,7 @@ non è lineare.
     Si moltiplicano entrambi i membri per il denominatore, che è positivo:
 
     $$
-    \sum_{j=1}^n \big( a_{j} - \gamma \; e_{j} \big) \, x_j \le 0 .
+    \sum_{j=1}^n \big( a_{j} - g \; e_{j} \big) \, x_j \le 0 .
     $$
 
 ## Quando vale

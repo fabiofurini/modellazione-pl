@@ -39,15 +39,15 @@ $$
 
 ## Frazioni della miscela
 
-Un requisito della forma «*la materia prima $j$ deve essere almeno una frazione $\alpha$
-della miscela*» *non* si scrive come $\frac{x_j}{\sum_{\ell} x_{\ell}} \ge \alpha$, che non è
+Un requisito della forma «*la materia prima $j$ deve essere almeno una frazione $f$
+della miscela*» *non* si scrive come $\frac{x_j}{\sum_{\ell} x_{\ell}} \ge f$, che non è
 un vincolo lineare. Si scrive invece moltiplicando entrambi i membri per il denominatore, che
 è positivo:
 
 $$
 \begin{aligned}
-& x_j \ge \alpha \; \sum_{\ell = 1}^{r} x_{\ell} \\
-\Longleftrightarrow \quad & (1 - \alpha) \; x_j - \alpha \sum_{\ell \ne j} x_{\ell} \ge 0 .
+& x_j \ge f \; \sum_{\ell = 1}^{r} x_{\ell} \\
+\Longleftrightarrow \quad & (1 - f) \; x_j - f \sum_{\ell \ne j} x_{\ell} \ge 0 .
 \end{aligned}
 $$
 

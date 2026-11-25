@@ -62,7 +62,7 @@ stessa quantità lascerebbe soddisfatto il vincolo e farebbe scendere l'obiettiv
 !!! example "Senza caratteristiche: torna il quantile empirico"
     Con $p = 0$ resta la sola intercetta. Sette giorni di vendite: 88, 96, 104,
     112, 120, 132, 148 pezzi; la panetteria del capitolo 8 ha $c_u = 9$ e
-    $c_o = 4$, quindi $\tau = \alpha^* = 9/13 = 0{,}6923$.
+    $c_o = 4$, quindi $\tau = f^* = 9/13 = 0{,}6923$.
 
     L'ottimo è $\tilde b = 120$, la quinta osservazione in ordine crescente
     ($4/7 = 0{,}5714 \le \tau \le 5/7 = 0{,}7143$), con valore
@@ -560,7 +560,7 @@ Lo stesso codice è disponibile come notebook — [`notebooks/lab11_regressione.
    se si sposta di $-30$ uno dei due punti di appoggio? Spiegare con gli scarti
    complementari.
 3. La panetteria svende l'invenduto a fine giornata e $c_o$ passa da 4 a 2 euro:
-   ricalcolare $\alpha^*$, rieseguire la regressione quantile e dire di quanti
+   ricalcolare $f^*$, rieseguire la regressione quantile e dire di quanti
    pezzi cambia la produzione del giorno tipo.
 4. Tracciare il valore ottimo con budget per $t \in \{0, 1, \dots, 60\}$ e
    verificare che sia convesso e lineare a tratti; i punti di rottura coincidono

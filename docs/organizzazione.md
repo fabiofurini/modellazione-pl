@@ -51,7 +51,7 @@ pagina.
 4. Sbagliare il segno dei duali nei problemi di minimo.
 5. Aggiornare il RHS di un vincolo con costanti a sinistra.
 6. Ottimizzare un solo obiettivo quando ce ne sono due (minimax puro).
-7. Scegliere i parametri ($\tau$, $\lambda$, il budget) guardando i dati usati per decidere.
+7. Scegliere i parametri ($\tau$, $r$, il budget) guardando i dati usati per decidere.
 8. Riportare sei cifre decimali da stime che ballano alla seconda.
 
 ## Riproducibilità

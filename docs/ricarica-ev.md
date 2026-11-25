@@ -41,14 +41,14 @@ prelievo totale sotto la potenza del contatore.
 | Simbolo | Tipo | Significato |
 |---|---|---|
 | $n$ | $\in \mathbb{Z}_{\ge 1}$ | numero di veicoli, indicizzati da $v \in \{1, 2, \dots, n\}$ |
-| $m$ | $\in \mathbb{Z}_{\ge 1}$ | numero di intervalli orari, indicizzati da $t \in \{1, 2, \dots, m\}$, di durata $\Delta t$ (qui $\Delta t = 1$ h) |
-| $\pi_t$ | $\in \mathbb{Q}_{\ge 0}$ | prezzo dell'energia nell'ora $t$ (€/kWh) |
+| $m$ | $\in \mathbb{Z}_{\ge 1}$ | numero di intervalli orari, indicizzati da $t \in \{1, 2, \dots, m\}$, di durata $d$ (qui $d = 1$ h) |
+| $c_t$ | $\in \mathbb{Q}_{\ge 0}$ | prezzo dell'energia nell'ora $t$ (€/kWh) |
 | $a_{vt}$ | $\in \{0, 1\}$ | *dato* osservato: $1$ se il veicolo $v$ è collegato nell'ora $t$, $0$ altrimenti |
 | $e_v$ | $\in \mathbb{Q}_{> 0}$ | energia richiesta dal veicolo $v$ entro la partenza (kWh) |
 | $\bar p_v$ | $\in \mathbb{Q}_{> 0}$ | potenza massima di ricarica del veicolo $v$ (kW) |
 | $b_t$ | $\in \mathbb{Q}_{\ge 0}$ | carico di base dell'edificio nell'ora $t$ (kW) |
 | $k$ | $\in \mathbb{Q}_{> 0}$ | potenza massima prelevabile dal contatore (kW) |
-| $\eta$ | $\in \mathbb{Q},\ 0 < \eta \le 1$ | rendimento di carica |
+| $r$ | $\in \mathbb{Q},\ 0 < r \le 1$ | rendimento di carica |
 
 **Variabili decisionali.** Introduciamo le seguenti $n\,m$ variabili non negative:
 
@@ -61,8 +61,8 @@ Usando queste variabili, un modello LP per il problema è il seguente:
 
 $$
 \begin{aligned}
-\min ~~ \sum_{v=1}^{n} \sum_{t=1}^{m} \pi_t\, \Delta t\, x_{vt} & & \\
-\text{soggetto a} \quad \eta \sum_{t=1}^{m} \Delta t\, x_{vt} &\ge e_v, & \forall v \in \{1, 2, \dots, n\}, \\
+\min ~~ \sum_{v=1}^{n} \sum_{t=1}^{m} c_t\, d\, x_{vt} & & \\
+\text{soggetto a} \quad r \sum_{t=1}^{m} d\, x_{vt} &\ge e_v, & \forall v \in \{1, 2, \dots, n\}, \\
 \sum_{v=1}^{n} x_{vt} + b_t &\le k, & \forall t \in \{1, 2, \dots, m\}, \\
 x_{vt} &\le a_{vt}\, \bar p_v, & \forall v \in \{1, 2, \dots, n\},~\forall t \in \{1, 2, \dots, m\}, \\
 x_{vt} &\ge 0, & \forall v \in \{1, 2, \dots, n\},~\forall t \in \{1, 2, \dots, m\}.
@@ -72,10 +72,10 @@ $$
 Descrizione della funzione obiettivo e dei vincoli:
 
 - la funzione obiettivo lineare minimizza la spesa energetica della notte: la potenza
-  $x_{vt}$ erogata per la durata $\Delta t$ costa $\pi_t\, \Delta t\, x_{vt}$ euro;
+  $x_{vt}$ erogata per la durata $d$ costa $c_t\, d\, x_{vt}$ euro;
 - i vincoli lineari di **energia** assicurano che ogni veicolo riceva tutta l'energia
-  richiesta entro la partenza; il rendimento $\eta$ sta a sinistra: dell'energia
-  prelevata solo la frazione $\eta$ finisce in batteria ($n$ vincoli lineari);
+  richiesta entro la partenza; il rendimento $r$ sta a sinistra: dell'energia
+  prelevata solo la frazione $r$ finisce in batteria ($n$ vincoli lineari);
 - i vincoli lineari di **rete** impongono che il prelievo complessivo (ricarica più
   carico di base) non superi mai la potenza del contatore: sono i vincoli che
   accoppiano i veicoli tra loro ($m$ vincoli lineari);
@@ -86,12 +86,12 @@ Descrizione della funzione obiettivo e dei vincoli:
 - i vincoli di non negatività su $x_{vt}$ definiscono le variabili del modello.
 
 Varianti: peak shaving ($\min z$ con $\sum_{v=1}^{n} x_{vt} + b_t \le z$ per ogni
-$t \in \{1, 2, \dots, m\}$); multiobiettivo costo $+\,\rho\,z$.
+$t \in \{1, 2, \dots, m\}$); multiobiettivo costo $+\,w\,z$.
 Il vincolo di energia è scritto come $\ge$ perché caricare più del necessario è
 ammesso ma mai conveniente (il prezzo è positivo): all'ottimo vale con uguaglianza.
 
 !!! example "Esempio a mano (1 veicolo, 2 ore)"
-    $e = 10$ kWh ($\eta = 1$), prezzi $\pi_1 = 0{,}10$ e $\pi_2 = 0{,}20$ €/kWh,
+    $e = 10$ kWh ($r = 1$), prezzi $c_1 = 0{,}10$ e $c_2 = 0{,}20$ €/kWh,
     $\bar p = 8$ kW: si carica 8 kWh nell'ora economica e 2 in quella cara (costo
     $8 \cdot 0{,}10 + 2 \cdot 0{,}20 = 1{,}20$ €). Prezzo ombra del fabbisogno
     = 0,20 €/kWh (il prezzo dell'*ora marginale*); prezzo ombra del limite di potenza
@@ -100,7 +100,7 @@ ammesso ma mai conveniente (il prezzo è positivo): all'ottimo vale con uguaglia
 
 ## Caso di studio
 
-Sei furgoni con finestre notturne diverse, contatore $k = 120$ kW, $\eta = 0{,}95$.
+Sei furgoni con finestre notturne diverse, contatore $k = 120$ kW, $r = 0{,}95$.
 
 ```text
 Costo minimo   : 20,36 EUR/notte   picco di prelievo 103,4 kW (limite 120)
@@ -111,8 +111,8 @@ Prezzi ombra del fabbisogno (EUR/kWh):
 
 ![Profili di prelievo](img/cap06_profili.png)
 
-I prezzi ombra del fabbisogno valgono $0{,}0842 = 0{,}08/\eta$ oppure
-$0{,}0947 = 0{,}09/\eta$: sono i prezzi delle **ore marginali** di ciascun veicolo
+I prezzi ombra del fabbisogno valgono $0{,}0842 = 0{,}08/r$ oppure
+$0{,}0947 = 0{,}09/r$: sono i prezzi delle **ore marginali** di ciascun veicolo
 (l'ora più economica ancora libera nella sua finestra), corretti per il rendimento.
 V2, V3 e V6 hanno finestre che coprono le ore a $0{,}08$; V1, V4 e V5 arrivano tardi
 o partono presto e la loro ora marginale costa $0{,}09$. Un kWh di fabbisogno in più
@@ -123,10 +123,10 @@ costa quindi 8,4–9,5 centesimi a seconda del veicolo.
 ![Frontiera costo-picco](img/cap06_frontiera.png)
 
 ```text
-Compromesso costo + rho*picco:
-  rho = 0,00: costo 20,36  picco 103,4     rho = 0,20: costo 22,15  picco 68,0
-  rho = 0,05: costo 20,69  picco  86,5     rho = 0,50: costo 22,15  picco 68,0
-  rho = 0,10: costo 21,39  picco  74,9
+Compromesso costo + w*picco:
+  w = 0,00: costo 20,36  picco 103,4     w = 0,20: costo 22,15  picco 68,0
+  w = 0,05: costo 20,69  picco  86,5     w = 0,50: costo 22,15  picco 68,0
+  w = 0,10: costo 21,39  picco  74,9
 Capacita' del contatore:
   k = 60, 65 kW: INAMMISSIBILE     k = 80: 21,09     k = 120: 20,36
   k = 70 kW    : 21,93             k = 90: 20,63
@@ -134,7 +134,7 @@ Capacita' del contatore:
 
 Tagliare il picco da 103 a 75 kW (−28%) costa solo un euro a notte; arrivare a 68 kW
 ne costa meno di due. Il minimax puro (picco 68) senza termine di costo spenderebbe
-27,79 €: il compromesso con $\rho = 0{,}2$ ottiene lo *stesso* picco a 22,15 € — mai
+27,79 €: il compromesso con $w = 0{,}2$ ottiene lo *stesso* picco a 22,15 € — mai
 ottimizzare un solo obiettivo quando ce ne sono due.
 
 !!! warning "Un bug istruttivo (capitato davvero)"
@@ -155,9 +155,9 @@ la variante quadratica di questo modello, nel modulo *Modellazione PNL*, pagina
 
     - La ricarica intelligente è un LP puro: si decide quanta potenza, e la disponibilità è un dato, non una variabile binaria.
 
-    - Le ore economiche si riempiono per prime; il prezzo ombra del fabbisogno di energia è il prezzo dell'ora marginale diviso per $\eta$.
+    - Le ore economiche si riempiono per prime; il prezzo ombra del fabbisogno di energia è il prezzo dell'ora marginale diviso per $r$.
 
-    - Costo $+\,\rho\,$picco traccia la frontiera costo-picco: il picco scende molto per un piccolo aumento di costo.
+    - Costo $+\,w\,$picco traccia la frontiera costo-picco: il picco scende molto per un piccolo aumento di costo.
 
     - Le costanti dei vincoli finiscono nel termine noto: se un'analisi di sensitività non cambia nulla, si controlla prima il codice.
 
@@ -271,7 +271,7 @@ Lo stesso codice è disponibile come notebook — [`notebooks/lab06_ricarica_ev.
     print(f"Picco minimo possibile: {mp.ObjVal:.1f} kW   costo: {costo_picco:.2f} € "
           f"(+{costo_picco - costo_min:.2f} € rispetto al costo minimo)")
 
-    intestazione("Compromesso: costo + rho · picco")
+    intestazione("Compromesso: costo + w · picco")
     compromessi = []
     for rho in [0, 0.05, 0.1, 0.2, 0.5, 1.0, 2.0]:
         mc, xc, _, _ = costruisci()
@@ -282,7 +282,7 @@ Lo stesso codice è disponibile come notebook — [`notebooks/lab06_ricarica_ev.
         mc.optimize()
         cc = sum(prezzo[t] * xc[v, t].X for v in veicoli for t in ore)
         compromessi.append((rho, cc, zc.X))
-        print(f"  rho = {rho:4.2f}: costo {cc:6.2f} €, picco {zc.X:6.1f} kW")
+        print(f"  w = {rho:4.2f}: costo {cc:6.2f} €, picco {zc.X:6.1f} kW")
     salva_dati(pd.DataFrame(compromessi, columns=["rho", "costo", "picco"]), "ev_compromessi")
 
     # ----------------------------------------------------------------------
@@ -328,7 +328,7 @@ Lo stesso codice è disponibile come notebook — [`notebooks/lab06_ricarica_ev.
     fig, ax = plt.subplots()
     ax.plot(comp["picco"], comp["costo"], "-o", color=TEAL)
     for _, r in comp.iterrows():
-        ax.annotate(f"  $\\rho$={r['rho']:.2f}", (r["picco"], r["costo"]), fontsize=8)
+        ax.annotate(f"  $w$={r['rho']:.2f}", (r["picco"], r["costo"]), fontsize=8)
     ax.set_xlabel("picco di prelievo (kW)")
     ax.set_ylabel("costo di ricarica (€)")
     ax.set_title("Frontiera costo-picco: ridurre il picco costa poco all'inizio")

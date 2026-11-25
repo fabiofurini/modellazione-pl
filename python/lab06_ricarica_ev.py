@@ -97,7 +97,7 @@ costo_picco = sum(prezzo[t] * prof_picco[t] for t in ore)
 print(f"Picco minimo possibile: {mp.ObjVal:.1f} kW   costo: {costo_picco:.2f} € "
       f"(+{costo_picco - costo_min:.2f} € rispetto al costo minimo)")
 
-intestazione("Compromesso: costo + rho · picco")
+intestazione("Compromesso: costo + w · picco")
 compromessi = []
 for rho in [0, 0.05, 0.1, 0.2, 0.5, 1.0, 2.0]:
     mc, xc, _, _ = costruisci()
@@ -108,7 +108,7 @@ for rho in [0, 0.05, 0.1, 0.2, 0.5, 1.0, 2.0]:
     mc.optimize()
     cc = sum(prezzo[t] * xc[v, t].X for v in veicoli for t in ore)
     compromessi.append((rho, cc, zc.X))
-    print(f"  rho = {rho:4.2f}: costo {cc:6.2f} €, picco {zc.X:6.1f} kW")
+    print(f"  w = {rho:4.2f}: costo {cc:6.2f} €, picco {zc.X:6.1f} kW")
 salva_dati(pd.DataFrame(compromessi, columns=["rho", "costo", "picco"]), "ev_compromessi")
 
 # ----------------------------------------------------------------------
@@ -154,7 +154,7 @@ comp = pd.DataFrame(compromessi, columns=["rho", "costo", "picco"])
 fig, ax = plt.subplots()
 ax.plot(comp["picco"], comp["costo"], "-o", color=TEAL)
 for _, r in comp.iterrows():
-    ax.annotate(f"  $\\rho$={r['rho']:.2f}", (r["picco"], r["costo"]), fontsize=8)
+    ax.annotate(f"  $w$={r['rho']:.2f}", (r["picco"], r["costo"]), fontsize=8)
 ax.set_xlabel("picco di prelievo (kW)")
 ax.set_ylabel("costo di ricarica (€)")
 ax.set_title("Frontiera costo-picco: ridurre il picco costa poco all'inizio")

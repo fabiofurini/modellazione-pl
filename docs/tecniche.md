@@ -128,7 +128,7 @@ dicono»).
 | [4.5 più periodi](tecniche-05.md) | $y_{t-1} + x_t - y_t = d_t$ |
 | [4.6 min-max](tecniche-06.md) | $\min w$ con $w \ge \sum_j a_{ij} x_j$ |
 | [4.7 valore assoluto](tecniche-07.md) | $w_i \ge \pm \sum_j a_{ij} x_j$, oppure $w_i^{+} - w_i^{-}$ |
-| [4.8 rapporto](tecniche-08.md) | $\sum_j (a_j - \gamma\, e_j)\, x_j \le 0$ |
+| [4.8 rapporto](tecniche-08.md) | $\sum_j (a_j - g\, e_j)\, x_j \le 0$ |
 
 <!-- modelli-svolti:inizio -->
 ## Modelli svolti
