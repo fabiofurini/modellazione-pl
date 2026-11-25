@@ -1,6 +1,6 @@
 # Esempio 4.11 — Miscelazione di petrolio greggio in una raffineria
 
-[:material-file-pdf-box: Dispensa (PDF)](pdf/dispensa-modellazione-pl.pdf) · [:material-presentation: Slide del capitolo (PDF)](pdf/slide-04-tecniche.pdf)
+[:material-file-pdf-box: Dispensa (PDF)](pdf/dispensa-modellazione-pl.pdf) · [:material-presentation: Slide del capitolo (PDF)](pdf/slide-04-tecniche.pdf) · [:material-gesture-tap: App: Miscelazione in una raffineria](laboratorio/raffineria.md)
 
 **Modello:** numerico · **Tecniche:** [4.3 Miscelazione](tecniche-03.md) · [4.8 Rapporti e percentuali](tecniche-08.md) · [Tutti i modelli svolti](tecniche.md#modelli-svolti)
 
@@ -76,6 +76,6 @@
 
 ## Laboratorio interattivo { #laboratorio-interattivo }
 
-L'app risolve questo modello nel browser, con i dati dell'esempio: i cursori cambiano i dati principali e il simplesso ricalcola la soluzione ottima, il valore ottimo e i prezzi ombra. Si apre anche a tutta pagina nel [laboratorio interattivo](laboratorio/tecniche.md), con gli altri otto modelli svolti.
+L'app risolve questo modello nel browser, con i dati dell'esempio: i cursori cambiano i dati e il simplesso ricalcola la soluzione ottima e i prezzi ombra. Si apre anche a tutta pagina nel laboratorio interattivo: [Miscelazione in una raffineria](laboratorio/raffineria.md).
 
-<div class="gi gi-capitolo" data-grafico="pl-tecniche" data-funzione="raffineria"></div>
+<div class="gi gi-capitolo" data-grafico="pl-raffineria"></div>

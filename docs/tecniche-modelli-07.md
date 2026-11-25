@@ -1,6 +1,6 @@
 # Esempio 4.10 — Produzione e stoccaggio di torte di frutta
 
-[:material-file-pdf-box: Dispensa (PDF)](pdf/dispensa-modellazione-pl.pdf) · [:material-presentation: Slide del capitolo (PDF)](pdf/slide-04-tecniche.pdf)
+[:material-file-pdf-box: Dispensa (PDF)](pdf/dispensa-modellazione-pl.pdf) · [:material-presentation: Slide del capitolo (PDF)](pdf/slide-04-tecniche.pdf) · [:material-gesture-tap: App: Produzione e stoccaggio di torte](laboratorio/torte-di-frutta.md)
 
 **Modello:** numerico · **Tecniche:** [4.5 Pianificazione su più periodi](tecniche-05.md) · [Tutti i modelli svolti](tecniche.md#modelli-svolti)
 
@@ -65,6 +65,6 @@
 
 ## Laboratorio interattivo { #laboratorio-interattivo }
 
-L'app risolve questo modello nel browser, con i dati dell'esempio: i cursori cambiano i dati principali e il simplesso ricalcola la soluzione ottima, il valore ottimo e i prezzi ombra. Si apre anche a tutta pagina nel [laboratorio interattivo](laboratorio/tecniche.md), con gli altri otto modelli svolti.
+L'app risolve questo modello nel browser, con i dati dell'esempio: i cursori cambiano i dati e il simplesso ricalcola la soluzione ottima e i prezzi ombra. Si apre anche a tutta pagina nel laboratorio interattivo: [Produzione e stoccaggio di torte](laboratorio/torte-di-frutta.md).
 
-<div class="gi gi-capitolo" data-grafico="pl-tecniche" data-funzione="torte"></div>
+<div class="gi gi-capitolo" data-grafico="pl-torte"></div>

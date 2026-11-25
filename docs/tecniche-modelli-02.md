@@ -1,6 +1,6 @@
 # Esempio 4.5 — Trasporto dai magazzini ai clienti
 
-[:material-file-pdf-box: Dispensa (PDF)](pdf/dispensa-modellazione-pl.pdf) · [:material-presentation: Slide del capitolo (PDF)](pdf/slide-04-tecniche.pdf)
+[:material-file-pdf-box: Dispensa (PDF)](pdf/dispensa-modellazione-pl.pdf) · [:material-presentation: Slide del capitolo (PDF)](pdf/slide-04-tecniche.pdf) · [:material-gesture-tap: App: Trasporto dai magazzini ai clienti](laboratorio/trasporto.md)
 
 **Modello:** simbolico · **Tecniche:** [4.4 Trasporto](tecniche-04.md) · [Tutti i modelli svolti](tecniche.md#modelli-svolti)
 
@@ -168,6 +168,4 @@
 
 ## Laboratorio interattivo { #laboratorio-interattivo }
 
-L'app risolve questo modello nel browser, con i dati dell'esempio: i cursori cambiano i dati principali e il simplesso ricalcola la soluzione ottima, il valore ottimo e i prezzi ombra. Si apre anche a tutta pagina nel [laboratorio interattivo](laboratorio/tecniche.md), con gli altri otto modelli svolti.
-
-<div class="gi gi-capitolo" data-grafico="pl-tecniche" data-funzione="trasporto"></div>
+Un modello di trasporto si risolve nel browser nell'app [Trasporto dai magazzini ai clienti](laboratorio/trasporto.md) del laboratorio interattivo, su un'istanza con due magazzini e tre clienti: i cursori cambiano i dati e il simplesso ricalcola la soluzione ottima.

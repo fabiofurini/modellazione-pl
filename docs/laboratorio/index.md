@@ -21,13 +21,75 @@ e delle dispense. Scegli un'app: si apre a tutta pagina.
 
     [Apri l'app →](trasporto.md)
 
--   :material-format-list-numbered: **Nove modelli LP svolti**
+</div>
+
+## Modelli svolti del capitolo 4
+
+<div class="grid cards" markdown>
+
+-   :material-clock-outline: **Produzione in orario ordinario e in straordinario**
 
     ---
 
-    I nove modelli svolti del capitolo 4: produzione, trasporto, diete, pianificazione su più periodi, miscelazione e rapporti. Cambia i dati con i cursori: il simplesso, nel browser, ricalcola la soluzione ottima, il valore ottimo e i prezzi ombra.
+    L'app risolve all'ottimo nel browser un modello di programmazione lineare: i dati, il modello simbolico, il modello numerico dell'istanza, la soluzione ottima con il suo grafico e i prezzi ombra.
 
-    [Apri l'app →](tecniche.md)
+    [Apri l'app →](produzione-straordinario.md)
+
+-   :material-food-apple-outline: **Pianificazione della dieta**
+
+    ---
+
+    L'app risolve all'ottimo nel browser un modello di programmazione lineare: i dati, il modello simbolico, il modello numerico dell'istanza, la soluzione ottima con il suo grafico e i prezzi ombra.
+
+    [Apri l'app →](dieta.md)
+
+-   :material-account-group-outline: **Dieta per più classi**
+
+    ---
+
+    L'app risolve all'ottimo nel browser un modello di programmazione lineare: i dati, il modello simbolico, il modello numerico dell'istanza, la soluzione ottima con il suo grafico e i prezzi ombra.
+
+    [Apri l'app →](dieta-piu-classi.md)
+
+-   :material-calendar-range: **Produzione su più periodi con acquisti**
+
+    ---
+
+    L'app risolve all'ottimo nel browser un modello di programmazione lineare: i dati, il modello simbolico, il modello numerico dell'istanza, la soluzione ottima con il suo grafico e i prezzi ombra.
+
+    [Apri l'app →](produzione-piu-periodi.md)
+
+-   :material-cupcake: **Scelta dei dolci**
+
+    ---
+
+    L'app risolve all'ottimo nel browser un modello di programmazione lineare: i dati, il modello simbolico, il modello numerico dell'istanza, la soluzione ottima con il suo grafico e i prezzi ombra.
+
+    [Apri l'app →](scelta-dolci.md)
+
+-   :material-cake-variant-outline: **Produzione e stoccaggio di torte**
+
+    ---
+
+    L'app risolve all'ottimo nel browser un modello di programmazione lineare: i dati, il modello simbolico, il modello numerico dell'istanza, la soluzione ottima con il suo grafico e i prezzi ombra.
+
+    [Apri l'app →](torte-di-frutta.md)
+
+-   :material-oil: **Miscelazione in una raffineria**
+
+    ---
+
+    L'app risolve all'ottimo nel browser un modello di programmazione lineare: i dati, il modello simbolico, il modello numerico dell'istanza, la soluzione ottima con il suo grafico e i prezzi ombra.
+
+    [Apri l'app →](raffineria.md)
+
+-   :material-pill: **Produzione di tre farmaci**
+
+    ---
+
+    L'app risolve all'ottimo nel browser un modello di programmazione lineare: i dati, il modello simbolico, il modello numerico dell'istanza, la soluzione ottima con il suo grafico e i prezzi ombra.
+
+    [Apri l'app →](tre-farmaci.md)
 
 </div>
 

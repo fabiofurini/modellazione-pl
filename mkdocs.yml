@@ -144,7 +144,7 @@ extra_javascript:
   - javascripts/gi-pl-modelli.js?v=2fadd486f6
   - javascripts/gi-pl-app.js?v=c229170304
   - javascripts/gi-pl-finanza.js?v=675eccface
-  - javascripts/gi-pl-tecniche.js?v=2991821b1f
+  - javascripts/gi-pl-tecniche.js?v=fbafbd2249
   - javascripts/gi-pl-trasporto.js?v=ce16f21e66
   - javascripts/quiz.js?v=be7fae2b85
 
