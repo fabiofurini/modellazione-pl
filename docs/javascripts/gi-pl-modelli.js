@@ -3,7 +3,7 @@
  * dai CSV di dati/, cioè dagli script del corso). Si caricano anche in node per il test
  * (python/test_laboratorio.py), che confronta i numeri con Gurobi.
  *
- *   produzione(fCap, fDom, fGiac) cap. 4: LP a costo minimo; piano, scorte, prezzi ombra della capacità
+ *   produzione(fCap, fDom, fGiac) cap. 5: LP a costo minimo; piano, scorte (mesi 1..m-1), prezzi ombra della capacità
  *                                (fGiac: un fattore per tutti i prodotti o un vettore, uno per prodotto)
  *   dea(o, vrs, vista)           cap. 6: forma di inviluppo orientata all'input (CCR/BCC), poi gli scarti
  *   newsvendor(p, lam, alfa)     cap. 8: LP a scenari con avversione al rischio (1-lam) E + lam CVaR
@@ -15,17 +15,26 @@
   const O = () => W.GI_OTT, D = () => W.GI_DATI_PL;
 
   // ---------------------------------------------------------------- cap. 4
+  /** come il lot sizing di Modellazione MIP, senza la binaria: x_{i1} - s_{i1} = d_{i1} - r_{i0};
+   *  x_{it} + s_{i,t-1} - s_{it} = d_{it} (t = 2..m-1); x_{im} + s_{i,m-1} = d_{im} + r_{im}. Le scorte s_{it}
+   *  sono variabili solo per t = 1..m-1 (a fine orizzonte la scorta è il dato r_{im}).
+   *  Colonne: x_{11}, ..., x_{nm}, poi s_{11}, ..., s_{1,m-1}, ..., s_{n,m-1}. */
   function produzione(fCap = 1, fDom = 1, fGiac = 1) {
-    const P = D().produzione, nI = P.prodotti.length, nT = P.mesi.length;
-    const ix = (i, t) => i * nT + t, is = (i, t) => nI * nT + i * nT + t, nv = 2 * nI * nT;
+    const P = D().produzione, nI = P.prodotti.length, nT = P.mesi.length, nS = nT - 1;
+    const ix = (i, t) => i * nT + t, is = (i, t) => nI * nT + i * nS + t, nv = nI * nT + nI * nS;
     const c = new Array(nv).fill(0), A = [], rel = [], b = [];
-    for (let i = 0; i < nI; i++) for (let t = 0; t < nT; t++) { c[ix(i, t)] = P.cp[i]; c[is(i, t)] = P.ch[i] * (Array.isArray(fGiac) ? fGiac[i] : fGiac); }
+    const hI = P.ch.map((h, i) => h * (Array.isArray(fGiac) ? fGiac[i] : fGiac));
+    for (let i = 0; i < nI; i++) {
+      for (let t = 0; t < nT; t++) c[ix(i, t)] = P.cp[i];
+      for (let t = 0; t < nS; t++) c[is(i, t)] = hI[i];
+    }
     const dom = P.domanda.map((r) => r.map((v) => v * fDom));
     for (let i = 0; i < nI; i++) for (let t = 0; t < nT; t++) {
       const a = new Array(nv).fill(0);
-      a[ix(i, t)] = 1; a[is(i, t)] = -1;
+      a[ix(i, t)] = 1;
+      if (t < nS) a[is(i, t)] = -1;
       if (t > 0) a[is(i, t - 1)] = 1;
-      A.push(a); rel.push("="); b.push(dom[i][t] - (t === 0 ? P.s0[i] : 0));
+      A.push(a); rel.push("="); b.push(dom[i][t] - (t === 0 ? P.r0[i] : 0) + (t === nT - 1 ? P.rm[i] : 0));
     }
     const cap = P.cap.map((v) => v * fCap);
     for (let t = 0; t < nT; t++) {
@@ -35,12 +44,16 @@
     }
     const r = O().lp({ c, A, rel, b, senso: "min" }), lp = { c, A, rel, b };   // lp: le righe del simplesso, per il modello numerico
     if (r.stato !== "ottimo") return { stato: r.stato, cap, dom, lp };
-    const x = [], s = [], ore = [];
-    for (let i = 0; i < nI; i++) { x.push([]); s.push([]); for (let t = 0; t < nT; t++) { x[i].push(r.x[ix(i, t)]); s[i].push(r.x[is(i, t)]); } }
+    const x = [], s = [], ore = [];   // s[i]: le nT - 1 scorte s_{i1}, ..., s_{i,m-1}
+    for (let i = 0; i < nI; i++) {
+      x.push([]); s.push([]);
+      for (let t = 0; t < nT; t++) x[i].push(r.x[ix(i, t)]);
+      for (let t = 0; t < nS; t++) s[i].push(r.x[is(i, t)]);
+    }
     for (let t = 0; t < nT; t++) ore.push(P.ore.reduce((acc, h, i) => acc + h * x[i][t], 0));
     const k = nI * nT;
     return {
-      stato: "ottimo", costo: r.z, x, s, ore, cap, dom, lp,
+      stato: "ottimo", costo: r.z, x, s, ore, cap, dom, lp, giacenza: s.reduce((tot, riga, i) => tot + riga.reduce((q, v) => q + v, 0) * hI[i], 0),
       ombra: r.y.slice(k), lo: r.rhsLo.slice(k), up: r.rhsUp.slice(k),
       bilancio: r.y.slice(0, k),
     };

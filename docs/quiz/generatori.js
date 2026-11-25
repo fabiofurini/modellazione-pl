@@ -893,15 +893,15 @@ window.QUIZ_GEN = window.QUIZ_GEN || {};
     link: link("solver-lp/#the-log-explained", "solver-lp/#il-log-spiegato"),
     prova: function (rng, L) {
       var n = ri(rng, 2, 6), mm = ri(rng, 3, 12);
-      var R = n * mm + mm, Cn = 2 * n * mm;
+      var R = n * mm + mm, Cn = n * (2 * mm - 1);
       function o(r, c) { return T(L, "$" + r + "$ rows, $" + c + "$ columns", "$" + r + "$ righe, $" + c + "$ colonne"); }
       var testo = T(L,
-        "A gurobipy production-inventory LP has $n = " + n + "$ products and $m = " + mm + "$ months: variables $x_{it} \\ge 0$ (units produced) and $s_{it} \\ge 0$ (inventory at the end of the month) for every product $i$ and month $t$; one balance constraint $x_{it} + s_{i,t-1} - s_{it} = d_{it}$ per product and month (for $t = 1$ the initial inventory $r_i$, a datum, moves to the right-hand side); one machine-hours constraint $\\sum_i a_ix_{it} \\le b_t$ per month. What does the line `Optimize a model with ... rows, ... columns` of the Gurobi log report?",
-        "Un LP gurobipy di produzione e scorte ha $n = " + n + "$ prodotti e $m = " + mm + "$ mesi: variabili $x_{it} \\ge 0$ (unità prodotte) e $s_{it} \\ge 0$ (scorta a fine mese) per ogni prodotto $i$ e mese $t$; un vincolo di bilancio $x_{it} + s_{i,t-1} - s_{it} = d_{it}$ per prodotto e mese (per $t = 1$ la scorta iniziale $r_i$, un dato, passa a destra); un vincolo di ore macchina $\\sum_i a_ix_{it} \\le b_t$ per mese. Che cosa riporta la riga `Optimize a model with ... rows, ... columns` del log di Gurobi?");
+        "A gurobipy production-inventory LP has $n = " + n + "$ products and $m = " + mm + "$ months: variables $x_{it} \\ge 0$ (units produced) for every product $i$ and month $t$, and $s_{it} \\ge 0$ (inventory at the end of the month) for every product $i$ and month $t \\le m-1$; one balance constraint per product and month, $x_{i1} - s_{i1} = d_{i1} - r_{i0}$ in the first month, $x_{it} + s_{i,t-1} - s_{it} = d_{it}$ in the middle months and $x_{im} + s_{i,m-1} = d_{im} + r_{im}$ in the last one (the initial and final inventories $r_{i0}$ and $r_{im}$ are data); one machine-hours constraint $\\sum_i a_ix_{it} \\le b_t$ per month. What does the line `Optimize a model with ... rows, ... columns` of the Gurobi log report?",
+        "Un LP gurobipy di produzione e scorte ha $n = " + n + "$ prodotti e $m = " + mm + "$ mesi: variabili $x_{it} \\ge 0$ (unità prodotte) per ogni prodotto $i$ e mese $t$, e $s_{it} \\ge 0$ (scorta a fine mese) per ogni prodotto $i$ e mese $t \\le m-1$; un vincolo di bilancio per prodotto e mese, $x_{i1} - s_{i1} = d_{i1} - r_{i0}$ nel primo mese, $x_{it} + s_{i,t-1} - s_{it} = d_{it}$ nei mesi intermedi e $x_{im} + s_{i,m-1} = d_{im} + r_{im}$ nell'ultimo (le scorte iniziale e finale $r_{i0}$ e $r_{im}$ sono dati); un vincolo di ore macchina $\\sum_i a_ix_{it} \\le b_t$ per mese. Che cosa riporta la riga `Optimize a model with ... rows, ... columns` del log di Gurobi?");
       var sp = T(L,
-        "Rows are constraints: $nm = " + n * mm + "$ balances plus $m = " + mm + "$ capacities, $" + R + "$ in all; columns are variables: $2nm = " + Cn + "$. Checking these sizes is the first reading of the log.",
-        "Le righe sono i vincoli: $nm = " + n * mm + "$ bilanci più $m = " + mm + "$ capacità, $" + R + "$ in tutto; le colonne sono le variabili: $2nm = " + Cn + "$. Controllare queste dimensioni è la prima lettura del log.");
-      return chiudi(rng, testo, o(R, Cn), [o(Cn, R), o(n * mm, Cn), o(R, n * mm), o(n * mm + n, Cn)], sp,
+        "Rows are constraints: $nm = " + n * mm + "$ balances plus $m = " + mm + "$ capacities, $" + R + "$ in all; columns are variables: $nm = " + n * mm + "$ productions plus $n(m-1) = " + n * (mm - 1) + "$ inventories, $n(2m-1) = " + Cn + "$. Checking these sizes is the first reading of the log.",
+        "Le righe sono i vincoli: $nm = " + n * mm + "$ bilanci più $m = " + mm + "$ capacità, $" + R + "$ in tutto; le colonne sono le variabili: $nm = " + n * mm + "$ produzioni più $n(m-1) = " + n * (mm - 1) + "$ scorte, $n(2m-1) = " + Cn + "$. Controllare queste dimensioni è la prima lettura del log.");
+      return chiudi(rng, testo, o(R, Cn), [o(Cn, R), o(R, 2 * n * mm), o(R, n * mm), o(n * mm + n, Cn)], sp,
         { n: n, m: mm });
     }
   });

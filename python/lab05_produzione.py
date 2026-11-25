@@ -32,12 +32,16 @@ costo_prod = {"1": 10.0, "2": 15.0, "3": 20.0}   # €/unità
 costo_giac = {"1": 1.0, "2": 1.2, "3": 1.2}      # €/unità/mese
 ore_unit = {"1": 1.0, "2": 1.5, "3": 2.0}        # ore macchina per unità
 capacita = {1: 400, 2: 400, 3: 400}  # ore/mese
-scorta_iniziale = {"1": 0, "2": 0, "3": 0}
+scorta_iniziale = {"1": 0, "2": 0, "3": 0}      # r_i0: scorta a inizio orizzonte (unità)
+scorta_finale = {"1": 0, "2": 0, "3": 0}        # r_im: scorta richiesta a fine orizzonte (unità)
+ultimo = mesi[-1]                               # mese m
+mesi_s = mesi[:-1]                              # mesi 1..m-1: solo qui la scorta s_it è una variabile
 
 df = pd.DataFrame(
-    [(i, t, domanda[i, t], costo_prod[i], costo_giac[i], ore_unit[i], scorta_iniziale[i])
+    [(i, t, domanda[i, t], costo_prod[i], costo_giac[i], ore_unit[i], scorta_iniziale[i], scorta_finale[i])
      for i in prodotti for t in mesi],
-    columns=["prodotto", "mese", "domanda", "costo_prod", "costo_giac", "ore_unit", "scorta_iniziale"])
+    columns=["prodotto", "mese", "domanda", "costo_prod", "costo_giac", "ore_unit", "scorta_iniziale",
+             "scorta_finale"])
 salva_dati(df, "produzione_domanda")
 salva_dati(pd.DataFrame({"mese": mesi, "capacita_ore": [capacita[t] for t in mesi]}),
            "produzione_capacita")
@@ -48,18 +52,21 @@ def costruisci_lp():
     m = gp.Model("produzione_scorte")
     m.Params.OutputFlag = 0
     x = m.addVars(prodotti, mesi, name="x")           # quantità prodotta
-    s = m.addVars(prodotti, mesi, name="s")           # scorta a fine mese
-    # bilancio delle scorte: s_{i,t-1} + x_it = d_it + s_it
-    m.addConstrs(
-        ((scorta_iniziale[i] if t == 1 else s[i, t - 1]) + x[i, t] == domanda[i, t] + s[i, t]
-         for i in prodotti for t in mesi), name="bilancio")
+    s = m.addVars(prodotti, mesi_s, name="s")         # scorta a fine mese, mesi 1..m-1
+    # bilancio delle scorte (variabili a sinistra, dati a destra): primo mese, mesi intermedi, ultimo mese
+    m.addConstrs((x[i, 1] - s[i, 1] == domanda[i, 1] - scorta_iniziale[i]
+                  for i in prodotti), name="bilancio_primo")
+    m.addConstrs((x[i, t] + s[i, t - 1] - s[i, t] == domanda[i, t]
+                  for i in prodotti for t in mesi[1:-1]), name="bilancio")
+    m.addConstrs((x[i, ultimo] + s[i, ultimo - 1] == domanda[i, ultimo] + scorta_finale[i]
+                  for i in prodotti), name="bilancio_ultimo")
     # capacità della risorsa condivisa
     v_cap = m.addConstrs(
         (gp.quicksum(ore_unit[i] * x[i, t] for i in prodotti) <= capacita[t]
          for t in mesi), name="capacita")
     m.setObjective(
-        gp.quicksum(costo_prod[i] * x[i, t] + costo_giac[i] * s[i, t]
-                    for i in prodotti for t in mesi), GRB.MINIMIZE)
+        gp.quicksum(costo_prod[i] * x[i, t] for i in prodotti for t in mesi)
+        + gp.quicksum(costo_giac[i] * s[i, t] for i in prodotti for t in mesi_s), GRB.MINIMIZE)
     return m, x, s, v_cap
 
 
@@ -72,13 +79,18 @@ m.optimize()
 assert m.Status == GRB.OPTIMAL
 print(f"Costo totale ottimo: {m.ObjVal:,.2f} €")
 
+def scorta(i, t):
+    """scorta a fine mese t: la variabile s_it per t < m, il dato r_im per t = m"""
+    return s[i, t].X if t < ultimo else scorta_finale[i]
+
+
 piano = pd.DataFrame(
-    [(i, t, x[i, t].X, s[i, t].X) for i in prodotti for t in mesi],
+    [(i, t, x[i, t].X, scorta(i, t)) for i in prodotti for t in mesi],
     columns=["prodotto", "mese", "produzione", "scorta"])
 salva_dati(piano, "produzione_piano_ottimo")
 print("\nPiano di produzione (unità/mese):")
 print(piano.pivot(index="prodotto", columns="mese", values="produzione").round(1))
-print("\nScorte a fine mese:")
+print(f"\nScorte a fine mese (mese {ultimo}: la scorta finale richiesta r_i{ultimo}, un dato):")
 print(piano.pivot(index="prodotto", columns="mese", values="scorta").round(1))
 
 print("\nVincoli di capacità: utilizzo, prezzo ombra e range di validità")
@@ -109,7 +121,7 @@ print(f"\nVerifica: +1 ora nel mese {t_star} → costo passa da {m.ObjVal:.2f} a
 salva_dat(pd.DataFrame({
     "mese": mesi,
     **{f"x{i}": [x[i, t].X for t in mesi] for i in prodotti},
-    **{f"s{i}": [s[i, t].X for t in mesi] for i in prodotti},
+    **{f"s{i}": [scorta(i, t) for t in mesi] for i in prodotti},       # mese m: il dato r_im
     **{f"d{i}": [domanda[i, t] for t in mesi] for i in prodotti},
     "domtot": [sum(domanda[i, t] for i in prodotti) for t in mesi],
 }), "cap05_piano")
@@ -146,11 +158,15 @@ ax2.set_ylim(0, max(domanda.values()) * 1.6)
 ax2.set_xticks(mesi); ax2.set_xlabel("mese"); ax2.set_ylabel("unità")
 ax2.set_title("Produzione e domanda per prodotto")
 ax2.legend(fontsize=7, ncol=2, loc="upper left")
-for i in prodotti:
-    ax3.plot(mesi, [s[i, t].X for t in mesi], marker="o", color=colori[i], label=f"prodotto {i}")
+for i in prodotti:                        # scorte s_it (mesi 1..m-1) e, vuoto, il dato r_im del mese m
+    ax3.plot(mesi_s, [s[i, t].X for t in mesi_s], marker="o", color=colori[i], label=f"prodotto {i}")
+    ax3.plot([mesi_s[-1], ultimo], [s[i, mesi_s[-1]].X, scorta_finale[i]], "--", color=colori[i], lw=1)
+    ax3.plot([ultimo], [scorta_finale[i]], "o", color=colori[i], mfc="white")
+ax3.plot([], [], "o", color=GRIGIO, mfc="white", label=f"mese {ultimo}: scorta finale $r_{{i{ultimo}}}$ (dato)")
 ax3.set_xticks(mesi); ax3.set_xlabel("mese"); ax3.set_ylabel("unità a scorta")
 ax3.set_title("Scorte di fine mese")
-ax3.legend(fontsize=8)
+ax3.set_ylim(-3, max([s[i, t].X for i in prodotti for t in mesi_s] + [10]) * 1.6)
+ax3.legend(fontsize=8, loc="upper left")
 salva_figura(fig, "cap05_piano_scorte")
 
 # sensitività: costo ottimo al variare della capacità uniforme

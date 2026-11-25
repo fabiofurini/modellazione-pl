@@ -46,7 +46,8 @@
     return Q;
   }
   /** legenda dentro il pannello, in alto a sinistra («sx») o a destra («dx»), come nelle figure.
-   *  voci: [colore, testo, tipo] con tipo "barra", "linea", "lineaPunti", "tratteggioPunti", "tratteggio", "punteggiata", "punto" */
+   *  voci: [colore, testo, tipo] con tipo "barra", "linea", "lineaPunti", "tratteggioPunti", "tratteggio", "punteggiata", "punto",
+   *  "puntoVuoto" (pallino vuoto: un dato) */
   function legendaIn(crea, P, voci, C, dove = "sx") {
     const fs = 11.5, passo = 17, lung = 20;
     const largo = Math.max(...voci.map((v) => v[1].length)) * fs * 0.56 + lung + 10;
@@ -55,6 +56,7 @@
       const y = P.Y1 - 12 - k * passo;
       if (tipo === "barra") M.rett(crea, x0 + 2, y - 5, x0 + lung - 2, y + 5, { fillColor: col, fillOpacity: 1, strokeColor: col, strokeWidth: 0.5 });
       else if (tipo === "punto") M.pallino(crea, x0 + lung / 2, y, { size: 4, fillColor: col, strokeColor: col });
+      else if (tipo === "puntoVuoto") M.pallino(crea, x0 + lung / 2, y, { size: 4, fillColor: C.card || "#ffffff", strokeColor: col, strokeWidth: 1.5 });
       else {
         const dash = tipo.startsWith("tratteggio") ? 2 : tipo === "punteggiata" ? 1 : 0;
         M.linea(crea, x0, y, x0 + lung, y, { strokeColor: col, strokeWidth: 2.2, dash });
@@ -368,7 +370,7 @@
   };
   window.GI_PL_DV = DV;
 
-  // ================================================================ produzione (cap. 4)
+  // ================================================================ produzione (cap. 5)
   /** riga evidenziata sotto il problema: quantità continue, non oggetti da contare */
   const CONTINUE = ["", ""];   // la nota sulle unità continue sta solo nella pagina del capitolo (Fabio, 25/11/2026)
   const PRODOTTO = (C) => [C.a, C.b, C.c];
@@ -389,18 +391,20 @@
     formula(R, v, st) {
       const P = DD().produzione, nI = P.prodotti.length, nT = P.mesi.length;
       const it = `${PER("i", "n")},~${PER("t", "m")}`;
-      const sim = `\\min ~~ \\sum_{i=1}^{n} \\sum_{t=1}^{m} \\bigl( c_{it}\\, x_{it} + ${st.col("c", "h_{it}")}\\, s_{it} \\bigr) & & \\\\
-        ${SA()} \\quad x_{i1} - s_{i1} &= ${st.col("a", "d_{i1}")} - r_i, & ${PER("i", "n")}, \\\\
-        x_{it} + s_{i,t-1} - s_{it} &= ${st.col("a", "d_{it}")}, & ${PER("i", "n")},~\\forall t \\in \\{2, 3, \\dots, m\\}, \\\\
+      const sim = `\\min ~~ \\sum_{i=1}^{n} \\sum_{t=1}^{m} c_{it}\\, x_{it} + \\sum_{i=1}^{n} \\sum_{t=1}^{m-1} ${st.col("c", "h_{it}")}\\, s_{it} & & \\\\
+        ${SA()} \\quad x_{i1} - s_{i1} &= ${st.col("a", "d_{i1}")} - r_{i0}, & ${PER("i", "n")}, \\\\
+        x_{it} + s_{i,t-1} - s_{it} &= ${st.col("a", "d_{it}")}, & ${PER("i", "n")},~\\forall t \\in \\{2, 3, \\dots, m-1\\}, \\\\
+        x_{im} + s_{i,m-1} &= ${st.col("a", "d_{im}")} + r_{im}, & ${PER("i", "n")}, \\\\
         \\sum_{i=1}^{n} a_i\\, x_{it} &\\le ${st.col("b", "b_t")}, & ${PER("t", "m")}, \\\\
         x_{it} &\\ge 0, & ${it}, \\\\
-        s_{it} &\\ge 0, & ${it}.`;
+        s_{it} &\\ge 0, & ${PER("i", "n")},~\\forall t \\in \\{1, 2, \\dots, m-1\\}.`;
       const fD = v[0] / 100, fC = v[1] / 100, fH = v[2] / 100;
-      // un solo array dalle righe del simplesso (R.lp, colonne x_{11}, ..., x_{nm}, s_{11}, ..., s_{nm});
-      // forma matriciale stretta (Fabio): una colonna per variabile, x_{11}, ..., x_{33}, s_{11}, ..., s_{33}, ogni riga
-      // su una sola riga dell'array
-      const lp = R.lp, kx = (i, t) => i * nT + t, ks = (i, t) => nI * nT + i * nT + t, vars = [], px = [], ps = [];
-      for (let i = 0; i < nI; i++) for (let t = 0; t < nT; t++) { vars[kx(i, t)] = `x_{${i + 1}${t + 1}}`; vars[ks(i, t)] = `s_{${i + 1}${t + 1}}`; px.push(kx(i, t)); ps.push(ks(i, t)); }
+      // un solo array dalle righe del simplesso (R.lp, colonne x_{11}, ..., x_{nm}, s_{11}, ..., s_{n,m-1});
+      // forma matriciale stretta (Fabio): una colonna per variabile, x_{11}, ..., x_{33}, s_{11}, s_{12}, ..., s_{32}
+      // (le scorte solo nei mesi 1..m-1), ogni riga su una sola riga dell'array
+      const nS = nT - 1, lp = R.lp, kx = (i, t) => i * nT + t, ks = (i, t) => nI * nT + i * nS + t, vars = [], px = [], ps = [];
+      for (let i = 0; i < nI; i++) for (let t = 0; t < nT; t++) { vars[kx(i, t)] = `x_{${i + 1}${t + 1}}`; px.push(kx(i, t)); }
+      for (let i = 0; i < nI; i++) for (let t = 0; t < nS; t++) { vars[ks(i, t)] = `s_{${i + 1}${t + 1}}`; ps.push(ks(i, t)); }
       const pezzi = [[...px, ...ps]];
       const num = numLP({ senso: "min", vars, c: lp.c, cifre: 2, pezzi,
         righe: lp.A.map((a, k) => ({ a, rel: lp.rel[k], rhs: lp.b[k], cifre: k < nI * nT ? 2 : 1 })) });
@@ -409,12 +413,12 @@
         ["\\(i \\backslash t\\)", ...P.mesi.map(String)], P.domanda.map((r, i) => [String(i + 1), ...r.map((x) => DV.t(x * fD, 1))])));
       return modelloDi("produzione")(T(`<b>Il problema.</b> Decidiamo quante unità di ogni prodotto produrre in ogni mese e quante tenerne a scorta. ` +
         "L'obiettivo è minimizzare il costo di produzione e di giacenza. I vincoli: bilancio di magazzino mese per mese, con la domanda servita per intero, e ore macchina disponibili in ogni mese." + CONTINUE[0] +
-        "<br><b>Variabili:</b> \\(x_{it}\\): unità del prodotto \\(i\\) prodotte nel mese \\(t\\); \\(s_{it}\\): unità del prodotto \\(i\\) a scorta alla fine del mese \\(t\\)." +
-        `<br><b>Dati:</b> \\(n = ${nI}\\): numero di prodotti; \\(m = ${nT}\\): numero di mesi; \\(c_{it}\\): costo di produzione di un'unità di \\(i\\), uguale in tutti i mesi: \\(${DV.L(P.cp)}\\) € (prodotti 1, 2, 3); \\(h_{it}\\): costo di giacenza di un'unità di \\(i\\) per un mese, uguale in tutti i mesi: \\(${DV.L(hI)}\\) €; \\(d_{it}\\): domanda del prodotto \\(i\\) nel mese \\(t\\) (unità, tabella qui sotto); \\(a_i\\): ore macchina per produrre un'unità di \\(i\\): \\(${DV.L(P.ore)}\\); \\(b_t\\): ore macchina disponibili nel mese \\(t\\): \\(${DV.L(P.cap.map((x) => x * fC), 1)}\\); \\(r_i\\): scorta iniziale del prodotto \\(i\\): \\(${DV.L(P.s0)}\\) unità.` + TABS,
+        "<br><b>Variabili:</b> \\(x_{it}\\): unità del prodotto \\(i\\) prodotte nel mese \\(t\\); \\(s_{it}\\): unità del prodotto \\(i\\) a scorta alla fine del mese \\(t\\), per \\(t \\le m-1\\) (a fine orizzonte la scorta è il dato \\(r_{im}\\))." +
+        `<br><b>Dati:</b> \\(n = ${nI}\\): numero di prodotti; \\(m = ${nT}\\): numero di mesi; \\(c_{it}\\): costo di produzione di un'unità di \\(i\\), uguale in tutti i mesi: \\(${DV.L(P.cp)}\\) € (prodotti 1, 2, 3); \\(h_{it}\\): costo di giacenza di un'unità di \\(i\\) per un mese, uguale in tutti i mesi: \\(${DV.L(hI)}\\) €; \\(d_{it}\\): domanda del prodotto \\(i\\) nel mese \\(t\\) (unità, tabella qui sotto); \\(a_i\\): ore macchina per produrre un'unità di \\(i\\): \\(${DV.L(P.ore)}\\); \\(b_t\\): ore macchina disponibili nel mese \\(t\\): \\(${DV.L(P.cap.map((x) => x * fC), 1)}\\); \\(r_{i0}\\): scorta iniziale del prodotto \\(i\\): \\(${DV.L(P.r0)}\\) unità; \\(r_{im}\\): scorta finale richiesta del prodotto \\(i\\): \\(${DV.L(P.rm)}\\) unità.` + TABS,
       `<b>The problem.</b> We decide how many units of each product to produce in each month and how many to keep in inventory. ` +
         "The objective is to minimize production and holding cost. The constraints: inventory balance month by month, with demand served in full, and the machine hours available in each month." + CONTINUE[1] +
-        "<br><b>Variables:</b> \\(x_{it}\\): units of product \\(i\\) produced in month \\(t\\); \\(s_{it}\\): units of product \\(i\\) in inventory at the end of month \\(t\\)." +
-        `<br><b>Data:</b> \\(n = ${nI}\\): number of products; \\(m = ${nT}\\): number of months; \\(c_{it}\\): production cost of one unit of \\(i\\), the same in every month: \\(${DV.L(P.cp)}\\) € (products 1, 2, 3); \\(h_{it}\\): holding cost of one unit of \\(i\\) for one month, the same in every month: \\(${DV.L(hI)}\\) €; \\(d_{it}\\): demand for product \\(i\\) in month \\(t\\) (units, table below); \\(a_i\\): machine hours to produce one unit of \\(i\\): \\(${DV.L(P.ore)}\\); \\(b_t\\): machine hours available in month \\(t\\): \\(${DV.L(P.cap.map((x) => x * fC), 1)}\\); \\(r_i\\): initial inventory of product \\(i\\): \\(${DV.L(P.s0)}\\) units.` + TABS),
+        "<br><b>Variables:</b> \\(x_{it}\\): units of product \\(i\\) produced in month \\(t\\); \\(s_{it}\\): units of product \\(i\\) in inventory at the end of month \\(t\\), for \\(t \\le m-1\\) (at the end of the horizon the inventory is the datum \\(r_{im}\\))." +
+        `<br><b>Data:</b> \\(n = ${nI}\\): number of products; \\(m = ${nT}\\): number of months; \\(c_{it}\\): production cost of one unit of \\(i\\), the same in every month: \\(${DV.L(P.cp)}\\) € (products 1, 2, 3); \\(h_{it}\\): holding cost of one unit of \\(i\\) for one month, the same in every month: \\(${DV.L(hI)}\\) €; \\(d_{it}\\): demand for product \\(i\\) in month \\(t\\) (units, table below); \\(a_i\\): machine hours to produce one unit of \\(i\\): \\(${DV.L(P.ore)}\\); \\(b_t\\): machine hours available in month \\(t\\): \\(${DV.L(P.cap.map((x) => x * fC), 1)}\\); \\(r_{i0}\\): initial inventory of product \\(i\\): \\(${DV.L(P.r0)}\\) units; \\(r_{im}\\): required final inventory of product \\(i\\): \\(${DV.L(P.rm)}\\) units.` + TABS),
       sim, num);
     },
     disegna(crea, R, v, C, S) {
@@ -460,12 +464,18 @@
       }
       legendaRiga(crea, B, [...col.map((c, i) => [c, T(`${i + 1}: produzione`, `${i + 1}: production`), "barra"]),
         ...col.map((c, i) => [c, T(`${i + 1}: domanda`, `${i + 1}: demand`), "tratteggio"])], C);
-      // 3. scorte s_it
-      const sMax = Math.max(10, ...R.s.flat()) * 1.4;
+      // 3. scorte s_it (mesi 1..m-1) e, con un pallino vuoto e un tratteggio, il dato r_im del mese m (come nel capitolo)
+      const sMax = Math.max(10, ...R.s.flat(), ...P0.rm) * 1.7;   // spazio in alto per la legenda
       const D = figura(crea, Object.assign(box(1), { xa: 0.7, xb: nT + 0.3, ya: -sMax * 0.05, yb: sMax,
         titolo: T("Scorte di fine mese", "End-of-month inventory"), nx: mese, ny: T("unità a scorta", "units in stock") }), C, { nTx: nT, nTy: 4, fx });
-      R.s.forEach((riga, i) => lineaPunti(crea, D, mesiX, riga, col[i], { r: 4 }));
-      legendaIn(crea, D, col.map((c, i) => [c, prod(i), "lineaPunti"]), C, "dx");
+      const pedice = (k) => String(k).replace(/\d/g, (c) => "₀₁₂₃₄₅₆₇₈₉"[c]);
+      R.s.forEach((riga, i) => {
+        lineaPunti(crea, D, mesiX.slice(0, nT - 1), riga, col[i], { r: 4 });
+        lineaPunti(crea, D, [nT - 1, nT], [riga[nT - 2], P0.rm[i]], col[i], { spessore: 1.2, dash: 2, punti: false });
+        M.pallino(crea, D.X(nT), D.Y(P0.rm[i]), { size: 4, fillColor: C.card || "#ffffff", strokeColor: col[i], strokeWidth: 1.5 });
+      });
+      legendaIn(crea, D, [...col.map((c, i) => [c, prod(i), "lineaPunti"]),
+        [F.grigio, T(`mese ${nT}: scorta finale rᵢ${pedice(nT)} (dato)`, `month ${nT}: final inventory rᵢ${pedice(nT)} (datum)`), "puntoVuoto"]], C, "sx");
     },
     legenda: (C) => [
       ...COL_PROD().map((c, i) => [c, T(`prodotto ${i + 1}: ore macchina \\(a_${i + 1} x_{${i + 1}t}\\) (in alto), produzione \\(x_{${i + 1}t}\\) e domanda \\(d_{${i + 1}t}\\) (in basso), scorte \\(s_{${i + 1}t}\\)`,
@@ -490,13 +500,14 @@
     },
     soluzione(R, v) {
       if (R.stato !== "ottimo") return "";
-      const Pd = DD().produzione, giac = R.s.reduce((tot, riga, i) => tot + riga.reduce((a, x) => a + x, 0) * Pd.ch[i] * (i === 2 ? v[2] / 100 : 1), 0);
-      const intest = (s) => [tx(`i \\backslash t`), ...Pd.mesi.map((m, t) => String(t + 1))];
+      const Pd = DD().produzione, nT = Pd.mesi.length, giac = R.giacenza;
+      const intest = (k = nT) => [tx(`i \\backslash t`), ...Pd.mesi.slice(0, k).map((m, t) => String(t + 1))];
       const righe = (A) => A.map((riga, i) => [String(i + 1), ...riga.map((x) => SOL.z(x, 1))]);
       return SOL.blocco(`${T("Costo ottimo", "Optimal cost")}: <b>${euro(R.costo)}</b>, ${T("di cui giacenza", "of which holding")} ${euro(giac)}`, [
         SOL.tab(T("Produzione \\(\\tilde x_{it}\\) (unità): prodotto \\(i\\) per riga, mese \\(t\\) per colonna", "Production \\(\\tilde x_{it}\\) (units): product \\(i\\) by row, month \\(t\\) by column"), intest(), righe(R.x)),
-        SOL.tab(T("Scorte di fine mese \\(\\tilde s_{it}\\) (unità)", "End-of-month inventory \\(\\tilde s_{it}\\) (units)"), intest(), righe(R.s)),
-      ], T("«—»: valore nullo.", "«—»: zero value."));
+        SOL.tab(T("Scorte di fine mese \\(\\tilde s_{it}\\) (unità)", "End-of-month inventory \\(\\tilde s_{it}\\) (units)"), intest(nT - 1), righe(R.s)),
+      ], T(`«—»: valore nullo. Le scorte sono variabili fino al mese ${nT - 1}: a fine mese ${nT} la scorta è il dato \\(r_{i${nT}}\\) (\\(${DV.L(Pd.rm)}\\) unità).`,
+        `«—»: zero value. The inventory is a variable up to month ${nT - 1}: at the end of month ${nT} the inventory is the datum \\(r_{i${nT}}\\) (\\(${DV.L(Pd.rm)}\\) units).`));
     },
     domanda: T("Il mese 1 ha prezzo ombra nullo: perché? Porta la capacità a × 1,10: quale mese smette di essere saturo? E perché il mese 3 resta saturo fino a × 1,30? Sotto × 0,95 il piano non esiste più: perché? Abbassa la domanda sotto il 93%: che cosa cambia nei mesi saturi e nelle scorte? Poi alza la giacenza \\(h_{3t}\\) del prodotto 3: fino a 1,6 € il piano non cambia ma il costo e i prezzi ombra sì; oltre, le scorte passano al prodotto 2. Perché proprio 1,6 €?",
       "Month 1 has a zero shadow price: why? Set capacity to × 1.10: which month stops being binding? And why does month 3 stay binding up to × 1.30? Below × 0.95 there is no plan any more: why? Lower demand below 93%: what changes in the binding months and in the inventory? Then raise the holding cost \\(h_{3t}\\) of product 3: up to 1.6 € the plan does not change but the cost and the shadow prices do; beyond it, the inventory moves to product 2. Why exactly 1.6 €?"),

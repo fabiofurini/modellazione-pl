@@ -48,17 +48,20 @@ ore macchina disponibili.
 | $h_{it}$ | $\in \mathbb{Q}_{> 0}$ | costo di giacenza di un'unità di $i$ per il mese $t$ (€) |
 | $a_i$ | $\in \mathbb{Q}_{> 0}$ | ore macchina per produrre un'unità del prodotto $i$ |
 | $b_t$ | $\in \mathbb{Q}_{\ge 0}$ | ore macchina disponibili nel mese $t$ |
-| $r_i$ | $\in \mathbb{Q}_{\ge 0}$ | scorta iniziale del prodotto $i$ (unità) |
+| $r_{i0}$ | $\in \mathbb{Q}_{\ge 0}$ | scorta iniziale del prodotto $i$ (unità) |
+| $r_{im}$ | $\in \mathbb{Q}_{\ge 0}$ | scorta finale richiesta del prodotto $i$, a fine mese $m$ (unità) |
 
-**Variabili decisionali.** Introduciamo le seguenti $2\,n\,m$ variabili non negative:
+**Variabili decisionali.** Introduciamo le seguenti $n\,m + n\,(m-1) = n\,(2m-1)$ variabili non negative:
 
 $$
 \begin{cases}
-x_{it} = \text{unità del prodotto } i \text{ prodotte nel mese } t\\[1ex]
-s_{it} = \text{unità del prodotto } i \text{ a scorta alla fine del mese } t
+x_{it} = \text{unità di } i \text{ prodotte nel mese } t, & \forall t \in \{1, \dots, m\},\\[1ex]
+s_{it} = \text{unità di } i \text{ a scorta alla fine del mese } t, & \forall t \in \{1, \dots, m-1\},
 \end{cases}
-\qquad \forall i \in \{1, 2, \dots, n\},~\forall t \in \{1, 2, \dots, m\}.
+\quad \forall i \in \{1, \dots, n\}.
 $$
+
+A fine orizzonte la scorta non è una variabile: è il dato $r_{im}$.
 
 !!! nota "Quantità continue"
 
@@ -68,28 +71,31 @@ Usando queste variabili, un modello LP per il problema è il seguente:
 
 $$
 \begin{aligned}
-\min ~~ \sum_{i=1}^{n} \sum_{t=1}^{m} \bigl( c_{it}\, x_{it} + h_{it}\, s_{it} \bigr) & & \\
-\text{soggetto a} \quad x_{i1} - s_{i1} &= d_{i1} - r_i, & \forall i \in \{1, 2, \dots, n\}, \\
-x_{it} + s_{i,t-1} - s_{it} &= d_{it}, & \forall i \in \{1, 2, \dots, n\},~\forall t \in \{2, 3, \dots, m\}, \\
+\min ~~ \sum_{i=1}^{n} \sum_{t=1}^{m} c_{it}\, x_{it} + \sum_{i=1}^{n} \sum_{t=1}^{m-1} h_{it}\, s_{it} & & \\
+\text{soggetto a} \quad x_{i1} - s_{i1} &= d_{i1} - r_{i0}, & \forall i \in \{1, 2, \dots, n\}, \\
+x_{it} + s_{i,t-1} - s_{it} &= d_{it}, & \forall i \in \{1, 2, \dots, n\},~\forall t \in \{2, 3, \dots, m-1\}, \\
+x_{im} + s_{i,m-1} &= d_{im} + r_{im}, & \forall i \in \{1, 2, \dots, n\}, \\
 \sum_{i=1}^{n} a_i\, x_{it} &\le b_t, & \forall t \in \{1, 2, \dots, m\}, \\
 x_{it} &\ge 0, & \forall i \in \{1, 2, \dots, n\},~\forall t \in \{1, 2, \dots, m\}, \\
-s_{it} &\ge 0, & \forall i \in \{1, 2, \dots, n\},~\forall t \in \{1, 2, \dots, m\}.
+s_{it} &\ge 0, & \forall i \in \{1, 2, \dots, n\},~\forall t \in \{1, 2, \dots, m-1\}.
 \end{aligned}
 $$
 
 Descrizione della funzione obiettivo e dei vincoli:
 
 - la funzione obiettivo lineare minimizza il costo totale del piano, somma dei costi
-  di produzione $c_{it}\, x_{it}$ e di giacenza $h_{it}\, s_{it}$ su tutti i prodotti
-  e i mesi;
-- i vincoli lineari di **bilancio** delle scorte sono quelli della tecnica
-  [4.5 Pianificazione su più periodi](tecniche-05.md), uno per prodotto e mese; per
-  $t = 1$ la scorta iniziale $r_i$ è un dato e passa a destra, nel termine noto
-  ($n\,m$ vincoli lineari);
+  di produzione $c_{it}\, x_{it}$ su tutti i prodotti e i mesi e dei costi di giacenza
+  $h_{it}\, s_{it}$ sui mesi da $1$ a $m-1$;
+- i vincoli lineari di **bilancio** del primo mese: la scorta iniziale $r_{i0}$ è un
+  dato e passa a destra, nel termine noto ($n$ vincoli lineari);
+- i vincoli lineari di **bilancio** dei mesi intermedi sono quelli della tecnica
+  [4.5 Pianificazione su più periodi](tecniche-05.md) ($n\,(m-2)$ vincoli lineari);
+- i vincoli lineari di **bilancio** dell'ultimo mese: la scorta finale richiesta
+  $r_{im}$ è un dato e sta a destra, con la domanda ($n$ vincoli lineari);
 - i vincoli lineari di **capacità** assicurano che, in ogni mese, le ore macchina
   usate da tutti i prodotti non superino quelle disponibili ($m$ vincoli lineari);
-- i vincoli di non negatività su $x_{it}$ e $s_{it}$ definiscono le variabili del
-  modello.
+- i vincoli di non negatività su $x_{it}$ e su $s_{it}$, $t \le m-1$, definiscono le
+  variabili del modello.
 
 Il bilancio è la contabilità di magazzino e lega i mesi tra loro; la capacità
 è la risorsa scarsa condivisa, e il suo prezzo ombra dirà quanto vale un'ora in più.
@@ -102,16 +108,16 @@ Il bilancio è la contabilità di magazzino e lega i mesi tra loro; la capacità
 
 ## Caso di studio
 
-Tre prodotti × tre mesi ($n = m = 3$: 18 variabili, 9 bilanci e 3 vincoli di
+Tre prodotti × tre mesi ($n = m = 3$: 15 variabili, 9 bilanci e 3 vincoli di
 capacità), domanda crescente con il picco nel mese 3, 400 ore macchina al mese,
-scorte iniziali nulle (dati in `dati/produzione_domanda.csv` e
+scorte iniziali e finali nulle (dati in `dati/produzione_domanda.csv` e
 `dati/produzione_capacita.csv`).
 
-| Prodotto | $c_i$ (€/unità) | $h_i$ (€/unità/mese) | $a_i$ (ore/unità) | $r_i$ (unità) |
-|---|---|---|---|---|
-| 1 | 10 | 1 | 1 | 0 |
-| 2 | 15 | 1,2 | 1,5 | 0 |
-| 3 | 20 | 1,2 | 2 | 0 |
+| Prodotto | $c_i$ (€/unità) | $h_i$ (€/unità/mese) | $a_i$ (ore/unità) | $r_{i0}$ (unità) | $r_{im}$ (unità) |
+|---|---|---|---|---|---|
+| 1 | 10 | 1 | 1 | 0 | 0 |
+| 2 | 15 | 1,2 | 1,5 | 0 | 0 |
+| 3 | 20 | 1,2 | 2 | 0 | 0 |
 
 | mese $t$ | 1 | 2 | 3 |
 |---|---|---|---|
@@ -135,11 +141,12 @@ prod.3   70.0   70.0   10.0     (scorte del prodotto 3: 30 e 60 unità a fine me
 
 In alto le ore macchina $a_i\, x_{it}$ usate da ogni prodotto, impilate, con la capacità $b_t$
 tratteggiata: i mesi 2 e 3 sono saturi, il mese 1 usa 340 delle sue 400 ore. In basso a sinistra
-la produzione $x_{it}$ (barre) e la domanda $d_{it}$ (tratteggio) di ogni prodotto; a destra le scorte $s_{it}$.
+la produzione $x_{it}$ (barre) e la domanda $d_{it}$ (tratteggio) di ogni prodotto; a destra le scorte $s_{it}$
+dei mesi 1 e 2 e, con il pallino vuoto, la scorta finale richiesta $r_{i3} = 0$, che è un dato.
 
 Il solver scopre da solo il **pre-build**: il prodotto 3 (2 ore/unità) viene
 prodotto in anticipo, 30 unità nel mese 1 e 30 nel mese 2, per liberare 120 ore nel
-mese di picco; le scorte tornano a zero nel mese finale. Conviene proprio il prodotto 3
+mese di picco; a fine orizzonte la scorta è quella richiesta, $r_{i3} = 0$. Conviene proprio il prodotto 3
 perché anticipare un'ora macchina costa $h_i/a_i$ al mese: $1$, $0{,}8$ e $0{,}6$ € per
 i prodotti 1, 2 e 3.
 
@@ -177,7 +184,7 @@ variante quadratica di questo modello, nel modulo *Modellazione PNL*, pagina
 
     - Il bilancio delle scorte lega i mesi: il problema non si risolve un mese alla volta.
 
-    - Le scorte spostano capacità dai mesi scarichi ai mesi di picco; svuotare il magazzino alla fine è sempre ottimo.
+    - Le scorte spostano capacità dai mesi scarichi ai mesi di picco; la scorta a fine orizzonte è il dato $r_{im}$, non una variabile.
 
     - Il prezzo ombra di una capacità si verifica aggiungendo un'ora e riottimizzando; una capacità non attiva ha prezzo ombra nullo.
 
@@ -228,12 +235,16 @@ Lo stesso codice è disponibile come notebook — [`notebooks/lab05_produzione.i
     costo_giac = {"1": 1.0, "2": 1.2, "3": 1.2}      # €/unità/mese
     ore_unit = {"1": 1.0, "2": 1.5, "3": 2.0}        # ore macchina per unità
     capacita = {1: 400, 2: 400, 3: 400}  # ore/mese
-    scorta_iniziale = {"1": 0, "2": 0, "3": 0}
+    scorta_iniziale = {"1": 0, "2": 0, "3": 0}      # r_i0: scorta a inizio orizzonte (unità)
+    scorta_finale = {"1": 0, "2": 0, "3": 0}        # r_im: scorta richiesta a fine orizzonte (unità)
+    ultimo = mesi[-1]                               # mese m
+    mesi_s = mesi[:-1]                              # mesi 1..m-1: solo qui la scorta s_it è una variabile
 
     df = pd.DataFrame(
-        [(i, t, domanda[i, t], costo_prod[i], costo_giac[i], ore_unit[i], scorta_iniziale[i])
+        [(i, t, domanda[i, t], costo_prod[i], costo_giac[i], ore_unit[i], scorta_iniziale[i], scorta_finale[i])
          for i in prodotti for t in mesi],
-        columns=["prodotto", "mese", "domanda", "costo_prod", "costo_giac", "ore_unit", "scorta_iniziale"])
+        columns=["prodotto", "mese", "domanda", "costo_prod", "costo_giac", "ore_unit", "scorta_iniziale",
+                 "scorta_finale"])
     salva_dati(df, "produzione_domanda")
     salva_dati(pd.DataFrame({"mese": mesi, "capacita_ore": [capacita[t] for t in mesi]}),
                "produzione_capacita")
@@ -244,18 +255,21 @@ Lo stesso codice è disponibile come notebook — [`notebooks/lab05_produzione.i
         m = gp.Model("produzione_scorte")
         m.Params.OutputFlag = 0
         x = m.addVars(prodotti, mesi, name="x")           # quantità prodotta
-        s = m.addVars(prodotti, mesi, name="s")           # scorta a fine mese
-        # bilancio delle scorte: s_{i,t-1} + x_it = d_it + s_it
-        m.addConstrs(
-            ((scorta_iniziale[i] if t == 1 else s[i, t - 1]) + x[i, t] == domanda[i, t] + s[i, t]
-             for i in prodotti for t in mesi), name="bilancio")
+        s = m.addVars(prodotti, mesi_s, name="s")         # scorta a fine mese, mesi 1..m-1
+        # bilancio delle scorte (variabili a sinistra, dati a destra): primo mese, mesi intermedi, ultimo mese
+        m.addConstrs((x[i, 1] - s[i, 1] == domanda[i, 1] - scorta_iniziale[i]
+                      for i in prodotti), name="bilancio_primo")
+        m.addConstrs((x[i, t] + s[i, t - 1] - s[i, t] == domanda[i, t]
+                      for i in prodotti for t in mesi[1:-1]), name="bilancio")
+        m.addConstrs((x[i, ultimo] + s[i, ultimo - 1] == domanda[i, ultimo] + scorta_finale[i]
+                      for i in prodotti), name="bilancio_ultimo")
         # capacità della risorsa condivisa
         v_cap = m.addConstrs(
             (gp.quicksum(ore_unit[i] * x[i, t] for i in prodotti) <= capacita[t]
              for t in mesi), name="capacita")
         m.setObjective(
-            gp.quicksum(costo_prod[i] * x[i, t] + costo_giac[i] * s[i, t]
-                        for i in prodotti for t in mesi), GRB.MINIMIZE)
+            gp.quicksum(costo_prod[i] * x[i, t] for i in prodotti for t in mesi)
+            + gp.quicksum(costo_giac[i] * s[i, t] for i in prodotti for t in mesi_s), GRB.MINIMIZE)
         return m, x, s, v_cap
 
 
@@ -268,13 +282,18 @@ Lo stesso codice è disponibile come notebook — [`notebooks/lab05_produzione.i
     assert m.Status == GRB.OPTIMAL
     print(f"Costo totale ottimo: {m.ObjVal:,.2f} €")
 
+    def scorta(i, t):
+        """scorta a fine mese t: la variabile s_it per t < m, il dato r_im per t = m"""
+        return s[i, t].X if t < ultimo else scorta_finale[i]
+
+
     piano = pd.DataFrame(
-        [(i, t, x[i, t].X, s[i, t].X) for i in prodotti for t in mesi],
+        [(i, t, x[i, t].X, scorta(i, t)) for i in prodotti for t in mesi],
         columns=["prodotto", "mese", "produzione", "scorta"])
     salva_dati(piano, "produzione_piano_ottimo")
     print("\nPiano di produzione (unità/mese):")
     print(piano.pivot(index="prodotto", columns="mese", values="produzione").round(1))
-    print("\nScorte a fine mese:")
+    print(f"\nScorte a fine mese (mese {ultimo}: la scorta finale richiesta r_i{ultimo}, un dato):")
     print(piano.pivot(index="prodotto", columns="mese", values="scorta").round(1))
 
     print("\nVincoli di capacità: utilizzo, prezzo ombra e range di validità")
@@ -305,7 +324,7 @@ Lo stesso codice è disponibile come notebook — [`notebooks/lab05_produzione.i
     salva_dat(pd.DataFrame({
         "mese": mesi,
         **{f"x{i}": [x[i, t].X for t in mesi] for i in prodotti},
-        **{f"s{i}": [s[i, t].X for t in mesi] for i in prodotti},
+        **{f"s{i}": [scorta(i, t) for t in mesi] for i in prodotti},       # mese m: il dato r_im
         **{f"d{i}": [domanda[i, t] for t in mesi] for i in prodotti},
         "domtot": [sum(domanda[i, t] for i in prodotti) for t in mesi],
     }), "cap05_piano")
@@ -342,11 +361,15 @@ Lo stesso codice è disponibile come notebook — [`notebooks/lab05_produzione.i
     ax2.set_xticks(mesi); ax2.set_xlabel("mese"); ax2.set_ylabel("unità")
     ax2.set_title("Produzione e domanda per prodotto")
     ax2.legend(fontsize=7, ncol=2, loc="upper left")
-    for i in prodotti:
-        ax3.plot(mesi, [s[i, t].X for t in mesi], marker="o", color=colori[i], label=f"prodotto {i}")
+    for i in prodotti:                        # scorte s_it (mesi 1..m-1) e, vuoto, il dato r_im del mese m
+        ax3.plot(mesi_s, [s[i, t].X for t in mesi_s], marker="o", color=colori[i], label=f"prodotto {i}")
+        ax3.plot([mesi_s[-1], ultimo], [s[i, mesi_s[-1]].X, scorta_finale[i]], "--", color=colori[i], lw=1)
+        ax3.plot([ultimo], [scorta_finale[i]], "o", color=colori[i], mfc="white")
+    ax3.plot([], [], "o", color=GRIGIO, mfc="white", label=f"mese {ultimo}: scorta finale $r_{{i{ultimo}}}$ (dato)")
     ax3.set_xticks(mesi); ax3.set_xlabel("mese"); ax3.set_ylabel("unità a scorta")
     ax3.set_title("Scorte di fine mese")
-    ax3.legend(fontsize=8)
+    ax3.set_ylim(-3, max([s[i, t].X for i in prodotti for t in mesi_s] + [10]) * 1.6)
+    ax3.legend(fontsize=8, loc="upper left")
     salva_figura(fig, "cap05_piano_scorte")
 
     # sensitività: costo ottimo al variare della capacità uniforme
@@ -386,8 +409,8 @@ Lo stesso codice è disponibile come notebook — [`notebooks/lab05_produzione.i
    domanda conviene *non* servire?
 4. **Emissioni** — aggiungere $w \sum_{i,t} e_i x_{it}$ e tracciare la frontiera
    costo-emissioni.
-5. **Scorta di sicurezza** — imporre $s_{it} \ge 0{,}1\, d_{i,t+1}$: quanto costa la
-   politica?
+5. **Scorta di sicurezza** — imporre $s_{it} \ge 0{,}1\, d_{i,t+1}$ per $t \le m-1$:
+   quanto costa la politica?
 
 <!-- laboratorio-interattivo: sezione generata da genera_laboratorio.py -->
 
