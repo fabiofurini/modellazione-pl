@@ -432,18 +432,23 @@ Lo stesso codice è disponibile come notebook — [`notebooks/lab08_newsvendor.i
                  capsize=3)
     ax2.axhline(q_star, color=ROSSO, ls="-.", label="q* teorico")
     ax2.set_xscale("log")
-    ax2.set_xlabel("numero di scenari S"); ax2.set_ylabel("q ottima")
+    ax2.set_xlabel("numero di scenari $k$"); ax2.set_ylabel("q ottima")
     ax2.set_title("Stabilità della soluzione a scenari")
     ax2.legend(fontsize=8)
     salva_figura(fig, "cap08_quantile_stabilita")
 
     fig, ax = plt.subplots()
-    ax.plot(front["cvar"], front["costo_medio"], "-o", color=TEAL)
+    # come l'app del laboratorio: stessa curva, stesse etichette, legenda nell'angolo vuoto in alto a destra
+    pesi = "; ".join(f"{w:g}".replace(".", ",") for w in front["lam"])
+    ax.plot(front["cvar"], front["costo_medio"], "-o", color=TEAL, label=f"frontiera ($r$ = {pesi})")
     for _, r in front.iterrows():
-        ax.annotate(f"  $r$={r['lam']:.2f}, q={r['q']:.0f}", (r["cvar"], r["costo_medio"]),
-                    fontsize=8)
-    ax.set_xlabel("CVaR$_{0.90}$ del costo (€)"); ax.set_ylabel("costo medio (€)")
-    ax.set_title("Frontiera costo medio - rischio di coda")
+        ax.annotate(f"$r$ = {r['lam']:.2f}: $q$ = {r['q']:.0f}".replace(".", ","),
+                    (r["cvar"], r["costo_medio"]), textcoords="offset points", xytext=(8, -3), fontsize=8)
+    dx = front["cvar"].max() - front["cvar"].min()
+    ax.set_xlim(front["cvar"].min() - 0.06 * dx, front["cvar"].max() + 0.32 * dx)
+    ax.set_xlabel("CVaR$_{0,90}$ del costo (€)"); ax.set_ylabel("costo medio (€)")
+    ax.set_title("Frontiera costo medio – rischio di coda")
+    ax.legend(fontsize=8, loc="upper right")
     salva_figura(fig, "cap08_frontiera")
 
     print("\nFatto: capitolo 8.")
@@ -457,3 +462,12 @@ Lo stesso codice è disponibile come notebook — [`notebooks/lab08_newsvendor.i
 4. EVPI: quanto vale al massimo una previsione perfetta? (88,33 €/ciclo.)
 5. Vincolo di fill rate al 98% vs cycle service level al 98%: confrontare.
 6. Multiprodotto con $\rho = 0$: perché il costo scende?
+
+<!-- laboratorio-interattivo: sezione generata da genera_laboratorio.py -->
+
+## Laboratorio interattivo { #laboratorio-interattivo }
+
+L'app di questo capitolo risolve il modello nel browser, con i dati del caso di studio. ▶ accanto a un cursore lo fa muovere da solo.
+Si apre anche a tutta pagina nel [laboratorio interattivo](laboratorio/index.md): [Newsvendor: ordine ottimo sui 600 scenari](laboratorio/newsvendor-scenari.md).
+
+<div class="gi gi-capitolo" data-grafico="pl-newsvendor"></div>

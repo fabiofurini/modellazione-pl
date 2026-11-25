@@ -692,3 +692,12 @@ Lo stesso codice è disponibile come notebook — [`notebooks/lab07_dea.ipynb`](
 4. **Restrizioni sui pesi** — aggiungere $u_2 \ge u_1$: quali filiali restano efficienti?
 5. **Super-efficienza** — togliere la DMU $o$ dall'insieme di riferimento per ordinare le
    filiali efficienti: quale è la più solida?
+
+<!-- laboratorio-interattivo: sezione generata da genera_laboratorio.py -->
+
+## Laboratorio interattivo { #laboratorio-interattivo }
+
+L'app di questo capitolo risolve il modello nel browser, con i dati del caso di studio. ▶ accanto a «filiale» le passa tutte.
+Si apre anche a tutta pagina nel [laboratorio interattivo](laboratorio/index.md): [DEA: efficienza e peer di una filiale](laboratorio/dea-efficienza.md).
+
+<div class="gi gi-capitolo" data-grafico="pl-dea"></div>

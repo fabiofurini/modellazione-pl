@@ -198,18 +198,23 @@ ax2.errorbar(stab["S"], stab["q_media"], yerr=stab["q_std"], fmt="-o", color=TEA
              capsize=3)
 ax2.axhline(q_star, color=ROSSO, ls="-.", label="q* teorico")
 ax2.set_xscale("log")
-ax2.set_xlabel("numero di scenari S"); ax2.set_ylabel("q ottima")
+ax2.set_xlabel("numero di scenari $k$"); ax2.set_ylabel("q ottima")
 ax2.set_title("Stabilità della soluzione a scenari")
 ax2.legend(fontsize=8)
 salva_figura(fig, "cap08_quantile_stabilita")
 
 fig, ax = plt.subplots()
-ax.plot(front["cvar"], front["costo_medio"], "-o", color=TEAL)
+# come l'app del laboratorio: stessa curva, stesse etichette, legenda nell'angolo vuoto in alto a destra
+pesi = "; ".join(f"{w:g}".replace(".", ",") for w in front["lam"])
+ax.plot(front["cvar"], front["costo_medio"], "-o", color=TEAL, label=f"frontiera ($r$ = {pesi})")
 for _, r in front.iterrows():
-    ax.annotate(f"  $r$={r['lam']:.2f}, q={r['q']:.0f}", (r["cvar"], r["costo_medio"]),
-                fontsize=8)
-ax.set_xlabel("CVaR$_{0.90}$ del costo (€)"); ax.set_ylabel("costo medio (€)")
-ax.set_title("Frontiera costo medio - rischio di coda")
+    ax.annotate(f"$r$ = {r['lam']:.2f}: $q$ = {r['q']:.0f}".replace(".", ","),
+                (r["cvar"], r["costo_medio"]), textcoords="offset points", xytext=(8, -3), fontsize=8)
+dx = front["cvar"].max() - front["cvar"].min()
+ax.set_xlim(front["cvar"].min() - 0.06 * dx, front["cvar"].max() + 0.32 * dx)
+ax.set_xlabel("CVaR$_{0,90}$ del costo (€)"); ax.set_ylabel("costo medio (€)")
+ax.set_title("Frontiera costo medio – rischio di coda")
+ax.legend(fontsize=8, loc="upper right")
 salva_figura(fig, "cap08_frontiera")
 
 print("\nFatto: capitolo 8.")

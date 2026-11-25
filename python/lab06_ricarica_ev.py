@@ -137,24 +137,31 @@ salva_dat(pd.DataFrame(compromessi, columns=["rho", "costo", "picco"]), "cap06_f
 
 fig, (ax1, ax2) = plt.subplots(2, 1, figsize=(8.2, 6.4), sharex=True)
 ax1.bar(ore, prezzo * 100, color=GRIGIO, alpha=0.6)
-ax1.set_ylabel("prezzo (c€/kWh)")
+ax1.set_ylabel("prezzo $c_t$ (c€/kWh)")
 ax1.set_title("Prezzo orario dell'energia")
-ax2.plot(ore, base, color=GRIGIO, ls="--", label="carico di base")
+# stesse voci, colori e titolo dell'app del laboratorio; legenda sopra il limite del contatore
+ax2.plot(ore, base, color=GRIGIO, ls="--", label="carico di base $b_t$")
 ax2.plot(ore, base + prof_costo, color=TEAL, lw=2, drawstyle="steps-mid",
          label="costo minimo")
 ax2.plot(ore, base + prof_picco, color=ARANCIO, lw=2, drawstyle="steps-mid",
          label="peak shaving")
-ax2.axhline(C_rete, color=ROSSO, ls=":", label=f"limite rete {C_rete:.0f} kW")
+ax2.axhline(C_rete, color=ROSSO, ls=":", label=f"potenza del contatore $k$ = {C_rete:.0f} kW")
+ax2.set_ylim(0, C_rete * 1.45)
 ax2.set_xlabel("ora del giorno"); ax2.set_ylabel("prelievo totale (kW)")
-ax2.set_title("Profilo di prelievo: inseguire i prezzi crea un picco notturno")
-ax2.legend(fontsize=8, ncol=2)
+ax2.set_title("Profilo di prelievo dalla rete")
+ax2.legend(fontsize=8, ncol=2, loc="upper right")
 salva_figura(fig, "cap06_profili")
 
 comp = pd.DataFrame(compromessi, columns=["rho", "costo", "picco"])
 fig, ax = plt.subplots()
 ax.plot(comp["picco"], comp["costo"], "-o", color=TEAL)
-for _, r in comp.iterrows():
-    ax.annotate(f"  $w$={r['rho']:.2f}", (r["picco"], r["costo"]), fontsize=8)
+# i pesi con lo stesso punto (stesso picco e costo) in un'unica etichetta
+gruppi = comp.groupby([comp["picco"].round(3), comp["costo"].round(4)], sort=False)
+for (pk, cc), g in gruppi:
+    pesi = "; ".join(f"{w:.2f}".replace(".", ",") for w in g["rho"])
+    ax.annotate(f"$w$ = {pesi}", (pk, cc), textcoords="offset points", xytext=(8, -3),
+                fontsize=8)
+ax.set_xlim(comp["picco"].min() - 3, comp["picco"].max() + 6)
 ax.set_xlabel("picco di prelievo (kW)")
 ax.set_ylabel("costo di ricarica (€)")
 ax.set_title("Frontiera costo-picco: ridurre il picco costa poco all'inizio")

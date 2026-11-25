@@ -109,6 +109,8 @@
     const c = CAPITOLO[chiave];
     if (!c) return "";
     const url = new URL(GI.EN ? c[1] : c[0], radice()).href;
+    // in fondo al capitolo stesso (sezione «Laboratorio interattivo») il rimando non serve
+    if (new URL(url).pathname.replace(/\/$/, "") === location.pathname.replace(/(index\.html)?\/?$/, "")) return "";
     return `<p class="plm-cap">${T("Il modello è spiegato nel capitolo", "The model is explained in the chapter")} <a href="${url}">${GI.EN ? c[3] : c[2]}</a>.</p>`;
   };
 
@@ -401,17 +403,18 @@
       const hTot = S.H - MF.basso - MF.alto - gap, hTop = hTot * 0.42;
       const fx = (u) => (u % 5 === 0 ? String(u) : "");
       const A = figura(crea, { X0: MF.sx, X1: S.W - MF.dx, Y0: S.H - MF.alto - hTop, Y1: S.H - MF.alto, xa: -1.2, xb: 24.2, ya: 0,
-        yb: Math.max(...R.prezzo) * 100 * 1.08, titolo: T("Prezzo orario dell'energia", "Hourly energy price"), ny: T("c€/kWh", "c€/kWh") }, C, { nTx: 0, nTy: 4 });
+        yb: Math.max(...R.prezzo) * 100 * 1.08, titolo: T("Prezzo orario dell'energia", "Hourly energy price"), ny: T("prezzo cₜ (c€/kWh)", "price cₜ (c€/kWh)") }, C, { nTx: 0, nTy: 4 });
       ore.forEach((t) => M.rett(crea, A.X(t - 0.4), A.Y(0), A.X(t + 0.4), A.Y(R.prezzo[t] * 100), { fillColor: F.grigio, fillOpacity: 0.55, strokeColor: "none", strokeWidth: 0 }));
       const yb = Math.max(R.C, ...R.tot) * 1.45;
       const B = figura(crea, { X0: MF.sx, X1: S.W - MF.dx, Y0: MF.basso, Y1: S.H - MF.alto - hTop - gap, xa: -1.2, xb: 24.2, ya: 0, yb,
-        titolo: T("Profilo di prelievo dalla rete (costo minimo)", "Power drawn from the grid (minimum cost)"), nx: T("ora del giorno", "hour of the day"),
-        ny: T("prelievo totale (kW)", "total draw (kW)") }, C, { nTx: 6, nTy: 4, fx });
+        titolo: T("Profilo di prelievo dalla rete", "Power withdrawn from the grid"), nx: T("ora del giorno", "hour of the day"),
+        ny: T("prelievo totale (kW)", "total withdrawal (kW)") }, C, { nTx: 6, nTy: 4, fx });
       lineaPunti(crea, B, ore, E.base, F.grigio, { dash: 2, punti: false, spessore: 1.8 });
       gradini(crea, B, R.tot, F.teal);
       M.linea(crea, B.X(-1.2), B.Y(R.C), B.X(24.2), B.Y(R.C), { strokeColor: F.rosso, strokeWidth: 2, dash: 1 });
-      legendaIn(crea, B, [[F.grigio, T("carico di base", "base load"), "tratteggio"], [F.teal, T("costo minimo", "minimum cost"), "linea"],
-        [F.rosso, T(`limite di rete ${nt(R.C, 0)} kW`, `grid limit ${nt(R.C, 0)} kW`), "punteggiata"]], C, "dx");
+      // stesse voci della figura (che mostra anche il peak shaving, min z, qui non calcolato)
+      legendaIn(crea, B, [[F.grigio, T("carico di base bₜ", "base load bₜ"), "tratteggio"], [F.teal, T("costo minimo", "minimum cost"), "linea"],
+        [F.rosso, T(`potenza del contatore k = ${nt(R.C, 0)} kW`, `meter power k = ${nt(R.C, 0)} kW`), "punteggiata"]], C, "dx");
     },
     legenda: () => { const F = FIG(); return [[F.grigio, T("prezzo dell'energia \\(c_t\\) (barre) e carico di base \\(b_t\\) dell'edificio (tratteggio)", "energy price \\(c_t\\) (bars) and building base load \\(b_t\\) (dashed)"), "pieno"],
       [F.teal, T("prelievo totale \\(b_t + \\sum_v x_{vt}\\) del piano a costo minimo", "total draw \\(b_t + \\sum_v x_{vt}\\) of the minimum-cost plan"), ""],
@@ -493,7 +496,7 @@
         titolo: T("Frontiera costo medio – rischio di coda", "Mean cost – tail risk frontier"),
         nx: T("CVaR₀,₉₀ del costo (€)", "CVaR₀.₉₀ of the cost (€)"), ny: T("costo medio (€)", "mean cost (€)") }, C, { nTx: 6, nTy: 5 });
       lineaPunti(crea, P, pti.map((p) => p.cv), pti.map((p) => p.media), F.teal, { r: 4.5 });
-      pti.forEach((p) => M.scritta(crea, P.X(p.cv) + 8, P.Y(p.media), `r=${nt(p.r, 2)}, q=${nt(p.q, 0)}`, { anchorX: "left", fontSize: 11, strokeColor: C.testo }));
+      pti.forEach((p) => M.scritta(crea, P.X(p.cv) + 8, P.Y(p.media), `r = ${T(p.r.toFixed(2).replace(".", ","), p.r.toFixed(2))}: q = ${nt(p.q, 0)}`, { anchorX: "left", fontSize: 11, strokeColor: C.testo }));
       M.pallino(crea, P.X(R.cvar), P.Y(R.media), { size: 7, fillColor: "none", fillOpacity: 0, strokeColor: F.arancio, strokeWidth: 3 });
       legendaIn(crea, P, [[F.teal, T("frontiera (r = 0; 0,25; 0,5; 0,75; 1)", "frontier (r = 0, 0.25, 0.5, 0.75, 1)"), "lineaPunti"],
         [F.arancio, T(`ordine ottimo con r = ${nt(v[1], 2)}: q* = ${nt(R.q, 1)}`, `optimal order with r = ${nt(v[1], 2)}: q* = ${nt(R.q, 1)}`), "punto"]], C, "dx");
@@ -632,15 +635,19 @@
     dati: () => DD().panetteria,
     // come la figura del capitolo (cap11_quantili): punti grigi, retta mediana blu notte, retta del quantile verde
     titoloGrafico: () => T("Retta mediana e retta del quantile τ", "Median line and τ-quantile line"),
-    coloreTitolo: () => FIG().blu, colorePunti: () => FIG().grigio,
+    coloreTitolo: () => FIG().blu, colorePunti: () => FIG().grigio, coloreAppoggio: () => FIG().verde, coloreSciopero: () => FIG().rosso,
+    nomeX: () => T("temperatura massima xᵢ (°C)", "maximum temperature xᵢ (°C)"), nomeY: () => T("domanda yᵢ (pezzi)", "demand yᵢ (pieces)"),
+    legendaGrafico: true, appoggioNome: () => T("punti di appoggio della retta τ", "support points of the τ line"),
     parametri: [{ k: "tau", nome: "\\tau", min: 0.05, max: 0.95, step: 0.01, val: 0.69, colore: "c", cifre: 2,
       descr: T("quantile: \\(9/13 \\approx 0{,}69\\) è il frattile critico del newsvendor", "quantile: \\(9/13 \\approx 0.69\\) is the critical fractile of the newsvendor") }],
     rette(t, y, p, C) {
       DATI_REG.t = t; DATI_REG.y = y;
       const lad = PL().regressione(t, y, 0.5), q = PL().regressione(t, y, p.tau);
       return [
-        { ...lad, colore: FIG().navy, nome: T("scarti assoluti (LP, \\(\\tau = 1/2\\))", "least absolute deviations (LP, \\(\\tau = 1/2\\))"), stile: { strokeWidth: 3 } },
-        { ...q, colore: FIG().verde, nome: T("quantile \\(\\tau\\)", "\\(\\tau\\)-quantile"), stile: { strokeWidth: 3, dash: 2 } },
+        { ...lad, colore: FIG().navy, nome: T("scarti assoluti (LP, \\(\\tau = 1/2\\))", "least absolute deviations (LP, \\(\\tau = 1/2\\))"),
+          breve: T("τ = 1/2: scarti assoluti (LP)", "τ = 1/2: least absolute deviations (LP)"), stile: { strokeWidth: 3 } },
+        { ...q, colore: FIG().verde, nome: T("quantile \\(\\tau\\)", "\\(\\tau\\)-quantile"),
+          breve: T(`τ = ${nt(p.tau, 2)}: quantile`, `τ = ${nt(p.tau, 2)}: quantile`), stile: { strokeWidth: 3 } },
       ];
     },
     appoggio: (rette) => rette[1].appoggio,

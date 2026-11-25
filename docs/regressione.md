@@ -487,18 +487,19 @@ Lo stesso codice è disponibile come notebook — [`notebooks/lab11_regressione.
     salva_dat(punti, "cap11_panetteria")
 
     fig, ax = plt.subplots()
-    ax.scatter(temperatura[buoni], domanda[buoni], s=18, color=TEAL,
+    # come l'app del laboratorio: giorni normali grigi, scioperi croci rosse, appoggi cerchiati in verde
+    ax.scatter(temperatura[buoni], domanda[buoni], s=18, color=GRIGIO,
                label="giorni normali")
     ax.scatter(temperatura[~buoni], domanda[~buoni], s=45, color=ROSSO, marker="X",
                label="giorni di sciopero")
     ax.scatter(temperatura[appoggio], domanda[appoggio], s=95, facecolors="none",
                edgecolors=VERDE, linewidths=1.6, label="punti di appoggio")
     gr = np.linspace(9, 35, 2)
-    ax.plot(gr, b_lad + w_lad[0] * gr, color=BLU, lw=2, label="scarti assoluti (LP)")
-    ax.set_xlabel("temperatura massima (gradi)")
-    ax.set_ylabel("domanda (pezzi)")
+    ax.plot(gr, b_lad + w_lad[0] * gr, color=BLU, lw=2, label=r"scarti assoluti (LP, $\tau = 1/2$)")
+    ax.set_xlabel("temperatura massima $x_i$ (°C)")
+    ax.set_ylabel("domanda $y_i$ (pezzi)")
     ax.set_title("Cinque giorni di sciopero non spostano la retta dell'LP")
-    ax.legend(loc="upper right", fontsize=8)
+    ax.legend(loc="lower left", bbox_to_anchor=(0.0, 0.13), fontsize=8)
     salva_figura(fig, "cap11_regressione_robusta")
 
     rette = []
@@ -513,14 +514,15 @@ Lo stesso codice è disponibile come notebook — [`notebooks/lab11_regressione.
                label="55 giorni normali")
     colori = {0.10: ARANCIO, 0.50: BLU, TAU_NV: VERDE}
     for _, riga in rette.iterrows():
-        etichetta = ("tau = 9/13 (frattile critico)" if abs(riga["tau"] - TAU_NV) < 1e-9
-                     else f"tau = {riga['tau']:.2f}".replace(".", ","))
+        etichetta = (r"$\tau$ = 9/13: frattile critico" if abs(riga["tau"] - TAU_NV) < 1e-9
+                     else r"$\tau$ = 1/2: scarti assoluti" if abs(riga["tau"] - 0.5) < 1e-9
+                     else rf"$\tau$ = {riga['tau']:.2f}".replace(".", ","))
         ax.plot(gr, riga["intercetta"] + riga["pendenza"] * gr,
                 color=colori[riga["tau"]], lw=2, label=etichetta)
-    ax.set_xlabel("temperatura massima (gradi)")
-    ax.set_ylabel("domanda (pezzi)")
+    ax.set_xlabel("temperatura massima $x_i$ (°C)")
+    ax.set_ylabel("domanda $y_i$ (pezzi)")
     ax.set_title("Una retta per ogni quantile: il ventaglio della domanda")
-    ax.legend(loc="upper right", fontsize=8)
+    ax.legend(loc="lower left", fontsize=8)
     salva_figura(fig, "cap11_quantili")
 
     fig, ax = plt.subplots()
@@ -528,7 +530,7 @@ Lo stesso codice è disponibile come notebook — [`notebooks/lab11_regressione.
     for nome, t in sorted(entrate.items(), key=lambda kv: kv[1]):
         riga = curva[curva["budget"] == t].iloc[0]
         ax.plot([t], [riga["scarto_medio"]], "o", color=ROSSO, ms=5)
-        ax.annotate(nome, (t, riga["scarto_medio"]), textcoords="offset points",
+        ax.annotate(nome.replace("_", " "), (t, riga["scarto_medio"]), textcoords="offset points",
                     xytext=(6, 8), fontsize=8, color=ROSSO)
     ax.set_xlabel("budget sui coefficienti")
     ax.set_ylabel("scarto assoluto medio (pezzi)")
@@ -568,3 +570,12 @@ Lo stesso codice è disponibile come notebook — [`notebooks/lab11_regressione.
 5. Dividere i 55 giorni normali in stima (40) e verifica (15) e tracciare lo
    scarto assoluto medio sui due insiemi per $t \in \{5, 10, \dots, 55\}$: quale
    budget si sceglie?
+
+<!-- laboratorio-interattivo: sezione generata da genera_laboratorio.py -->
+
+## Laboratorio interattivo { #laboratorio-interattivo }
+
+L'app di questo capitolo risolve il modello nel browser, con i dati del caso di studio. Trascina un punto; ▶ accanto a τ fa scorrere il quantile.
+Si apre anche a tutta pagina nel [laboratorio interattivo](laboratorio/index.md): [Regressione con gli scarti assoluti e quantile](laboratorio/regressione-quantile.md).
+
+<div class="gi gi-capitolo" data-grafico="pl-regressione"></div>

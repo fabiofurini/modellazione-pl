@@ -92,3 +92,11 @@
 .md-typeset .plm-num-corpo > .plm-tit:first-child { margin-top: .2em; }
 .md-typeset .plm-nota { margin: .4em 0 0; font-size: .95em; opacity: .85; white-space: normal; }
 .plm-stretto { font-size: .8em; }
+
+/* l'app in fondo al capitolo (sezione «Laboratorio interattivo», genera_laboratorio.py): una colonna, grafico a tutta
+   larghezza e alto 600px, comandi e letture sotto; così i pannelli nello stile delle figure non si schiacciano */
+.gi.gi-capitolo .gi-corpo { grid-template-columns: minmax(0, 1fr); }
+@media (min-width: 860px) {
+  .gi.gi-capitolo .gi-board { aspect-ratio: auto !important; height: 600px !important; }
+  .gi.gi-capitolo .gi-corpo > div:last-child { display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: .4em 1.2em; align-items: start; }
+}

@@ -367,3 +367,12 @@ Lo stesso codice è disponibile come notebook — [`notebooks/lab05_produzione.i
    costo-emissioni.
 5. **Scorta di sicurezza** — imporre $s_{it} \ge 0{,}1\, d_{i,t+1}$: quanto costa la
    politica?
+
+<!-- laboratorio-interattivo: sezione generata da genera_laboratorio.py -->
+
+## Laboratorio interattivo { #laboratorio-interattivo }
+
+L'app di questo capitolo risolve il modello nel browser, con i dati del caso di studio. ▶ accanto a un cursore lo fa muovere da solo.
+Si apre anche a tutta pagina nel [laboratorio interattivo](laboratorio/index.md): [Piano di produzione e prezzi ombra](laboratorio/piano-produzione.md).
+
+<div class="gi gi-capitolo" data-grafico="pl-produzione"></div>

@@ -497,7 +497,10 @@
   /** Ricetta «retta sui dati della panetteria» con i punti trascinabili (regressione LP e minimi quadrati).
    *  opz = { titolo, dati() -> {temperatura, domanda, sciopero}, parametri, rette(t, y, p, C) -> [{w, b, colore,
    *          nome, stile}], appoggio(rette) -> indici da cerchiare, modifica(y, p, info) (facoltativa: cambia i dati
-   *          prima del calcolo, es. sposta un giorno), formula(p, st), letture(rette, p, {t, y, info}, C), domanda } */
+   *          prima del calcolo, es. sposta un giorno), formula(p, st), letture(rette, p, {t, y, info}, C), domanda,
+   *          facoltativi: nomeX(), nomeY() (nomi degli assi), coloreAppoggio(), coloreSciopero(), appoggioNome() (voce
+   *          di legenda dei punti cerchiati), legendaGrafico (legenda anche dentro il grafico, in alto a destra, con
+   *          il testo «breve» di ogni retta) } */
   function ricettaRetta(opz) {
     const GI = W.GI, M = W.GI_MIP, T = GI.T;
     const voci = {
@@ -518,6 +521,27 @@
       D.calc = { firma, t, y, info, rette: opz.rette(t, y, p, C) };
       return D.calc;
     }
+    /** legenda dentro il grafico, in alto a destra sotto il titolo, nello stile delle figure dei capitoli:
+     *  posizioni in pixel dal bordo (seguono il ridimensionamento), testi delle rette aggiornati a ogni calcolo */
+    function legendaRetta(board, st, C, prima) {
+      const fs = 11.5, passo = 17, lung = 20, bb = () => board.getBoundingBox();
+      const voci = [[opz.colorePunti ? opz.colorePunti() : C.b, () => T("giorni normali", "normal days"), "o"]];
+      if (st.chiave() === "tutti") voci.push([opz.coloreSciopero ? opz.coloreSciopero() : C.rosso, () => T("giorni di sciopero", "strike days"), "x"]);
+      if (opz.appoggioNome) voci.push([opz.coloreAppoggio ? opz.coloreAppoggio() : C.c, opz.appoggioNome, "cerchio"]);
+      prima.forEach((r, k) => voci.push([r.colore, () => { const q = calcolo(st).rette[k]; return q.breve || q.nome; }, "linea", r.stile]));
+      const largo = Math.max(...voci.map((v) => v[1]().length + 4)) * fs * 0.56 + lung + 10;
+      const ux = () => board.unitX, uy = () => board.unitY;
+      const x0 = () => bb()[2] - (largo + 8) / ux(), yk = (k) => () => bb()[1] - (34 + k * passo) / uy();
+      const att = { fixed: true, highlight: false, showInfobox: false, withLabel: false, name: "" };
+      voci.forEach(([col, testo, tipo, stile], k) => {
+        const xm = () => x0() + lung / 2 / ux();
+        if (tipo === "linea") board.create("segment", [[x0, yk(k)], [() => x0() + lung / ux(), yk(k)]],
+          Object.assign({}, att, { strokeColor: col, strokeWidth: 3, dash: (stile && stile.dash) || 0 }));
+        else if (tipo === "cerchio") board.create("point", [xm, yk(k)], Object.assign({}, att, { size: 6, face: "o", fillColor: "none", fillOpacity: 0, strokeColor: col, strokeWidth: 2.2 }));
+        else board.create("point", [xm, yk(k)], Object.assign({}, att, { size: tipo === "x" ? 4 : 3, face: tipo, fillColor: col, strokeColor: col, strokeWidth: tipo === "x" ? 3 : 1 }));
+        board.create("text", [() => x0() + (lung + 7) / ux(), yk(k), testo], { anchorX: "left", anchorY: "middle", fixed: true, highlight: false, fontSize: fs, strokeColor: C.testo });
+      });
+    }
     return {
       titolo: opz.titolo,
       funzioni: voci,
@@ -527,7 +551,9 @@
       assi: false,
       legenda: (st) => {
         const C = M.COL(st), r = calcolo(st).rette;
-        return [[opz.colorePunti ? opz.colorePunti() : C.b, T("giorni normali", "normal days"), "punto"], ...(st.chiave() === "tutti" ? [[C.rosso, T("giorni di sciopero", "strike days"), "punto"]] : []),
+        return [[opz.colorePunti ? opz.colorePunti() : C.b, T("giorni normali", "normal days"), "punto"],
+          ...(st.chiave() === "tutti" ? [[opz.coloreSciopero ? opz.coloreSciopero() : C.rosso, T("giorni di sciopero", "strike days"), "punto"]] : []),
+          ...(opz.appoggioNome ? [[opz.coloreAppoggio ? opz.coloreAppoggio() : C.c, opz.appoggioNome(), "punto"]] : []),
           ...r.map((q) => [q.colore, q.nome, q.stile && q.stile.dash ? "dashed" : ""])];
       },
       monta(board, st) {
@@ -539,8 +565,8 @@
         const ax = { strokeColor: C.muted, highlight: false, ticks: { strokeColor: C.line, majorHeight: -1, insertTicks: false, ticksDistance: 0, label: { strokeColor: C.muted } } };
         board.create("axis", [[7.5, 0], [8.5, 0]], Object.assign({}, ax, { ticks: Object.assign({}, ax.ticks, { ticksDistance: 2, minorTicks: 0 }) }));
         board.create("axis", [[7.5, 0], [7.5, 1]], Object.assign({}, ax, { ticks: Object.assign({}, ax.ticks, { ticksDistance: 50, minorTicks: 0 }) }));
-        board.create("text", [36.6, -4, T("temperatura (°C)", "temperature (°C)")], { anchorX: "right", anchorY: "top", fixed: true, highlight: false, fontSize: 12, strokeColor: C.muted });
-        board.create("text", [7.8, opz.titoloGrafico ? 226 : 244, T("domanda (pezzi)", "demand (pieces)")], { anchorX: "left", anchorY: "top", fixed: true, highlight: false, fontSize: 12, strokeColor: C.muted });
+        board.create("text", [36.6, -4, opz.nomeX ? opz.nomeX() : T("temperatura (°C)", "temperature (°C)")], { anchorX: "right", anchorY: "top", fixed: true, highlight: false, fontSize: 12, strokeColor: C.muted });
+        board.create("text", [7.8, opz.titoloGrafico ? 226 : 244, opz.nomeY ? opz.nomeY() : T("domanda (pezzi)", "demand (pieces)")], { anchorX: "left", anchorY: "top", fixed: true, highlight: false, fontSize: 12, strokeColor: C.muted });
         // titolo nello stile delle figure dei capitoli (facoltativo)
         if (opz.titoloGrafico) board.create("text", [21.3, 246, opz.titoloGrafico()], { anchorX: "middle", anchorY: "top", fixed: true, highlight: false, fontSize: 13.5, cssStyle: "font-weight:700", strokeColor: opz.coloreTitolo ? opz.coloreTitolo() : C.testo });
         const prima = calcolo(st).rette;
@@ -550,14 +576,16 @@
         for (let k = 0; k < 4; k++) board.create("point", [
           () => { const c = calcolo(st), a = opz.appoggio ? opz.appoggio(c.rette) : []; return a[k] != null ? c.t[a[k]] : NaN; },
           () => { const c = calcolo(st), a = opz.appoggio ? opz.appoggio(c.rette) : []; return a[k] != null ? c.y[a[k]] : NaN; }],
-          { name: "", fixed: true, size: 9, fillColor: "none", fillOpacity: 0, strokeColor: C.c, strokeWidth: 2.5, highlight: false, showInfobox: false, withLabel: false });
+          { name: "", fixed: true, size: 9, fillColor: "none", fillOpacity: 0, strokeColor: opz.coloreAppoggio ? opz.coloreAppoggio() : C.c, strokeWidth: 2.5, highlight: false, showInfobox: false, withLabel: false });
+        const colS = opz.coloreSciopero ? opz.coloreSciopero() : C.rosso;
         D.punti.forEach((q) => {
           q.P = board.create("point", [q.t, q.y], {
-            name: "", size: q.sciopero ? 4 : 3, face: q.sciopero ? "x" : "o", strokeColor: q.sciopero ? C.rosso : (opz.colorePunti ? opz.colorePunti() : C.b), fillColor: q.sciopero ? C.rosso : (opz.colorePunti ? opz.colorePunti() : C.b),
+            name: "", size: q.sciopero ? 4 : 3, face: q.sciopero ? "x" : "o", strokeColor: q.sciopero ? colS : (opz.colorePunti ? opz.colorePunti() : C.b), fillColor: q.sciopero ? colS : (opz.colorePunti ? opz.colorePunti() : C.b),
             strokeWidth: q.sciopero ? 3 : 1, showInfobox: false, withLabel: false, highlightStrokeColor: C.a, highlightFillColor: C.a,
           });
           q.P.on("drag", () => { q.t = q.P.X(); q.y = q.P.Y(); });
         });
+        if (opz.legendaGrafico) legendaRetta(board, st, C, prima);
       },
       formula: (p, st) => opz.formula(p, st),
       letture: (p, st) => { const c = calcolo(st); return opz.letture(c.rette, p, c, M.COL(st)); },
