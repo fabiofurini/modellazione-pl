@@ -1,6 +1,6 @@
 # VaR e CVaR: misurare e ottimizzare il rischio
 
-[:material-file-pdf-box: Dispensa (PDF)](pdf/dispensa-modellazione-pl.pdf) · [:material-presentation: Slide del capitolo (PDF)](pdf/slide-09-var-cvar.pdf)
+[:material-file-pdf-box: Dispensa (PDF)](pdf/dispensa-modellazione-pl.pdf) · [:material-presentation: Slide del capitolo (PDF)](pdf/slide-09-var-cvar.pdf) · [:material-gesture-tap: App: VaR e CVaR: portafoglio a rischio di coda minimo](laboratorio/var-cvar.md)
 
 **Classe:** LP a scenari · **Script:** `python/lab09_var_cvar.py`
 
@@ -113,14 +113,14 @@ $\mathrm{CVaR}_{0,90}$ con rendimento atteso $\ge 8\%$ annuo.
 
 ```text
             | perdita media | VaR90  | CVaR90   (perdite mensili)
-  mean-CVaR |       -0,0067 | 0,0327 | 0,0489
+  mean-CVaR |       -0,0067 | 0,0327 | 0,0511
 Composizione: ENE 9,9 FIN 1,9 TEC 10,5 SAN 8,6 UTL 46,5 MAT 22,5
 ```
 
 ![Distribuzione delle perdite e frontiera](img/cap09_perdite_frontiera.png)
 
 Con un rendimento atteso dell'8% annuo il portafoglio guadagna in media lo 0,67% al
-mese, ma nel 10% dei mesi peggiori perde in media il 4,89%: è il numero che la media
+mese, ma nel 10% dei mesi peggiori perde in media il 5,11%: è il numero che la media
 nasconde. Il CVaR concentra il portafoglio su UTL e MAT e tiene una quota di TEC che,
 pur mediocre in media, si muove in controtendenza negli scenari peggiori di questo
 campione. Il CVaR guarda solo dove fa male: le perdite sopra il VaR.
@@ -179,15 +179,15 @@ Descrizione della funzione obiettivo e dei vincoli:
 r = 0,0: prenoto forn.1 161,5  forn.2 134,2
               costo medio 1.724   CVaR90 2.902   servizio 98,7%
 r = 0,5: prenoto forn.1  92,7  forn.2 212,7
-              costo medio 1.803   CVaR90 2.217   servizio 99,9%
+              costo medio 1.803   CVaR90 2.221   servizio 99,9%
 r = 1,0: prenoto forn.1  68,5  forn.2 236,9
-              costo medio 1.906   CVaR90 2.139   servizio 99,0%
+              costo medio 1.906   CVaR90 2.203   servizio 99,0%
 ```
 
 Il decisore neutrale compra dal fornitore economico e accetta che nel 12% degli
 scenari lo shortage faccia esplodere i costi (CVaR 2.902). Al crescere di $r$
 la capacità migra verso il fornitore affidabile: **+79 € di costo medio comprano
-−685 € di CVaR** — il costo della resilienza, quantificato.
+−681 € di CVaR** — il costo della resilienza, quantificato.
 
 ## Analisi di sensitività
 
@@ -320,9 +320,22 @@ Lo stesso codice è disponibile come notebook — [`notebooks/lab09_var_cvar.ipy
     perd_cv = -R @ w_cv
 
 
+    def var_cvar(perd, alpha):
+        """VaR_alpha e CVaR_alpha esatto di k scenari equiprobabili.
+
+        VaR = quantile alpha (la (ceil(alpha*k))-esima perdita in ordine crescente);
+        CVaR = VaR + 1/((1-alpha) k) * sum_s max(l_s - VaR, 0), il valore della formula di
+        Rockafellar-Uryasev: con perdite uguali al VaR conta esattamente (1-alpha) k scenari.
+        """
+        ordinate = np.sort(perd)
+        k = len(ordinate)
+        var_ = ordinate[int(np.ceil(alpha * k - 1e-9)) - 1]
+        cvar_ = var_ + np.maximum(ordinate - var_, 0).sum() / ((1 - alpha) * k)
+        return var_, cvar_
+
+
     def stat_perdite(perd):
-        var_ = np.quantile(perd, alpha_c)
-        cvar_ = perd[perd >= var_ - 1e-12].mean()
+        var_, cvar_ = var_cvar(perd, alpha_c)
         return perd.mean(), var_, cvar_
 
 
@@ -410,8 +423,7 @@ Lo stesso codice è disponibile come notebook — [`notebooks/lab09_var_cvar.ipy
     righe = []
     for lam in [0.0, 0.5, 1.0]:
         cap, tot, serv = duestadi(lam)
-        var_t = np.quantile(tot, 0.90)
-        cvar_t = tot[tot >= var_t - 1e-9].mean()
+        _, cvar_t = var_cvar(tot, 0.90)
         righe.append((lam, cap["F1"], cap["F2"], tot.mean(), cvar_t, serv.mean()))
         print(f"  r = {lam:3.1f}: prenoto F1 = {cap['F1']:6.1f}, F2 = {cap['F2']:6.1f} | "
               f"costo medio {tot.mean():8.2f}, CVaR90 {cvar_t:8.2f} | servizio medio {serv.mean():.1%}")

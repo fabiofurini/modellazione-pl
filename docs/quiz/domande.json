@@ -3348,7 +3348,7 @@
      "Scende a zero: non ordinare elimina ogni rischio",
      "Sale da $108{,}6$ a $116{,}2$: gli scenari peggiori sono rotture di stock"
     ],
-    "spiegazione": "Qui la coda costosa viene dalle rotture di stock ($c_u > c_o$), quindi proteggersi vuol dire ordinare di più: $6{,}5$ € in più in media tagliano di $21{,}4$ € il costo medio del peggior $10\\%$."
+    "spiegazione": "Qui la coda costosa viene dalle rotture di stock ($c_u > c_o$), quindi proteggersi vuol dire ordinare di più: $6{,}5$ € in più in media tagliano di $20{,}7$ € il costo medio del peggior $10\\%$."
    },
    "en": {
     "testo": "Newsvendor: order quantity $q$ before observing the random demand $D$ (distribution function $F$); unit underage cost $c_u$ (demand left unmet) and overage cost $c_o$ (unit left unsold); minimize $c_o\\mathbb E[(q - D)^+] + c_u\\mathbb E[(D - q)^+]$. A risk-averse bakery minimizes $(1-r)\\,\\mathbb E[\\text{cost}] + r\\,\\mathrm{CVaR}_{0.90}(\\text{cost})$. In the case study, as $r$ goes from $0$ to $1$, how does the order change?",
@@ -3358,7 +3358,7 @@
      "It drops to zero: not ordering removes every risk",
      "It rises from $108.6$ to $116.2$: the worst scenarios are shortages"
     ],
-    "spiegazione": "Here the costly tail comes from stock-outs ($c_u > c_o$), so protection means ordering more: $6.5$ € more on average cut the mean cost of the worst $10\\%$ by $21.4$ €."
+    "spiegazione": "Here the costly tail comes from stock-outs ($c_u > c_o$), so protection means ordering more: $6.5$ € more on average cut the mean cost of the worst $10\\%$ by $20.7$ €."
    }
   },
   {
@@ -5621,24 +5621,24 @@
    },
    "corretta": 1,
    "it": {
-    "testo": "Newsvendor: quantità ordinata $q$ scelta prima di osservare la domanda aleatoria $D$ (funzione di ripartizione $F$); costo unitario di underage $c_u$ (domanda non servita) e di overage $c_o$ (unità invenduta); si minimizza $c_o\\mathbb E[(q - D)^+] + c_u\\mathbb E[(D - q)^+]$. Una panetteria avversa al rischio minimizza $(1-r)\\mathbb E[\\text{costo}] + r\\,\\mathrm{CVaR}_{0{,}90}(\\text{costo})$. Con $r = 0$: costo medio $88{,}33$, CVaR $245{,}93$; con $r = 0{,}25$: $90{,}37$ e $229{,}29$; con $r = 1$: $94{,}87$ e $224{,}56$. Che cosa mostrano i numeri?",
+    "testo": "Newsvendor: quantità ordinata $q$ scelta prima di osservare la domanda aleatoria $D$ (funzione di ripartizione $F$); costo unitario di underage $c_u$ (domanda non servita) e di overage $c_o$ (unità invenduta); si minimizza $c_o\\mathbb E[(q - D)^+] + c_u\\mathbb E[(D - q)^+]$. Una panetteria avversa al rischio minimizza $(1-r)\\mathbb E[\\text{costo}] + r\\,\\mathrm{CVaR}_{0{,}90}(\\text{costo})$. Con $r = 0$: costo medio $88{,}33$, CVaR $245{,}93$; con $r = 0{,}25$: $90{,}37$ e $230{,}14$; con $r = 1$: $94{,}87$ e $225{,}26$. Che cosa mostrano i numeri?",
     "opzioni": [
      "La protezione cresce linearmente con $r$",
      "Gran parte arriva già con $r = 0{,}25$",
      "Il CVaR non dipende da $r$",
      "Con $r = 1$ il costo medio diminuisce"
     ],
-    "spiegazione": "Da $r = 0$ a $0{,}25$ il CVaR scende di $16{,}6$ € per $2$ € di costo medio; andare fino a $r = 1$ fa guadagnare meno di $5$ € in più: la frontiera è ripida all'inizio e piatta dopo."
+    "spiegazione": "Da $r = 0$ a $0{,}25$ il CVaR scende di $15{,}8$ € per $2$ € di costo medio; andare fino a $r = 1$ fa guadagnare meno di $5$ € in più: la frontiera è ripida all'inizio e piatta dopo."
    },
    "en": {
-    "testo": "Newsvendor: order quantity $q$ chosen before observing the random demand $D$ (distribution function $F$); unit underage cost $c_u$ (demand left unmet) and overage cost $c_o$ (unit left unsold); minimize $c_o\\mathbb E[(q - D)^+] + c_u\\mathbb E[(D - q)^+]$. A risk-averse bakery minimizes $(1-r)\\mathbb E[\\text{cost}] + r\\,\\mathrm{CVaR}_{0.90}(\\text{cost})$. With $r = 0$: mean cost $88.33$, CVaR $245.93$; with $r = 0.25$: $90.37$ and $229.29$; with $r = 1$: $94.87$ and $224.56$. What do the numbers show?",
+    "testo": "Newsvendor: order quantity $q$ chosen before observing the random demand $D$ (distribution function $F$); unit underage cost $c_u$ (demand left unmet) and overage cost $c_o$ (unit left unsold); minimize $c_o\\mathbb E[(q - D)^+] + c_u\\mathbb E[(D - q)^+]$. A risk-averse bakery minimizes $(1-r)\\mathbb E[\\text{cost}] + r\\,\\mathrm{CVaR}_{0.90}(\\text{cost})$. With $r = 0$: mean cost $88.33$, CVaR $245.93$; with $r = 0.25$: $90.37$ and $230.14$; with $r = 1$: $94.87$ and $225.26$. What do the numbers show?",
     "opzioni": [
      "Protection grows linearly with $r$",
      "Most of it comes already at $r = 0.25$",
      "The CVaR does not depend on $r$",
      "With $r = 1$ the mean cost decreases"
     ],
-    "spiegazione": "From $r = 0$ to $0.25$ the CVaR drops by $16.6$ € for $2$ € of mean cost; going on to $r = 1$ gains less than $5$ € more: the frontier is steep at first and flat afterwards."
+    "spiegazione": "From $r = 0$ to $0.25$ the CVaR drops by $15.8$ € for $2$ € of mean cost; going on to $r = 1$ gains less than $5$ € more: the frontier is steep at first and flat afterwards."
    }
   },
   {
@@ -6011,24 +6011,24 @@
    },
    "corretta": 1,
    "it": {
-    "testo": "Supply chain a due stadi con CVaR del laboratorio: da $r = 0$ a $r = 1$ il costo medio passa da $1724$ a $1906$ € e il $\\mathrm{CVaR}_{0{,}90}$ da $2902$ a $2139$ €; già con $r = 0{,}5$: $1803$ e $2217$. Come chiama la dispensa il costo medio in più pagato per la protezione?",
+    "testo": "Supply chain a due stadi con CVaR del laboratorio: da $r = 0$ a $r = 1$ il costo medio passa da $1724$ a $1906$ € e il $\\mathrm{CVaR}_{0{,}90}$ da $2902$ a $2203$ €; già con $r = 0{,}5$: $1803$ e $2221$. Come chiama la dispensa il costo medio in più pagato per la protezione?",
     "opzioni": [
      "Il valore della soluzione stocastica",
      "Il costo della resilienza",
      "Il prezzo dell'anarchia",
      "Il prezzo ombra della capacità"
     ],
-    "spiegazione": "Circa $+79$ € di costo medio comprano $-685$ € di CVaR (con $r = 0{,}5$): il costo della resilienza, il numero che serve in una discussione su dual sourcing o rishoring."
+    "spiegazione": "Circa $+79$ € di costo medio comprano $-681$ € di CVaR (con $r = 0{,}5$): il costo della resilienza, il numero che serve in una discussione su dual sourcing o rishoring."
    },
    "en": {
-    "testo": "Two-stage supply chain with CVaR of the lab: from $r = 0$ to $r = 1$ the mean cost goes from $1724$ to $1906$ € and the $\\mathrm{CVaR}_{0.90}$ from $2902$ to $2139$ €; already with $r = 0.5$: $1803$ and $2217$. How do the notes call the extra mean cost paid for the protection?",
+    "testo": "Two-stage supply chain with CVaR of the lab: from $r = 0$ to $r = 1$ the mean cost goes from $1724$ to $1906$ € and the $\\mathrm{CVaR}_{0.90}$ from $2902$ to $2203$ €; already with $r = 0.5$: $1803$ and $2221$. How do the notes call the extra mean cost paid for the protection?",
     "opzioni": [
      "The value of the stochastic solution",
      "The cost of resilience",
      "The price of anarchy",
      "The shadow price of the capacity"
     ],
-    "spiegazione": "About $+79$ € of mean cost buy $-685$ € of CVaR (at $r = 0.5$): the cost of resilience, the number needed in a discussion about dual sourcing or reshoring."
+    "spiegazione": "About $+79$ € of mean cost buy $-681$ € of CVaR (at $r = 0.5$): the cost of resilience, the number needed in a discussion about dual sourcing or reshoring."
    }
   },
   {
@@ -9855,20 +9855,20 @@
     "opzioni": [
      "$3{,}27\\%$",
      "$-0{,}67\\%$",
-     "$4{,}89\\%$",
+     "$5{,}11\\%$",
      "$2{,}60\\%$"
     ],
-    "spiegazione": "Il CVaR$_{90}$ è la perdita media nel 10\\% dei mesi peggiori, quindi non inferiore al VaR: $4{,}89\\%$."
+    "spiegazione": "Il CVaR$_{90}$ è la perdita media nel 10\\% dei mesi peggiori, quindi non inferiore al VaR: $5{,}11\\%$."
    },
    "en": {
     "testo": "Mean-CVaR portfolio of the course, $\\alpha = 0.90$, expected return at least $8\\%$: the mean monthly loss is $-0.67\\%$ and the VaR$_{90}$ is $3.27\\%$. What is the CVaR$_{90}$?",
     "opzioni": [
      "$3.27\\%$",
      "$-0.67\\%$",
-     "$4.89\\%$",
+     "$5.11\\%$",
      "$2.60\\%$"
     ],
-    "spiegazione": "The CVaR$_{90}$ is the mean loss in the worst 10\\% of the months, hence not below the VaR: $4.89\\%$."
+    "spiegazione": "The CVaR$_{90}$ is the mean loss in the worst 10\\% of the months, hence not below the VaR: $5.11\\%$."
    }
   },
   {

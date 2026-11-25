@@ -176,15 +176,15 @@ $(1-r)\,\mathbb{E}[\text{costo}] + r\, \mathrm{CVaR}_{0,90}(\text{costo})$:
 
 ```text
 r = 0,00: q = 108,61  costo medio 88,33  CVaR90 245,93
-r = 0,25: q = 112,45  costo medio 90,37  CVaR90 229,29
-r = 0,50: q = 114,48  costo medio 92,52  CVaR90 225,49
-r = 1,00: q = 116,17  costo medio 94,87  CVaR90 224,56
+r = 0,25: q = 112,45  costo medio 90,37  CVaR90 230,14
+r = 0,50: q = 114,48  costo medio 92,52  CVaR90 226,24
+r = 1,00: q = 116,17  costo medio 94,87  CVaR90 225,26
 ```
 
 ![Frontiera costo-CVaR](img/cap08_frontiera.png)
 
 Il decisore avverso al rischio ordina di più (da 108,6 a 116,2 unità): paga 6,5 € in
-più in media per tagliare di 21,4 € il costo medio dei peggiori 10% degli scenari. La
+più in media per tagliare di 20,7 € il costo medio dei peggiori 10% degli scenari. La
 gran parte della protezione si ottiene già con $r = 0{,}25$: la frontiera è
 ripida all'inizio e piatta poi.
 
@@ -370,11 +370,25 @@ Lo stesso codice è disponibile come notebook — [`notebooks/lab08_newsvendor.i
     # ----------------------------------------------------------------------
     intestazione("Frontiera costo medio - CVaR (alpha = 0,90)")
     alpha_cv = 0.90
+
+
+    def var_cvar(costi, alpha):
+        """VaR_alpha e CVaR_alpha esatto di k scenari equiprobabili.
+
+        VaR = quantile alpha (il (ceil(alpha*k))-esimo costo in ordine crescente);
+        CVaR = VaR + 1/((1-alpha) k) * sum_s max(c_s - VaR, 0), il valore della formula di
+        Rockafellar-Uryasev: la media esatta dei (1-alpha) k scenari più costosi.
+        """
+        ordinati = np.sort(costi)
+        k = len(ordinati)
+        var_ = ordinati[int(np.ceil(alpha * k - 1e-9)) - 1]
+        return var_, var_ + np.maximum(ordinati - var_, 0).sum() / ((1 - alpha) * k)
+
+
     front = []
     for lam in [0, 0.25, 0.5, 0.75, 1.0]:
         q_l, cm, costi_l = newsvendor_lp(dom, lam=lam, alpha_cvar=alpha_cv)
-        var_l = np.quantile(costi_l, alpha_cv)
-        cvar_l = costi_l[costi_l >= var_l - 1e-9].mean()
+        _, cvar_l = var_cvar(costi_l, alpha_cv)
         front.append((lam, q_l, cm, cvar_l))
         print(f"  r = {lam:4.2f}: q = {q_l:7.2f}, costo medio = {cm:6.2f}, "
               f"CVaR90 = {cvar_l:6.2f}")
