@@ -26,6 +26,54 @@
   const avviso = (crea, S, C, testo) =>
     M.scritta(crea, S.W / 2, S.H / 2, testo, { fontSize: 15, strokeColor: C.rosso, cssStyle: "font-weight:700" });
 
+  // ================================================================ il modello sopra il grafico
+  /* Ogni app mostra, sopra il grafico: il problema a parole (dal capitolo), il modello simbolico
+   * impaginato come nel capitolo (aligned: min, «soggetto a», un vincolo per riga, relazioni in
+   * colonna, ∀ a destra) e, in un blocco richiudibile, il modello numerico con i dati dei cursori. */
+  const NUM = { aperto: false };
+  document.addEventListener("toggle", (e) => {
+    const d = e.target;
+    if (d && d.classList && d.classList.contains("plm-num")) { NUM.aperto = d.open; limita(d); window.dispatchEvent(new Event("resize")); }
+  }, true);
+  /** a tutta pagina il modello numerico si apre sopra il grafico: resta dentro il riquadro dell'app */
+  function limita(d) {
+    const app = d.closest(".gi-app-intera"), corpo = d.querySelector(".plm-num-corpo");
+    if (!app || !corpo || !d.open || window.innerWidth < 860) { if (corpo) corpo.style.maxHeight = ""; return; }
+    const spazio = app.getBoundingClientRect().bottom - d.getBoundingClientRect().bottom - 10;
+    corpo.style.maxHeight = Math.max(200, Math.round(spazio)) + "px";
+  }
+  window.addEventListener("resize", () => document.querySelectorAll(".gi-app-intera details.plm-num[open]").forEach(limita));
+  // le app a tutta pagina ricalcolano l'altezza del grafico quando il riquadro del modello cambia altezza
+  if (window.ResizeObserver) {
+    let attesa = 0;
+    const ro = new ResizeObserver(() => { clearTimeout(attesa); attesa = setTimeout(() => window.dispatchEvent(new Event("resize")), 120); });
+    const osserva = () => document.querySelectorAll(".gi-app-intera details.plm-num[open]:not([data-lim])").forEach((d) => { d.dataset.lim = "1"; limita(d); }) ||
+      document.querySelectorAll(".gi-app-intera .gi-formula:not([data-plm])").forEach((f) => { f.dataset.plm = "1"; ro.observe(f); });
+    new MutationObserver(osserva).observe(document.documentElement, { childList: true, subtree: true });
+  }
+  const SA = () => T("\\text{soggetto a}", "\\text{subject to}");
+  const PER = (i, m) => `\\forall ${i} \\in \\{1, 2, \\dots, ${m}\\}`;
+  const REL = { "<=": "\\le", "=": "=", ">=": "\\ge", "><": "\\gtreqless" };
+  /** a·var con il segno: [[coeff, "x_1"], ...] -> "12\,x_1 - 3\,x_2"; coeff 1 omesso */
+  const somma = (termini, c = 2) => termini.map(([a, x], k) => {
+    const s = a < 0 ? (k ? " - " : "-") : (k ? " + " : ""), m = Math.abs(a);
+    return s + (Math.abs(m - 1) < 1e-12 ? "" : n(m, c) + "\\,") + x;
+  }).join("");
+  /** modello numerico: obiettivo (righe) e vincoli [lhs, rel, rhs, nota], relazioni in colonna */
+  const numerico = (senso, obiettivo, righe) => {
+    const ob = obiettivo.length > 1 ? `\\begin{aligned}[t] ${obiettivo.map((l) => "& " + l).join(" \\\\ ")} \\end{aligned}` : obiettivo[0];
+    const corpo = righe.map((r, k) =>
+      `${k ? "" : SA()} & ${r[0]} & ${REL[r[1]] || ""} & ${r[2]} & ${r[3] ? "\\quad " + r[3] : ""} \\\\`).join("\n");
+    return `<div class="plm-riga">\\(\\displaystyle \\${senso}\\ \\ ${ob}\\)</div>` +
+      `<div class="plm-riga">\\(\\displaystyle \\begin{array}{lrcll} ${corpo} \\end{array}\\)</div>`;
+  };
+  /** il blocco completo: problema, modello simbolico, modello numerico richiudibile */
+  const modello = (testo, simbolico, num, nota) =>
+    `<div class="plm"><p class="plm-testo">${testo}</p>` +
+    `<div class="plm-sim">\\(\\displaystyle \\begin{aligned} ${simbolico} \\end{aligned}\\)</div>` +
+    `<details class="plm-num"${NUM.aperto ? " open" : ""}><summary>${T("Modello numerico con i dati attuali", "Numerical model with the current data")}</summary>` +
+    `<div class="plm-num-corpo">${num}${nota ? `<p class="plm-nota">${nota}</p>` : ""}</div></details></div>`;
+
   // ================================================================ produzione (cap. 4)
   const PRODOTTO = (C) => [C.a, C.b, C.c];
   const vProduzione = {
@@ -36,11 +84,33 @@
       { nome: T("\\text{capacità}", "\\text{capacity}"), min: 95, max: 130, step: 1, val: 100, fmt: pct,
         descr: T("ore macchina \\(b_t\\) di ogni mese", "machine hours \\(b_t\\) of every month") },
       { nome: T("\\text{giacenza}", "\\text{holding}"), min: 25, max: 300, step: 25, val: 100, fmt: pct,
-        descr: T("costo di giacenza \\(h_i\\)", "holding cost \\(h_i\\)") },
+        descr: T("costo di giacenza \\(h_{it}\\)", "holding cost \\(h_{it}\\)") },
     ],
     calcola: (v) => PL().produzione(v[1] / 100, v[0] / 100, v[2] / 100),
     formula(R, v, st) {
-      return `\\min \\sum_{i,t} \\big(c_i x_{it} + ${st.col("c", "h_i")} s_{it}\\big)\\quad s_{i,t-1} + x_{it} = ${st.col("a", "d_{it}")} + s_{it},\\ \\ \\sum_i a_i x_{it} \\le ${st.col("b", "b_t")},\\ \\ x, s \\ge 0`;
+      const P = DD().produzione, nI = P.prodotti.length, nT = P.mesi.length;
+      const it = `${PER("i", "n")},~${PER("t", "m")}`;
+      const sim = `\\min ~~ \\sum_{i=1}^{n} \\sum_{t=1}^{m} \\bigl( c_{it}\\, x_{it} + ${st.col("c", "h_{it}")}\\, s_{it} \\bigr) & & \\\\
+        ${SA()} \\quad s_{i,t-1} + x_{it} &= ${st.col("a", "d_{it}")} + s_{it}, & ${it}, \\\\
+        \\sum_{i=1}^{n} a_i\\, x_{it} &\\le ${st.col("b", "b_t")}, & ${PER("t", "m")}, \\\\
+        x_{it} &\\ge 0, & ${it}, \\\\
+        s_{it} &\\ge 0, & ${it}.`;
+      const fD = v[0] / 100, fC = v[1] / 100, fH = v[2] / 100;
+      const lista = (x, i) => P.mesi.map((m, t) => `${x}_{${i + 1},${t + 1}}`).join(" + ");
+      const ob = P.prodotti.map((p, i) => `${i ? "+ " : ""}${n(P.cp[i], 2)}\\,(${lista("x", i)}) + ${n(P.ch[i] * fH, 3)}\\,(${lista("s", i)})`);
+      const righe = [];
+      for (let i = 0; i < nI; i++) for (let t = 0; t < nT; t++)
+        righe.push([`${t ? `s_{${i + 1},${t}}` : n(P.s0[i], 1)} + x_{${i + 1},${t + 1}}`, "=", `${n(P.domanda[i][t] * fD, 1)} + s_{${i + 1},${t + 1}}`, `i = ${i + 1},~t = ${t + 1}`]);
+      for (let t = 0; t < nT; t++)
+        righe.push([somma(P.ore.map((a, i) => [a, `x_{${i + 1},${t + 1}}`])), "<=", n(P.cap[t] * fC, 1), `t = ${t + 1}`]);
+      righe.push(["x_{it},~ s_{it}", ">=", "0", `i \\in \\{1, 2, 3\\},~ t \\in \\{1, 2, \\dots, 6\\}`]);
+      return modello(T(`<b>Il problema.</b> Decidiamo quante unità di ognuno dei ${nI} prodotti produrre in ognuno dei ${nT} mesi e quante tenerne a scorta. ` +
+        "L'obiettivo è minimizzare il costo di produzione e di giacenza. I vincoli: bilancio di magazzino mese per mese, con la domanda servita per intero, e ore macchina disponibili in ogni mese.",
+      `<b>The problem.</b> We decide how many units of each of the ${nI} products to produce in each of the ${nT} months and how many to keep in inventory. ` +
+        "The objective is to minimize production and holding cost. The constraints: inventory balance month by month, with demand served in full, and the machine hours available in each month."),
+      sim, numerico("min", ob, righe),
+      T("Righe: 18 vincoli di bilancio (per \\(t = 1\\) compare la scorta iniziale \\(s_{i0}\\)), poi i 6 vincoli di capacità.",
+        "Rows: 18 balance constraints (for \\(t = 1\\) the initial inventory \\(s_{i0}\\) appears), then the 6 capacity constraints."));
     },
     disegna(crea, R, v, C, S) {
       if (R.stato !== "ottimo") return avviso(crea, S, C, T("Nessun piano ammissibile: la capacità non basta per la domanda", "No feasible plan: capacity does not cover demand"));
@@ -90,16 +160,51 @@
   const vEv = {
     etichetta: T("Ricarica di veicoli elettrici", "Electric vehicle charging"),
     cursori: [
-      { nome: "C", min: 80, max: 160, step: 5, val: 120, fmt: (x) => nt(x, 0) + " kW",
+      { nome: "k", min: 80, max: 160, step: 5, val: 120, fmt: (x) => nt(x, 0) + " kW",
         descr: T("potenza massima prelevabile dal contatore", "maximum power drawn from the meter") },
-      { nome: "E_v", min: 60, max: 130, step: 5, val: 100, fmt: pct,
+      { nome: "e_v", min: 60, max: 130, step: 5, val: 100, fmt: pct,
         descr: T("fabbisogno di energia dei furgoni, in % dei dati", "energy needed by the vans, in % of the data") },
-      { nome: T("p_t\\ \\text{serale}", "p_t\\ \\text{evening}"), min: 50, max: 200, step: 10, val: 100, fmt: pct,
+      { nome: T("\\pi_t\\ \\text{serale}", "\\pi_t\\ \\text{evening}"), min: 50, max: 200, step: 10, val: 100, fmt: pct,
         descr: T("prezzo dell'energia dalle 17 alle 21", "energy price from 5 pm to 9 pm") },
     ],
     calcola: (v) => PL().ricaricaEv(v[0], v[1] / 100, v[2] / 100),
     formula(R, v, st) {
-      return `\\min \\sum_{v,t} ${st.col("c", "p_t")} x_{vt}\\quad \\eta \\sum_t x_{vt} \\ge ${st.col("b", "E_v")},\\ \\ \\sum_v x_{vt} + \\ell_t \\le ${st.col("a", "C")},\\ \\ 0 \\le x_{vt} \\le \\bar p_v`;
+      const E = DD().ev, V = E.veicoli, nV = V.length;
+      const vt = `${PER("v", "n")},~${PER("t", "m")}`;
+      const sim = `\\min ~~ \\sum_{v=1}^{n} \\sum_{t=1}^{m} ${st.col("c", "\\pi_t")}\\, \\Delta t\\, x_{vt} & & \\\\
+        ${SA()} \\quad \\eta \\sum_{t=1}^{m} \\Delta t\\, x_{vt} &\\ge ${st.col("b", "e_v")}, & ${PER("v", "n")}, \\\\
+        \\sum_{v=1}^{n} x_{vt} + b_t &\\le ${st.col("a", "k")}, & ${PER("t", "m")}, \\\\
+        x_{vt} &\\le a_{vt}\\, \\bar p_v, & ${vt}, \\\\
+        x_{vt} &\\ge 0, & ${vt}.`;
+      const coll = (x, t) => x.arrivo <= t || t < x.partenza;
+      const prezzo = (t) => E.prezzo[t] * (t >= 17 && t <= 20 ? v[2] / 100 : 1);
+      const ore = (x) => ORDINE_ORE.filter((t) => coll(x, t));
+      const xv = (j, t) => `x_{${j + 1},${t}}`;
+      // obiettivo raggruppato per ora (Delta t = 1 h), al più 8 variabili per riga
+      const gruppi = ORDINE_ORE.map((t) => [t, V.map((x, j) => (coll(x, t) ? xv(j, t) : null)).filter(Boolean)]).filter((q) => q[1].length);
+      const ob = [];
+      let riga = [], quante = 0;
+      gruppi.forEach(([t, xs]) => {
+        if (riga.length && quante + xs.length > 8) { ob.push((ob.length ? "+ " : "") + riga.join(" + ")); riga = []; quante = 0; }
+        riga.push(`${n(prezzo(t), 3)}\\,(${xs.join(" + ")})`); quante += xs.length;
+      });
+      if (riga.length) ob.push((ob.length ? "+ " : "") + riga.join(" + "));
+      const breve = (j, hh) => [xv(j, hh[0]), xv(j, hh[1]), "\\dots", xv(j, hh[hh.length - 1])].join(" + ");
+      const righe = V.map((x, j) => [`${n(E.eta, 2)}\\,(${breve(j, ore(x))})`, ">=", n(x.energia * v[1] / 100, 1), `v = ${j + 1}`]);
+      ORDINE_ORE.forEach((t) => {
+        const xs = V.map((x, j) => (coll(x, t) ? xv(j, t) : null)).filter(Boolean);
+        if (xs.length) righe.push([`${xs.join(" + ")} + ${n(E.base[t], 1)}`, "<=", n(v[0], 0), `t = ${t}`]);
+      });
+      V.forEach((x, j) => righe.push([`x_{${j + 1},t}`, "<=", n(x.pmax, 1), `t \\in \\{${x.arrivo}, \\dots, 23, 0, \\dots, ${x.partenza - 1}\\}`]));
+      righe.push(["x_{vt}", "<=", "0", T("\\text{nelle ore con } a_{vt} = 0", "\\text{in the hours with } a_{vt} = 0")]);
+      righe.push(["x_{vt}", ">=", "0", `v \\in \\{1, \\dots, ${nV}\\},~ t \\in \\{0, \\dots, 23\\}`]);
+      return modello(T(`<b>Il problema.</b> Decidiamo la potenza \\(x_{vt}\\) assegnata a ognuno dei ${nV} furgoni in ogni ora \\(t\\) (\\(\\Delta t = 1\\) h). ` +
+        "L'obiettivo è la minima spesa energetica. I vincoli: energia richiesta entro la partenza, ricarica solo quando il furgone è collegato e sotto la potenza del caricatore, prelievo totale sotto la potenza \\(k\\) del contatore.",
+      `<b>The problem.</b> We decide the power \\(x_{vt}\\) assigned to each of the ${nV} vans in each hour \\(t\\) (\\(\\Delta t = 1\\) h). ` +
+        "The objective is the minimum energy expenditure. The constraints: the energy required before departure, charging only while the van is plugged in and below the power of the charger, total draw below the power \\(k\\) of the meter."),
+      sim, numerico("min", ob, righe),
+      T("Le ore sono quelle dell'orologio (\\(x_{1,18}\\): furgone 1 alle 18); nei vincoli di energia la somma va dall'ora di arrivo all'ultima ora prima della partenza. I vincoli di rete sono scritti solo per le ore con almeno un furgone collegato.",
+        "Hours are clock hours (\\(x_{1,18}\\): van 1 at 6 pm); in the energy constraints the sum runs from the arrival hour to the last hour before departure. The grid constraints are written only for the hours with at least one van plugged in."));
     },
     disegna(crea, R, v, C, S) {
       if (R.stato !== "ottimo") return avviso(crea, S, C, T("Inammissibile: con questo limite i furgoni non si ricaricano in tempo", "Infeasible: with this limit the vans cannot be charged in time"));
@@ -109,14 +214,14 @@
         ny: T("prelievo dalla rete (kW)", "power drawn from the grid (kW)") }, C, { nTx: 0, nTy: 4 });
       O.barre(crea, top, ORDINE_ORE.map((h, k) => ({ x: k, pezzi: [[E.base[h], C.grigio], ...R.x.map((riga, j) => [riga[h], col[j]])] })), 0.8);
       M.linea(crea, top.X(-0.6), top.Y(R.C), top.X(23.6), top.Y(R.C), { strokeColor: C.rosso, strokeWidth: 2.5, dash: 2 });
-      M.scritta(crea, top.X(23.5), top.Y(R.C) + 4, `C = ${nt(R.C, 0)} kW`, { anchorX: "right", anchorY: "bottom", fontSize: 11, strokeColor: C.rosso });
+      M.scritta(crea, top.X(23.5), top.Y(R.C) + 4, `k = ${nt(R.C, 0)} kW`, { anchorX: "right", anchorY: "bottom", fontSize: 11, strokeColor: C.rosso });
       const bot = O.pannello(crea, { X0: mg.X0, X1: mg.X1, Y0: mg.basso, Y1: S.H - mg.alto - hTop - gap, xa: -0.6, xb: 23.6, ya: 0, yb: Math.max(...R.prezzo) * 100 * 1.15,
         ny: T("prezzo (c€/kWh)", "price (c€/kWh)") }, C, { nTx: 0, nTy: 2 });
       O.barre(crea, bot, ORDINE_ORE.map((h, k) => ({ x: k, pezzi: [[R.prezzo[h] * 100, C.grigio]] })), 0.8);
       ORDINE_ORE.forEach((h, k) => { if (h % 3 === 0) M.scritta(crea, bot.X(k), mg.basso - 6, h + ":00", { anchorY: "top", fontSize: 10, strokeColor: C.muted }); });
     },
-    legenda: (C) => [[C.grigio, T("carico dell'edificio \\(\\ell_t\\)", "building load \\(\\ell_t\\)"), "pieno"],
-      ...DD().ev.veicoli.map((x, j) => [VEICOLO(C)[j], x.nome, "pieno"]), [C.rosso, T("limite \\(C\\)", "limit \\(C\\)"), "dashed"]],
+    legenda: (C) => [[C.grigio, T("carico dell'edificio \\(b_t\\)", "building load \\(b_t\\)"), "pieno"],
+      ...DD().ev.veicoli.map((x, j) => [VEICOLO(C)[j], x.nome, "pieno"]), [C.rosso, T("limite \\(k\\)", "limit \\(k\\)"), "dashed"]],
     letture(R, v, st, C) {
       if (R.stato !== "ottimo") return M.tinta(C.rosso, T("Inammissibile.", "Infeasible."));
       const E = DD().ev;
@@ -128,8 +233,8 @@
           T(": un kW in più lì vale ", ": one more kW there is worth ") + sature.map((t) => nt(-R.ombraRete[t] * 100, 1)).join(", ") + " c€."
           : T("Il limite di rete non è mai saturo: ogni furgone carica nelle sue ore più economiche.", "The grid limit is never binding: every van charges in its cheapest hours.")}</div>`;
     },
-    domanda: T("Abbassa \\(C\\) a 90 kW: in quali ore il limite diventa saturo e quanto sale il costo? Perché il prezzo ombra dell'energia di un furgone è il prezzo della sua ora più cara usata, diviso per \\(\\eta\\)?",
-      "Lower \\(C\\) to 90 kW: in which hours does the limit become binding and how much does the cost grow? Why is the shadow price of a van's energy the price of its most expensive hour used, divided by \\(\\eta\\)?"),
+    domanda: T("Abbassa \\(k\\) a 90 kW: in quali ore il limite diventa saturo e quanto sale il costo? Perché il prezzo ombra dell'energia di un furgone è il prezzo della sua ora più cara usata, diviso per \\(\\eta\\)?",
+      "Lower \\(k\\) to 90 kW: in which hours does the limit become binding and how much does the cost grow? Why is the shadow price of a van's energy the price of its most expensive hour used, divided by \\(\\eta\\)?"),
   };
 
   // ================================================================ newsvendor (cap. 7)
@@ -150,7 +255,33 @@
       return R;
     },
     formula(R, v, st) {
-      return `\\min_{q \\ge 0}\\ (1-${st.col("b", "\\lambda")})\\,\\tfrac1S \\sum_s \\big(C_o o_s + C_u u_s\\big) + ${st.col("b", "\\lambda")}\\,\\mathrm{CVaR}_{0{,}9}\\quad o_s \\ge q - d_s,\\ \\ u_s \\ge d_s - q,\\ \\ o, u \\ge 0`.replace("0{,}9", GI.EN ? "0.9" : "0{,}9");
+      const N = DD().newsvendor, d = N.domanda, k = d.length, lam = st.col("b", "\\lambda");
+      const ks = PER("s", "k");
+      const sim = `\\min ~~ (1-${lam}) \\sum_{s=1}^{k} \\pi_s \\bigl( c_o\\, o_s + ${st.col("a", "c_u")}\\, u_s \\bigr) & & \\\\
+        + ${lam} \\Bigl( \\eta + \\tfrac{1}{1-\\alpha} \\sum_{s=1}^{k} \\pi_s\\, \\xi_s \\Bigr) & & \\\\
+        ${SA()} \\quad o_s &\\ge q - d_s, & ${ks}, \\\\
+        u_s &\\ge d_s - q, & ${ks}, \\\\
+        \\xi_s &\\ge c_o\\, o_s + ${st.col("a", "c_u")}\\, u_s - \\eta, & ${ks}, \\\\
+        q &\\ge 0, & \\\\
+        \\eta &\\gtreqless 0, & \\\\
+        o_s,\\ u_s,\\ \\xi_s &\\ge 0, & ${ks}.`;
+      const Co = N.c - N.v, Cu = v[0] - N.c, L = v[1];
+      const ob = [`${n(1 - L, 2)} \\cdot \\frac{1}{${k}} \\sum_{s=1}^{${k}} \\bigl( ${n(Co, 2)}\\, o_s + ${n(Cu, 2)}\\, u_s \\bigr)`, `+ ${n(L, 2)} \\Bigl( \\eta + \\frac{1}{${n(1 - ALFA, 1)} \\cdot ${k}} \\sum_{s=1}^{${k}} \\xi_s \\Bigr)`];
+      const righe = [];
+      [0, 1, 2].forEach((s) => {
+        const ds = n(d[s], 2), S = s + 1;
+        righe.push([`o_{${S}}`, ">=", `q - ${ds}`, `s = ${S}`], [`u_{${S}}`, ">=", `${ds} - q`, `s = ${S}`],
+          [`\\xi_{${S}}`, ">=", `${somma([[Co, `o_{${S}}`], [Cu, `u_{${S}}`]])} - \\eta`, `s = ${S}`]);
+      });
+      righe.push(["\\vdots", "", "", T(`\\text{analoghi per } s = 4, \\dots, ${k}`, `\\text{analogous for } s = 4, \\dots, ${k}`)]);
+      righe.push(["q", ">=", "0", ""], ["\\eta", "><", "0", ""], ["o_s,~ u_s,~ \\xi_s", ">=", "0", `s \\in \\{1, \\dots, ${k}\\}`]);
+      return modello(T(`<b>Il problema.</b> Decidiamo la quantità \\(q\\) da ordinare prima di osservare la domanda, descritta da ${k} scenari equiprobabili \\(d_s\\) (\\(\\pi_s = 1/${k}\\)). ` +
+        "Ogni unità invenduta costa \\(c_o\\), ogni vendita persa \\(c_u\\). L'obiettivo è minimizzare \\((1-\\lambda)\\) volte il costo atteso più \\(\\lambda\\) volte il CVaR\\(_{0{,}9}\\) del costo.",
+      `<b>The problem.</b> We decide the quantity \\(q\\) to order before observing demand, described by ${k} equally likely scenarios \\(d_s\\) (\\(\\pi_s = 1/${k}\\)). ` +
+        "Each unsold unit costs \\(c_o\\), each lost sale \\(c_u\\). The objective is to minimize \\((1-\\lambda)\\) times the expected cost plus \\(\\lambda\\) times the CVaR\\(_{0.9}\\) of the cost."),
+      sim, numerico("min", ob, righe),
+      T(`Con ${k} scenari si scrivono per intero i vincoli dei primi tre; gli altri hanno la stessa forma con il proprio \\(d_s\\). Qui \\(c_o = c - v = ${n(Co, 2)}\\), \\(c_u = p - c = ${n(Cu, 2)}\\), \\(\\alpha = 0{,}9\\).`,
+        `With ${k} scenarios the constraints of the first three are written in full; the others have the same form with their own \\(d_s\\). Here \\(c_o = c - v = ${n(Co, 2)}\\), \\(c_u = p - c = ${n(Cu, 2)}\\), \\(\\alpha = 0.9\\).`));
     },
     disegna(crea, R, v, C, S) {
       const mg = margini(S, 22, 40);
@@ -209,8 +340,32 @@
     },
     formula(R, v, st) {
       const o = st.col("a", "o");
-      const io = vista === "1x1" ? T("personale", "staff") : "i";
-      return `\\min\\ \\theta\\quad \\sum_j \\lambda_j x_{${vista === "1x1" ? "j" : "ij"}} \\le \\theta\\, x_{${vista === "1x1" ? "" : "i"}${o}},\\ \\ \\sum_j \\lambda_j y_{${vista === "1x1" ? "j" : "rj"}} \\ge y_{${vista === "1x1" ? "" : "r"}${o}}${vrs ? ",\\ \\ \\sum_j \\lambda_j = 1" : ""},\\ \\ \\lambda \\ge 0`.replace("io", io);
+      const sim = `\\min ~~ \\theta & & \\\\
+        ${SA()} \\quad \\theta\\, x_{i${o}} - \\sum_{j=1}^{n} \\lambda_j\\, x_{ij} &\\ge 0, & ${PER("i", "m")}, \\\\
+        \\sum_{j=1}^{n} \\lambda_j\\, y_{rj} &\\ge y_{r${o}}, & ${PER("r", "p")}, \\\\
+        ${vrs ? `\\sum_{j=1}^{n} \\lambda_j &= 1, & \\\\` : ""}
+        \\theta &\\gtreqless 0, & \\\\
+        \\lambda_j &\\ge 0, & ${PER("j", "n")}.`;
+      // numerico: una colonna per variabile (theta, lambda_1..lambda_n), relazioni in colonna
+      const d = DD().dea, oo = Math.round(v[0]) - 1;
+      const X = vista === "1x1" ? [d.personale] : [d.personale, d.costi], Y = vista === "1x1" ? [d.prestiti] : [d.prestiti, d.depositi];
+      const nI = X.length, nR = Y.length, nn = X[0].length;
+      const nomiI = vista === "1x1" ? [T("personale", "staff")] : [T("personale", "staff"), T("costi", "costs")];
+      const nomiR = vista === "1x1" ? [T("prestiti", "loans")] : [T("prestiti", "loans"), T("depositi", "deposits")];
+      const cella = (a, x, primo) => (a === 0 ? "" : (a < 0 ? "-" : primo ? "" : "+") + (Math.abs(a) === 1 ? "" : n(Math.abs(a), 1) + "\\,") + x);
+      const riga = (lab, th, coef, rel, rhs, nota) => `${lab} & ${th} & ${coef.map((a, j) => cella(a, `\\lambda_{${j + 1}}`, !th && j === 0)).join(" & ")} & ${rel} & ${rhs} & ${nota ? `\\quad \\text{${nota}}` : ""} \\\\`;
+      const vuoto = new Array(nn).fill(0);
+      const righe = [riga("\\min", "\\theta", vuoto, "", "", "")];
+      X.forEach((r, i) => righe.push(riga(i ? "" : SA(), `${n(r[oo], 1)}\\,\\theta`, r.map((x) => -x), "\\ge", "0", nomiI[i])));
+      Y.forEach((r, k) => righe.push(riga("", "", r, "\\ge", n(r[oo], 1), nomiR[k])));
+      if (vrs) righe.push(riga("", "", new Array(nn).fill(1), "=", "1", ""));
+      const num = `<div class="plm-riga plm-stretto">\\(\\displaystyle \\begin{array}{lr${"r".repeat(nn)}cll} ${righe.join("\n")} \\end{array}\\)</div>` +
+        `<div class="plm-riga">\\(\\displaystyle \\theta \\gtreqless 0, \\qquad \\lambda_j \\ge 0 \\quad j \\in \\{1, 2, \\dots, ${nn}\\}\\)</div>`;
+      return modello(T(`<b>Il problema.</b> Per la filiale valutata \\(o = ${oo + 1}\\) cerchiamo i pesi \\(\\lambda_j\\) delle ${nn} filiali e il fattore \\(\\theta\\): la combinazione pesata deve produrre almeno gli output di \\(o\\) (${nomiR.join(", ")}) usando al più \\(\\theta\\) volte i suoi input (${nomiI.join(", ")}). ` +
+        `L'obiettivo è minimizzare \\(\\theta\\), l'efficienza della filiale${vrs ? "; il vincolo \\(\\sum_j \\lambda_j = 1\\) dà il modello BCC" : ""}.`,
+      `<b>The problem.</b> For the branch under evaluation \\(o = ${oo + 1}\\) we look for the weights \\(\\lambda_j\\) of the ${nn} branches and the factor \\(\\theta\\): the weighted combination must produce at least the outputs of \\(o\\) (${nomiR.join(", ")}) using at most \\(\\theta\\) times its inputs (${nomiI.join(", ")}). ` +
+        `The objective is to minimize \\(\\theta\\), the efficiency of the branch${vrs ? "; the constraint \\(\\sum_j \\lambda_j = 1\\) gives the BCC model" : ""}.`),
+      sim, num);
     },
     disegna(crea, R, v, C, S) {
       const d = DD().dea, mg = margini(S, 22, 40), o = R.o;
@@ -268,12 +423,14 @@
   });
 
   // ================================================================ regressione (cap. 10): punti trascinabili
+  const DATI_REG = { t: null, y: null };
   window.GI_RICETTE["pl-regressione"] = () => O.ricettaRetta({
     titolo: T("Scarti assoluti e regressione quantile", "Least absolute deviations and quantile regression"),
     dati: () => DD().panetteria,
     parametri: [{ k: "tau", nome: "\\tau", min: 0.05, max: 0.95, step: 0.01, val: 0.69, colore: "c", cifre: 2,
       descr: T("quantile: \\(9/13 \\approx 0{,}69\\) è il frattile critico del newsvendor", "quantile: \\(9/13 \\approx 0.69\\) is the critical fractile of the newsvendor") }],
     rette(t, y, p, C) {
+      DATI_REG.t = t; DATI_REG.y = y;
       const lad = PL().regressione(t, y, 0.5), q = PL().regressione(t, y, p.tau);
       return [
         { ...lad, colore: C.blu, nome: T("scarti assoluti (LP, \\(\\tau = 1/2\\))", "least absolute deviations (LP, \\(\\tau = 1/2\\))"), stile: { strokeWidth: 3 } },
@@ -281,7 +438,26 @@
       ];
     },
     appoggio: (rette) => rette[1].appoggio,
-    formula: (p, st) => `\\min \\sum_i \\big(${st.col("c", "\\tau")}\\, u_i + (1-${st.col("c", "\\tau")})\\, v_i\\big)\\quad w\\, t_i + b + u_i - v_i = y_i,\\ \\ u, v \\ge 0`,
+    formula(p, st) {
+      const tau = st.col("c", "\\tau"), ni = PER("i", "n");
+      const sim = `\\min ~ \\sum_{i=1}^{n} \\bigl[\\, ${tau}\\, u_i + (1 - ${tau})\\, v_i \\,\\bigr] & & \\\\
+        ${SA()} \\quad w\\, x_i + b + u_i - v_i &= y_i, & ${ni}, \\\\
+        w &\\gtreqless 0, & \\\\
+        b &\\gtreqless 0, & \\\\
+        u_i,\; v_i &\\ge 0, & ${ni}.`;
+      const t = DATI_REG.t || [], y = DATI_REG.y || [], m = t.length;
+      const ob = [`\\sum_{i=1}^{${m}} \\bigl( ${n(p.tau, 2)}\\, u_i + ${n(1 - p.tau, 2)}\\, v_i \\bigr)`];
+      const righe = [0, 1, 2].filter((i) => i < m).map((i) => [`${n(t[i], 1)}\\, w + b + u_{${i + 1}} - v_{${i + 1}}`, "=", n(y[i], 1), `i = ${i + 1}`]);
+      righe.push(["\\vdots", "", "", T(`\\text{analoghi per } i = 4, \\dots, ${m}`, `\\text{analogous for } i = 4, \\dots, ${m}`)]);
+      righe.push(["w,~ b", "><", "0", ""], ["u_i,~ v_i", ">=", "0", `i \\in \\{1, \\dots, ${m}\\}`]);
+      return modello(T(`<b>Il problema.</b> Decidiamo la pendenza \\(w\\) e l'intercetta \\(b\\) della retta che stima la domanda \\(y_i\\) dalla temperatura \\(x_i\\) degli ${m} giorni osservati; \\(u_i\\) e \\(v_i\\) sono gli scostamenti in eccesso e in difetto. ` +
+        "L'obiettivo è minimizzare la somma degli scostamenti pesati \\(\\tau\\) e \\(1 - \\tau\\) (con \\(\\tau = 1/2\\) si ottengono gli scarti assoluti).",
+      `<b>The problem.</b> We decide the slope \\(w\\) and the intercept \\(b\\) of the line that estimates demand \\(y_i\\) from the temperature \\(x_i\\) of the ${m} observed days; \\(u_i\\) and \\(v_i\\) are the deviations in excess and in defect. ` +
+        "The objective is to minimize the sum of the deviations weighted by \\(\\tau\\) and \\(1 - \\tau\\) (with \\(\\tau = 1/2\\) one gets least absolute deviations)."),
+      sim, numerico("min", ob, righe),
+      T(`Il modello numerico è quello della retta \\(\\tau\\) con i punti attuali (anche quelli trascinati): si scrivono per intero i primi tre vincoli, gli altri hanno la stessa forma con il proprio \\((x_i, y_i)\\).`,
+        `The numerical model is the one of the \\(\\tau\\) line with the current points (dragged ones included): the first three constraints are written in full, the others have the same form with their own \\((x_i, y_i)\\).`));
+    },
     letture(rette, p, dati, C) {
       const [lad, q] = rette, m = dati.t.length;
       const eq = (r) => `\\(y = ${n(r.b, 2)} ${r.w < 0 ? "-" : "+"} ${n(Math.abs(r.w), 2)}\\, t\\)`;

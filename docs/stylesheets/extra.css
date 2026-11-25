@@ -63,3 +63,22 @@
 .md-typeset .admonition.soluzione, .md-typeset details.soluzione { border-width: 0 0 0 4px; border-color: var(--c-soluzione); background: color-mix(in srgb, var(--c-soluzione) 5%, transparent); }
 .md-typeset .soluzione > .admonition-title, .md-typeset .soluzione > summary { background: color-mix(in srgb, var(--c-soluzione) 13%, transparent); font-weight: 600; }
 .md-typeset .soluzione > .admonition-title::before, .md-typeset .soluzione > summary::before { background-color: var(--c-soluzione); -webkit-mask-image: var(--md-admonition-icon--success); mask-image: var(--md-admonition-icon--success); }
+
+/* app del laboratorio: problema, modello simbolico e modello numerico sopra il grafico (gi-pl-app.js) */
+.gi-formula:has(.plm) { display: block; font-size: 1em; min-height: 0; overflow: visible; padding: .1em 0 .5em; }
+.md-typeset .plm-testo { margin: 0 0 .5em; font-size: .78rem; line-height: 1.45; }
+.plm-sim { overflow-x: auto; overflow-y: hidden; text-align: center; font-size: .95em; padding: .2em 0 .3em; }
+.md-typeset details.plm-num { margin: .3em 0 0; font-size: .74rem; }
+.md-typeset details.plm-num > summary { font-weight: 600; }
+.plm-num-corpo { max-height: 46vh; overflow: auto; padding: .2em 0 .4em; }
+.md-typeset .gi-app-intera details.plm-num { position: relative; overflow: visible; }
+/* a tutta pagina il modello numerico si apre sopra il grafico, che resta della sua altezza */
+.gi-app-intera details.plm-num[open] > .plm-num-corpo {
+  position: absolute; left: -1px; right: -1px; top: 100%; z-index: 6;
+  max-height: min(62vh, 680px); padding: .4em .8em .6em;
+  background: var(--md-default-bg-color); border: 1px solid var(--md-default-fg-color--lighter);
+  border-radius: 0 0 6px 6px; box-shadow: 0 8px 22px rgba(0, 0, 0, .22);
+}
+.plm-riga { text-align: left; margin: .25em 0; white-space: nowrap; }
+.md-typeset .plm-nota { margin: .4em 0 0; font-size: .95em; opacity: .85; white-space: normal; }
+.plm-stretto { font-size: .8em; }
