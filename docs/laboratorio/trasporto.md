@@ -9,6 +9,6 @@ title: "Trasporto dai magazzini ai clienti"
 
 # Trasporto dai magazzini ai clienti
 
-Il trasporto da due magazzini a tre clienti, risolto all'ottimo nel browser: il problema, i dati, il modello simbolico e quello numerico, le spedizioni ottime e il loro costo. Muovi un costo e la capacità del magazzino 1: cambiano le spedizioni ottime.
+Il trasporto dai magazzini ai clienti, risolto all'ottimo nel browser su un'istanza con due magazzini e tre clienti: il problema, i dati, il modello simbolico e quello numerico, le spedizioni ottime e il loro costo. Muovi un costo e la capacità del magazzino 1: cambiano le spedizioni ottime.
 
 <div class="gi gi-app-intera" data-grafico="pl-trasporto"></div>

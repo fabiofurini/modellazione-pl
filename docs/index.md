@@ -33,7 +33,7 @@ Prerequisiti: [Programmazione lineare](https://fabiofurini.github.io/programmazi
 <!-- collana-app -->
 ## Provalo subito
 
-Il problema del trasporto da due magazzini a tre clienti, risolto all'ottimo nel browser: cambia un costo e la capacità di un magazzino con i cursori e il simplesso ricalcola le spedizioni ottime e il loro costo.
+Il problema del trasporto dai magazzini ai clienti, risolto all'ottimo nel browser su un'istanza con due magazzini e tre clienti: cambia un costo e la capacità di un magazzino con i cursori e il simplesso ricalcola le spedizioni ottime e il loro costo.
 
 <div class="gi" data-grafico="pl-trasporto"></div>
 

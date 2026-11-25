@@ -17,7 +17,7 @@ e delle dispense. Scegli un'app: si apre a tutta pagina.
 
     ---
 
-    Il trasporto da due magazzini a tre clienti, risolto all'ottimo nel browser: il problema, i dati, il modello simbolico e quello numerico, le spedizioni ottime e il loro costo.
+    Il trasporto dai magazzini ai clienti, risolto all'ottimo nel browser su un'istanza con due magazzini e tre clienti: il problema, i dati, il modello simbolico e quello numerico, le spedizioni ottime e il loro costo.
 
     [Apri l'app →](trasporto.md)
 

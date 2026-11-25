@@ -63,11 +63,11 @@
         [tx("i \\backslash j"), "1", "2", "3", tx("d_i")],
         [...Rr.f.map((r, i) => [String(i + 1), ...r.map(String), String(Rr.d[i])]), [tx("e_j"), ...DATI.e.map(String), ""]]));
       const testo = T(
-        "<b>Il problema.</b> Due magazzini riforniscono tre clienti. Decidiamo quante unità spedire da ogni magazzino a ogni cliente, " +
+        "<b>Il problema.</b> Alcuni magazzini riforniscono alcuni clienti. Decidiamo quante unità spedire da ogni magazzino a ogni cliente, " +
         "con costo totale minimo, senza superare la capacità dei magazzini e servendo per intero la domanda dei clienti." +
         "<br><b>Variabili:</b> \\(x_{ij} \\ge 0\\): unità spedite dal magazzino \\(i\\) al cliente \\(j\\)." +
         `<br><b>Dati:</b> \\(s = ${S}\\) magazzini, \\(r = ${R}\\) clienti; \\(f_{ij}\\): costo di un'unità da \\(i\\) a \\(j\\); \\(d_i\\): capacità del magazzino \\(i\\); \\(e_j\\): domanda del cliente \\(j\\).` + TAB,
-        "<b>The problem.</b> Two warehouses supply three customers. We decide how many units to ship from each warehouse to each customer, " +
+        "<b>The problem.</b> Some warehouses supply some customers. We decide how many units to ship from each warehouse to each customer, " +
         "at minimum total cost, without exceeding the capacity of the warehouses and serving the demand of the customers in full." +
         "<br><b>Variables:</b> \\(x_{ij} \\ge 0\\): units shipped from warehouse \\(i\\) to customer \\(j\\)." +
         `<br><b>Data:</b> \\(s = ${S}\\) warehouses, \\(r = ${R}\\) customers; \\(f_{ij}\\): cost of one unit from \\(i\\) to \\(j\\); \\(d_i\\): capacity of warehouse \\(i\\); \\(e_j\\): demand of customer \\(j\\).` + TAB);
