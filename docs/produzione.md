@@ -48,7 +48,7 @@ ore macchina disponibili.
 | $h_{it}$ | $\in \mathbb{Q}_{> 0}$ | costo di giacenza di un'unità di $i$ per il mese $t$ (€) |
 | $a_i$ | $\in \mathbb{Q}_{> 0}$ | ore macchina per produrre un'unità del prodotto $i$ |
 | $b_t$ | $\in \mathbb{Q}_{\ge 0}$ | ore macchina disponibili nel mese $t$ |
-| $s_{i0}$ | $\in \mathbb{Q}_{\ge 0}$ | scorta iniziale del prodotto $i$ (unità) |
+| $r_i$ | $\in \mathbb{Q}_{\ge 0}$ | scorta iniziale del prodotto $i$ (unità) |
 
 **Variabili decisionali.** Introduciamo le seguenti $2\,n\,m$ variabili non negative:
 
@@ -69,7 +69,7 @@ Usando queste variabili, un modello LP per il problema è il seguente:
 $$
 \begin{aligned}
 \min ~~ \sum_{i=1}^{n} \sum_{t=1}^{m} \bigl( c_{it}\, x_{it} + h_{it}\, s_{it} \bigr) & & \\
-\text{soggetto a} \quad x_{i1} - s_{i1} &= d_{i1} - s_{i0}, & \forall i \in \{1, 2, \dots, n\}, \\
+\text{soggetto a} \quad x_{i1} - s_{i1} &= d_{i1} - r_i, & \forall i \in \{1, 2, \dots, n\}, \\
 x_{it} + s_{i,t-1} - s_{it} &= d_{it}, & \forall i \in \{1, 2, \dots, n\},~\forall t \in \{2, 3, \dots, m\}, \\
 \sum_{i=1}^{n} a_i\, x_{it} &\le b_t, & \forall t \in \{1, 2, \dots, m\}, \\
 x_{it} &\ge 0, & \forall i \in \{1, 2, \dots, n\},~\forall t \in \{1, 2, \dots, m\}, \\
@@ -84,7 +84,7 @@ Descrizione della funzione obiettivo e dei vincoli:
   e i mesi;
 - i vincoli lineari di **bilancio** delle scorte sono quelli della tecnica
   [4.5 Pianificazione su più periodi](tecniche-05.md), uno per prodotto e mese; per
-  $t = 1$ la scorta iniziale $s_{i0}$ è un dato e passa a destra, nel termine noto
+  $t = 1$ la scorta iniziale $r_i$ è un dato e passa a destra, nel termine noto
   ($n\,m$ vincoli lineari);
 - i vincoli lineari di **capacità** assicurano che, in ogni mese, le ore macchina
   usate da tutti i prodotti non superino quelle disponibili ($m$ vincoli lineari);
@@ -107,7 +107,7 @@ capacità), domanda crescente con il picco nel mese 3, 400 ore macchina al mese,
 scorte iniziali nulle (dati in `dati/produzione_domanda.csv` e
 `dati/produzione_capacita.csv`).
 
-| Prodotto | $c_i$ (€/unità) | $h_i$ (€/unità/mese) | $a_i$ (ore/unità) | $s_{i0}$ (unità) |
+| Prodotto | $c_i$ (€/unità) | $h_i$ (€/unità/mese) | $a_i$ (ore/unità) | $r_i$ (unità) |
 |---|---|---|---|---|
 | 1 | 10 | 1 | 1 | 0 |
 | 2 | 15 | 1,2 | 1,5 | 0 |
