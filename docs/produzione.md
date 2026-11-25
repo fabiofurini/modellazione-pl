@@ -71,7 +71,7 @@ Usando queste variabili, un modello LP per il problema è il seguente:
 
 $$
 \begin{aligned}
-\min ~~ \sum_{i=1}^{n} \sum_{t=1}^{m} c_{it}\, x_{it} + \sum_{i=1}^{n} \sum_{t=1}^{m-1} h_{it}\, s_{it} & & \\
+\min ~~ \sum_{i=1}^{n} \sum_{t=1}^{m} c_{it}\, x_{it} & + \sum_{i=1}^{n} \sum_{t=1}^{m-1} h_{it}\, s_{it} & \\
 \text{soggetto a} \quad x_{i1} - s_{i1} &= d_{i1} - r_{i0}, & \forall i \in \{1, 2, \dots, n\}, \\
 x_{it} + s_{i,t-1} - s_{it} &= d_{it}, & \forall i \in \{1, 2, \dots, n\},~\forall t \in \{2, 3, \dots, m-1\}, \\
 x_{im} + s_{i,m-1} &= d_{im} + r_{im}, & \forall i \in \{1, 2, \dots, n\}, \\
