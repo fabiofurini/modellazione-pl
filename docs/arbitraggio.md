@@ -1,6 +1,6 @@
 # Arbitraggio e prezzatura senza arbitraggio
 
-[:material-file-pdf-box: Dispensa (PDF)](pdf/dispensa-modellazione-pl.pdf) · [:material-presentation: Slide del capitolo (PDF)](pdf/slide-10-arbitraggio.pdf)
+[:material-file-pdf-box: Dispensa (PDF)](pdf/dispensa-modellazione-pl.pdf) · [:material-presentation: Slide del capitolo (PDF)](pdf/slide-10-arbitraggio.pdf) · [:material-gesture-tap: App: Arbitraggio e prezzi coerenti](laboratorio/arbitraggio.md)
 
 **Classe: LP** · Script: `python/lab10_arbitraggio.py`
 
