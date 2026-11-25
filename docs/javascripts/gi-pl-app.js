@@ -209,8 +209,7 @@
 
   // ================================================================ produzione (cap. 4)
   /** riga evidenziata sotto il problema: quantità continue, non oggetti da contare */
-  const CONTINUE = [`</p><p class="plm-evid">Un'unità di prodotto può essere un litro, un chilogrammo o un'altra unità di misura, ed è ovviamente frazionaria: le variabili \\(x_{it}\\) e \\(s_{it}\\) sono continue, non intere. Non possono rappresentare oggetti da contare, come il numero di automobili prodotte: servirebbero variabili intere e un modello di programmazione lineare intera.`,
-    `</p><p class="plm-evid">A unit of product can be a litre, a kilogram or any other unit of measure, and it is obviously fractional: the variables \\(x_{it}\\) and \\(s_{it}\\) are continuous, not integer. They cannot represent items to be counted, such as the number of cars produced: that would require integer variables and an integer linear programming model.`];
+  const CONTINUE = ["", ""];   // la nota sulle unità continue sta solo nella pagina del capitolo (Fabio, 25/11/2026)
   const PRODOTTO = (C) => [C.a, C.b, C.c];
   const vProduzione = {
     etichetta: T("Produzione e scorte", "Production and inventory"),
