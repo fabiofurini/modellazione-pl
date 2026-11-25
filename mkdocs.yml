@@ -142,9 +142,9 @@ extra_javascript:
   - javascripts/gi-ott.js?v=04048d2032
   - javascripts/gi-pl-dati.js?v=3bb3aa7015
   - javascripts/gi-pl-modelli.js?v=574e57b3ed
-  - javascripts/gi-pl-app.js?v=7c95277313
-  - javascripts/gi-pl-finanza.js?v=cf6b2a4546
-  - javascripts/gi-pl-tecniche.js?v=186b5ec35d
+  - javascripts/gi-pl-app.js?v=de01b77377
+  - javascripts/gi-pl-finanza.js?v=006d45332d
+  - javascripts/gi-pl-tecniche.js?v=2e7668761d
   - javascripts/quiz.js?v=be7fae2b85
 
 # le pagine delle singole app non stanno nel menu: il laboratorio è una voce sola

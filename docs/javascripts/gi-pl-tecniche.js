@@ -256,15 +256,13 @@
         x_i &\\ge 0, & ${ir}, \\\\
         y_i &\\ge 0, & ${ir}, \\\\
         z_i &\\ge 0, & ${ir}.`;
-      return modello("01", T("<b>Il problema.</b> Decidiamo quanti litri di ogni prodotto vendere al giorno non trattati (\\(x_i\\)), trattati in orario ordinario (\\(y_i\\)) e trattati in straordinario (\\(z_i\\)). " +
-        "L'obiettivo è il profitto massimo: un litro rende \\(a_i\\) € se non trattato (3, 2, 2), \\(b_i\\) € se trattato in orario ordinario (6, 4, 4), \\(c_i\\) € se trattato in straordinario (5, 3, 3). " +
-        "I vincoli: al più \\(w_i\\) litri al giorno di ogni prodotto (35, 30, 25), al più \\(d\\) litri al giorno trattati in orario ordinario ed \\(e\\) litri in straordinario, per tutti i prodotti insieme." +
-        "<br><b>Dati:</b> \\(r = 3\\): numero di prodotti, indice \\(i\\)." +
+      return modello("01", T(`<b>Il problema.</b> Decidiamo quanti litri di ogni prodotto vendere al giorno non trattati, trattati in orario ordinario e trattati in straordinario. L'obiettivo è il profitto massimo. I vincoli: produzione massima di ogni prodotto, capacità di trattamento in orario ordinario e in straordinario, per tutti i prodotti insieme.` +
+        `<br><b>Variabili:</b> \\(x_i\\): litri del prodotto \\(i\\) venduti al giorno non trattati; \\(y_i\\): litri trattati in orario ordinario; \\(z_i\\): litri trattati in straordinario.` +
+        `<br><b>Dati:</b> \\(r = 3\\): numero di prodotti, indice \\(i\\); \\(a_i\\): profitto di un litro non trattato (3, 2, 2 €); \\(b_i\\): profitto di un litro trattato in orario ordinario (6, 4, 4 €); \\(c_i\\): profitto di un litro trattato in straordinario (5, 3, 3 €); \\(w_i\\): produzione massima del prodotto \\(i\\) (35, 30, 25 L al giorno); \\(d\\): litri trattabili al giorno in orario ordinario (30); \\(e\\): litri trattabili al giorno in straordinario (20).` +
         DUALI("\\(\\lambda_i\\): profitto in più, in €/L, per un litro in più di produzione massima \\(w_i\\); \\(\\pi\\) e \\(\\varrho\\): lo stesso per un litro in più di capacità \\(d\\) e \\(e\\)."),
-      "<b>The problem.</b> We decide how many liters of each product to sell per day untreated (\\(x_i\\)), treated in regular time (\\(y_i\\)) and treated in overtime (\\(z_i\\)). " +
-        "The objective is the maximum profit: one liter yields \\(a_i\\) € untreated (3, 2, 2), \\(b_i\\) € treated in regular time (6, 4, 4), \\(c_i\\) € treated in overtime (5, 3, 3). " +
-        "The constraints: at most \\(w_i\\) liters per day of each product (35, 30, 25), at most \\(d\\) liters per day treated in regular time and \\(e\\) liters in overtime, all products together." +
-        "<br><b>Data:</b> \\(r = 3\\): number of products, index \\(i\\)." +
+      `<b>The problem.</b> We decide how many liters of each product to sell per day untreated, treated in regular time and treated in overtime. The objective is the maximum profit. The constraints: maximum production of each product, treatment capacity in regular time and in overtime, all products together.` +
+        `<br><b>Variables:</b> \\(x_i\\): liters of product \\(i\\) sold per day untreated; \\(y_i\\): liters treated in regular time; \\(z_i\\): liters treated in overtime.` +
+        `<br><b>Data:</b> \\(r = 3\\): number of products, index \\(i\\); \\(a_i\\): profit of one untreated liter (3, 2, 2 €); \\(b_i\\): profit of one liter treated in regular time (6, 4, 4 €); \\(c_i\\): profit of one liter treated in overtime (5, 3, 3 €); \\(w_i\\): maximum production of product \\(i\\) (35, 30, 25 L per day); \\(d\\): liters that can be treated per day in regular time (30); \\(e\\): liters that can be treated per day in overtime (20).` +
         DUALI("\\(\\lambda_i\\): extra profit, in €/L, for one more liter of maximum production \\(w_i\\); \\(\\pi\\) and \\(\\varrho\\): the same for one more liter of capacity \\(d\\) and \\(e\\).")),
       sim, numerico(R.P));
     },
@@ -345,15 +343,13 @@
         ${SA()} \\quad \\sum_{j=1}^{r} x_{ij} &\\le ${st.col("a", "d_i")}, & ${ii}, \\\\
         \\sum_{i=1}^{s} x_{ij} &= ${st.col("b", "e_j")}, & ${jj}, \\\\
         x_{ij} &\\ge 0, & ${ii},~${jj}.`;
-      return modello("02", T("<b>Il problema.</b> Decidiamo i litri \\(x_{ij}\\) trasportati ogni settimana dal magazzino \\(i\\) al cliente \\(j\\). " +
-        "L'obiettivo è il costo di trasporto minimo: \\(f_{ij}\\) € al litro, 3, 2, 1 dal magazzino 1 e 2, 4, 1 dal magazzino 2. " +
-        "I vincoli: ogni magazzino spedisce al più \\(d_i\\) litri a settimana (120 e 110), ogni cliente riceve esattamente la sua domanda \\(e_j\\) in litri a settimana (50, 60, 100)." +
-        "<br><b>Dati:</b> \\(s = 2\\): numero di magazzini, indice \\(i\\); \\(r = 3\\): numero di clienti, indice \\(j\\)." +
+      return modello("02", T(`<b>Il problema.</b> Decidiamo quanti litri trasportare ogni settimana da ogni magazzino a ogni cliente. L'obiettivo è il costo di trasporto minimo. I vincoli: ogni magazzino spedisce al più la sua capacità, ogni cliente riceve esattamente la sua domanda.` +
+        `<br><b>Variabili:</b> \\(x_{ij}\\): litri trasportati ogni settimana dal magazzino \\(i\\) al cliente \\(j\\).` +
+        `<br><b>Dati:</b> \\(s = 2\\): numero di magazzini, indice \\(i\\); \\(r = 3\\): numero di clienti, indice \\(j\\); \\(f_{ij}\\): costo di trasporto (€ al litro): 3, 2, 1 dal magazzino 1 e 2, 4, 1 dal magazzino 2; \\(d_i\\): capacità del magazzino \\(i\\) (120 e 110 L a settimana); \\(e_j\\): domanda del cliente \\(j\\) (50, 60, 100 L a settimana).` +
         DUALI("\\(\\mu_i \\le 0\\): variazione del costo, in €/L, per un litro in più di capacità \\(d_i\\); \\(\\pi_j\\): costo in più, in €/L, per un litro in più di domanda \\(e_j\\)."),
-      "<b>The problem.</b> We decide the liters \\(x_{ij}\\) transported each week from warehouse \\(i\\) to client \\(j\\). " +
-        "The objective is the minimum transportation cost: \\(f_{ij}\\) € per liter, 3, 2, 1 from warehouse 1 and 2, 4, 1 from warehouse 2. " +
-        "The constraints: each warehouse ships at most \\(d_i\\) liters per week (120 and 110), each client receives exactly its demand \\(e_j\\) in liters per week (50, 60, 100)." +
-        "<br><b>Data:</b> \\(s = 2\\): number of warehouses, index \\(i\\); \\(r = 3\\): number of clients, index \\(j\\)." +
+      `<b>The problem.</b> We decide how many liters to transport each week from each warehouse to each client. The objective is the minimum transportation cost. The constraints: each warehouse ships at most its capacity, each client receives exactly its demand.` +
+        `<br><b>Variables:</b> \\(x_{ij}\\): liters transported each week from warehouse \\(i\\) to client \\(j\\).` +
+        `<br><b>Data:</b> \\(s = 2\\): number of warehouses, index \\(i\\); \\(r = 3\\): number of clients, index \\(j\\); \\(f_{ij}\\): transportation cost (€ per liter): 3, 2, 1 from warehouse 1 and 2, 4, 1 from warehouse 2; \\(d_i\\): capacity of warehouse \\(i\\) (120 and 110 L per week); \\(e_j\\): demand of client \\(j\\) (50, 60, 100 L per week).` +
         DUALI("\\(\\mu_i \\le 0\\): change of the cost, in €/L, for one more liter of capacity \\(d_i\\); \\(\\pi_j\\): extra cost, in €/L, for one more liter of demand \\(e_j\\).")),
       sim, numerico(R.P));
     },
@@ -440,15 +436,13 @@
         x_i &\\ge c_i, & ${is}, \\\\
         x_i &\\le d_i, & ${is}, \\\\
         x_i &\\ge 0, & ${is}.`;
-      return modello("03", T("<b>Il problema.</b> Decidiamo i chilogrammi \\(x_i\\) di ogni alimento nella dieta mensile. " +
-        "Un chilogrammo di alimento \\(i\\) dà \\(g_{ij}\\) grammi di nutriente \\(j\\): (2, 4, 2), (1, 1, 1), (4, 6, 4), (4, 6, 2) per gli alimenti 1–4. L'obiettivo è il costo minimo, con \\(w_i\\) € al chilogrammo (5, 8, 2, 2). " +
-        "I vincoli: al mese, per ogni nutriente almeno \\(a_j\\) grammi (10, 20, 10) e al più \\(b_j\\) grammi (40, 60, 50); per ogni alimento almeno \\(c_i\\) chilogrammi (1, 1, 0, 1) e al più \\(d_i\\) chilogrammi (10, 15, 20, 10)." +
-        "<br><b>Dati:</b> \\(s = 4\\): numero di alimenti, indice \\(i\\); \\(r = 3\\): numero di nutrienti, indice \\(j\\)." +
+      return modello("03", T(`<b>Il problema.</b> Decidiamo quanti chilogrammi di ogni alimento mettere nella dieta mensile. L'obiettivo è il costo minimo. I vincoli: per ogni nutriente una quantità minima e una massima al mese; per ogni alimento una quantità minima e una massima.` +
+        `<br><b>Variabili:</b> \\(x_i\\): chilogrammi dell'alimento \\(i\\) nella dieta mensile.` +
+        `<br><b>Dati:</b> \\(s = 4\\): numero di alimenti, indice \\(i\\); \\(r = 3\\): numero di nutrienti, indice \\(j\\); \\(g_{ij}\\): grammi di nutriente \\(j\\) in un chilogrammo di alimento \\(i\\): (2, 4, 2), (1, 1, 1), (4, 6, 4), (4, 6, 2) per gli alimenti 1–4; \\(w_i\\): costo dell'alimento \\(i\\) (5, 8, 2, 2 € al kg); \\(a_j\\) e \\(b_j\\): grammi minimi (10, 20, 10) e massimi (40, 60, 50) di nutriente \\(j\\) al mese; \\(c_i\\) e \\(d_i\\): chilogrammi minimi (1, 1, 0, 1) e massimi (10, 15, 20, 10) di alimento \\(i\\) al mese.` +
         DUALI("costo in più per un'unità in più a destra del vincolo: \\(\\alpha_j \\ge 0\\) e \\(\\beta_j \\le 0\\) in €/g per i limiti \\(a_j\\) e \\(b_j\\), \\(\\gamma_i \\ge 0\\) e \\(\\delta_i \\le 0\\) in €/kg per i limiti \\(c_i\\) e \\(d_i\\)."),
-      "<b>The problem.</b> We decide the kilograms \\(x_i\\) of each food in the monthly diet. " +
-        "One kilogram of food \\(i\\) gives \\(g_{ij}\\) grams of nutrient \\(j\\): (2, 4, 2), (1, 1, 1), (4, 6, 4), (4, 6, 2) for foods 1–4. The objective is the minimum cost, with \\(w_i\\) € per kilogram (5, 8, 2, 2). " +
-        "The constraints: per month, for each nutrient at least \\(a_j\\) grams (10, 20, 10) and at most \\(b_j\\) grams (40, 60, 50); for each food at least \\(c_i\\) kilograms (1, 1, 0, 1) and at most \\(d_i\\) kilograms (10, 15, 20, 10)." +
-        "<br><b>Data:</b> \\(s = 4\\): number of foods, index \\(i\\); \\(r = 3\\): number of nutrients, index \\(j\\)." +
+      `<b>The problem.</b> We decide how many kilograms of each food to put in the monthly diet. The objective is the minimum cost. The constraints: for each nutrient a minimum and a maximum amount per month; for each food a minimum and a maximum amount.` +
+        `<br><b>Variables:</b> \\(x_i\\): kilograms of food \\(i\\) in the monthly diet.` +
+        `<br><b>Data:</b> \\(s = 4\\): number of foods, index \\(i\\); \\(r = 3\\): number of nutrients, index \\(j\\); \\(g_{ij}\\): grams of nutrient \\(j\\) in one kilogram of food \\(i\\): (2, 4, 2), (1, 1, 1), (4, 6, 4), (4, 6, 2) for foods 1–4; \\(w_i\\): cost of food \\(i\\) (5, 8, 2, 2 € per kg); \\(a_j\\) and \\(b_j\\): minimum (10, 20, 10) and maximum (40, 60, 50) grams of nutrient \\(j\\) per month; \\(c_i\\) and \\(d_i\\): minimum (1, 1, 0, 1) and maximum (10, 15, 20, 10) kilograms of food \\(i\\) per month.` +
         DUALI("extra cost for one more unit on the right-hand side of the constraint: \\(\\alpha_j \\ge 0\\) and \\(\\beta_j \\le 0\\) in €/g for the bounds \\(a_j\\) and \\(b_j\\), \\(\\gamma_i \\ge 0\\) and \\(\\delta_i \\le 0\\) in €/kg for the bounds \\(c_i\\) and \\(d_i\\).")),
       sim, numerico(R.P));
     },
@@ -523,15 +517,13 @@
         \\sum_{k=1}^{n} x_{ik} &\\ge ${st.col("c", "c_i")}, & ${is}, \\\\
         \\sum_{k=1}^{n} x_{ik} &\\le d_i, & ${is}, \\\\
         x_{ik} &\\ge 0, & ${is},~${kn}.`;
-      return modello("04", T("<b>Il problema.</b> Decidiamo i chilogrammi \\(x_{ik}\\) di alimento \\(i\\) nella dieta \\(k\\). " +
-        "Un chilogrammo di alimento \\(i\\) dà \\(g_{ij}\\) grammi di nutriente \\(j\\): (6, 2), (2, 1), (2, 6) per gli alimenti 1–3. L'obiettivo è il costo minimo delle due diete, con \\(w_i\\) € al chilogrammo (5, 8, 6). " +
-        "I vincoli: nella dieta \\(k\\) almeno \\(a_{kj}\\) e al più \\(b_{kj}\\) grammi di nutriente \\(j\\) (dieta 1: da 20 a 40 e da 10 a 20; dieta 2: da 10 a 20 e da 20 a 40); per ogni alimento, sommando le due diete, almeno \\(c_i\\) chilogrammi (1, 1, 0) e al più \\(d_i\\) (5, 4, 10)." +
-        "<br><b>Dati:</b> \\(n = 2\\): numero di diete mensili, indice \\(k\\); \\(s = 3\\): numero di alimenti, indice \\(i\\); \\(r = 2\\): numero di nutrienti, indice \\(j\\)." +
+      return modello("04", T(`<b>Il problema.</b> Decidiamo quanti chilogrammi di ogni alimento mettere in ognuna delle due diete mensili. L'obiettivo è il costo minimo delle due diete. I vincoli: in ogni dieta, per ogni nutriente, una quantità minima e una massima; per ogni alimento, sommando le due diete, una quantità minima e una massima.` +
+        `<br><b>Variabili:</b> \\(x_{ik}\\): chilogrammi di alimento \\(i\\) nella dieta \\(k\\).` +
+        `<br><b>Dati:</b> \\(n = 2\\): numero di diete mensili, indice \\(k\\); \\(s = 3\\): numero di alimenti, indice \\(i\\); \\(r = 2\\): numero di nutrienti, indice \\(j\\); \\(g_{ij}\\): grammi di nutriente \\(j\\) in un chilogrammo di alimento \\(i\\): (6, 2), (2, 1), (2, 6) per gli alimenti 1–3; \\(w_i\\): costo dell'alimento \\(i\\) (5, 8, 6 € al kg); \\(a_{kj}\\) e \\(b_{kj}\\): grammi minimi e massimi di nutriente \\(j\\) nella dieta \\(k\\) (dieta 1: da 20 a 40 e da 10 a 20; dieta 2: da 10 a 20 e da 20 a 40); \\(c_i\\) e \\(d_i\\): chilogrammi minimi (1, 1, 0) e massimi (5, 4, 10) di alimento \\(i\\) nelle due diete insieme.` +
         DUALI("costo in più per un'unità in più a destra del vincolo: \\(\\alpha_{kj} \\ge 0\\) e \\(\\beta_{kj} \\le 0\\) in €/g per i limiti \\(a_{kj}\\) e \\(b_{kj}\\), \\(\\gamma_i \\ge 0\\) e \\(\\delta_i \\le 0\\) in €/kg per i limiti \\(c_i\\) e \\(d_i\\)."),
-      "<b>The problem.</b> We decide the kilograms \\(x_{ik}\\) of food \\(i\\) in diet \\(k\\). " +
-        "One kilogram of food \\(i\\) gives \\(g_{ij}\\) grams of nutrient \\(j\\): (6, 2), (2, 1), (2, 6) for foods 1–3. The objective is the minimum cost of the two diets, with \\(w_i\\) € per kilogram (5, 8, 6). " +
-        "The constraints: diet \\(k\\) has at least \\(a_{kj}\\) and at most \\(b_{kj}\\) grams of nutrient \\(j\\) (diet 1: 20 to 40 and 10 to 20; diet 2: 10 to 20 and 20 to 40); for each food, over both diets, at least \\(c_i\\) kilograms (1, 1, 0) and at most \\(d_i\\) (5, 4, 10)." +
-        "<br><b>Data:</b> \\(n = 2\\): number of monthly diets, index \\(k\\); \\(s = 3\\): number of foods, index \\(i\\); \\(r = 2\\): number of nutrients, index \\(j\\)." +
+      `<b>The problem.</b> We decide how many kilograms of each food to put in each of the two monthly diets. The objective is the minimum cost of the two diets. The constraints: in each diet, for each nutrient, a minimum and a maximum amount; for each food, over both diets, a minimum and a maximum amount.` +
+        `<br><b>Variables:</b> \\(x_{ik}\\): kilograms of food \\(i\\) in diet \\(k\\).` +
+        `<br><b>Data:</b> \\(n = 2\\): number of monthly diets, index \\(k\\); \\(s = 3\\): number of foods, index \\(i\\); \\(r = 2\\): number of nutrients, index \\(j\\); \\(g_{ij}\\): grams of nutrient \\(j\\) in one kilogram of food \\(i\\): (6, 2), (2, 1), (2, 6) for foods 1–3; \\(w_i\\): cost of food \\(i\\) (5, 8, 6 € per kg); \\(a_{kj}\\) and \\(b_{kj}\\): minimum and maximum grams of nutrient \\(j\\) in diet \\(k\\) (diet 1: 20 to 40 and 10 to 20; diet 2: 10 to 20 and 20 to 40); \\(c_i\\) and \\(d_i\\): minimum (1, 1, 0) and maximum (5, 4, 10) kilograms of food \\(i\\) over both diets.` +
         DUALI("extra cost for one more unit on the right-hand side of the constraint: \\(\\alpha_{kj} \\ge 0\\) and \\(\\beta_{kj} \\le 0\\) in €/g for the bounds \\(a_{kj}\\) and \\(b_{kj}\\), \\(\\gamma_i \\ge 0\\) and \\(\\delta_i \\le 0\\) in €/kg for the bounds \\(c_i\\) and \\(d_i\\).")),
       sim, numerico(R.P));
     },
@@ -613,17 +605,13 @@
         b_t &\\ge 0, & ${tn}, \\\\
         s_t &\\ge 0, & \\forall t \\in \\{1, 2, \\dots, n-1\\}.`;
       const D = R.D;
-      return modello("05", T(`<b>Il problema.</b> Decidiamo i litri prodotti \\(x_t\\), acquistati sul mercato \\(b_t\\) e in magazzino a fine giorno \\(s_t\\). ` +
-        `L'obiettivo è il costo minimo: \\(p_t\\) € per litro prodotto (10), \\(u_t\\) € per litro acquistato (15), \\(h_t\\) € per litro tenuto in magazzino a fine giorno (2). ` +
-        `I vincoli: ogni giorno la domanda \\(d_t\\) in litri (45, 60, 75, 75) è servita da produzione, acquisti e scorta del giorno prima; si parte con \\(\\ell_0 = ${D.l0}\\) litri e alla fine restano \\(\\ell_n = ${D.ln}\\) litri; si producono al più \\(m_t\\) litri al giorno (40, 50, 150, 40). ` +
-        `Il termine costante \\(h_n\\, \\ell_n\\) è il costo di mantenimento della scorta finale.` +
-        "<br><b>Dati:</b> \\(n = 4\\): numero di giorni, indice \\(t\\)." +
+      return modello("05", T(`<b>Il problema.</b> Decidiamo quanti litri produrre, quanti acquistare sul mercato e quanti tenere in magazzino ogni giorno. L'obiettivo è il costo minimo di produzione, acquisto e magazzino. I vincoli: ogni giorno la domanda è servita da produzione, acquisti e scorta del giorno prima; la scorta iniziale e quella finale sono fissate; la produzione giornaliera ha un limite.` +
+        `<br><b>Variabili:</b> \\(x_t\\): litri prodotti nel giorno \\(t\\); \\(b_t\\): litri acquistati sul mercato nel giorno \\(t\\); \\(s_t\\): litri in magazzino a fine giorno \\(t\\).` +
+        `<br><b>Dati:</b> \\(n = 4\\): numero di giorni, indice \\(t\\); \\(p_t\\): costo di un litro prodotto (10 €); \\(u_t\\): costo di un litro acquistato (15 €); \\(h_t\\): costo di un litro tenuto in magazzino a fine giorno (2 €); \\(d_t\\): domanda del giorno \\(t\\) (45, 60, 75, 75 L); \\(\\ell_0 = ${D.l0}\\): litri in magazzino all'inizio; \\(\\ell_n = ${D.ln}\\): litri che devono restare alla fine; \\(m_t\\): produzione massima del giorno \\(t\\) (40, 50, 150, 40 L). Il termine costante \\(h_n\\, \\ell_n\\) è il costo di mantenimento della scorta finale.` +
         DUALI("\\(\\mu_t\\): costo in più, in €/L, per un litro in più di domanda nel giorno \\(t\\); \\(\\pi_t \\le 0\\): variazione del costo, in €/L, per un litro in più di capacità \\(m_t\\)."),
-      `<b>The problem.</b> We decide the liters produced \\(x_t\\), bought on the market \\(b_t\\) and in stock at the end of the day \\(s_t\\). ` +
-        `The objective is the minimum cost: \\(p_t\\) € per liter produced (10), \\(u_t\\) € per liter bought (15), \\(h_t\\) € per liter kept in stock at the end of the day (2). ` +
-        `The constraints: each day the demand \\(d_t\\) in liters (45, 60, 75, 75) is served by production, purchases and the stock of the day before; we start with \\(\\ell_0 = ${D.l0}\\) liters and \\(\\ell_n = ${D.ln}\\) liters must remain at the end; at most \\(m_t\\) liters are produced per day (40, 50, 150, 40). ` +
-        `The constant term \\(h_n\\, \\ell_n\\) is the holding cost of the final stock.` +
-        "<br><b>Data:</b> \\(n = 4\\): number of days, index \\(t\\)." +
+      `<b>The problem.</b> We decide how many liters to produce, how many to buy on the market and how many to keep in stock each day. The objective is the minimum cost of production, purchase and storage. The constraints: each day demand is served by production, purchases and the stock of the day before; the initial and final stock are fixed; daily production has a limit.` +
+        `<br><b>Variables:</b> \\(x_t\\): liters produced on day \\(t\\); \\(b_t\\): liters bought on the market on day \\(t\\); \\(s_t\\): liters in stock at the end of day \\(t\\).` +
+        `<br><b>Data:</b> \\(n = 4\\): number of days, index \\(t\\); \\(p_t\\): cost of one liter produced (10 €); \\(u_t\\): cost of one liter bought (15 €); \\(h_t\\): cost of one liter kept in stock at the end of the day (2 €); \\(d_t\\): demand of day \\(t\\) (45, 60, 75, 75 L); \\(\\ell_0 = ${D.l0}\\): liters in stock at the start; \\(\\ell_n = ${D.ln}\\): liters that must remain at the end; \\(m_t\\): maximum production of day \\(t\\) (40, 50, 150, 40 L). The constant term \\(h_n\\, \\ell_n\\) is the holding cost of the final stock.` +
         DUALI("\\(\\mu_t\\): extra cost, in €/L, for one more liter of demand on day \\(t\\); \\(\\pi_t \\le 0\\): change of the cost, in €/L, for one more liter of capacity \\(m_t\\).")),
       sim, numerico(R.P, { per: 8 }),
       T(`Senza il termine costante \\(h_n\\, \\ell_n = ${n(D.h, 2)} \\cdot ${D.ln} = ${n(D.h * D.ln, 2)}\\), che il valore ottimo qui sotto include.`,
@@ -733,15 +721,13 @@
         \\sum_{i=1}^{2} c_i\\, x_i &\\le ${st.col("b", "v")}, & \\\\
         \\sum_{i=1}^{2} a_i\\, x_i &\\ge m, & \\\\
         x_i &\\ge 0, & ${ii}.`;
-      return modello("06", T("<b>Il problema.</b> Decidiamo le porzioni \\(x_i\\) di ogni dolce. " +
-        "Una porzione pesa \\(a_i\\) grammi (50 e 75), dà \\(b_i\\) calorie (120 e 160) e \\(c_i\\) grammi di grassi (5 e 10). L'obiettivo è il gradimento massimo, \\(s_i\\) punti per grammo. " +
-        "I vincoli: al più \\(u\\) calorie (450), al più \\(v\\) grammi di grassi (25), almeno \\(m = 120\\) grammi di dolci." +
-        "<br><b>Dati:</b> \\(i = 1, 2\\): i due dolci, torta di frutta (1) e gelato (2)." +
+      return modello("06", T(`<b>Il problema.</b> Decidiamo quante porzioni di ogni dolce servire. L'obiettivo è il gradimento massimo. I vincoli: un limite alle calorie, un limite ai grassi, una quantità minima di dolci.` +
+        `<br><b>Variabili:</b> \\(x_i\\): porzioni del dolce \\(i\\).` +
+        `<br><b>Dati:</b> \\(i = 1, 2\\): i due dolci, torta di frutta (1) e gelato (2); \\(a_i\\): peso di una porzione (50 e 75 g); \\(b_i\\): calorie di una porzione (120 e 160); \\(c_i\\): grammi di grassi di una porzione (5 e 10); \\(s_i\\): gradimento di un grammo (8 e 9 punti); \\(u\\): calorie massime (450); \\(v\\): grammi massimi di grassi (25); \\(m = 120\\): grammi minimi di dolci.` +
         DUALI("gradimento in più per un'unità in più a destra del vincolo: \\(\\pi\\) in punti per caloria, \\(\\rho\\) in punti per grammo di grassi, \\(\\mu \\le 0\\) in punti per grammo di dolci richiesto."),
-      "<b>The problem.</b> We decide the portions \\(x_i\\) of each dessert. " +
-        "A portion weighs \\(a_i\\) grams (50 and 75), gives \\(b_i\\) calories (120 and 160) and \\(c_i\\) grams of fat (5 and 10). The objective is the maximum taste score, \\(s_i\\) points per gram. " +
-        "The constraints: at most \\(u\\) calories (450), at most \\(v\\) grams of fat (25), at least \\(m = 120\\) grams of dessert." +
-        "<br><b>Data:</b> \\(i = 1, 2\\): the two desserts, fruit cake (1) and ice cream (2)." +
+      `<b>The problem.</b> We decide how many portions of each dessert to serve. The objective is the maximum taste score. The constraints: a limit on calories, a limit on fat, a minimum amount of dessert.` +
+        `<br><b>Variables:</b> \\(x_i\\): portions of dessert \\(i\\).` +
+        `<br><b>Data:</b> \\(i = 1, 2\\): the two desserts, fruit cake (1) and ice cream (2); \\(a_i\\): weight of a portion (50 and 75 g); \\(b_i\\): calories of a portion (120 and 160); \\(c_i\\): grams of fat in a portion (5 and 10); \\(s_i\\): taste score of one gram (8 and 9 points); \\(u\\): maximum calories (450); \\(v\\): maximum grams of fat (25); \\(m = 120\\): minimum grams of dessert.` +
         DUALI("extra taste score for one more unit on the right-hand side of the constraint: \\(\\pi\\) in points per calorie, \\(\\rho\\) in points per gram of fat, \\(\\mu \\le 0\\) in points per gram of dessert required.")),
       sim, numerico(R.P));
     },
@@ -829,15 +815,13 @@
         s_t &\\le ${st.col("b", "k")}, & \\forall t \\in \\{1, 2, 3\\}, \\\\
         x_t &\\ge 0, & \\forall t \\in \\{1, 2, 3, 4\\}, \\\\
         s_t &\\ge 0, & \\forall t \\in \\{1, 2, 3\\}.`;
-      return modello("07", T("<b>Il problema.</b> Decidiamo i chilogrammi \\(x_t\\) di torta di frutta prodotti ogni giorno e \\(s_t\\) in magazzino a fine giorno. " +
-        "L'obiettivo è il costo minimo: \\(c_t\\) € per chilogrammo prodotto (10, 20, 30, 40) e \\(h_t\\) € per chilogrammo in magazzino a fine giorno, il 10% di \\(c_t\\) (1, 2, 3). " +
-        "I vincoli: ogni giorno la domanda è servita dalla produzione e dalla scorta del giorno prima, con la scorta iniziale \\(\\ell_0\\) in kg (5); si producono al più \\(m\\) kg al giorno (30); il magazzino tiene al più \\(k\\) kg (10)." +
-        "<br><b>Dati:</b> \\(t = 1, \\dots, 4\\): i 4 giorni; \\(d_t\\): domanda di torta di frutta nel giorno \\(t\\), 10, 20, 30 e 20 kg." +
+      return modello("07", T(`<b>Il problema.</b> Decidiamo quanti chilogrammi di torta di frutta produrre ogni giorno e quanti tenerne in magazzino a fine giorno. L'obiettivo è il costo minimo di produzione e magazzino. I vincoli: ogni giorno la domanda è servita dalla produzione e dalla scorta del giorno prima; la produzione giornaliera e il magazzino hanno un limite.` +
+        `<br><b>Variabili:</b> \\(x_t\\): chilogrammi di torta prodotti nel giorno \\(t\\); \\(s_t\\): chilogrammi in magazzino a fine giorno \\(t\\).` +
+        `<br><b>Dati:</b> \\(t = 1, \\dots, 4\\): i 4 giorni; \\(d_t\\): domanda del giorno \\(t\\) (10, 20, 30, 20 kg); \\(c_t\\): costo di un chilogrammo prodotto (10, 20, 30, 40 €); \\(h_t\\): costo di un chilogrammo in magazzino a fine giorno, il 10% di \\(c_t\\) (1, 2, 3 €); \\(\\ell_0\\): scorta iniziale (5 kg); \\(m\\): produzione massima giornaliera (30 kg); \\(k\\): capacità del magazzino (10 kg).` +
         DUALI("\\(\\mu_t\\): costo in più, in €/kg, per un chilogrammo in più di domanda nel giorno \\(t\\); \\(\\pi_t \\le 0\\) e \\(\\varrho_t \\le 0\\): variazione del costo, in €/kg, per un chilogrammo in più di produzione massima e di capacità del magazzino in quel giorno."),
-      "<b>The problem.</b> We decide the kilograms \\(x_t\\) of fruit cake produced each day and \\(s_t\\) in stock at the end of the day. " +
-        "The objective is the minimum cost: \\(c_t\\) € per kilogram produced (10, 20, 30, 40) and \\(h_t\\) € per kilogram in stock at the end of the day, 10% of \\(c_t\\) (1, 2, 3). " +
-        "The constraints: each day demand is served by production and by the stock of the day before, with the initial stock \\(\\ell_0\\) in kg (5); at most \\(m\\) kg are produced per day (30); the warehouse holds at most \\(k\\) kg (10)." +
-        "<br><b>Data:</b> \\(t = 1, \\dots, 4\\): the 4 days; \\(d_t\\): demand for fruit cake on day \\(t\\), 10, 20, 30 and 20 kg." +
+      `<b>The problem.</b> We decide how many kilograms of fruit cake to produce each day and how many to keep in stock at the end of the day. The objective is the minimum cost of production and storage. The constraints: each day demand is served by production and by the stock of the day before; daily production and the warehouse have a limit.` +
+        `<br><b>Variables:</b> \\(x_t\\): kilograms of cake produced on day \\(t\\); \\(s_t\\): kilograms in stock at the end of day \\(t\\).` +
+        `<br><b>Data:</b> \\(t = 1, \\dots, 4\\): the 4 days; \\(d_t\\): demand of day \\(t\\) (10, 20, 30, 20 kg); \\(c_t\\): cost of one kilogram produced (10, 20, 30, 40 €); \\(h_t\\): cost of one kilogram in stock at the end of the day, 10% of \\(c_t\\) (1, 2, 3 €); \\(\\ell_0\\): initial stock (5 kg); \\(m\\): maximum daily production (30 kg); \\(k\\): warehouse capacity (10 kg).` +
         DUALI("\\(\\mu_t\\): extra cost, in €/kg, for one more kilogram of demand on day \\(t\\); \\(\\pi_t \\le 0\\) and \\(\\varrho_t \\le 0\\): change of the cost, in €/kg, for one more kilogram of maximum production and of storage capacity on that day.")),
       sim, numerico(R.P));
     },
@@ -909,15 +893,13 @@
         (q_1 - ${st.col("b", "g_1")})\\, x_1 + (q_2 - ${st.col("b", "g_1")})\\, x_2 &\\ge 0, & \\\\
         (q_1 - g_2)\\, y_1 + (q_2 - g_2)\\, y_2 &\\ge 0, & \\\\
         x_i,~ y_i &\\ge 0, & ${ii}.`;
-      return modello("08", T("<b>Il problema.</b> Decidiamo i barili di greggio \\(i\\) usati per la benzina (\\(x_i\\)) e per il gasolio (\\(y_i\\)). " +
-        "L'obiettivo è il ricavo massimo: un barile di benzina si vende a \\(p_1\\) dollari (25), uno di gasolio a \\(p_2\\) (20). I vincoli: al più \\(w_i\\) barili di greggio \\(i\\) (5000 e 10 000); la qualità media della miscela è almeno \\(g_1\\) per la benzina (8) e \\(g_2\\) per il gasolio (6), con livello di qualità \\(q_1 = 10\\) e \\(q_2 = 5\\) dei due greggi. " +
-        "Il rapporto \\((q_1 x_1 + q_2 x_2)/(x_1 + x_2) \\ge g_1\\) diventa lineare moltiplicando per \\(x_1 + x_2\\)." +
-        "<br><b>Dati:</b> \\(i = 1, 2\\): i due tipi di greggio; i due prodotti sono benzina e gasolio da riscaldamento." +
+      return modello("08", T(`<b>Il problema.</b> Decidiamo quanti barili di ogni tipo di greggio usare per la benzina e per il gasolio da riscaldamento. L'obiettivo è il ricavo massimo. I vincoli: disponibilità di ogni greggio e qualità media minima della miscela per ogni prodotto. Il rapporto \\((q_1 x_1 + q_2 x_2)/(x_1 + x_2) \\ge g_1\\) diventa lineare moltiplicando per \\(x_1 + x_2\\).` +
+        `<br><b>Variabili:</b> \\(x_i\\): barili di greggio \\(i\\) usati per la benzina; \\(y_i\\): barili di greggio \\(i\\) usati per il gasolio.` +
+        `<br><b>Dati:</b> \\(i = 1, 2\\): i due tipi di greggio; \\(p_1\\): prezzo di un barile di benzina (25 $); \\(p_2\\): prezzo di un barile di gasolio (20 $); \\(w_i\\): barili disponibili di greggio \\(i\\) (5000 e 10 000); \\(q_i\\): livello di qualità del greggio \\(i\\) (10 e 5); \\(g_1\\) e \\(g_2\\): qualità media minima della benzina (8) e del gasolio (6).` +
         DUALI("\\(\\pi_i\\): ricavo in più, in $/barile, per un barile in più di greggio \\(i\\); \\(\\rho_1 \\le 0\\) e \\(\\rho_2 \\le 0\\): variazione del ricavo, in $ per punto di qualità per barile, per un'unità in più a destra del vincolo di qualità."),
-      "<b>The problem.</b> We decide the barrels of crude \\(i\\) used for gasoline (\\(x_i\\)) and for heating oil (\\(y_i\\)). " +
-        "The objective is the maximum revenue: a barrel of gasoline sells at \\(p_1\\) dollars (25), one of heating oil at \\(p_2\\) (20). The constraints: at most \\(w_i\\) barrels of crude \\(i\\) (5000 and 10 000); the average quality of the blend is at least \\(g_1\\) for gasoline (8) and \\(g_2\\) for heating oil (6), with quality levels \\(q_1 = 10\\) and \\(q_2 = 5\\) of the two crudes. " +
-        "The ratio \\((q_1 x_1 + q_2 x_2)/(x_1 + x_2) \\ge g_1\\) becomes linear after multiplying by \\(x_1 + x_2\\)." +
-        "<br><b>Data:</b> \\(i = 1, 2\\): the two types of crude oil; the two products are gasoline and heating oil." +
+      `<b>The problem.</b> We decide how many barrels of each type of crude oil to use for gasoline and for heating oil. The objective is the maximum revenue. The constraints: availability of each crude and minimum average quality of the blend for each product. The ratio \\((q_1 x_1 + q_2 x_2)/(x_1 + x_2) \\ge g_1\\) becomes linear after multiplying by \\(x_1 + x_2\\).` +
+        `<br><b>Variables:</b> \\(x_i\\): barrels of crude \\(i\\) used for gasoline; \\(y_i\\): barrels of crude \\(i\\) used for heating oil.` +
+        `<br><b>Data:</b> \\(i = 1, 2\\): the two types of crude oil; \\(p_1\\): price of a barrel of gasoline (25 $); \\(p_2\\): price of a barrel of heating oil (20 $); \\(w_i\\): barrels available of crude \\(i\\) (5000 and 10 000); \\(q_i\\): quality level of crude \\(i\\) (10 and 5); \\(g_1\\) and \\(g_2\\): minimum average quality of gasoline (8) and of heating oil (6).` +
         DUALI("\\(\\pi_i\\): extra revenue, in $/barrel, for one more barrel of crude \\(i\\); \\(\\rho_1 \\le 0\\) and \\(\\rho_2 \\le 0\\): change of the revenue, in $ per quality point per barrel, for one more unit on the right-hand side of the quality constraint.")),
       sim, numerico(R.P));
     },
@@ -991,13 +973,13 @@
         -x_1 + 2\\, x_2 &\\le 0, & \\\\
         -x_2 + x_3 &\\le 0, & \\\\
         x_i &\\ge 0, & \\forall i \\in \\{1, 2, 3\\}.`;
-      return modello("09", T("<b>Il problema.</b> Decidiamo le unità \\(x_i\\) prodotte di ogni farmaco; un'unità di farmaco 2 consuma 2 unità di farmaco 1, un'unità di farmaco 3 consuma 1 unità di farmaco 2. " +
-        "L'obiettivo è il ricavo massimo delle unità vendute, \\(x_1 - 2x_2\\), \\(x_2 - x_3\\) e \\(x_3\\), ai prezzi \\(p_i\\) in € per unità (8, 70, 100). I vincoli: al più \\(k\\) ore di lavoro (4000), con \\(h_i\\) ore per unità prodotta (1, 2, 3), e consumi interni non superiori alla produzione. È il secondo modello della pagina." +
-        "<br><b>Dati:</b> \\(i = 1, 2, 3\\): i tre farmaci." +
+      return modello("09", T(`<b>Il problema.</b> Decidiamo quante unità produrre di ogni farmaco; il farmaco 2 si produce consumando il farmaco 1, il farmaco 3 consumando il farmaco 2. L'obiettivo è il ricavo massimo delle unità vendute, cioè prodotte e non consumate. I vincoli: le ore di lavoro disponibili e consumi interni non superiori alla produzione. È il secondo modello della pagina.` +
+        `<br><b>Variabili:</b> \\(x_i\\): unità prodotte del farmaco \\(i\\); le unità vendute sono \\(x_1 - 2x_2\\), \\(x_2 - x_3\\) e \\(x_3\\).` +
+        `<br><b>Dati:</b> \\(i = 1, 2, 3\\): i tre farmaci; un'unità di farmaco 2 consuma 2 unità di farmaco 1, un'unità di farmaco 3 consuma 1 unità di farmaco 2; \\(p_i\\): prezzo di vendita del farmaco \\(i\\) (8, 70, 100 € per unità); \\(k\\): ore di lavoro disponibili (4000); \\(h_i\\): ore di lavoro per unità prodotta (1, 2, 3).` +
         DUALI("\\(\\pi\\): ricavo in più, in €/ora, per un'ora di lavoro in più; \\(\\rho_1\\) e \\(\\rho_2\\): ricavo in più, in €/unità, se il farmaco 2 o il farmaco 3 potesse usare un'unità in meno del farmaco precedente."),
-      "<b>The problem.</b> We decide the units \\(x_i\\) produced of each drug; one unit of drug 2 uses 2 units of drug 1, one unit of drug 3 uses 1 unit of drug 2. " +
-        "The objective is the maximum revenue from the units sold, \\(x_1 - 2x_2\\), \\(x_2 - x_3\\) and \\(x_3\\), at prices \\(p_i\\) in € per unit (8, 70, 100). The constraints: at most \\(k\\) working hours (4000), with \\(h_i\\) hours per unit produced (1, 2, 3), and internal use not above production. It is the second model of the page." +
-        "<br><b>Data:</b> \\(i = 1, 2, 3\\): the three drugs." +
+      `<b>The problem.</b> We decide how many units of each drug to produce; drug 2 is made by using drug 1, drug 3 by using drug 2. The objective is the maximum revenue from the units sold, that is produced and not used internally. The constraints: the working hours available and internal use not above production. It is the second model of the page.` +
+        `<br><b>Variables:</b> \\(x_i\\): units produced of drug \\(i\\); the units sold are \\(x_1 - 2x_2\\), \\(x_2 - x_3\\) and \\(x_3\\).` +
+        `<br><b>Data:</b> \\(i = 1, 2, 3\\): the three drugs; one unit of drug 2 uses 2 units of drug 1, one unit of drug 3 uses 1 unit of drug 2; \\(p_i\\): selling price of drug \\(i\\) (8, 70, 100 € per unit); \\(k\\): working hours available (4000); \\(h_i\\): working hours per unit produced (1, 2, 3).` +
         DUALI("\\(\\pi\\): extra revenue, in €/hour, for one more working hour; \\(\\rho_1\\) and \\(\\rho_2\\): extra revenue, in €/unit, if drug 2 or drug 3 could use one unit less of the previous drug.")),
       sim, numerico(R.P),
       T("I coefficienti della funzione obiettivo sono \\(p_1\\), \\(p_2 - 2p_1\\) e \\(p_3 - p_2\\).", "The objective function coefficients are \\(p_1\\), \\(p_2 - 2p_1\\) and \\(p_3 - p_2\\)."));
