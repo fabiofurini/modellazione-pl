@@ -305,8 +305,7 @@
         c[ie] = 1; c[ix(s)] = 1;
         righe.push({ a: c, rel: ">=", rhs: 0 });
       });
-      // 14 colonne non stanno nel riquadro: a capo dopo xi_5, con xi_6, ..., xi_10 sotto xi_1, ..., xi_5
-      const num = W.GI_PL_NUM.numLP({ senso: "min", vars, c: ob, cifreObj: 4, cifre: 2, righe, pezzi: W.GI_PL_NUM.aCapo(vars.map((x, j) => j), NT + 6, NT + 1),
+      const num = W.GI_PL_NUM.numLP({ senso: "min", vars, c: ob, cifreObj: 4, cifre: 2, righe,
         dominio: [{ cols: [ie], rel: "><", rhs: "0" }, { cols: vars.map((x, j) => j).filter((j) => j !== ie), rel: ">=", rhs: "0" }] });
       const DV = W.GI_PL_DV;
       const TABS = DV.tabelle(DV.tab(T(`Rendimento annuo \\(r_{is}\\) (%) del titolo \\(i\\) nello scenario \\(s\\), e rendimento atteso \\(m_i\\) (%)`, `Annual return \\(r_{is}\\) (%) of asset \\(i\\) in scenario \\(s\\), and expected return \\(m_i\\) (%)`),

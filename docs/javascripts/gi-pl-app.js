@@ -133,8 +133,8 @@
     let attesa = 0;
     const ro = new ResizeObserver(() => { clearTimeout(attesa); attesa = setTimeout(() => window.dispatchEvent(new Event("resize")), 120); });
     // il modello numerico non scorre mai di lato: se l'array è più largo del riquadro (cursori che allungano i
-    // coefficienti, schermi stretti) il suo corpo scende quanto basta, fino a 0,7em (CHTML scala con il font)
-    const BASE = 0.92, MINIMO = 0.7;
+    // coefficienti, schermi stretti) il suo corpo scende quanto basta, fino a 0,75em (CHTML scala con il font); oltre, il riquadro scorre
+    const BASE = 0.92, MINIMO = 0.75;
     const adatta = (cont) => {
       const box = cont.closest(".plm-array");
       if (!box || !box.clientWidth) return;
@@ -291,8 +291,14 @@
       b.innerHTML = GI.mj(testo);
       if (html) GI.typeset(b);
     },
-    /** avvolge le letture della voce: prima la colonna di destra, poi il blocco */
+    /** avvolge le letture della voce: prima la colonna di destra, poi il blocco; e la formula: il modello numerico
+     *  va in fondo al riquadro dell'app (FONDO) */
     voce(vc) {
+      if (vc.formula && !vc.conFondo) {
+        const f = vc.formula;
+        vc.conFondo = true;
+        vc.formula = (...a) => FONDO.sposta(a[a.length - 1], f.apply(vc, a));
+      }
       if (!vc.soluzione || vc.conSoluzione) return vc;
       const vecchie = vc.letture;
       vc.conSoluzione = true;
@@ -315,6 +321,34 @@
       (tabelle.length ? `<div class="plm-sol-tabs">${tabelle.join("")}</div>` : "") + (nota ? `<p class="plm-sol-nota">${nota}</p>` : ""),
   };
   window.GI_PL_SOL = SOL;
+
+  // ================================================================ il modello numerico in fondo al riquadro
+  /* Fabio, 25/11/2026: il blocco richiudibile «Modello numerico» sta in fondo al riquadro dell'app, dopo i grafici e
+   * la soluzione, largo quanto tutto il riquadro (le due colonne): la forma matriciale, una colonna per variabile e una
+   * riga per vincolo, ci sta con il font quasi normale. Il modello simbolico resta in alto. */
+  const FONDO = {
+    /** toglie dall'HTML della formula il blocco <details class="plm-num"> e lo mostra in fondo al riquadro */
+    sposta(st, html) {
+      if (typeof html !== "string" || !st || !st.el) return html;
+      const i = html.indexOf('<details class="plm-num"');
+      if (i < 0) return html;
+      const j = html.indexOf("</details>", i) + "</details>".length;
+      FONDO.mostra(st, html.slice(i, j));
+      return html.slice(0, i) + html.slice(j);
+    },
+    mostra(st, html) {
+      let b = st.el.querySelector(":scope > .plm-fondo");
+      if (!b) { b = GI.h("div", { class: "plm-fondo" }); st.el.append(b); }
+      if (b.dataset.html === html) return;
+      const prima = b.querySelector("details.plm-num"), aperto = prima ? prima.open : null;
+      b.dataset.html = html;
+      b.innerHTML = GI.mj(html);
+      const d = b.querySelector("details.plm-num");
+      if (d && aperto !== null) d.open = aperto;   // resta aperto (o chiuso) mentre si muovono i cursori
+      GI.typeset(b);
+    },
+  };
+  window.GI_PL_FONDO = FONDO;
 
   // ================================================================ valori dei dati nella riga «Dati:»
   /* Ogni dato mostra il suo valore (Fabio, 25/11/2026): scalari e liste brevi nel testo, matrici in tabelline
@@ -362,12 +396,11 @@
         s_{it} &\\ge 0, & ${it}.`;
       const fD = v[0] / 100, fC = v[1] / 100, fH = v[2] / 100;
       // un solo array dalle righe del simplesso (R.lp, colonne x_{11}, ..., x_{nm}, s_{11}, ..., s_{nm});
-      // a video le colonne vanno per mese, x_{1t}, x_{2t}, x_{3t}, s_{1t}, s_{2t}, s_{3t}, e le 18 colonne vanno a capo
-      // a ogni mese (come in tecniche-modelli-05): la capacità del mese t sta su una riga, il bilancio va a capo al
-      // più una volta (s_{i,t-1} nella riga del mese prima, sopra s_{it})
-      const lp = R.lp, kx = (i, t) => i * nT + t, ks = (i, t) => nI * nT + i * nT + t, vars = [], pezzi = [];
-      for (let i = 0; i < nI; i++) for (let t = 0; t < nT; t++) { vars[kx(i, t)] = `x_{${i + 1}${t + 1}}`; vars[ks(i, t)] = `s_{${i + 1}${t + 1}}`; }
-      for (let t = 0; t < nT; t++) pezzi.push([...P.prodotti.map((q, i) => kx(i, t)), ...P.prodotti.map((q, i) => ks(i, t))]);
+      // forma matriciale stretta (Fabio): una colonna per variabile, x_{11}, ..., x_{33}, s_{11}, ..., s_{33}, ogni riga
+      // su una sola riga dell'array
+      const lp = R.lp, kx = (i, t) => i * nT + t, ks = (i, t) => nI * nT + i * nT + t, vars = [], px = [], ps = [];
+      for (let i = 0; i < nI; i++) for (let t = 0; t < nT; t++) { vars[kx(i, t)] = `x_{${i + 1}${t + 1}}`; vars[ks(i, t)] = `s_{${i + 1}${t + 1}}`; px.push(kx(i, t)); ps.push(ks(i, t)); }
+      const pezzi = [[...px, ...ps]];
       const num = numLP({ senso: "min", vars, c: lp.c, cifre: 2, pezzi,
         righe: lp.A.map((a, k) => ({ a, rel: lp.rel[k], rhs: lp.b[k], cifre: k < nI * nT ? 2 : 1 })) });
       const hI = P.ch.map((h, i) => h * (i === 2 ? fH : 1));
@@ -498,15 +531,11 @@
         x_{vt} &\\ge 0, & ${vt}.`;
       // un solo array dalle righe del simplesso (R.lp): una colonna per ogni coppia furgone-ora di collegamento
       // (d = 1 h); righe: energia di ogni furgone, rete in ogni ora (a destra k - b_t), potenza del caricatore
-      // a video le colonne vanno per ora (x_{11}, x_{21}, x_{12}, x_{22}, ...) e vanno a capo solo fra un'ora e l'altra
-      // (al più 6 colonne per riga, come in tecniche-modelli-05): ogni riga della rete sta su una riga, l'energia di un
-      // furgone va a capo al più una volta; i limiti x_{vt} <= p_v come la riga del dominio, uno per valore di p_v
+      // forma matriciale stretta: una colonna per variabile, ogni riga su una sola riga; le colonne vanno per ora
+      // (x_{11}, x_{21}, x_{12}, x_{22}, ...), così ogni riga della rete ha le sue variabili affiancate;
+      // i limiti x_{vt} <= p_v come la riga del dominio, uno per valore di p_v
       const lp = R.lp, vars = lp.vars.map(([j, t]) => `x_{${j + 1}${t + 1}}`), pezzi = [[]];
-      for (let t = 0; t < nT; t++) {
-        const ora = lp.vars.map((u, w) => w).filter((w) => lp.vars[w][1] === t);
-        if (pezzi[pezzi.length - 1].length + ora.length > 6) pezzi.push([]);
-        pezzi[pezzi.length - 1].push(...ora);
-      }
+      for (let t = 0; t < nT; t++) pezzi[0].push(...lp.vars.map((u, w) => w).filter((w) => lp.vars[w][1] === t));
       const num = numLP({ senso: "min", vars, c: lp.c, cifre: 3, pezzi, limiti: true,
         righe: lp.A.map((a, k) => ({ a, rel: lp.rel[k], rhs: lp.b[k], cifre: k < nV ? 2 : 1 })) });
       const TABS = DV.tabelle(
@@ -617,8 +646,8 @@
         q &\\ge 0, & \\\\
         \\eta &\\gtreqless 0, & \\\\
         o_s,\\ u_s,\\ \\xi_s &\\ge 0, & ${ks}.`;
-      // tutto il modello numerico in un array: colonne q, (eta), o_1..o_k, u_1..u_k, (xi_1..xi_k); a capo come in
-      // tecniche-modelli-05, con u_s (e xi_s) sotto o_s; righe per tipo: eccedenza, carenza (a destra d_s), CVaR.
+      // tutto il modello numerico in forma matriciale: colonne q, (eta), o_1..o_k, u_1..u_k, (xi_1..xi_k), una riga
+      // dell'array per riga del modello; righe per tipo: eccedenza, carenza (a destra d_s), CVaR.
       // Con r = 0, eta e xi_s non entrano nella funzione obiettivo e restano fuori (21 variabili, 20 vincoli)
       const rischio = L > 0, h = rischio ? 2 : 1;
       const io = (s) => h + s, iu = (s) => h + k + s, ix = (s) => h + 2 * k + s;
@@ -629,9 +658,7 @@
       d.forEach((ds, s) => { const a = z(); a[0] = 1; a[io(s)] = -1; righe.push({ a, rel: "<=", rhs: ds, cifre: 0 }); });
       d.forEach((ds, s) => { const a = z(); a[0] = 1; a[iu(s)] = 1; righe.push({ a, rel: ">=", rhs: ds, cifre: 0 }); });
       if (rischio) d.forEach((ds, s) => { const a = z(); a[1] = 1; a[io(s)] = -Co; a[iu(s)] = -Cu; a[ix(s)] = 1; righe.push({ a, rel: ">=", rhs: 0, cifre: 2 }); });
-      // pezzi: q con le o_s, sotto le u_s, sotto ancora eta con le xi_s (11 colonne: stanno nel riquadro)
-      const pezzi = [[0, ...d.map((x, s) => io(s))], [null, ...d.map((x, s) => iu(s))], ...(rischio ? [[1, ...d.map((x, s) => ix(s))]] : [])];
-      const num = numLP({ senso: "min", vars, c: ob, cifreObj: 3, righe, pezzi,
+      const num = numLP({ senso: "min", vars, c: ob, cifreObj: 3, righe,
         dominio: rischio ? [{ cols: [1], rel: "><", rhs: "0" }, { cols: vars.map((x, j) => j).filter((j) => j !== 1), rel: ">=", rhs: "0" }] : undefined });
       const TABS = DV.tabelle(DV.tab(T(`Scenari equiprobabili (\\(w_s = 1/${k}\\)): domanda \\(d_s\\) (unità)`, `Equally likely scenarios (\\(w_s = 1/${k}\\)): demand \\(d_s\\) (units)`),
         ["\\(s\\)", ...d.map((x, s) => String(s + 1))], [["\\(d_s\\)", ...d.map((x) => DV.t(x, 0))]]));
@@ -760,8 +787,7 @@
       X.forEach((r) => righe.push({ a: [r[oo], ...r.map((q) => -q)], rel: ">=", rhs: 0, cifre: 1 }));
       Y.forEach((r) => righe.push({ a: [0, ...r], rel: ">=", rhs: r[oo], cifre: 1 }));
       if (vrs) righe.push({ a: [0, ...new Array(nn).fill(1)], rel: "=", rhs: 1 });
-      // 13 colonne non stanno nel riquadro: a capo dopo theta e 6 lambda, lambda_7, ... sotto lambda_1, ...
-      const num = numLP({ senso: "min", vars, c: ob, righe, pezzi: aCapo(vars.map((q, j) => j), 7, 1), dominio: [{ cols: [0], rel: "><", rhs: "0" }, { cols: vars.map((q, j) => j).filter((j) => j), rel: ">=", rhs: "0" }] },
+      const num = numLP({ senso: "min", vars, c: ob, righe, dominio: [{ cols: [0], rel: "><", rhs: "0" }, { cols: vars.map((q, j) => j).filter((j) => j), rel: ">=", rhs: "0" }] },
         T(`Il modello LP della filiale \\(o = ${oo + 1}\\): ${nn + 1} variabili, ${righe.length} vincoli. Righe: input (${nomiI.join(", ")}), poi output (${nomiR.join(", ")})${vrs ? ", poi \\(\\sum_j \\lambda_j = 1\\)" : ""}.`,
           `The LP model of branch \\(o = ${oo + 1}\\): ${nn + 1} variables, ${righe.length} constraints. Rows: inputs (${nomiI.join(", ")}), then outputs (${nomiR.join(", ")})${vrs ? ", then \\(\\sum_j \\lambda_j = 1\\)" : ""}.`));
       const nomiX = [T("\\(x_{1j}\\): personale (FTE)", "\\(x_{1j}\\): staff (FTE)"), T("\\(x_{2j}\\): costi (k€)", "\\(x_{2j}\\): costs (k€)")];
@@ -883,7 +909,8 @@
       ];
     },
     appoggio: (rette) => rette[1].appoggio,
-    formula(p, st) {
+    formula(p, st) { return FONDO.sposta(st, this.formulaModello(p, st)); },
+    formulaModello(p, st) {
       const tau = st.col("c", "\\tau"), ni = PER("i", "n");
       const sim = `\\min ~ \\sum_{i=1}^{n} \\bigl[\\, ${tau}\\, u_i + (1 - ${tau})\\, v_i \\,\\bigr] & & \\\\
         ${SA()} \\quad w\\, x_i + b + u_i - v_i &= y_i, & ${ni}, \\\\

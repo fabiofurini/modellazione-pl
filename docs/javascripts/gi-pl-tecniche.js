@@ -622,7 +622,7 @@
         `<br><b>Variables:</b> \\(x_t\\): liters produced on day \\(t\\); \\(b_t\\): liters bought on the market on day \\(t\\); \\(s_t\\): liters in stock at the end of day \\(t\\).` +
         `<br><b>Data:</b> \\(n = 4\\): number of days, index \\(t\\); \\(p_t = ${DV.f(QD.p)}\\) €: cost of one liter produced, the same every day; \\(u_t = ${DV.f(QD.u)}\\) €: cost of one liter bought, the same every day; \\(h_t = ${DV.f(QD.h)}\\) €: cost of one liter kept in stock at the end of the day, the same every day; \\(d_t\\): demand of day \\(t\\): \\(${DV.L(QD.d)}\\) L; \\(\\ell_0 = ${QD.l0}\\) L: stock at the start; \\(\\ell_n = ${QD.ln}\\) L: stock that must remain at the end; \\(m_t\\): maximum production of day \\(t\\): \\(${DV.L(QD.m)}\\) L. The constant term \\(h_n\\, \\ell_n\\) is the holding cost of the final stock.` +
         DUALI("\\(\\mu_t\\): extra cost, in €/L, for one more liter of demand on day \\(t\\); \\(\\pi_t \\le 0\\): change of the cost, in €/L, for one more liter of capacity \\(m_t\\).")),
-      sim, numerico(R.P, { per: 8 }),
+      sim, numerico(R.P),
       T(`Senza il termine costante \\(h_n\\, \\ell_n = ${n(D.h, 2)} \\cdot ${D.ln} = ${n(D.h * D.ln, 2)}\\), che il valore ottimo qui sotto include.`,
         `Without the constant term \\(h_n\\, \\ell_n = ${n(D.h, 2)} \\cdot ${D.ln} = ${n(D.h * D.ln, 2)}\\), which the optimal value below includes.`));
     },
