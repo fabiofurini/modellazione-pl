@@ -114,3 +114,9 @@
 .md-typeset .gi .plm-sol table.gi-tabella td, .md-typeset .gi .plm-sol table.gi-tabella th { min-width: 2.8em; padding: .1em .45em; }
 .md-typeset .gi .plm-sol table.gi-tabella td:first-child, .md-typeset .gi .plm-sol table.gi-tabella th:first-child { text-align: left; }
 .md-typeset .plm-sol-nota { margin: .1em 0 .2em; opacity: .85; }
+/* valori dei dati: tabelline subito sotto la riga «Dati:» (GI_PL_DV in gi-pl-app.js; Fabio, 25/11/2026) */
+.md-typeset .plm-testo:empty { display: none; }
+.md-typeset .plm-dati { display: flex; flex-wrap: wrap; gap: .2em 1.6em; align-items: flex-start; margin: -.2em 0 .5em; font-size: .72rem; line-height: 1.4; overflow-x: auto; }
+.md-typeset .gi .plm-dati table.gi-tabella { width: auto; margin: 0 0 .2em; }
+.md-typeset .gi .plm-dati table.gi-tabella td, .md-typeset .gi .plm-dati table.gi-tabella th { min-width: 2.2em; padding: .05em .4em; }
+.md-typeset .gi .plm-dati table.gi-tabella td:first-child, .md-typeset .gi .plm-dati table.gi-tabella th:first-child { text-align: left; }
