@@ -134,12 +134,12 @@
     const ro = new ResizeObserver(() => { clearTimeout(attesa); attesa = setTimeout(() => window.dispatchEvent(new Event("resize")), 120); });
     // il modello numerico non scorre mai di lato: se l'array è più largo del riquadro (cursori che allungano i
     // coefficienti, schermi stretti) il suo corpo scende quanto basta, fino a 0,75em (CHTML scala con il font); oltre, il riquadro scorre
-    const BASE = 0.92, MINIMO = 0.75;
+    const BASE = 1.45, MINIMO = 0.75;   // cresce fino a riempire il riquadro (Fabio: «occupa bene lo spazio»)
     const adatta = (cont) => {
       const box = cont.closest(".plm-array");
       if (!box || !box.clientWidth) return;
-      const ora = parseFloat(box.dataset.fs || BASE), largo = cont.getBoundingClientRect().width / ora;
-      const fs = Math.max(MINIMO, Math.min(BASE, Math.floor(((box.clientWidth - 6) / largo) * 100) / 100));
+      const ora = parseFloat(box.dataset.fs || BASE), largo = (cont.querySelector("mjx-table") || cont).getBoundingClientRect().width / ora;   // le celle vere: mjx-mtable resta largo con le spaziature originali di MathJax
+      const fs = Math.max(MINIMO, Math.min(BASE, Math.floor(((box.clientWidth - 12) / largo) * 100) / 100));
       if (Math.abs(fs - ora) > 0.004) { box.dataset.fs = fs; box.style.fontSize = fs + "em"; }
     };
     const roArray = new ResizeObserver((voci) => voci.forEach((v) => adatta(v.target)));
@@ -390,7 +390,8 @@
       const P = DD().produzione, nI = P.prodotti.length, nT = P.mesi.length;
       const it = `${PER("i", "n")},~${PER("t", "m")}`;
       const sim = `\\min ~~ \\sum_{i=1}^{n} \\sum_{t=1}^{m} \\bigl( c_{it}\\, x_{it} + ${st.col("c", "h_{it}")}\\, s_{it} \\bigr) & & \\\\
-        ${SA()} \\quad s_{i,t-1} + x_{it} &= ${st.col("a", "d_{it}")} + s_{it}, & ${it}, \\\\
+        ${SA()} \\quad x_{i1} - s_{i1} &= ${st.col("a", "d_{i1}")} - s_{i0}, & ${PER("i", "n")}, \\\\
+        x_{it} + s_{i,t-1} - s_{it} &= ${st.col("a", "d_{it}")}, & ${PER("i", "n")},~\\forall t \\in \\{2, 3, \\dots, m\\}, \\\\
         \\sum_{i=1}^{n} a_i\\, x_{it} &\\le ${st.col("b", "b_t")}, & ${PER("t", "m")}, \\\\
         x_{it} &\\ge 0, & ${it}, \\\\
         s_{it} &\\ge 0, & ${it}.`;

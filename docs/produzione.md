@@ -69,7 +69,8 @@ Usando queste variabili, un modello LP per il problema è il seguente:
 $$
 \begin{aligned}
 \min ~~ \sum_{i=1}^{n} \sum_{t=1}^{m} \bigl( c_{it}\, x_{it} + h_{it}\, s_{it} \bigr) & & \\
-\text{soggetto a} \quad s_{i,t-1} + x_{it} &= d_{it} + s_{it}, & \forall i \in \{1, 2, \dots, n\},~\forall t \in \{1, 2, \dots, m\}, \\
+\text{soggetto a} \quad x_{i1} - s_{i1} &= d_{i1} - s_{i0}, & \forall i \in \{1, 2, \dots, n\}, \\
+x_{it} + s_{i,t-1} - s_{it} &= d_{it}, & \forall i \in \{1, 2, \dots, n\},~\forall t \in \{2, 3, \dots, m\}, \\
 \sum_{i=1}^{n} a_i\, x_{it} &\le b_t, & \forall t \in \{1, 2, \dots, m\}, \\
 x_{it} &\ge 0, & \forall i \in \{1, 2, \dots, n\},~\forall t \in \{1, 2, \dots, m\}, \\
 s_{it} &\ge 0, & \forall i \in \{1, 2, \dots, n\},~\forall t \in \{1, 2, \dots, m\}.
@@ -83,7 +84,8 @@ Descrizione della funzione obiettivo e dei vincoli:
   e i mesi;
 - i vincoli lineari di **bilancio** delle scorte sono quelli della tecnica
   [4.5 Pianificazione su più periodi](tecniche-05.md), uno per prodotto e mese; per
-  $t = 1$ si usa la scorta iniziale $s_{i0}$ ($n\,m$ vincoli lineari);
+  $t = 1$ la scorta iniziale $s_{i0}$ è un dato e passa a destra, nel termine noto
+  ($n\,m$ vincoli lineari);
 - i vincoli lineari di **capacità** assicurano che, in ogni mese, le ore macchina
   usate da tutti i prodotti non superino quelle disponibili ($m$ vincoli lineari);
 - i vincoli di non negatività su $x_{it}$ e $s_{it}$ definiscono le variabili del

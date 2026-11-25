@@ -80,6 +80,10 @@
 .md-typeset details.plm-num > summary { font-weight: 600; }
 /* il modello numerico (un solo array, GI_PL_NUM in gi-pl-app.js) sta in fondo al riquadro dell'app, largo quanto il riquadro (FONDO) */
 .plm-fondo { padding: 0 1em .8em; }
+/* in fondo il modello numerico usa tutta la larghezza: testo normale e matrice centrata, ingrandita da adatta() */
+.md-typeset .plm-fondo details.plm-num { font-size: .82rem; }
+.plm-fondo .plm-riga.plm-array { text-align: center; }
+.plm-fondo .plm-array mjx-math, .plm-fondo .plm-array mjx-mtable { width: auto !important; min-width: 0 !important; }
 .plm-fondo:empty { display: none; }
 .plm-num-corpo { padding: .2em 0 .4em; }
 .plm-riga.plm-array { font-size: .92em; }
