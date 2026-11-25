@@ -9,8 +9,8 @@
  *
  * Stesso formato di «pl-produzione» (gi-pl-app.js): il problema a parole con variabili e dati, il modello
  * simbolico, il blocco «Soluzione ottima», il modello numerico in fondo al riquadro (GI_PL_NUM, GI_PL_SOL,
- * GI_PL_FONDO, GI_PL_DV, GI_PL_FR, letti al montaggio) e la ricetta a voci di gi-ott.js. Niente grafico: la
- * board resta nascosta.
+ * GI_PL_FONDO, GI_PL_DV, GI_PL_FR, letti al montaggio) e la ricetta a voci di gi-ott.js. La figura, al posto
+ * del grafico della produzione, è il grafo bipartito delle spedizioni ottime.
  */
 (function () {
   "use strict";
@@ -77,8 +77,45 @@
         `<div class="plm-num-corpo">${num}</div></details></div>`;
       return FONDO.sposta(st, html);
     },
-    // niente grafico: la board resta nascosta
-    disegna(crea, Rr, v, C, Sz, st, board) { if (board && board.containerObj) board.containerObj.style.display = "none"; },
+    // la figura: grafo bipartito magazzini → clienti; archi con x̃_ij > 0 pieni, spessi quanto la quantità e
+    // con il valore, archi vuoti sottili, chiari e tratteggiati
+    disegna(crea, Rr, v, C, Sz) {
+      const M = window.GI_MIP, FR = window.GI_PL_FR, W = Sz.W, H = Sz.H;
+      M.scritta(crea, W / 2, H - 16, T("Spedizioni ottime x̃ᵢⱼ: lo spessore dell'arco cresce con la quantità", "Optimal shipments x̃ᵢⱼ: the arc gets thicker with the quantity"),
+        { fontSize: 13.5, strokeColor: C.testo, cssStyle: "font-weight:700" });
+      if (Rr.stato !== "ottimo") return M.scritta(crea, W / 2, H / 2, T("Nessun piano ammissibile", "No feasible plan"), { fontSize: 15, strokeColor: C.rosso });
+      const xs = W * 0.24, xc = W * 0.76, r = Math.max(15, Math.min(22, H / 22)), alto = H - 70, basso = 40;
+      const ys = [0, 1].map((i) => alto - (alto - basso) * (i + 0.5) / 2), yc = [0, 1, 2].map((j) => alto - (alto - basso) * (j + 0.5) / 3);
+      const qMax = Math.max(...DATI.e);
+      // archi: prima quelli vuoti, poi quelli pieni (sopra)
+      const archi = [];
+      for (let i = 0; i < S; i++) for (let j = 0; j < R; j++) archi.push([i, j, Rr.x[i][j]]);
+      archi.sort((a, b) => (a[2] > 1e-9) - (b[2] > 1e-9));
+      for (const [i, j, q] of archi) {
+        const dx = xc - xs, dy = yc[j] - ys[i], L = Math.hypot(dx, dy), ux = dx / L, uy = dy / L;
+        const p0 = [xs + ux * (r + 2), ys[i] + uy * (r + 2)], p1 = [xc - ux * (r + 4), yc[j] - uy * (r + 4)];
+        const pieno = q > 1e-9;
+        crea("arrow", [p0, p1], { strokeColor: pieno ? C.b : C.grigio, strokeOpacity: pieno ? 1 : 0.6, strokeWidth: pieno ? 2 + 7 * q / qMax : 1.2,
+          dash: pieno ? 0 : 2, fixed: true, highlight: false, withLabel: false, lastArrow: { type: 2, size: pieno ? 3 : 6 } });
+        // il valore sopra l'arco, a un terzo dal magazzino (spostato di lato perché l'arco spesso non lo copra)
+        if (pieno) M.scritta(crea, p0[0] + (p1[0] - p0[0]) * 0.3 - uy * 14, p0[1] + (p1[1] - p0[1]) * 0.3 + ux * 14, FR.txt(q), { fontSize: 13, strokeColor: C.b,
+          display: "html", cssStyle: "font-weight:700;background:var(--md-default-bg-color);padding:0 .25em;border-radius:3px" });
+      }
+      // nodi: magazzini a sinistra (capacità d_i), clienti a destra (domanda e_j)
+      ys.forEach((y, i) => {
+        M.pallino(crea, xs, y, { size: r, fillColor: C.b, strokeColor: C.b });
+        M.scritta(crea, xs, y, String(i + 1), { fontSize: 14, strokeColor: "#ffffff", cssStyle: "font-weight:700" });
+        M.scritta(crea, xs - r - 10, y + 9, T(`magazzino ${i + 1}`, `warehouse ${i + 1}`), { anchorX: "right", fontSize: 12.5, strokeColor: C.testo });
+        M.scritta(crea, xs - r - 10, y - 9, `d${"₁₂"[i]} = ${FR.txt(Rr.d[i])}`, { anchorX: "right", fontSize: 12.5, strokeColor: C.testo });
+      });
+      yc.forEach((y, j) => {
+        M.pallino(crea, xc, y, { size: r, fillColor: C.c, strokeColor: C.c });
+        M.scritta(crea, xc, y, String(j + 1), { fontSize: 14, strokeColor: "#ffffff", cssStyle: "font-weight:700" });
+        M.scritta(crea, xc + r + 10, y + 9, T(`cliente ${j + 1}`, `customer ${j + 1}`), { anchorX: "left", fontSize: 12.5, strokeColor: C.testo });
+        M.scritta(crea, xc + r + 10, y - 9, `e${"₁₂₃"[j]} = ${FR.txt(DATI.e[j])}`, { anchorX: "left", fontSize: 12.5, strokeColor: C.testo });
+      });
+      M.scritta(crea, W / 2, 14, T("tratteggio: nessuna spedizione", "dashed: no shipment"), { fontSize: 11.5, strokeColor: C.muted });
+    },
     soluzione(Rr) {
       if (Rr.stato !== "ottimo") return T("Nessun piano ammissibile.", "No feasible plan.");
       const SOL = window.GI_PL_SOL, FR = window.GI_PL_FR;
