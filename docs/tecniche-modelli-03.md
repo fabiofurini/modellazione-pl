@@ -198,8 +198,20 @@ $$
 
 <!-- laboratorio-interattivo: sezione aggiunta per l'app dei nove modelli -->
 
+## Prezzi ombra dell'istanza { #prezzi-ombra }
+
+Il prezzo ombra di un vincolo è la variazione del valore ottimo per un'unità in più del suo termine noto, finché la base ottima non cambia. Per l'istanza di questa pagina (valore ottimo $18$) valgono, calcolati con Gurobi:
+
+| Vincolo | Prezzo ombra |
+|---|---|
+| nutriente 2, minimo ($a_2$) | $\frac{1}{3}$ €/g |
+| alimento 1, minimo ($c_1$) | $\frac{11}{3}$ €/kg |
+| alimento 2, minimo ($c_2$) | $\frac{23}{3}$ €/kg |
+
+Gli altri 11 vincoli hanno prezzo ombra nullo.
+
 ## Laboratorio interattivo { #laboratorio-interattivo }
 
-L'app risolve questo modello nel browser, con i dati dell'esempio: i cursori cambiano i dati e il simplesso ricalcola la soluzione ottima e i prezzi ombra. Si apre anche a tutta pagina nel laboratorio interattivo: [Pianificazione della dieta](laboratorio/dieta.md).
+L'app risolve questo modello nel browser, con i dati dell'esempio: i cursori cambiano i dati e il simplesso ricalcola la soluzione ottima. Si apre anche a tutta pagina nel laboratorio interattivo: [Pianificazione della dieta](laboratorio/dieta.md).
 
 <div class="gi gi-capitolo" data-grafico="pl-dieta"></div>

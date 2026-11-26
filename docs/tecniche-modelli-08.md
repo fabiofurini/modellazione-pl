@@ -74,8 +74,19 @@
 
 <!-- laboratorio-interattivo: sezione aggiunta per l'app dei nove modelli -->
 
+## Prezzi ombra dell'istanza { #prezzi-ombra }
+
+Il prezzo ombra di un vincolo è la variazione del valore ottimo per un'unità in più del suo termine noto, finché la base ottima non cambia. Per l'istanza di questa pagina (valore ottimo $325\,000$) valgono, calcolati con Gurobi:
+
+| Vincolo | Prezzo ombra |
+|---|---|
+| greggio di tipo 1 ($w_1$) | $30$ $/barile |
+| greggio di tipo 2 ($w_2$) | $\frac{35}{2}$ $/barile |
+| qualità della benzina | $-\frac{5}{2}$ $ per punto e barile |
+| qualità del gasolio | $-\frac{5}{2}$ $ per punto e barile |
+
 ## Laboratorio interattivo { #laboratorio-interattivo }
 
-L'app risolve questo modello nel browser, con i dati dell'esempio: i cursori cambiano i dati e il simplesso ricalcola la soluzione ottima e i prezzi ombra. Si apre anche a tutta pagina nel laboratorio interattivo: [Miscelazione in una raffineria](laboratorio/raffineria.md).
+L'app risolve questo modello nel browser, con i dati dell'esempio: i cursori cambiano i dati e il simplesso ricalcola la soluzione ottima. Si apre anche a tutta pagina nel laboratorio interattivo: [Miscelazione in una raffineria](laboratorio/raffineria.md).
 
 <div class="gi gi-capitolo" data-grafico="pl-raffineria"></div>

@@ -178,8 +178,20 @@
 
 <!-- laboratorio-interattivo: sezione aggiunta per l'app dei nove modelli -->
 
+## Prezzi ombra dell'istanza { #prezzi-ombra }
+
+Il prezzo ombra di un vincolo è la variazione del valore ottimo per un'unità in più del suo termine noto, finché la base ottima non cambia. Per l'istanza di questa pagina (valore ottimo $330$) valgono, calcolati con Gurobi:
+
+| Vincolo | Prezzo ombra |
+|---|---|
+| produzione massima del prodotto 1 ($w_1$) | $4$ €/L |
+| produzione massima del prodotto 2 ($w_2$) | $2$ €/L |
+| produzione massima del prodotto 3 ($w_3$) | $2$ €/L |
+| trattamento in orario ordinario ($d$) | $2$ €/L |
+| trattamento in straordinario ($e$) | $1$ €/L |
+
 ## Laboratorio interattivo { #laboratorio-interattivo }
 
-L'app risolve questo modello nel browser, con i dati dell'esempio: i cursori cambiano i dati e il simplesso ricalcola la soluzione ottima e i prezzi ombra. Si apre anche a tutta pagina nel laboratorio interattivo: [Produzione in orario ordinario e in straordinario](laboratorio/produzione-straordinario.md).
+L'app risolve questo modello nel browser, con i dati dell'esempio: i cursori cambiano i dati e il simplesso ricalcola la soluzione ottima. Si apre anche a tutta pagina nel laboratorio interattivo: [Produzione in orario ordinario e in straordinario](laboratorio/produzione-straordinario.md).
 
 <div class="gi gi-capitolo" data-grafico="pl-straordinario"></div>

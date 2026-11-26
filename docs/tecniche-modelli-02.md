@@ -166,6 +166,18 @@
 
 <!-- laboratorio-interattivo: sezione aggiunta per l'app dei nove modelli -->
 
+## Prezzi ombra dell'istanza { #prezzi-ombra }
+
+Il prezzo ombra di un vincolo è la variazione del valore ottimo per un'unità in più del suo termine noto, finché la base ottima non cambia. Per l'istanza di questa pagina (valore ottimo $320$) valgono, calcolati con Gurobi:
+
+| Vincolo | Prezzo ombra |
+|---|---|
+| capacità del magazzino 1 ($d_1$) | $0$ €/L |
+| capacità del magazzino 2 ($d_2$) | $0$ €/L |
+| domanda del cliente 1 ($e_1$) | $2$ €/L |
+| domanda del cliente 2 ($e_2$) | $2$ €/L |
+| domanda del cliente 3 ($e_3$) | $1$ €/L |
+
 ## Laboratorio interattivo { #laboratorio-interattivo }
 
 Un modello di trasporto si risolve nel browser nell'app [Trasporto dai magazzini ai clienti](laboratorio/trasporto.md) del laboratorio interattivo, su un'istanza con due magazzini e tre clienti: i cursori cambiano i dati e il simplesso ricalcola la soluzione ottima.

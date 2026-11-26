@@ -6,7 +6,7 @@
  *   Il trasporto (4.5) è l'app «pl-trasporto» (gi-pl-trasporto.js).
  *
  * Ogni app: due cursori sui dati principali, il simplesso in JS (GI_OTT.lp, gi-ott.js) risolve l'LP e l'app mostra
- * il problema, i dati con la tabella, il modello simbolico, la figura, la soluzione ottima con i prezzi ombra e, in
+ * il problema, i dati con la tabella, il modello simbolico, la figura, la soluzione ottima e, in
  * fondo, il modello numerico; i numeri non interi come frazioni (GI_PL_FR di gi-pl-app.js). Con i valori iniziali
  * dei cursori i dati sono quelli delle pagine. Si carica dopo gi-ott.js e gi-comune.js (usa GI, GI_MIP, GI_OTT e la
  * ricetta «a voci» GI_OTT.ricettaVoci, come gi-pl-app.js); lo stile dei blocchi del modello (plm-…) sta in extra.css.
@@ -102,6 +102,8 @@
     xs.forEach((x, k) => M.pallino(crea, P.X(x), P.Y(ys[k]), { size: 4, fillColor: col, strokeColor: col }));
   };
   const rombo = (crea, P, x, y, col, C) => M.pallino(crea, P.X(x), P.Y(y), { size: 5.5, face: "<>", fillColor: C.card || "#ffffff", strokeColor: col, strokeWidth: 1.5 });
+  /** un pannello a tutta larghezza (una figura per app: Fabio, 26/11/2026) */
+  const pieno = (S) => ({ X0: MF.sx, X1: S.W - MF.dx, Y0: MF.basso, Y1: S.H - MF.alto });
   /** due pannelli affiancati: frazione della larghezza al primo */
   const affiancati = (S, frac = 0.5, gap = 84) => {
     const L = S.W - MF.sx - MF.dx - gap, a = L * frac;
@@ -198,8 +200,6 @@
     righe.push({ dominio: [...Array(N).keys()], rel: ">=", rhs: "0" });
     return griglia(P.vars, righe, opz.per);
   }
-  /** la riga dei prezzi ombra sotto il problema: che cosa misura ogni variabile duale, con le unità */
-  const DUALI = (s) => `</p><p class="plm-testo"><b>${T("Prezzi ombra.", "Shadow prices.")}</b> ${s}`;
   const modello = (k, testo, simbolico, num, nota) =>
     `<div class="plm"><p class="plm-testo">${testo}</p>${rigaPagina(k)}` +
     `<div class="plm-sim">\\(\\displaystyle \\begin{aligned} ${simbolico} \\end{aligned}\\)</div>` +
@@ -223,21 +223,8 @@
   const stato = (R, C) => M.tinta(C.rosso, R.stato === "illimitato" ? T("Illimitato.", "Unbounded.") : T("Inammissibile.", "Infeasible.")) + " " +
     (R.stato === "illimitato" ? T("Il valore della funzione obiettivo cresce senza limite.", "The objective function value grows without bound.")
       : T("Con questi dati nessuna soluzione rispetta tutti i vincoli: il simplesso si ferma alla fase 1.", "With these data no solution satisfies all the constraints: the simplex method stops in phase 1."));
-  /** tabella dei prezzi ombra: tutti i vincoli se sono pochi, altrimenti solo quelli con prezzo ombra non nullo */
-  function tabOmbra(R) {
-    const P = R.P, tutti = P.righe.length <= 8;
-    const righe = [];
-    P.righe.forEach((r, i) => {
-      if (!tutti && !nz(R.y[i])) return;
-      const usato = `${fq(R.lhs[i])} ${r.rel === "=" ? "=" : r.rel === "<=" ? "≤" : "≥"} ${fq(r.b)}`;
-      righe.push([r.nome, tx(r.duale), `${tx(n(R.y[i], 4))} ${r.unita}`, usato]);
-    });
-    const nulli = P.righe.length - righe.length;
-    return M.tab([T("vincolo", "constraint"), T("duale", "dual"), T("prezzo ombra", "shadow price"), T("valore e limite", "value and bound")], righe) +
-      (!tutti ? `<div style="margin-top:.2em">${T(`Gli altri ${nulli} vincoli hanno prezzo ombra nullo.`, `The other ${nulli} constraints have a zero shadow price.`)}</div>` : "");
-  }
   const valore = (testo, R, unita, cifre = 2) => `${testo}: <b>${fq(R.z, cifre)} ${unita}</b>`;
-  /** il blocco «Soluzione ottima» sotto il grafico (GI_PL_SOL, gi-pl-app.js): valore ottimo e variabili; a destra prezzi ombra e note */
+  /** il blocco «Soluzione ottima» sotto il grafico (GI_PL_SOL, gi-pl-app.js): prima le variabili, sotto il valore ottimo */
   const SOL = () => window.GI_PL_SOL;
   const z = (x, c = 2) => (FRx() ? FRx().z(x, c) : SOL().z(x, c));
   const NULLO = () => T("«—»: valore nullo.", "«—»: zero value.");
@@ -278,17 +265,15 @@
       const DV = DVF(), QD = R.D;
       return modello("01", T(`<b>Il problema.</b> Decidiamo quanti litri di ogni prodotto vendere al giorno non trattati, trattati in orario ordinario e trattati in straordinario. L'obiettivo è il profitto massimo. I vincoli: produzione massima di ogni prodotto, capacità di trattamento in orario ordinario e in straordinario, per tutti i prodotti insieme.` +
         `<br><b>Variabili:</b> \\(x_i\\): litri del prodotto \\(i\\) venduti al giorno non trattati; \\(y_i\\): litri trattati in orario ordinario; \\(z_i\\): litri trattati in straordinario.` +
-        `<br><b>Dati:</b> \\(r = 3\\): numero di prodotti, indice \\(i\\); \\(a_i\\): profitto di un litro non trattato: \\(${DV.L(QD.a)}\\) €; \\(b_i\\): profitto di un litro trattato in orario ordinario: \\(${DV.L(QD.b)}\\) €; \\(c_i\\): profitto di un litro trattato in straordinario: \\(${DV.L(QD.c)}\\) €; \\(w_i\\): produzione massima del prodotto \\(i\\): \\(${DV.L(QD.w)}\\) L al giorno; \\(d = ${DV.f(QD.d)}\\) L: litri trattabili al giorno in orario ordinario; \\(e = ${DV.f(QD.e)}\\) L: litri trattabili al giorno in straordinario.` +
-        DUALI("\\(\\lambda_i\\): profitto in più, in €/L, per un litro in più di produzione massima \\(w_i\\); \\(\\pi\\) e \\(\\varrho\\): lo stesso per un litro in più di capacità \\(d\\) e \\(e\\)."),
+        `<br><b>Dati:</b> \\(r\\): numero di prodotti, indice \\(i\\); \\(a_i\\), \\(b_i\\), \\(c_i\\): profitto di un litro venduto non trattato, trattato in orario ordinario, trattato in straordinario (€); \\(w_i\\): produzione massima del prodotto \\(i\\) (L al giorno); \\(d\\), \\(e\\): litri trattabili al giorno in orario ordinario e in straordinario.`,
       `<b>The problem.</b> We decide how many liters of each product to sell per day untreated, treated in regular time and treated in overtime. The objective is the maximum profit. The constraints: maximum production of each product, treatment capacity in regular time and in overtime, all products together.` +
         `<br><b>Variables:</b> \\(x_i\\): liters of product \\(i\\) sold per day untreated; \\(y_i\\): liters treated in regular time; \\(z_i\\): liters treated in overtime.` +
-        `<br><b>Data:</b> \\(r = 3\\): number of products, index \\(i\\); \\(a_i\\): profit of one untreated liter: \\(${DV.L(QD.a)}\\) €; \\(b_i\\): profit of one liter treated in regular time: \\(${DV.L(QD.b)}\\) €; \\(c_i\\): profit of one liter treated in overtime: \\(${DV.L(QD.c)}\\) €; \\(w_i\\): maximum production of product \\(i\\): \\(${DV.L(QD.w)}\\) L per day; \\(d = ${DV.f(QD.d)}\\) L: liters that can be treated per day in regular time; \\(e = ${DV.f(QD.e)}\\) L: liters that can be treated per day in overtime.` +
-        DUALI("\\(\\lambda_i\\): extra profit, in €/L, for one more liter of maximum production \\(w_i\\); \\(\\pi\\) and \\(\\varrho\\): the same for one more liter of capacity \\(d\\) and \\(e\\).")),
+        `<br><b>Data:</b> \\(r\\): number of products, index \\(i\\); \\(a_i\\), \\(b_i\\), \\(c_i\\): profit of one liter sold untreated, treated in regular time, treated in overtime (€); \\(w_i\\): maximum production of product \\(i\\) (L per day); \\(d\\), \\(e\\): liters that can be treated per day in regular time and in overtime.`),
       sim, numerico(R.P));
     },
     disegna(crea, R, v, C, S) {
       if (R.stato !== "ottimo") return avviso(crea, S, C, T("Nessun piano ammissibile", "No feasible plan"));
-      const F = FIG(), D = R.D, x = R.x, [b1, b2] = affiancati(S, 0.62);
+      const F = FIG(), D = R.D, x = R.x, b1 = pieno(S);
       const ymax = Math.max(...D.w, D.d, D.e, 10) * 1.5;
       const A = figura(crea, Object.assign(b1, { xa: 0.4, xb: 3.6, ya: 0, yb: ymax, titolo: T("Litri al giorno per prodotto", "Liters per day by product"),
         nx: T("prodotto", "product"), ny: T("litri al giorno", "liters per day") }), C, { nTx: 0, nTy: 5 });
@@ -300,25 +285,12 @@
       categorie(crea, A, [1, 2, 3].map((i) => [i, String(i)]), C);
       legendaIn(crea, A, [[F.grigio, T("non trattato xᵢ", "untreated xᵢ"), "barra"], [F.teal, T("orario ordinario yᵢ", "regular time yᵢ"), "barra"],
         [F.arancio, T("straordinario zᵢ", "overtime zᵢ"), "barra"], [F.rosso, T("produzione massima wᵢ", "maximum production wᵢ"), "tratteggio"]], C);
-      const ord = x[3] + x[4] + x[5], str = x[6] + x[7] + x[8];
-      const B = figura(crea, Object.assign(b2, { xa: 0.4, xb: 2.6, ya: 0, yb: ymax, titolo: T("Capacità di trattamento", "Treatment capacity"),
-        ny: T("litri al giorno", "liters per day") }), C, { nTx: 0, nTy: 5 });
-      barra(crea, B, 1, 0, ord, 0.55, F.teal); barra(crea, B, 2, 0, str, 0.55, F.arancio);
-      tetto(crea, B, 1, D.d, 0.75, F.rosso); tetto(crea, B, 2, D.e, 0.75, F.rosso);
-      categorie(crea, B, [[1, T("ordinario", "regular")], [2, T("straord.", "overtime")]], C);
-      legendaIn(crea, B, [[F.rosso, T("capacità d ed e", "capacity d and e"), "tratteggio"]], C);
     },
     legenda: () => { const F = FIG(); return [[F.grigio, T("litri venduti non trattati \\(x_i\\)", "liters sold untreated \\(x_i\\)"), "pieno"],
       [F.teal, T("litri trattati in orario ordinario \\(y_i\\)", "liters treated in regular time \\(y_i\\)"), "pieno"],
       [F.arancio, T("litri trattati in straordinario \\(z_i\\)", "liters treated in overtime \\(z_i\\)"), "pieno"],
       [F.rosso, T("produzione massima \\(w_i\\) e capacità di trattamento \\(d\\), \\(e\\)", "maximum production \\(w_i\\) and treatment capacities \\(d\\), \\(e\\)"), "dashed"]]; },
-    letture(R, v, st, C) {
-      if (R.stato !== "ottimo") return stato(R, C);
-      const x = R.x;
-      return tabOmbra(R) +
-        nota(T("Il prezzo ombra \\(\\pi\\) è il profitto in più per un litro in più di capacità in orario ordinario, finché la base ottima non cambia.",
-          "The shadow price \\(\\pi\\) is the extra profit for one more liter of regular-time capacity, as long as the optimal basis does not change."));
-    },
+    letture(R, v, st, C) { return R.stato !== "ottimo" ? stato(R, C) : ""; },
     soluzione(R) {
       if (R.stato !== "ottimo") return "";
       const x = R.x;
@@ -327,8 +299,8 @@
           [0, 1, 2].map((i) => [String(i + 1), z(x[i]), z(x[3 + i]), z(x[6 + i]), `${nt(x[i] + x[3 + i] + x[6 + i])} / ${nt(R.D.w[i])}`])),
       ], NULLO());
     },
-    domanda: T("Con \\(d = 70\\) L nessun litro resta non trattato e \\(\\pi\\) scende da 2 a 1 €/L. Con \\(e = 0\\) si vendono 5 L del prodotto 1 non trattati.",
-      "With \\(d = 70\\) L no liter stays untreated and \\(\\pi\\) drops from 2 to 1 €/L. With \\(e = 0\\) 5 L of product 1 are sold untreated."),
+    domanda: T("Porta \\(d\\) a 70: nessun litro resta non trattato e il profitto sale a 410 €. Porta \\(e\\) a 0: si vendono 5 L del prodotto 1 non trattati.",
+      "Set \\(d\\) to 70: no liter stays untreated and the profit rises to 410 €. Set \\(e\\) to 0: 5 L of product 1 are sold untreated."),
     tabella: (R, DV) => DV.tab(T("Prodotti", "Products"), [T("prodotto \\(i\\)", "product \\(i\\)"), "\\(a_i\\) (€/L)", "\\(b_i\\) (€/L)", "\\(c_i\\) (€/L)", T("\\(w_i\\) (L al giorno)", "\\(w_i\\) (L per day)")],
       [0, 1, 2].map((i) => [String(i + 1), DV.t(R.D.a[i]), DV.t(R.D.b[i]), DV.t(R.D.c[i]), DV.t(R.D.w[i])])) + DV.tab(T("Capacità di trattamento", "Treatment capacity"), ["", T("L al giorno", "L per day")],
       [[T("orario ordinario \\(d\\)", "regular time \\(d\\)"), DV.t(R.D.d)], [T("straordinario \\(e\\)", "overtime \\(e\\)"), DV.t(R.D.e)]]),
@@ -340,9 +312,9 @@
     etichetta: T("Dieta", "Diet"),
     cursori: [
       { nome: "a_2", min: 0, max: 60, step: 2, val: 20, fmt: (x) => `${nt(x, 0)} ${T("g/mese", "g/month")}`,
-        descr: T("grammi minimi del nutriente 2 al mese (massimo \\(b_2 = 60\\))", "minimum grams of nutrient 2 per month (maximum \\(b_2 = 60\\))") },
+        descr: T("grammi minimi del nutriente 2 al mese", "minimum grams of nutrient 2 per month") },
       { nome: "a_3", min: 0, max: 50, step: 5, val: 10, fmt: (x) => `${nt(x, 0)} ${T("g/mese", "g/month")}`,
-        descr: T("grammi minimi del nutriente 3 al mese (massimo \\(b_3 = 50\\))", "minimum grams of nutrient 3 per month (maximum \\(b_3 = 50\\))") },
+        descr: T("grammi minimi del nutriente 3 al mese", "minimum grams of nutrient 3 per month") },
     ],
     calcola(v) {
       const D = Object.assign({}, D03, { a: [10, v[0], v[1]], w: D03.w.slice() });
@@ -365,45 +337,35 @@
       const TABS = DV.tabelle(DV.tab(T("Contenuto \\(g_{ij}\\) (g per kg): alimento \\(i\\) per riga, nutriente \\(j\\) per colonna", "Content \\(g_{ij}\\) (g per kg): food \\(i\\) by row, nutrient \\(j\\) by column"), ["\\(i \\backslash j\\)", ...QD.g[0].map((q, j) => String(j + 1))], QD.g.map((r, i) => [String(i + 1), ...r.map((x) => DV.t(x, 2))])));
       return modello("03", T(`<b>Il problema.</b> Decidiamo quanti chilogrammi di ogni alimento mettere nella dieta mensile. L'obiettivo è il costo minimo. I vincoli: per ogni nutriente una quantità minima e una massima al mese; per ogni alimento una quantità minima e una massima.` +
         `<br><b>Variabili:</b> \\(x_i\\): chilogrammi dell'alimento \\(i\\) nella dieta mensile.` +
-        `<br><b>Dati:</b> \\(s = 4\\): numero di alimenti, indice \\(i\\); \\(r = 3\\): numero di nutrienti, indice \\(j\\); \\(g_{ij}\\): grammi di nutriente \\(j\\) in un chilogrammo di alimento \\(i\\) (tabella qui sotto); \\(w_i\\): costo dell'alimento \\(i\\): \\(${DV.L(QD.w)}\\) € al kg; \\(a_j\\): grammi minimi di nutriente \\(j\\) al mese: \\(${DV.L(QD.a)}\\); \\(b_j\\): grammi massimi di nutriente \\(j\\) al mese: \\(${DV.L(QD.b)}\\); \\(c_i\\): chilogrammi minimi di alimento \\(i\\) al mese: \\(${DV.L(QD.c)}\\); \\(d_i\\): chilogrammi massimi di alimento \\(i\\) al mese: \\(${DV.L(QD.d)}\\).` + TABS +
-        DUALI("costo in più per un'unità in più a destra del vincolo: \\(\\alpha_j \\ge 0\\) e \\(\\beta_j \\le 0\\) in €/g per i limiti \\(a_j\\) e \\(b_j\\), \\(\\gamma_i \\ge 0\\) e \\(\\delta_i \\le 0\\) in €/kg per i limiti \\(c_i\\) e \\(d_i\\)."),
+        `<br><b>Dati:</b> \\(s\\): numero di alimenti, indice \\(i\\); \\(r\\): numero di nutrienti, indice \\(j\\); \\(g_{ij}\\): grammi di nutriente \\(j\\) in un chilogrammo di alimento \\(i\\); \\(w_i\\): costo di un chilogrammo di alimento \\(i\\) (€); \\(a_j\\), \\(b_j\\): grammi minimi e massimi di nutriente \\(j\\) al mese; \\(c_i\\), \\(d_i\\): chilogrammi minimi e massimi di alimento \\(i\\) al mese.` + TABS,
       `<b>The problem.</b> We decide how many kilograms of each food to put in the monthly diet. The objective is the minimum cost. The constraints: for each nutrient a minimum and a maximum amount per month; for each food a minimum and a maximum amount.` +
         `<br><b>Variables:</b> \\(x_i\\): kilograms of food \\(i\\) in the monthly diet.` +
-        `<br><b>Data:</b> \\(s = 4\\): number of foods, index \\(i\\); \\(r = 3\\): number of nutrients, index \\(j\\); \\(g_{ij}\\): grams of nutrient \\(j\\) in one kilogram of food \\(i\\) (table below); \\(w_i\\): cost of food \\(i\\): \\(${DV.L(QD.w)}\\) € per kg; \\(a_j\\): minimum grams of nutrient \\(j\\) per month: \\(${DV.L(QD.a)}\\); \\(b_j\\): maximum grams of nutrient \\(j\\) per month: \\(${DV.L(QD.b)}\\); \\(c_i\\): minimum kilograms of food \\(i\\) per month: \\(${DV.L(QD.c)}\\); \\(d_i\\): maximum kilograms of food \\(i\\) per month: \\(${DV.L(QD.d)}\\).` + TABS +
-        DUALI("extra cost for one more unit on the right-hand side of the constraint: \\(\\alpha_j \\ge 0\\) and \\(\\beta_j \\le 0\\) in €/g for the bounds \\(a_j\\) and \\(b_j\\), \\(\\gamma_i \\ge 0\\) and \\(\\delta_i \\le 0\\) in €/kg for the bounds \\(c_i\\) and \\(d_i\\).")),
+        `<br><b>Data:</b> \\(s\\): number of foods, index \\(i\\); \\(r\\): number of nutrients, index \\(j\\); \\(g_{ij}\\): grams of nutrient \\(j\\) in one kilogram of food \\(i\\); \\(w_i\\): cost of one kilogram of food \\(i\\) (€); \\(a_j\\), \\(b_j\\): minimum and maximum grams of nutrient \\(j\\) per month; \\(c_i\\), \\(d_i\\): minimum and maximum kilograms of food \\(i\\) per month.` + TABS),
       sim, numerico(R.P));
     },
     disegna(crea, R, v, C, S) {
       if (R.stato !== "ottimo") return avviso(crea, S, C, T("Nessuna dieta ammissibile", "No feasible diet"));
-      const F = FIG(), D = R.D, x = R.x, [b1, b2] = affiancati(S, 0.5);
-      const A = figura(crea, Object.assign(b1, { xa: 0.4, xb: 4.6, ya: 0, yb: Math.max(...D.d) * 1.45, titolo: T("Alimenti nella dieta", "Foods in the diet"),
-        nx: T("alimento", "food"), ny: T("chilogrammi al mese", "kilograms per month") }), C, { nTx: 0, nTy: 5 });
-      x.forEach((q, i) => { barra(crea, A, i + 1, 0, q, 0.5, F.teal); baffo(crea, A, i + 1, D.c[i], D.d[i], F.blu); });
-      categorie(crea, A, [1, 2, 3, 4].map((i) => [i, String(i)]), C);
-      legendaIn(crea, A, [[F.teal, T("kg di alimento xᵢ", "kg of food xᵢ"), "barra"], [F.blu, T("intervallo [cᵢ, dᵢ]", "range [cᵢ, dᵢ]"), "baffo"]], C);
-      const B = figura(crea, Object.assign(b2, { xa: 0.4, xb: 3.6, ya: 0, yb: Math.max(...D.b) * 1.45, titolo: T("Nutrienti nella dieta", "Nutrients in the diet"),
+      const F = FIG(), D = R.D, x = R.x, b1 = pieno(S);
+      // i nutrienti forniti dalla dieta ottima, con i limiti [a_j, b_j]: i cursori spostano i minimi a_2 e a_3
+      const B = figura(crea, Object.assign(b1, { xa: 0.4, xb: 3.6, ya: 0, yb: Math.max(...D.b) * 1.45, titolo: T("Nutrienti nella dieta ottima", "Nutrients in the optimal diet"),
         nx: T("nutriente", "nutrient"), ny: T("grammi al mese", "grams per month") }), C, { nTx: 0, nTy: 5 });
       R.lhs.slice(0, 3).forEach((q, j) => { barra(crea, B, j + 1, 0, q, 0.5, F.verde); baffo(crea, B, j + 1, D.a[j], D.b[j], F.blu); });
       categorie(crea, B, [1, 2, 3].map((j) => [j, String(j)]), C);
-      legendaIn(crea, B, [[F.verde, T("grammi forniti", "grams supplied"), "barra"], [F.blu, T("intervallo [aⱼ, bⱼ]", "range [aⱼ, bⱼ]"), "baffo"]], C);
+      legendaIn(crea, B, [[F.verde, T("grammi forniti Σᵢ gᵢⱼ xᵢ", "grams supplied Σᵢ gᵢⱼ xᵢ"), "barra"], [F.blu, T("intervallo [aⱼ, bⱼ]", "range [aⱼ, bⱼ]"), "baffo"]], C);
     },
     legenda: () => { const F = FIG(); return [[F.teal, T("chilogrammi \\(x_i\\) di ogni alimento", "kilograms \\(x_i\\) of each food"), "pieno"],
       [F.verde, T("grammi di nutriente \\(\\sum_i g_{ij} x_i\\)", "grams of nutrient \\(\\sum_i g_{ij} x_i\\)"), "pieno"],
       [F.blu, T("intervalli ammessi \\([c_i, d_i]\\) e \\([a_j, b_j]\\)", "allowed ranges \\([c_i, d_i]\\) and \\([a_j, b_j]\\)"), ""]]; },
-    letture(R, v, st, C) {
-      if (R.stato !== "ottimo") return stato(R, C);
-      return tabOmbra(R) +
-        nota(T("\\(\\alpha_j\\) è il costo in più per un grammo in più di fabbisogno minimo del nutriente \\(j\\).", "\\(\\alpha_j\\) is the extra cost for one more gram of minimum requirement of nutrient \\(j\\)."));
-    },
+    letture(R, v, st, C) { return R.stato !== "ottimo" ? stato(R, C) : ""; },
     soluzione(R) {
       if (R.stato !== "ottimo") return "";
       return SOL().blocco(valore(T("Costo minimo", "Minimum cost"), R, T("€ al mese", "€ per month")), [
         SOL().tab(T("Chili al mese di ogni alimento", "Kilograms per month of each food"), [T("alimento \\(i\\)", "food \\(i\\)"), ...R.x.map((q, i) => String(i + 1))],
-          [[T("\\(\\tilde x_i\\) (kg)", "\\(\\tilde x_i\\) (kg)"), ...R.x.map((q) => z(q, 3))], ["\\([c_i, d_i]\\)", ...R.x.map((q, i) => `[${nt(R.D.c[i], 0)}, ${nt(R.D.d[i], 0)}]`)]]),
+          [[T("\\(\\tilde x_i\\) (kg)", "\\(\\tilde x_i\\) (kg)"), ...R.x.map((q) => z(q, 3))]]),
       ], NULLO());
     },
-    domanda: T("Con \\(a_3 = 40\\) g la dieta diventa inammissibile. Con \\(a_2 = 30\\) g l'alimento 3 sale a \\(19/6\\) kg e il costo a \\(64/3\\) €.",
-      "With \\(a_3 = 40\\) g the diet becomes infeasible. With \\(a_2 = 30\\) g food 3 rises to \\(19/6\\) kg and the cost to \\(64/3\\) €."),
+    domanda: T("Porta \\(a_2\\) a 30: l'alimento 3 sale a \\(19/6\\) kg e il costo a \\(64/3\\) €. Porta \\(a_3\\) a 40: la dieta diventa inammissibile.",
+      "Set \\(a_2\\) to 30: food 3 rises to \\(19/6\\) kg and the cost to \\(64/3\\) €. Set \\(a_3\\) to 40: the diet becomes infeasible."),
     tabella: (R, DV) => DV.tab(T("Alimenti", "Foods"), [T("alimento \\(i\\)", "food \\(i\\)"), T("\\(w_i\\) (€ al kg)", "\\(w_i\\) (€ per kg)"), "\\(c_i\\) (kg)", "\\(d_i\\) (kg)"],
       R.D.w.map((w, i) => [String(i + 1), DV.t(w), DV.t(R.D.c[i]), DV.t(R.D.d[i])])) + DV.tab(T("Nutrienti", "Nutrients"), [T("nutriente \\(j\\)", "nutrient \\(j\\)"), "\\(a_j\\) (g)", "\\(b_j\\) (g)"],
       R.D.a.map((q, j) => [String(j + 1), DV.t(q), DV.t(R.D.b[j])])),
@@ -415,9 +377,9 @@
     etichetta: T("Dieta per più classi", "Diet for several classes"),
     cursori: [
       { nome: "a_{11}", min: 0, max: 40, step: 2, val: 20, fmt: (x) => `${nt(x, 0)} ${T("g/mese", "g/month")}`,
-        descr: T("grammi minimi del nutriente 1 nella dieta 1 (massimo \\(b_{11} = 40\\))", "minimum grams of nutrient 1 in diet 1 (maximum \\(b_{11} = 40\\))") },
+        descr: T("grammi minimi del nutriente 1 nella dieta 1", "minimum grams of nutrient 1 in diet 1") },
       { nome: "w_3", min: 1, max: 12, step: 1, val: 6, fmt: (x) => `${nt(x, 0)} €/kg`,
-        descr: T("costo dell'alimento 3 (alimenti 1 e 2: 5 e 8 €/kg)", "cost of food 3 (foods 1 and 2: 5 and 8 €/kg)") },
+        descr: T("costo di un chilogrammo dell'alimento 3", "cost of one kilogram of food 3") },
     ],
     calcola(v) {
       const D = { w: [5, 8, v[1]], g: D04.g, a: [[v[0], 10], [10, 20]], b: D04.b, c: D04.c.slice(), d: D04.d };
@@ -450,17 +412,15 @@
         DV.tab(T("Limiti \\(a_{kj}\\) e \\(b_{kj}\\) (g): dieta \\(k\\) per riga", "Bounds \\(a_{kj}\\) and \\(b_{kj}\\) (g): diet \\(k\\) by row"), ["\\(k\\)", "\\(a_{k1}\\)", "\\(a_{k2}\\)", "\\(b_{k1}\\)", "\\(b_{k2}\\)"], [0, 1].map((k) => [String(k + 1), ...QD.a[k].map((x) => DV.t(x, 2)), ...QD.b[k].map((x) => DV.t(x, 2))])));
       return modello("04", T(`<b>Il problema.</b> Decidiamo quanti chilogrammi di ogni alimento mettere in ognuna delle diete mensili. L'obiettivo è il costo minimo di tutte le diete. I vincoli: in ogni dieta, per ogni nutriente, una quantità minima e una massima; per ogni alimento, sommando le diete, una quantità minima e una massima.` +
         `<br><b>Variabili:</b> \\(x_{ik}\\): chilogrammi di alimento \\(i\\) nella dieta \\(k\\).` +
-        `<br><b>Dati:</b> \\(n = 2\\): numero di diete mensili, indice \\(k\\); \\(s = 3\\): numero di alimenti, indice \\(i\\); \\(r = 2\\): numero di nutrienti, indice \\(j\\); \\(g_{ij}\\): grammi di nutriente \\(j\\) in un chilogrammo di alimento \\(i\\) (tabella qui sotto); \\(w_i\\): costo dell'alimento \\(i\\): \\(${DV.L(QD.w)}\\) € al kg; \\(a_{kj}\\) e \\(b_{kj}\\): grammi minimi e massimi di nutriente \\(j\\) nella dieta \\(k\\) (tabella); \\(c_i\\): chilogrammi minimi di alimento \\(i\\) nelle due diete insieme: \\(${DV.L(QD.c)}\\); \\(d_i\\): chilogrammi massimi: \\(${DV.L(QD.d)}\\).` + TABS +
-        DUALI("costo in più per un'unità in più a destra del vincolo: \\(\\alpha_{kj} \\ge 0\\) e \\(\\beta_{kj} \\le 0\\) in €/g per i limiti \\(a_{kj}\\) e \\(b_{kj}\\), \\(\\gamma_i \\ge 0\\) e \\(\\delta_i \\le 0\\) in €/kg per i limiti \\(c_i\\) e \\(d_i\\)."),
+        `<br><b>Dati:</b> \\(n\\): numero di diete mensili, indice \\(k\\); \\(s\\): numero di alimenti, indice \\(i\\); \\(r\\): numero di nutrienti, indice \\(j\\); \\(g_{ij}\\): grammi di nutriente \\(j\\) in un chilogrammo di alimento \\(i\\); \\(w_i\\): costo di un chilogrammo di alimento \\(i\\) (€); \\(a_{kj}\\), \\(b_{kj}\\): grammi minimi e massimi di nutriente \\(j\\) nella dieta \\(k\\); \\(c_i\\), \\(d_i\\): chilogrammi minimi e massimi di alimento \\(i\\) nelle diete insieme.` + TABS,
       `<b>The problem.</b> We decide how many kilograms of each food to put in each of the monthly diets. The objective is the minimum cost of all the diets. The constraints: in each diet, for each nutrient, a minimum and a maximum amount; for each food, over all the diets, a minimum and a maximum amount.` +
         `<br><b>Variables:</b> \\(x_{ik}\\): kilograms of food \\(i\\) in diet \\(k\\).` +
-        `<br><b>Data:</b> \\(n = 2\\): number of monthly diets, index \\(k\\); \\(s = 3\\): number of foods, index \\(i\\); \\(r = 2\\): number of nutrients, index \\(j\\); \\(g_{ij}\\): grams of nutrient \\(j\\) in one kilogram of food \\(i\\) (table below); \\(w_i\\): cost of food \\(i\\): \\(${DV.L(QD.w)}\\) € per kg; \\(a_{kj}\\) and \\(b_{kj}\\): minimum and maximum grams of nutrient \\(j\\) in diet \\(k\\) (table); \\(c_i\\): minimum kilograms of food \\(i\\) over both diets: \\(${DV.L(QD.c)}\\); \\(d_i\\): maximum kilograms: \\(${DV.L(QD.d)}\\).` + TABS +
-        DUALI("extra cost for one more unit on the right-hand side of the constraint: \\(\\alpha_{kj} \\ge 0\\) and \\(\\beta_{kj} \\le 0\\) in €/g for the bounds \\(a_{kj}\\) and \\(b_{kj}\\), \\(\\gamma_i \\ge 0\\) and \\(\\delta_i \\le 0\\) in €/kg for the bounds \\(c_i\\) and \\(d_i\\).")),
+        `<br><b>Data:</b> \\(n\\): number of monthly diets, index \\(k\\); \\(s\\): number of foods, index \\(i\\); \\(r\\): number of nutrients, index \\(j\\); \\(g_{ij}\\): grams of nutrient \\(j\\) in one kilogram of food \\(i\\); \\(w_i\\): cost of one kilogram of food \\(i\\) (€); \\(a_{kj}\\), \\(b_{kj}\\): minimum and maximum grams of nutrient \\(j\\) in diet \\(k\\); \\(c_i\\), \\(d_i\\): minimum and maximum kilograms of food \\(i\\) over all the diets.` + TABS),
       sim, numerico(R.P));
     },
     disegna(crea, R, v, C, S) {
       if (R.stato !== "ottimo") return avviso(crea, S, C, T("Nessuna coppia di diete ammissibile", "No feasible pair of diets"));
-      const F = FIG(), D = R.D, x = R.x, col = [F.teal, F.arancio], [b1, b2] = affiancati(S, 0.45);
+      const F = FIG(), D = R.D, x = R.x, col = [F.teal, F.arancio], b1 = pieno(S);
       const A = figura(crea, Object.assign(b1, { xa: 0.4, xb: 3.6, ya: 0, yb: Math.max(...D.d) * 1.5, titolo: T("Alimenti per dieta", "Foods by diet"),
         nx: T("alimento", "food"), ny: T("chilogrammi al mese", "kilograms per month") }), C, { nTx: 0, nTy: 5 });
       for (let i = 0; i < 3; i++) {
@@ -469,25 +429,11 @@
       }
       categorie(crea, A, [1, 2, 3].map((i) => [i, String(i)]), C);
       legendaIn(crea, A, [[col[0], T("dieta 1", "diet 1"), "barra"], [col[1], T("dieta 2", "diet 2"), "barra"], [F.blu, T("totale in [cᵢ, dᵢ]", "total in [cᵢ, dᵢ]"), "baffo"]], C);
-      const pos = [1, 2, 3.5, 4.5];
-      const B = figura(crea, Object.assign(b2, { xa: 0.3, xb: 5.2, ya: 0, yb: 40 * 1.5, titolo: T("Nutrienti per dieta", "Nutrients by diet"),
-        nx: T("dieta k, nutriente j", "diet k, nutrient j"), ny: T("grammi al mese", "grams per month") }), C, { nTx: 0, nTy: 5 });
-      [0, 1, 2, 3].forEach((q) => {
-        const k = q >> 1, j = q & 1;
-        barra(crea, B, pos[q], 0, R.lhs[q], 0.6, col[k]);
-        baffo(crea, B, pos[q], D.a[k][j], D.b[k][j], F.blu);
-      });
-      categorie(crea, B, [0, 1, 2, 3].map((q) => [pos[q], `${(q >> 1) + 1}, ${(q & 1) + 1}`]), C);
-      legendaIn(crea, B, [[F.blu, T("intervallo [aₖⱼ, bₖⱼ]", "range [aₖⱼ, bₖⱼ]"), "baffo"]], C);
     },
     legenda: () => { const F = FIG(); return [[F.teal, T("dieta 1: chilogrammi \\(x_{i1}\\) e grammi di nutriente", "diet 1: kilograms \\(x_{i1}\\) and grams of nutrient"), "pieno"],
       [F.arancio, T("dieta 2: chilogrammi \\(x_{i2}\\) e grammi di nutriente", "diet 2: kilograms \\(x_{i2}\\) and grams of nutrient"), "pieno"],
       [F.blu, T("intervalli ammessi \\([c_i, d_i]\\) e \\([a_{kj}, b_{kj}]\\)", "allowed ranges \\([c_i, d_i]\\) and \\([a_{kj}, b_{kj}]\\)"), ""]]; },
-    letture(R, v, st, C) {
-      if (R.stato !== "ottimo") return stato(R, C);
-      const x = R.x;
-      return tabOmbra(R);
-    },
+    letture(R, v, st, C) { return R.stato !== "ottimo" ? stato(R, C) : ""; },
     soluzione(R) {
       if (R.stato !== "ottimo") return "";
       const x = R.x;
@@ -496,8 +442,8 @@
           [tx("i \\backslash k"), "1", "2", T("totale", "total")], [0, 1, 2].map((i) => [String(i + 1), z(x[2 * i], 4), z(x[2 * i + 1], 4), z(x[2 * i] + x[2 * i + 1], 4)])),
       ], NULLO());
     },
-    domanda: T("Con \\(w_3 = 1\\) € la dieta 2 usa solo l'alimento 3. Con \\(a_{11} = 40\\) g la dieta 1 prende tutti i 5 kg dell'alimento 1 e il costo sale a 93 €.",
-      "With \\(w_3 = 1\\) € diet 2 uses food 3 only. With \\(a_{11} = 40\\) g diet 1 takes all 5 kg of food 1 and the cost rises to 93 €."),
+    domanda: T("Porta \\(w_3\\) a 1: la dieta 2 usa solo l'alimento 3. Porta \\(a_{11}\\) a 40: la dieta 1 prende tutti i 5 kg dell'alimento 1 e il costo sale a 93 €.",
+      "Set \\(w_3\\) to 1: diet 2 uses food 3 only. Set \\(a_{11}\\) to 40: diet 1 takes all 5 kg of food 1 and the cost rises to 93 €."),
     tabella: (R, DV) => DV.tab(T("Alimenti", "Foods"), [T("alimento \\(i\\)", "food \\(i\\)"), T("\\(w_i\\) (€ al kg)", "\\(w_i\\) (€ per kg)"), "\\(c_i\\) (kg)", "\\(d_i\\) (kg)"],
       R.D.w.map((w, i) => [String(i + 1), DV.t(w), DV.t(R.D.c[i]), DV.t(R.D.d[i])])),
   };
@@ -508,9 +454,9 @@
     etichetta: T("Più periodi con acquisti", "Multi-period with purchases"),
     cursori: [
       { nome: "u_t", min: 10, max: 25, step: 1, val: 15, fmt: (x) => `${nt(x, 0)} €/L`,
-        descr: T("costo di un litro acquistato, uguale nei 4 giorni (produzione: 10 €/L)", "cost of one liter bought, the same in the 4 days (production: 10 €/L)") },
+        descr: T("costo di un litro acquistato, uguale in tutti i giorni", "cost of one liter bought, the same on all days") },
       { nome: "m_3", min: 0, max: 200, step: 10, val: 150, fmt: (x) => `${nt(x, 0)} L`,
-        descr: T("capacità produttiva del giorno 3 (giorni 1, 2, 4: 40, 50, 40 L)", "production capacity of day 3 (days 1, 2, 4: 40, 50, 40 L)") },
+        descr: T("produzione massima del giorno 3", "maximum production of day 3") },
     ],
     calcola(v) {
       const D = Object.assign({}, D05, { u: v[0], m: [40, 50, v[1], 40] }), nT = 4;
@@ -539,22 +485,20 @@
       const DV = DVF(), QD = R.D;
       return modello("05", T(`<b>Il problema.</b> Decidiamo quanti litri produrre, quanti acquistare sul mercato e quanti tenere in magazzino ogni giorno. L'obiettivo è il costo minimo di produzione, acquisto e magazzino. I vincoli: ogni giorno la domanda è servita da produzione, acquisti e scorta del giorno prima; la scorta iniziale e quella finale sono fissate; la produzione giornaliera ha un limite.` +
         `<br><b>Variabili:</b> \\(x_t\\): litri prodotti nel giorno \\(t\\); \\(b_t\\): litri acquistati sul mercato nel giorno \\(t\\); \\(s_t\\): litri in magazzino a fine giorno \\(t\\).` +
-        `<br><b>Dati:</b> \\(n = 4\\): numero di giorni, indice \\(t\\); \\(p_t = ${DV.f(QD.p)}\\) €: costo di un litro prodotto, uguale tutti i giorni; \\(u_t = ${DV.f(QD.u)}\\) €: costo di un litro acquistato, uguale tutti i giorni; \\(h_t = ${DV.f(QD.h)}\\) €: costo di un litro tenuto in magazzino a fine giorno, uguale tutti i giorni; \\(d_t\\): domanda del giorno \\(t\\): \\(${DV.L(QD.d)}\\) L; \\(\\ell_0 = ${QD.l0}\\) L: scorta all'inizio; \\(\\ell_n = ${QD.ln}\\) L: scorta che deve restare alla fine; \\(m_t\\): produzione massima del giorno \\(t\\): \\(${DV.L(QD.m)}\\) L. Il termine costante \\(h_n\\, \\ell_n\\) è il costo di mantenimento della scorta finale.` +
-        DUALI("\\(\\mu_t\\): costo in più, in €/L, per un litro in più di domanda nel giorno \\(t\\); \\(\\pi_t \\le 0\\): variazione del costo, in €/L, per un litro in più di capacità \\(m_t\\)."),
+        `<br><b>Dati:</b> \\(n\\): numero di giorni, indice \\(t\\); \\(p_t\\), \\(u_t\\): costo di un litro prodotto e di un litro acquistato nel giorno \\(t\\) (€); \\(h_t\\): costo di un litro in magazzino a fine giorno \\(t\\) (€); \\(d_t\\): domanda del giorno \\(t\\) (L); \\(m_t\\): produzione massima del giorno \\(t\\) (L); \\(\\ell_0\\): scorta iniziale (L); \\(\\ell_n\\): scorta che deve restare alla fine (L). Il termine costante \\(h_n\\, \\ell_n\\) è il costo di mantenimento della scorta finale.`,
       `<b>The problem.</b> We decide how many liters to produce, how many to buy on the market and how many to keep in stock each day. The objective is the minimum cost of production, purchase and storage. The constraints: each day demand is served by production, purchases and the stock of the day before; the initial and final stock are fixed; daily production has a limit.` +
         `<br><b>Variables:</b> \\(x_t\\): liters produced on day \\(t\\); \\(b_t\\): liters bought on the market on day \\(t\\); \\(s_t\\): liters in stock at the end of day \\(t\\).` +
-        `<br><b>Data:</b> \\(n = 4\\): number of days, index \\(t\\); \\(p_t = ${DV.f(QD.p)}\\) €: cost of one liter produced, the same every day; \\(u_t = ${DV.f(QD.u)}\\) €: cost of one liter bought, the same every day; \\(h_t = ${DV.f(QD.h)}\\) €: cost of one liter kept in stock at the end of the day, the same every day; \\(d_t\\): demand of day \\(t\\): \\(${DV.L(QD.d)}\\) L; \\(\\ell_0 = ${QD.l0}\\) L: stock at the start; \\(\\ell_n = ${QD.ln}\\) L: stock that must remain at the end; \\(m_t\\): maximum production of day \\(t\\): \\(${DV.L(QD.m)}\\) L. The constant term \\(h_n\\, \\ell_n\\) is the holding cost of the final stock.` +
-        DUALI("\\(\\mu_t\\): extra cost, in €/L, for one more liter of demand on day \\(t\\); \\(\\pi_t \\le 0\\): change of the cost, in €/L, for one more liter of capacity \\(m_t\\).")),
+        `<br><b>Data:</b> \\(n\\): number of days, index \\(t\\); \\(p_t\\), \\(u_t\\): cost of one liter produced and of one liter bought on day \\(t\\) (€); \\(h_t\\): cost of one liter in stock at the end of day \\(t\\) (€); \\(d_t\\): demand of day \\(t\\) (L); \\(m_t\\): maximum production of day \\(t\\) (L); \\(\\ell_0\\): initial stock (L); \\(\\ell_n\\): stock that must remain at the end (L). The constant term \\(h_n\\, \\ell_n\\) is the holding cost of the final stock.`),
       sim, numerico(R.P),
       T(`Senza il termine costante \\(h_n\\, \\ell_n = ${n(D.h, 2)} \\cdot ${D.ln} = ${n(D.h * D.ln, 2)}\\), che il valore ottimo qui sotto include.`,
         `Without the constant term \\(h_n\\, \\ell_n = ${n(D.h, 2)} \\cdot ${D.ln} = ${n(D.h * D.ln, 2)}\\), which the optimal value below includes.`));
     },
     disegna(crea, R, v, C, S) {
       if (R.stato !== "ottimo") return avviso(crea, S, C, T("Nessun piano ammissibile", "No feasible plan"));
-      const F = FIG(), D = R.D, x = R.x, [b1, b2] = sovrapposti(S, 0.6);
+      const F = FIG(), D = R.D, x = R.x, b1 = pieno(S);
       const top = Math.max(...D.d.map((d, t) => d + (t === 3 ? D.ln : 0)), ...x.slice(0, 4).map((q, t) => q + x[4 + t]), ...D.m.map((m) => Math.min(m, 120))) * 1.5;
       const A = figura(crea, Object.assign(b1, { xa: 0.4, xb: 4.6, ya: 0, yb: top, titolo: T("Produzione e acquisti per giorno (il resto della domanda viene dalla scorta)", "Production and purchases by day (the rest of the demand comes from the stock)"),
-        ny: T("litri", "liters") }), C, { nTx: 0, nTy: 4 });
+        nx: T("giorno", "day"), ny: T("litri", "liters") }), C, { nTx: 0, nTy: 4 });
       for (let t = 0; t < 4; t++) {
         barra(crea, A, t + 1, 0, x[t], 0.5, F.teal); barra(crea, A, t + 1, x[t], x[t] + x[4 + t], 0.5, F.arancio);
         if (D.m[t] <= top) tetto(crea, A, t + 1, D.m[t], 0.7, F.rosso);
@@ -563,23 +507,11 @@
       categorie(crea, A, [1, 2, 3, 4].map((t) => [t, String(t)]), C);
       legendaIn(crea, A, [[F.teal, T("prodotti xₜ", "produced xₜ"), "barra"], [F.arancio, T("acquistati bₜ", "bought bₜ"), "barra"],
         [F.rosso, T("capacità mₜ", "capacity mₜ"), "tratteggio"], [F.blu, T("domanda dₜ", "demand dₜ"), "rombo"]], C);
-      const sc = [D.l0, x[8], x[9], x[10], D.ln], smax = Math.max(10, ...sc) * 1.45;
-      const B = figura(crea, Object.assign(b2, { xa: -0.4, xb: 4.6, ya: 0, yb: smax, titolo: T("Scorta a fine giorno (giorno 0: scorta iniziale)", "Stock at the end of the day (day 0: initial stock)"),
-        nx: T("giorno", "day"), ny: T("litri", "liters") }), C, { nTx: 0, nTy: 3 });
-      lineaPunti(crea, B, [0, 1, 2, 3, 4], sc, F.verde);
-      categorie(crea, B, [0, 1, 2, 3, 4].map((t) => [t, String(t)]), C);
-      legendaIn(crea, B, [[F.verde, T("scorta sₜ (s₀ = ℓ₀, s₄ = ℓₙ)", "stock sₜ (s₀ = ℓ₀, s₄ = ℓₙ)"), "lineaPunti"]], C, "dx");
     },
     legenda: () => { const F = FIG(); return [[F.teal, T("litri prodotti \\(x_t\\)", "liters produced \\(x_t\\)"), "pieno"], [F.arancio, T("litri acquistati \\(b_t\\)", "liters bought \\(b_t\\)"), "pieno"],
       [F.rosso, T("capacità produttiva \\(m_t\\)", "production capacity \\(m_t\\)"), "dashed"], [F.blu, T("domanda \\(d_t\\)", "demand \\(d_t\\)"), "punto"],
       [F.verde, T("scorta a fine giorno \\(s_t\\)", "stock at the end of the day \\(s_t\\)"), ""]]; },
-    letture(R, v, st, C) {
-      if (R.stato !== "ottimo") return stato(R, C);
-      const x = R.x, D = R.D;
-      return tabOmbra(R) +
-        nota(T("\\(\\mu_t\\) è il costo del modo più economico di procurare un litro in più nel giorno \\(t\\): produrlo dove c'è capacità e tenerlo in magazzino, oppure comprarlo.",
-          "\\(\\mu_t\\) is the cost of the cheapest way to obtain one more liter on day \\(t\\): producing it where there is capacity and keeping it in stock, or buying it."));
-    },
+    letture(R, v, st, C) { return R.stato !== "ottimo" ? stato(R, C) : ""; },
     soluzione(R) {
       if (R.stato !== "ottimo") return "";
       const x = R.x, D = R.D;
@@ -590,10 +522,12 @@
             ["\\(\\tilde s_t\\)", ...[0, 1, 2].map((t) => z(x[8 + t])), `${nt(D.ln)} (\\(\\ell_n\\))`]]),
       ], T("«—»: valore nullo. La scorta finale \\(\\ell_n\\) è un dato.", "«—»: zero value. The final stock \\(\\ell_n\\) is a given."));
     },
-    domanda: T("Con \\(u_t = 12\\) € il giorno 4 compra 40 L invece di produrli il giorno 3. Con \\(m_3 = 0\\) L il giorno 3 compra 75 L.",
-      "With \\(u_t = 12\\) € day 4 buys 40 L instead of producing them on day 3. With \\(m_3 = 0\\) L day 3 buys 75 L."),
+    domanda: T("Porta \\(u_t\\) a 12: il giorno 4 compra 40 L invece di produrli il giorno 3. Porta \\(m_3\\) a 0: il giorno 3 compra 75 L.",
+      "Set \\(u_t\\) to 12: day 4 buys 40 L instead of producing them on day 3. Set \\(m_3\\) to 0: day 3 buys 75 L."),
     tabella: (R, DV) => DV.tab(T("Giorni", "Days"), [T("giorno \\(t\\)", "day \\(t\\)"), "1", "2", "3", "4"],
-      [[T("\\(d_t\\) (L)", "\\(d_t\\) (L)"), ...R.D.d.map((x) => DV.t(x))], [T("\\(m_t\\) (L)", "\\(m_t\\) (L)"), ...R.D.m.map((x) => DV.t(x))]]),
+      [[T("\\(d_t\\) (L)", "\\(d_t\\) (L)"), ...R.D.d.map((x) => DV.t(x))], [T("\\(m_t\\) (L)", "\\(m_t\\) (L)"), ...R.D.m.map((x) => DV.t(x))],
+        ["\\(p_t\\) (€)", ...R.D.d.map(() => DV.t(R.D.p))], ["\\(u_t\\) (€)", ...R.D.d.map(() => DV.t(R.D.u))], ["\\(h_t\\) (€)", ...R.D.d.map(() => DV.t(R.D.h))]]) +
+      DV.tab(T("Scorte", "Stock"), ["", "L"], [[T("iniziale \\(\\ell_0\\)", "initial \\(\\ell_0\\)"), DV.t(R.D.l0)], [T("finale \\(\\ell_n\\)", "final \\(\\ell_n\\)"), DV.t(R.D.ln)]]),
   };
 
   // ================================================================ 4.9 scelta dei dolci (metodo grafico)
@@ -656,12 +590,10 @@
       const DV = DVF(), QD = R.D;
       return modello("06", T(`<b>Il problema.</b> Decidiamo quante porzioni di ogni dolce servire. L'obiettivo è il gradimento massimo. I vincoli: un limite alle calorie, un limite ai grassi, una quantità minima di dolci.` +
         `<br><b>Variabili:</b> \\(x_i\\): porzioni del dolce \\(i\\).` +
-        `<br><b>Dati:</b> \\(i = 1, 2\\): i due dolci, torta di frutta (1) e gelato (2); \\(a_i\\): peso di una porzione: \\(${DV.L(QD.a)}\\) g; \\(b_i\\): calorie di una porzione: \\(${DV.L(QD.b)}\\); \\(c_i\\): grammi di grassi di una porzione: \\(${DV.L(QD.c)}\\); \\(s_i\\): gradimento di un grammo: \\(${DV.L(QD.s)}\\) punti; \\(u = ${DV.f(QD.u)}\\): calorie massime; \\(v = ${DV.f(QD.v)}\\): grammi massimi di grassi; \\(m = ${DV.f(QD.m)}\\): grammi minimi di dolci.` +
-        DUALI("gradimento in più per un'unità in più a destra del vincolo: \\(\\pi\\) in punti per caloria, \\(\\rho\\) in punti per grammo di grassi, \\(\\mu \\le 0\\) in punti per grammo di dolci richiesto."),
+        `<br><b>Dati:</b> \\(i = 1, 2\\): i due dolci, torta di frutta (1) e gelato (2); \\(a_i\\): peso di una porzione del dolce \\(i\\) (g); \\(b_i\\): calorie di una porzione; \\(c_i\\): grammi di grassi di una porzione; \\(s_i\\): gradimento di un grammo (punti); \\(u\\): calorie massime; \\(v\\): grammi massimi di grassi; \\(m\\): grammi minimi di dolci.`,
       `<b>The problem.</b> We decide how many portions of each dessert to serve. The objective is the maximum taste score. The constraints: a limit on calories, a limit on fat, a minimum amount of dessert.` +
         `<br><b>Variables:</b> \\(x_i\\): portions of dessert \\(i\\).` +
-        `<br><b>Data:</b> \\(i = 1, 2\\): the two desserts, fruit cake (1) and ice cream (2); \\(a_i\\): weight of a portion: \\(${DV.L(QD.a)}\\) g; \\(b_i\\): calories of a portion: \\(${DV.L(QD.b)}\\); \\(c_i\\): grams of fat in a portion: \\(${DV.L(QD.c)}\\); \\(s_i\\): taste score of one gram: \\(${DV.L(QD.s)}\\) points; \\(u = ${DV.f(QD.u)}\\): maximum calories; \\(v = ${DV.f(QD.v)}\\): maximum grams of fat; \\(m = ${DV.f(QD.m)}\\): minimum grams of dessert.` +
-        DUALI("extra taste score for one more unit on the right-hand side of the constraint: \\(\\pi\\) in points per calorie, \\(\\rho\\) in points per gram of fat, \\(\\mu \\le 0\\) in points per gram of dessert required.")),
+        `<br><b>Data:</b> \\(i = 1, 2\\): the two desserts, fruit cake (1) and ice cream (2); \\(a_i\\): weight of a portion of dessert \\(i\\) (g); \\(b_i\\): calories of a portion; \\(c_i\\): grams of fat in a portion; \\(s_i\\): taste score of one gram (points); \\(u\\): maximum calories; \\(v\\): maximum grams of fat; \\(m\\): minimum grams of dessert.`),
       sim, numerico(R.P));
     },
     disegna(crea, R, v, C, S) {
@@ -693,12 +625,7 @@
     legenda: () => { const F = FIG(); return [[F.rosso, T("vincolo delle calorie", "calorie constraint"), ""], [F.arancio, T("vincolo dei grassi", "fat constraint"), ""],
       [F.verde, T("vincolo dei grammi minimi", "minimum grams constraint"), ""], [F.teal, T("regione ammissibile", "feasible region"), "pieno"],
       [F.blu, T("retta di livello \\(s_1 a_1 x_1 + s_2 a_2 x_2 = z^*\\)", "level line \\(s_1 a_1 x_1 + s_2 a_2 x_2 = z^*\\)"), "dashed"], [F.arancio, T("soluzione ottima", "optimal solution"), "punto"]]; },
-    letture(R, v, st, C) {
-      if (R.stato !== "ottimo") return stato(R, C);
-      const D = R.D, x = R.x;
-      return tabOmbra(R) +
-        nota(T("La soluzione ottima è un vertice della regione ammissibile: lo trova anche il metodo grafico.", "The optimal solution is a vertex of the feasible region: the graphical method finds it too."));
-    },
+    letture(R, v, st, C) { return R.stato !== "ottimo" ? stato(R, C) : ""; },
     soluzione(R) {
       if (R.stato !== "ottimo") return "";
       const D = R.D, x = R.x;
@@ -707,10 +634,12 @@
           [[T("torta di frutta", "fruit cake"), z(x[0], 4), z(D.a[0] * x[0], 2)], [T("gelato", "ice cream"), z(x[1], 4), z(D.a[1] * x[1], 2)]]),
       ], NULLO());
     },
-    domanda: T("Con \\(u = 600\\) calorie si sceglie solo la torta di frutta. Con \\(v = 31\\) g si sceglie solo il gelato.",
-      "With \\(u = 600\\) calories only the fruit cake is chosen. With \\(v = 31\\) g only the ice cream is chosen."),
+    domanda: T("Porta \\(u\\) a 600: si sceglie solo la torta di frutta. Porta \\(v\\) a 31: si sceglie solo il gelato.",
+      "Set \\(u\\) to 600: only the fruit cake is chosen. Set \\(v\\) to 31: only the ice cream is chosen."),
     tabella: (R, DV) => DV.tab(T("Dolci", "Desserts"), [T("dolce \\(i\\)", "dessert \\(i\\)"), "\\(a_i\\) (g)", "\\(b_i\\)", "\\(c_i\\) (g)", T("\\(s_i\\) (punti/g)", "\\(s_i\\) (points/g)")],
-      [0, 1].map((i) => [T(["1. torta di frutta", "2. gelato"][i], ["1. fruit cake", "2. ice cream"][i]), DV.t(R.D.a[i]), DV.t(R.D.b[i]), DV.t(R.D.c[i]), DV.t(R.D.s[i])])),
+      [0, 1].map((i) => [T(["1. torta di frutta", "2. gelato"][i], ["1. fruit cake", "2. ice cream"][i]), DV.t(R.D.a[i]), DV.t(R.D.b[i]), DV.t(R.D.c[i]), DV.t(R.D.s[i])])) +
+      DV.tab(T("Limiti", "Limits"), ["", ""], [[T("calorie massime \\(u\\)", "maximum calories \\(u\\)"), DV.t(R.D.u)], [T("grassi massimi \\(v\\) (g)", "maximum fat \\(v\\) (g)"), DV.t(R.D.v)],
+        [T("dolci minimi \\(m\\) (g)", "minimum dessert \\(m\\) (g)"), DV.t(R.D.m)]]),
   };
 
   // ================================================================ 4.10 produzione e stoccaggio di torte di frutta
@@ -751,39 +680,24 @@
       const DV = DVF(), QD = R.D;
       return modello("07", T(`<b>Il problema.</b> Decidiamo quanti chilogrammi di torta di frutta produrre ogni giorno e quanti tenerne in magazzino a fine giorno. L'obiettivo è il costo minimo di produzione e magazzino. I vincoli: ogni giorno la domanda è servita dalla produzione e dalla scorta del giorno prima; la produzione giornaliera e il magazzino hanno un limite.` +
         `<br><b>Variabili:</b> \\(x_t\\): chilogrammi di torta prodotti nel giorno \\(t\\); \\(s_t\\): chilogrammi in magazzino a fine giorno \\(t\\).` +
-        `<br><b>Dati:</b> \\(t = 1, \\dots, 4\\): i 4 giorni; \\(d_t\\): domanda del giorno \\(t\\): \\(${DV.L(QD.d)}\\) kg; \\(c_t\\): costo di un chilogrammo prodotto: \\(${DV.L(QD.c)}\\) €; \\(h_t\\): costo di un chilogrammo in magazzino a fine giorno, il 10% di \\(c_t\\): \\(${DV.L(QD.h.slice(0, 3))}\\) € (\\(t = 1, 2, 3\\)); \\(\\ell_0 = ${DV.f(QD.l0)}\\) kg: scorta iniziale; \\(m = ${DV.f(QD.m)}\\) kg: produzione massima giornaliera; \\(k = ${DV.f(QD.k)}\\) kg: capacità del magazzino.` +
-        DUALI("\\(\\mu_t\\): costo in più, in €/kg, per un chilogrammo in più di domanda nel giorno \\(t\\); \\(\\pi_t \\le 0\\) e \\(\\varrho_t \\le 0\\): variazione del costo, in €/kg, per un chilogrammo in più di produzione massima e di capacità del magazzino in quel giorno."),
+        `<br><b>Dati:</b> \\(d_t\\): domanda del giorno \\(t\\) (kg); \\(c_t\\): costo di un chilogrammo prodotto nel giorno \\(t\\) (€); \\(h_t\\): costo di un chilogrammo in magazzino a fine giorno \\(t\\), il 10% di \\(c_t\\) (€); \\(\\ell_0\\): scorta iniziale (kg); \\(m\\): produzione massima al giorno (kg); \\(k\\): capacità del magazzino (kg).`,
       `<b>The problem.</b> We decide how many kilograms of fruit cake to produce each day and how many to keep in stock at the end of the day. The objective is the minimum cost of production and storage. The constraints: each day demand is served by production and by the stock of the day before; daily production and the warehouse have a limit.` +
         `<br><b>Variables:</b> \\(x_t\\): kilograms of cake produced on day \\(t\\); \\(s_t\\): kilograms in stock at the end of day \\(t\\).` +
-        `<br><b>Data:</b> \\(t = 1, \\dots, 4\\): the 4 days; \\(d_t\\): demand of day \\(t\\): \\(${DV.L(QD.d)}\\) kg; \\(c_t\\): cost of one kilogram produced: \\(${DV.L(QD.c)}\\) €; \\(h_t\\): cost of one kilogram in stock at the end of the day, 10% of \\(c_t\\): \\(${DV.L(QD.h.slice(0, 3))}\\) € (\\(t = 1, 2, 3\\)); \\(\\ell_0 = ${DV.f(QD.l0)}\\) kg: initial stock; \\(m = ${DV.f(QD.m)}\\) kg: maximum daily production; \\(k = ${DV.f(QD.k)}\\) kg: warehouse capacity.` +
-        DUALI("\\(\\mu_t\\): extra cost, in €/kg, for one more kilogram of demand on day \\(t\\); \\(\\pi_t \\le 0\\) and \\(\\varrho_t \\le 0\\): change of the cost, in €/kg, for one more kilogram of maximum production and of storage capacity on that day.")),
+        `<br><b>Data:</b> \\(d_t\\): demand of day \\(t\\) (kg); \\(c_t\\): cost of one kilogram produced on day \\(t\\) (€); \\(h_t\\): cost of one kilogram in stock at the end of day \\(t\\), 10% of \\(c_t\\) (€); \\(\\ell_0\\): initial stock (kg); \\(m\\): maximum production per day (kg); \\(k\\): warehouse capacity (kg).`),
       sim, numerico(R.P));
     },
     disegna(crea, R, v, C, S) {
       if (R.stato !== "ottimo") return avviso(crea, S, C, T("Nessun piano ammissibile con questa capacità", "No feasible plan with this capacity"));
-      const F = FIG(), D = R.D, x = R.x, [b1, b2] = sovrapposti(S, 0.58);
+      const F = FIG(), D = R.D, x = R.x, b1 = pieno(S);
       const top = Math.max(D.m, ...D.d, ...x.slice(0, 4)) * 1.5;
-      const A = figura(crea, Object.assign(b1, { xa: 0.4, xb: 4.6, ya: 0, yb: top, titolo: T("Produzione per giorno", "Production by day"), ny: T("chilogrammi", "kilograms") }), C, { nTx: 0, nTy: 4 });
+      const A = figura(crea, Object.assign(b1, { xa: 0.4, xb: 4.6, ya: 0, yb: top, titolo: T("Produzione per giorno", "Production by day"), nx: T("giorno", "day"), ny: T("chilogrammi", "kilograms") }), C, { nTx: 0, nTy: 4 });
       for (let t = 0; t < 4; t++) { barra(crea, A, t + 1, 0, x[t], 0.5, F.teal); tetto(crea, A, t + 1, D.m, 0.7, F.rosso); rombo(crea, A, t + 1, D.d[t], F.blu, C); }
       categorie(crea, A, [1, 2, 3, 4].map((t) => [t, String(t)]), C);
       legendaIn(crea, A, [[F.teal, T("prodotti xₜ", "produced xₜ"), "barra"], [F.rosso, T("produzione massima m", "maximum production m"), "tratteggio"], [F.blu, T("domanda dₜ", "demand dₜ"), "rombo"]], C);
-      const sc = [D.l0, x[4], x[5], x[6], 0], smax = Math.max(D.k, ...sc, 5) * 1.5;
-      const B = figura(crea, Object.assign(b2, { xa: -0.4, xb: 4.6, ya: 0, yb: smax, titolo: T("Scorta a fine giorno (giorno 0: scorta iniziale)", "Stock at the end of the day (day 0: initial stock)"),
-        nx: T("giorno", "day"), ny: T("chilogrammi", "kilograms") }), C, { nTx: 0, nTy: 3 });
-      M.linea(crea, B.X(0.6), B.Y(D.k), B.X(3.4), B.Y(D.k), { strokeColor: F.rosso, strokeWidth: 2, dash: 2 });
-      lineaPunti(crea, B, [0, 1, 2, 3, 4], sc, F.verde);
-      categorie(crea, B, [0, 1, 2, 3, 4].map((t) => [t, String(t)]), C);
-      legendaIn(crea, B, [[F.verde, T("scorta sₜ (s₀ = ℓ₀)", "stock sₜ (s₀ = ℓ₀)"), "lineaPunti"], [F.rosso, T("capacità del magazzino k", "storage capacity k"), "tratteggio"]], C, "dx");
     },
     legenda: () => { const F = FIG(); return [[F.teal, T("chilogrammi prodotti \\(x_t\\)", "kilograms produced \\(x_t\\)"), "pieno"], [F.blu, T("domanda \\(d_t\\)", "demand \\(d_t\\)"), "punto"],
       [F.verde, T("scorta a fine giorno \\(s_t\\)", "stock at the end of the day \\(s_t\\)"), ""], [F.rosso, T("produzione massima \\(m\\) e capacità del magazzino \\(k\\)", "maximum production \\(m\\) and storage capacity \\(k\\)"), "dashed"]]; },
-    letture(R, v, st, C) {
-      if (R.stato !== "ottimo") return stato(R, C);
-      const x = R.x;
-      return tabOmbra(R) +
-        nota(T("Il costo di produzione cresce di giorno in giorno: conviene produrre prima e tenere a magazzino, finché la capacità \\(k\\) lo permette.",
-          "The production cost grows day by day: it pays to produce earlier and keep the cakes in stock, as far as the capacity \\(k\\) allows."));
-    },
+    letture(R, v, st, C) { return R.stato !== "ottimo" ? stato(R, C) : ""; },
     soluzione(R) {
       if (R.stato !== "ottimo") return "";
       const x = R.x;
@@ -793,10 +707,12 @@
           [["\\(\\tilde x_t\\)", ...[0, 1, 2, 3].map((t) => z(x[t]))], ["\\(\\tilde s_t\\)", ...[0, 1, 2].map((t) => z(x[4 + t])), ""]]),
       ], NULLO());
     },
-    domanda: T("Con \\(k = 20\\) kg il giorno 4 non produce più e il costo scende a 1670 €. Con \\(m = 18\\) kg il problema è inammissibile.",
-      "With \\(k = 20\\) kg day 4 no longer produces and the cost drops to 1670 €. With \\(m = 18\\) kg the problem is infeasible."),
+    domanda: T("Porta \\(k\\) a 20: il giorno 4 non produce più e il costo scende a 1670 €. Porta \\(m\\) a 18: il problema diventa inammissibile.",
+      "Set \\(k\\) to 20: day 4 no longer produces and the cost drops to 1670 €. Set \\(m\\) to 18: the problem becomes infeasible."),
     tabella: (R, DV) => DV.tab(T("Giorni", "Days"), [T("giorno \\(t\\)", "day \\(t\\)"), "1", "2", "3", "4"],
-      [["\\(d_t\\) (kg)", ...R.D.d.map((x) => DV.t(x))], ["\\(c_t\\) (€)", ...R.D.c.map((x) => DV.t(x))], ["\\(h_t\\) (€)", ...R.D.h.map((x, t) => (t < 3 ? DV.t(x) : "—"))]]),
+      [["\\(d_t\\) (kg)", ...R.D.d.map((x) => DV.t(x))], ["\\(c_t\\) (€)", ...R.D.c.map((x) => DV.t(x))], ["\\(h_t\\) (€)", ...R.D.h.map((x, t) => (t < 3 ? DV.t(x) : "—"))]]) +
+      DV.tab(T("Limiti", "Limits"), ["", "kg"], [[T("scorta iniziale \\(\\ell_0\\)", "initial stock \\(\\ell_0\\)"), DV.t(R.D.l0)], [T("produzione massima \\(m\\)", "maximum production \\(m\\)"), DV.t(R.D.m)],
+        [T("magazzino \\(k\\)", "warehouse \\(k\\)"), DV.t(R.D.k)]]),
   };
 
   // ================================================================ 4.11 miscelazione di petrolio greggio
@@ -805,9 +721,9 @@
     etichetta: T("Raffineria", "Refinery"),
     cursori: [
       { nome: "w_1", min: 1000, max: 10000, step: 250, val: 5000, fmt: (x) => `${mig(x)} ${T("barili", "barrels")}`,
-        descr: T("barili disponibili di greggio di tipo 1, qualità 10 (tipo 2: 10 000 barili, qualità 5)", "barrels available of type 1 crude, quality 10 (type 2: 10 000 barrels, quality 5)") },
+        descr: T("barili disponibili di greggio di tipo 1", "barrels available of type 1 crude") },
       { nome: "p_2", min: 10, max: 30, step: 1, val: 20, fmt: (x) => `${nt(x, 0)} $/${T("barile", "barrel")}`,
-        descr: T("prezzo del gasolio da riscaldamento (benzina: 25 $/barile)", "price of heating oil (gasoline: 25 $/barrel)") },
+        descr: T("prezzo di un barile di gasolio da riscaldamento", "price of a barrel of heating oil") },
     ],
     calcola(v) {
       const D = { w: [v[0], D08.w[1]], q: D08.q, g: D08.g.slice(), p: [D08.p[0], v[1]] };
@@ -830,17 +746,15 @@
       const DV = DVF(), QD = R.D;
       return modello("08", T(`<b>Il problema.</b> Decidiamo quanti barili di ogni tipo di greggio usare per la benzina e per il gasolio da riscaldamento. L'obiettivo è il ricavo massimo. I vincoli: disponibilità di ogni greggio e qualità media minima della miscela per ogni prodotto. Il rapporto \\((q_1 x_1 + q_2 x_2)/(x_1 + x_2) \\ge g_1\\) diventa lineare moltiplicando per \\(x_1 + x_2\\).` +
         `<br><b>Variabili:</b> \\(x_i\\): barili di greggio \\(i\\) usati per la benzina; \\(y_i\\): barili di greggio \\(i\\) usati per il gasolio.` +
-        `<br><b>Dati:</b> \\(i = 1, 2\\): i due tipi di greggio; i due prodotti sono benzina e gasolio da riscaldamento; \\(p_1 = ${DV.f(QD.p[0])}\\) $: prezzo di un barile di benzina; \\(p_2 = ${DV.f(QD.p[1])}\\) $: prezzo di un barile di gasolio; \\(w_i\\): barili disponibili di greggio \\(i\\): \\(${DV.L(QD.w, 0)}\\); \\(q_i\\): livello di qualità del greggio \\(i\\): \\(${DV.L(QD.q)}\\); \\(g_1 = ${DV.f(QD.g[0])}\\) e \\(g_2 = ${DV.f(QD.g[1])}\\): qualità media minima della benzina e del gasolio.` +
-        DUALI("\\(\\pi_i\\): ricavo in più, in $/barile, per un barile in più di greggio \\(i\\); \\(\\rho_1 \\le 0\\) e \\(\\rho_2 \\le 0\\): variazione del ricavo, in $ per punto di qualità per barile, per un'unità in più a destra del vincolo di qualità."),
+        `<br><b>Dati:</b> \\(i = 1, 2\\): i due tipi di greggio; \\(p_1\\), \\(p_2\\): prezzo di un barile di benzina e di gasolio da riscaldamento ($); \\(w_i\\): barili disponibili di greggio \\(i\\); \\(q_i\\): livello di qualità del greggio \\(i\\); \\(g_1\\), \\(g_2\\): qualità media minima della benzina e del gasolio.`,
       `<b>The problem.</b> We decide how many barrels of each type of crude oil to use for gasoline and for heating oil. The objective is the maximum revenue. The constraints: availability of each crude and minimum average quality of the blend for each product. The ratio \\((q_1 x_1 + q_2 x_2)/(x_1 + x_2) \\ge g_1\\) becomes linear after multiplying by \\(x_1 + x_2\\).` +
         `<br><b>Variables:</b> \\(x_i\\): barrels of crude \\(i\\) used for gasoline; \\(y_i\\): barrels of crude \\(i\\) used for heating oil.` +
-        `<br><b>Data:</b> \\(i = 1, 2\\): the two types of crude oil; the two products are gasoline and heating oil; \\(p_1 = ${DV.f(QD.p[0])}\\) $: price of a barrel of gasoline; \\(p_2 = ${DV.f(QD.p[1])}\\) $: price of a barrel of heating oil; \\(w_i\\): barrels available of crude \\(i\\): \\(${DV.L(QD.w, 0)}\\); \\(q_i\\): quality level of crude \\(i\\): \\(${DV.L(QD.q)}\\); \\(g_1 = ${DV.f(QD.g[0])}\\) and \\(g_2 = ${DV.f(QD.g[1])}\\): minimum average quality of gasoline and of heating oil.` +
-        DUALI("\\(\\pi_i\\): extra revenue, in $/barrel, for one more barrel of crude \\(i\\); \\(\\rho_1 \\le 0\\) and \\(\\rho_2 \\le 0\\): change of the revenue, in $ per quality point per barrel, for one more unit on the right-hand side of the quality constraint.")),
+        `<br><b>Data:</b> \\(i = 1, 2\\): the two types of crude oil; \\(p_1\\), \\(p_2\\): price of a barrel of gasoline and of heating oil ($); \\(w_i\\): barrels available of crude \\(i\\); \\(q_i\\): quality level of crude \\(i\\); \\(g_1\\), \\(g_2\\): minimum average quality of gasoline and of heating oil.`),
       sim, numerico(R.P));
     },
     disegna(crea, R, v, C, S) {
       if (R.stato !== "ottimo") return avviso(crea, S, C, T("Nessun piano ammissibile", "No feasible plan"));
-      const F = FIG(), D = R.D, x = R.x, [b1, b2] = affiancati(S, 0.55);
+      const F = FIG(), D = R.D, x = R.x, b1 = pieno(S);
       const top = Math.max(x[0] + x[1], x[2] + x[3], ...D.w, 1000) * 1.5;
       const A = figura(crea, Object.assign(b1, { xa: 0.4, xb: 2.6, ya: 0, yb: top, titolo: T("Composizione delle miscele", "Composition of the blends"),
         ny: T("barili", "barrels") }), C, { nTx: 0, nTy: 5 });
@@ -852,21 +766,11 @@
       });
       categorie(crea, A, [[1, T("benzina", "gasoline")], [2, T("gasolio", "heating oil")]], C);
       legendaIn(crea, A, [[F.teal, T("greggio 1 (qualità 10)", "crude 1 (quality 10)"), "barra"], [F.arancio, T("greggio 2 (qualità 5)", "crude 2 (quality 5)"), "barra"]], C);
-      const B = figura(crea, Object.assign(b2, { xa: 0.4, xb: 2.6, ya: 0, yb: top, titolo: T("Greggio usato e disponibile", "Crude used and available"), ny: T("barili", "barrels") }), C, { nTx: 0, nTy: 5 });
-      barra(crea, B, 1, 0, x[0] + x[2], 0.55, F.teal); barra(crea, B, 2, 0, x[1] + x[3], 0.55, F.arancio);
-      tetto(crea, B, 1, D.w[0], 0.75, F.rosso); tetto(crea, B, 2, D.w[1], 0.75, F.rosso);
-      categorie(crea, B, [[1, T("greggio 1", "crude 1")], [2, T("greggio 2", "crude 2")]], C);
-      legendaIn(crea, B, [[F.rosso, T("disponibilità wᵢ", "availability wᵢ"), "tratteggio"]], C);
     },
     legenda: () => { const F = FIG(); return [[F.teal, T("barili di greggio di tipo 1 (\\(x_1\\), \\(y_1\\))", "barrels of type 1 crude (\\(x_1\\), \\(y_1\\))"), "pieno"],
       [F.arancio, T("barili di greggio di tipo 2 (\\(x_2\\), \\(y_2\\))", "barrels of type 2 crude (\\(x_2\\), \\(y_2\\))"), "pieno"],
       [F.rosso, T("barili disponibili \\(w_i\\)", "barrels available \\(w_i\\)"), "dashed"]]; },
-    letture(R, v, st, C) {
-      if (R.stato !== "ottimo") return stato(R, C);
-      const x = R.x;
-      return tabOmbra(R) +
-        nota(T("\\(\\pi_1\\) e \\(\\pi_2\\) sono il ricavo in più per un barile in più di ciascun greggio.", "\\(\\pi_1\\) and \\(\\pi_2\\) are the extra revenue for one more barrel of each crude."));
-    },
+    letture(R, v, st, C) { return R.stato !== "ottimo" ? stato(R, C) : ""; },
     soluzione(R) {
       if (R.stato !== "ottimo") return "";
       const x = R.x, zm = (q) => (Math.abs(q) < 0.5 ? "—" : mig(q));
@@ -876,8 +780,8 @@
           [[T("benzina \\(\\tilde x_j\\)", "gasoline \\(\\tilde x_j\\)"), zm(x[0]), zm(x[1]), zm(x[0] + x[1])], [T("gasolio \\(\\tilde y_j\\)", "heating oil \\(\\tilde y_j\\)"), zm(x[2]), zm(x[3]), zm(x[2] + x[3])]]),
       ], NULLO());
     },
-    domanda: T("Con \\(p_2 = 26\\) $ tutto il greggio va nel gasolio. Con \\(w_1 = 2000\\) barili il prezzo ombra \\(\\pi_1\\) sale a 100 $.",
-      "With \\(p_2 = 26\\) $ all the crude goes into heating oil. With \\(w_1 = 2000\\) barrels the shadow price \\(\\pi_1\\) rises to 100 $."),
+    domanda: T("Porta \\(p_2\\) a 26: tutto il greggio va nel gasolio. Porta \\(w_1\\) a 2000: la benzina non si produce più e 2000 barili di greggio 2 restano inutilizzati.",
+      "Set \\(p_2\\) to 26: all the crude goes into heating oil. Set \\(w_1\\) to 2000: no gasoline is produced and 2000 barrels of crude 2 stay unused."),
     tabella: (R, DV) => DV.tab(T("Greggi", "Crude oils"), [T("tipo \\(i\\)", "type \\(i\\)"), T("qualità \\(q_i\\)", "quality \\(q_i\\)"), T("\\(w_i\\) (barili)", "\\(w_i\\) (barrels)")],
       [0, 1].map((i) => [String(i + 1), DV.t(R.D.q[i]), DV.f(R.D.w[i]).replace(/\\,/g, " ")])) + DV.tab(T("Prodotti", "Products"), ["", T("prezzo \\(p\\) ($/barile)", "price \\(p\\) ($/barrel)"), T("qualità minima \\(g\\)", "minimum quality \\(g\\)")],
       [[T("benzina", "gasoline"), DV.t(R.D.p[0]), DV.t(R.D.g[0])], [T("gasolio", "heating oil"), DV.t(R.D.p[1]), DV.t(R.D.g[1])]]),
@@ -891,7 +795,7 @@
       { nome: "p_3", min: 50, max: 200, step: 10, val: 100, fmt: (x) => `${nt(x, 0)} €`,
         descr: T("prezzo di un'unità di farmaco 3", "price of one unit of drug 3") },
       { nome: "p_2", min: 30, max: 150, step: 10, val: 70, fmt: (x) => `${nt(x, 0)} €`,
-        descr: T("prezzo di un'unità di farmaco 2 (farmaco 1: 8 €)", "price of one unit of drug 2 (drug 1: 8 €)") },
+        descr: T("prezzo di un'unità di farmaco 2", "price of one unit of drug 2") },
     ],
     calcola(v) {
       const D = { p: [8, v[1], v[0]], h: D09.h, k: D09.k };
@@ -912,12 +816,10 @@
       const DV = DVF(), QD = R.D;
       return modello("09", T(`<b>Il problema.</b> Decidiamo quante unità produrre di ogni farmaco; ogni farmaco, tranne il primo, si produce consumando il farmaco precedente. L'obiettivo è il ricavo massimo delle unità vendute, cioè prodotte e non consumate. I vincoli: le ore di lavoro disponibili e consumi interni non superiori alla produzione.` +
         `<br><b>Variabili:</b> \\(x_i\\): unità prodotte del farmaco \\(i\\); le unità vendute sono \\(x_1 - 2x_2\\), \\(x_2 - x_3\\) e \\(x_3\\).` +
-        `<br><b>Dati:</b> \\(i = 1, 2, 3\\): i tre farmaci; un'unità di farmaco 2 consuma 2 unità di farmaco 1, un'unità di farmaco 3 consuma 1 unità di farmaco 2; \\(p_i\\): prezzo di vendita del farmaco \\(i\\): \\(${DV.L(QD.p)}\\) € per unità; \\(k = ${DV.f(QD.k, 0)}\\): ore di lavoro disponibili; \\(h_i\\): ore di lavoro per unità prodotta: \\(${DV.L(QD.h)}\\).` +
-        DUALI("\\(\\pi\\): ricavo in più, in €/ora, per un'ora di lavoro in più; \\(\\rho_1\\) e \\(\\rho_2\\): ricavo in più, in €/unità, se il farmaco 2 o il farmaco 3 potesse usare un'unità in meno del farmaco precedente."),
+        `<br><b>Dati:</b> \\(p_i\\): prezzo di vendita di un'unità del farmaco \\(i\\) (€); \\(h_i\\): ore di lavoro per unità prodotta; \\(k\\): ore di lavoro disponibili. Un'unità di farmaco 2 consuma 2 unità di farmaco 1; un'unità di farmaco 3 consuma 1 unità di farmaco 2.`,
       `<b>The problem.</b> We decide how many units of each drug to produce; each drug except the first is made by using the previous drug. The objective is the maximum revenue from the units sold, that is produced and not used internally. The constraints: the working hours available and internal use not above production.` +
         `<br><b>Variables:</b> \\(x_i\\): units produced of drug \\(i\\); the units sold are \\(x_1 - 2x_2\\), \\(x_2 - x_3\\) and \\(x_3\\).` +
-        `<br><b>Data:</b> \\(i = 1, 2, 3\\): the three drugs; one unit of drug 2 uses 2 units of drug 1, one unit of drug 3 uses 1 unit of drug 2; \\(p_i\\): selling price of drug \\(i\\): \\(${DV.L(QD.p)}\\) € per unit; \\(k = ${DV.f(QD.k, 0)}\\): working hours available; \\(h_i\\): working hours per unit produced: \\(${DV.L(QD.h)}\\).` +
-        DUALI("\\(\\pi\\): extra revenue, in €/hour, for one more working hour; \\(\\rho_1\\) and \\(\\rho_2\\): extra revenue, in €/unit, if drug 2 or drug 3 could use one unit less of the previous drug.")),
+        `<br><b>Data:</b> \\(p_i\\): selling price of one unit of drug \\(i\\) (€); \\(h_i\\): working hours per unit produced; \\(k\\): working hours available. One unit of drug 2 uses 2 units of drug 1; one unit of drug 3 uses 1 unit of drug 2.`),
       sim, numerico(R.P),
       T("I coefficienti della funzione obiettivo sono \\(p_1\\), \\(p_2 - 2p_1\\) e \\(p_3 - p_2\\).", "The objective function coefficients are \\(p_1\\), \\(p_2 - 2p_1\\) and \\(p_3 - p_2\\)."));
     },
@@ -937,13 +839,7 @@
     },
     legenda: () => { const F = FIG(); return [[F.teal, T("unità prodotte \\(x_i\\)", "units produced \\(x_i\\)"), "pieno"],
       [F.arancio, T("unità vendute \\(x_1 - 2x_2\\), \\(x_2 - x_3\\), \\(x_3\\)", "units sold \\(x_1 - 2x_2\\), \\(x_2 - x_3\\), \\(x_3\\)"), "pieno"]]; },
-    letture(R, v, st, C) {
-      if (R.stato !== "ottimo") return stato(R, C);
-      const x = R.x, y = [x[0] - 2 * x[1], x[1] - x[2], x[2]];
-      return tabOmbra(R) +
-        nota(T("\\(\\pi\\) è il ricavo in più per un'ora di lavoro in più: il farmaco che rende di più per ora, contando le ore dei farmaci consumati, prende tutte le ore.",
-          "\\(\\pi\\) is the extra revenue for one more working hour: the drug with the highest revenue per hour, counting the hours of the drugs it uses, takes all the hours."));
-    },
+    letture(R, v, st, C) { return R.stato !== "ottimo" ? stato(R, C) : ""; },
     soluzione(R) {
       if (R.stato !== "ottimo") return "";
       const x = R.x, y = [x[0] - 2 * x[1], x[1] - x[2], x[2]], zm = (q) => (Math.abs(q) < 0.5 ? "—" : mig(q));
@@ -953,23 +849,22 @@
           [["\\(\\tilde x_i\\)", ...x.map(zm)], [T("vendute", "sold"), ...y.map((q) => zm(Math.max(0, q)))]]),
       ], NULLO());
     },
-    domanda: T("Con \\(p_3 = 130\\) € si vende solo il farmaco 3, non più il 2. Con \\(p_2 = 50\\) € accade lo stesso.",
-      "With \\(p_3 = 130\\) € only drug 3 is sold, no longer drug 2. With \\(p_2 = 50\\) € the same happens."),
+    domanda: T("Porta \\(p_3\\) a 130: si vende solo il farmaco 3, non più il 2. Porta \\(p_2\\) a 50: accade lo stesso.",
+      "Set \\(p_3\\) to 130: only drug 3 is sold, no longer drug 2. Set \\(p_2\\) to 50: the same happens."),
     tabella: (R, DV) => DV.tab(T("Farmaci", "Drugs"), [T("farmaco \\(i\\)", "drug \\(i\\)"), T("\\(p_i\\) (€ per unità)", "\\(p_i\\) (€ per unit)"), T("\\(h_i\\) (ore per unità)", "\\(h_i\\) (hours per unit)")],
-      [0, 1, 2].map((i) => [String(i + 1), DV.t(R.D.p[i]), DV.t(R.D.h[i])])),
+      [0, 1, 2].map((i) => [String(i + 1), DV.t(R.D.p[i]), DV.t(R.D.h[i])])) +
+      DV.tab(T("Ore", "Hours"), ["", ""], [[T("ore disponibili \\(k\\)", "hours available \\(k\\)"), DV.t(R.D.k)]]),
   };
 
   // ================================================================ registrazione: un'app per modello
-  /** la tabella dei dati della voce (vc.tabella) va subito dopo la riga «Dati:», prima dei prezzi ombra */
+  /** la tabella dei dati della voce (vc.tabella) va subito dopo la riga «Dati:» */
   const conTabella = (vc) => {
     const f = vc.formula;
     vc.formula = function (R, v, st) {
       const h = f.call(vc, R, v, st);
       if (typeof h !== "string" || !vc.tabella || !R || !R.D) return h;
       const tab = `<div class="plm-dati"><p class="plm-dati-tit">${T("Dati", "Data")}</p>${vc.tabella(R, DVF())}</div>`;
-      const ombra = `</p><p class="plm-testo"><b>${T("Prezzi ombra.", "Shadow prices.")}</b>`;
-      return h.includes(ombra) ? h.replace(ombra, `</p>${tab}<p class="plm-testo"><b>${T("Prezzi ombra.", "Shadow prices.")}</b>`)
-        : h.replace('<p class="plm-cap">', `${tab}<p class="plm-cap">`);
+      return h.replace('<p class="plm-cap">', `${tab}<p class="plm-cap">`);
     };
     return vc;
   };

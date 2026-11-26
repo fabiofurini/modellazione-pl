@@ -139,3 +139,52 @@
 /* home (data-vetrina): app compatta in una schermata, come in Modellazione PNL (Fabio, 26/11/2026) */
 .gi[data-vetrina] .gi-board { aspect-ratio: 5 / 2; }
 .gi[data-vetrina] .plm-sol { margin-top: .6em; }
+
+/* struttura unica delle app (Fabio, 26/11/2026): Il problema, Dati, Modello (richiudibile: variabili e modello
+   simbolico), una figura; a destra cursori, Soluzione ottima, Prova tu (richiudibile); in fondo il modello numerico.
+   I blocchi richiudibili hanno la stessa cornice dei riquadri, con il titolo sempre visibile e la freccia a destra. */
+.md-typeset details.plm-box { display: block; overflow: visible; box-shadow: none; font-size: inherit; background: none;
+  margin: .2em 0 .6em; padding: .4em .7em .3em; border-radius: 8px; border: 1px solid color-mix(in srgb, var(--gi-line) 90%, transparent); }
+.md-typeset details.plm-box > summary.plm-box-tit, .md-typeset .gi details.plm-sub > summary, .md-typeset .gi details.plm-num > summary {
+  margin: 0; padding: 0; min-height: 0; font-size: .76rem; font-weight: 700; cursor: pointer; color: inherit; border: 0; border-radius: 0;
+  list-style: none; display: flex; align-items: center; gap: .35em; background: none; }
+.md-typeset details.plm-box > summary.plm-box-tit::-webkit-details-marker { display: none; }
+.md-typeset details.plm-box > summary.plm-box-tit::before, .md-typeset .gi details.plm-sub > summary::before, .md-typeset .gi details.plm-num > summary::before {
+  content: ""; position: static; width: .45em; height: .45em; flex: 0 0 auto;
+  border-right: 2px solid currentColor; border-bottom: 2px solid currentColor; transform: rotate(-45deg); transition: transform .15s;
+  background: none; -webkit-mask: none; mask: none; margin-right: .1em; }
+.md-typeset details.plm-box[open] > summary.plm-box-tit::before, .md-typeset .gi details.plm-sub[open] > summary::before, .md-typeset .gi details.plm-num[open] > summary::before { transform: rotate(45deg); }
+.md-typeset details.plm-box > summary.plm-box-tit::after, .md-typeset .gi details.plm-sub > summary::after, .md-typeset .gi details.plm-num > summary::after { display: none; }
+.md-typeset details.plm-box > .plm-box-corpo { margin-top: .2em; }
+.md-typeset details.plm-box > .plm-box-corpo > p { margin: 0 0 .2em; }
+.md-typeset .plm-mod-var { font-size: .78rem; line-height: 1.45; }
+/* modello numerico e tabelle grandi dei dati: stessa cornice e stessa freccia */
+.md-typeset .gi details.plm-num, .md-typeset .gi details.plm-sub { margin: .2em 0 .6em; padding: .4em .7em .3em; border: 1px solid color-mix(in srgb, var(--gi-line) 90%, transparent);
+  border-radius: 8px; box-shadow: none; background: none; font-size: inherit; overflow: visible; }
+.md-typeset .gi details.plm-sub { margin: .3em 0 .2em; padding: .25em .6em .2em; flex-basis: 100%; }
+.md-typeset .gi details.plm-sub > summary { font-weight: 600; font-size: .74rem; }
+.md-typeset .gi details.plm-sub > .plm-sub-corpo { display: flex; flex-wrap: wrap; gap: .2em 1.6em; align-items: flex-start; padding-top: .2em; }
+.md-typeset .plm-box-problema > p { font-size: .78rem; line-height: 1.45; }
+/* Prova tu: lo stesso riquadro, con il bordo sinistro colorato (come in Modellazione MIP) */
+.md-typeset details.plm-box-prova { margin: .6em 0 0; border-left: 4px solid #0E7490; background: color-mix(in srgb, #0E7490 7%, transparent); line-height: 1.4; }
+.md-typeset .gi details.plm-box-prova .gi-domanda { margin: .2em 0 0; padding: 0; border: 0; background: none; font-size: .78rem; line-height: 1.45; }
+/* Soluzione ottima: a destra, stessa cornice, appena colorata */
+.md-typeset .gi .plm-sol.plm-box { margin: .6em 0 .6em; padding: .4em .7em .3em; background: color-mix(in srgb, var(--gi-line) 35%, transparent); }
+.md-typeset .gi .plm-sol .plm-sol-tit { font-size: .76rem; }
+.md-typeset .gi .plm-sol-val { font-size: .8rem; }
+/* «Il modello è spiegato nel capitolo …» in fondo alla colonna della figura */
+.md-typeset .plm-cap-fondo:empty { display: none; }
+.md-typeset .plm-cap-fondo > .plm-cap { margin: .5em 0 0; font-size: .76rem; }
+/* una figura sola: altezza più contenuta */
+@media (min-width: 860px) {
+  .gi-app-intera:has(.plm) .gi-board { height: 440px !important; }
+  .gi.gi-capitolo .gi-board { height: 460px !important; }
+}
+/* home compatta: tutta l'app in una schermata 1440×900 (descrizioni dei cursori e nota della soluzione solo nel laboratorio) */
+.gi[data-vetrina] .gi-ctrl small, .gi[data-vetrina] .plm-sol-nota { display: none; }
+.gi[data-vetrina] .gi-board { aspect-ratio: 3 / 1; }
+.gi[data-vetrina] .plm-box { margin-bottom: .45em; }
+/* app in fondo al capitolo: soluzione e «Prova tu» su tutta la larghezza, sotto i cursori */
+@media (min-width: 860px) {
+  .gi.gi-capitolo .gi-corpo > div:last-child > .plm-sol, .gi.gi-capitolo .gi-corpo > div:last-child > details.plm-box-prova { grid-column: 1 / -1; }
+}

@@ -130,8 +130,18 @@
 
 <!-- laboratorio-interattivo: sezione aggiunta per l'app dei nove modelli -->
 
+## Prezzi ombra dell'istanza { #prezzi-ombra }
+
+Il prezzo ombra di un vincolo è la variazione del valore ottimo per un'unità in più del suo termine noto, finché la base ottima non cambia. Per l'istanza di questa pagina (valore ottimo $70\,000$) valgono, calcolati con Gurobi:
+
+| Vincolo | Prezzo ombra |
+|---|---|
+| ore di lavoro ($k$) | $\frac{35}{2}$ €/ora |
+| farmaco 1 consumato dal farmaco 2 | $\frac{19}{2}$ €/unità |
+| farmaco 2 consumato dal farmaco 3 | $0$ €/unità |
+
 ## Laboratorio interattivo { #laboratorio-interattivo }
 
-L'app risolve questo modello nel browser, con i dati dell'esempio: i cursori cambiano i dati e il simplesso ricalcola la soluzione ottima e i prezzi ombra. Si apre anche a tutta pagina nel laboratorio interattivo: [Produzione di tre farmaci](laboratorio/tre-farmaci.md).
+L'app risolve questo modello nel browser, con i dati dell'esempio: i cursori cambiano i dati e il simplesso ricalcola la soluzione ottima. Si apre anche a tutta pagina nel laboratorio interattivo: [Produzione di tre farmaci](laboratorio/tre-farmaci.md).
 
 <div class="gi gi-capitolo" data-grafico="pl-farmaci"></div>

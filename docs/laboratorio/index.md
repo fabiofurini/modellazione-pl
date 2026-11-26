@@ -31,7 +31,7 @@ e delle dispense. Scegli un'app: si apre a tutta pagina.
 
     ---
 
-    L'app risolve all'ottimo nel browser un modello di programmazione lineare: i dati, il modello simbolico, il modello numerico dell'istanza, la soluzione ottima con il suo grafico e i prezzi ombra.
+    L'app risolve all'ottimo nel browser un modello di programmazione lineare: i dati, il modello simbolico, il modello numerico dell'istanza e la soluzione ottima con il suo grafico.
 
     [Apri l'app →](produzione-straordinario.md)
 
@@ -39,7 +39,7 @@ e delle dispense. Scegli un'app: si apre a tutta pagina.
 
     ---
 
-    L'app risolve all'ottimo nel browser un modello di programmazione lineare: i dati, il modello simbolico, il modello numerico dell'istanza, la soluzione ottima con il suo grafico e i prezzi ombra.
+    L'app risolve all'ottimo nel browser un modello di programmazione lineare: i dati, il modello simbolico, il modello numerico dell'istanza e la soluzione ottima con il suo grafico.
 
     [Apri l'app →](dieta.md)
 
@@ -47,7 +47,7 @@ e delle dispense. Scegli un'app: si apre a tutta pagina.
 
     ---
 
-    L'app risolve all'ottimo nel browser un modello di programmazione lineare: i dati, il modello simbolico, il modello numerico dell'istanza, la soluzione ottima con il suo grafico e i prezzi ombra.
+    L'app risolve all'ottimo nel browser un modello di programmazione lineare: i dati, il modello simbolico, il modello numerico dell'istanza e la soluzione ottima con il suo grafico.
 
     [Apri l'app →](dieta-piu-classi.md)
 
@@ -55,7 +55,7 @@ e delle dispense. Scegli un'app: si apre a tutta pagina.
 
     ---
 
-    L'app risolve all'ottimo nel browser un modello di programmazione lineare: i dati, il modello simbolico, il modello numerico dell'istanza, la soluzione ottima con il suo grafico e i prezzi ombra.
+    L'app risolve all'ottimo nel browser un modello di programmazione lineare: i dati, il modello simbolico, il modello numerico dell'istanza e la soluzione ottima con il suo grafico.
 
     [Apri l'app →](produzione-piu-periodi.md)
 
@@ -63,7 +63,7 @@ e delle dispense. Scegli un'app: si apre a tutta pagina.
 
     ---
 
-    L'app risolve all'ottimo nel browser un modello di programmazione lineare: i dati, il modello simbolico, il modello numerico dell'istanza, la soluzione ottima con il suo grafico e i prezzi ombra.
+    L'app risolve all'ottimo nel browser un modello di programmazione lineare: i dati, il modello simbolico, il modello numerico dell'istanza e la soluzione ottima con il suo grafico.
 
     [Apri l'app →](scelta-dolci.md)
 
@@ -71,7 +71,7 @@ e delle dispense. Scegli un'app: si apre a tutta pagina.
 
     ---
 
-    L'app risolve all'ottimo nel browser un modello di programmazione lineare: i dati, il modello simbolico, il modello numerico dell'istanza, la soluzione ottima con il suo grafico e i prezzi ombra.
+    L'app risolve all'ottimo nel browser un modello di programmazione lineare: i dati, il modello simbolico, il modello numerico dell'istanza e la soluzione ottima con il suo grafico.
 
     [Apri l'app →](torte-di-frutta.md)
 
@@ -79,7 +79,7 @@ e delle dispense. Scegli un'app: si apre a tutta pagina.
 
     ---
 
-    L'app risolve all'ottimo nel browser un modello di programmazione lineare: i dati, il modello simbolico, il modello numerico dell'istanza, la soluzione ottima con il suo grafico e i prezzi ombra.
+    L'app risolve all'ottimo nel browser un modello di programmazione lineare: i dati, il modello simbolico, il modello numerico dell'istanza e la soluzione ottima con il suo grafico.
 
     [Apri l'app →](raffineria.md)
 
@@ -87,7 +87,7 @@ e delle dispense. Scegli un'app: si apre a tutta pagina.
 
     ---
 
-    L'app risolve all'ottimo nel browser un modello di programmazione lineare: i dati, il modello simbolico, il modello numerico dell'istanza, la soluzione ottima con il suo grafico e i prezzi ombra.
+    L'app risolve all'ottimo nel browser un modello di programmazione lineare: i dati, il modello simbolico, il modello numerico dell'istanza e la soluzione ottima con il suo grafico.
 
     [Apri l'app →](tre-farmaci.md)
 
@@ -97,11 +97,11 @@ e delle dispense. Scegli un'app: si apre a tutta pagina.
 
 <div class="grid cards" markdown>
 
--   :material-factory: **Piano di produzione e prezzi ombra**
+-   :material-factory: **Piano di produzione e scorte**
 
     ---
 
-    Il piano ottimo su tre mesi con le scorte: cambia domanda, capacità e costo di giacenza e guarda quali mesi saturano le ore macchina e quanto vale un'ora in più.
+    L'app risolve all'ottimo nel browser un modello di programmazione lineare: i dati, il modello simbolico, il modello numerico dell'istanza e la soluzione ottima con il suo grafico.
 
     [Apri l'app →](piano-produzione.md)
 
@@ -109,7 +109,7 @@ e delle dispense. Scegli un'app: si apre a tutta pagina.
 
     ---
 
-    Tre furgoni da ricaricare nelle sei ore dalle 0 alle 6: la ricarica insegue le ore economiche finché il limite del contatore lo permette. Cambia il limite, il fabbisogno e i prezzi e guarda profilo, costo e prezzi ombra.
+    L'app risolve all'ottimo nel browser un modello di programmazione lineare: i dati, il modello simbolico, il modello numerico dell'istanza e la soluzione ottima con il suo grafico.
 
     [Apri l'app →](ricarica-ev.md)
 
@@ -117,7 +117,7 @@ e delle dispense. Scegli un'app: si apre a tutta pagina.
 
     ---
 
-    Scegli una delle 12 filiali: l'LP della forma di inviluppo dà l'efficienza θ, i peer sulla frontiera con i loro pesi λ e i target degli input, con i rendimenti di scala costanti (CCR) o variabili (BCC).
+    L'app risolve all'ottimo nel browser un modello di programmazione lineare: i dati, il modello simbolico, il modello numerico dell'istanza e la soluzione ottima con il suo grafico.
 
     [Apri l'app →](dea-efficienza.md)
 
@@ -131,7 +131,7 @@ e delle dispense. Scegli un'app: si apre a tutta pagina.
 
     ---
 
-    Il costo atteso e il CVaR del costo in funzione della quantità ordinata, sui 10 scenari di domanda del capitolo: muovi il prezzo e l'avversione al rischio e guarda l'ordine ottimo saltare da uno scenario all'altro.
+    L'app risolve all'ottimo nel browser un modello di programmazione lineare: i dati, il modello simbolico, il modello numerico dell'istanza e la soluzione ottima con il suo grafico.
 
     [Apri l'app →](newsvendor-scenari.md)
 
@@ -139,7 +139,7 @@ e delle dispense. Scegli un'app: si apre a tutta pagina.
 
     ---
 
-    I 3 titoli e i 10 scenari annui del capitolo: le perdite del portafoglio a CVaR minimo, scenario per scenario, con media, VaR e CVaR, e la frontiera rendimento-CVaR. Muovi il livello α e il rendimento richiesto b e guarda cambiare le quote e il prezzo ombra.
+    L'app risolve all'ottimo nel browser un modello di programmazione lineare: i dati, il modello simbolico, il modello numerico dell'istanza e la soluzione ottima con il suo grafico.
 
     [Apri l'app →](var-cvar.md)
 
@@ -147,7 +147,7 @@ e delle dispense. Scegli un'app: si apre a tutta pagina.
 
     ---
 
-    Un titolo privo di rischio, due titoli rischiosi e tre stati: l'LP normalizzato rileva l'arbitraggio, i prezzi ombra danno le probabilità neutrali al rischio. Muovi i prezzi e il tasso r e guarda l'intervallo dei prezzi coerenti.
+    L'app risolve all'ottimo nel browser un modello di programmazione lineare: i dati, il modello simbolico, il modello numerico dell'istanza e la soluzione ottima con il suo grafico.
 
     [Apri l'app →](arbitraggio.md)
 
@@ -161,7 +161,7 @@ e delle dispense. Scegli un'app: si apre a tutta pagina.
 
     ---
 
-    I 60 giorni della panetteria: trascina i punti e guarda la retta degli scarti assoluti (LP) e la retta del quantile τ, con i punti di appoggio e quanti giorni restano sotto la retta.
+    L'app risolve all'ottimo nel browser un modello di programmazione lineare: i dati, il modello simbolico, il modello numerico dell'istanza e la soluzione ottima con il suo grafico.
 
     [Apri l'app →](regressione-quantile.md)
 

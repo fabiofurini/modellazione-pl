@@ -1,6 +1,6 @@
 # Produzione e scorte multiperiodali
 
-[:material-file-pdf-box: Dispensa (PDF)](pdf/dispensa-modellazione-pl.pdf) · [:material-presentation: Slide del capitolo (PDF)](pdf/slide-05-produzione.pdf) · [:material-gesture-tap: App: Piano di produzione e prezzi ombra](laboratorio/piano-produzione.md)
+[:material-file-pdf-box: Dispensa (PDF)](pdf/dispensa-modellazione-pl.pdf) · [:material-presentation: Slide del capitolo (PDF)](pdf/slide-05-produzione.pdf) · [:material-gesture-tap: App: Piano di produzione e scorte](laboratorio/piano-produzione.md)
 
 **Classe:** LP · **Script:** `python/lab05_produzione.py`
 
@@ -440,6 +440,6 @@ Lo stesso codice è disponibile come notebook — [`notebooks/lab05_produzione.i
 ## Laboratorio interattivo { #laboratorio-interattivo }
 
 L'app di questo capitolo risolve il modello nel browser, con i dati del caso di studio. ▶ accanto a un cursore lo fa muovere da solo.
-Si apre anche a tutta pagina nel [laboratorio interattivo](laboratorio/index.md): [Piano di produzione e prezzi ombra](laboratorio/piano-produzione.md).
+Si apre anche a tutta pagina nel [laboratorio interattivo](laboratorio/index.md): [Piano di produzione e scorte](laboratorio/piano-produzione.md).
 
 <div class="gi gi-capitolo" data-grafico="pl-produzione"></div>

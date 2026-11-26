@@ -63,8 +63,24 @@
 
 <!-- laboratorio-interattivo: sezione aggiunta per l'app dei nove modelli -->
 
+## Prezzi ombra dell'istanza { #prezzi-ombra }
+
+Il prezzo ombra di un vincolo è la variazione del valore ottimo per un'unità in più del suo termine noto, finché la base ottima non cambia. Per l'istanza di questa pagina (valore ottimo $1\,910$) valgono, calcolati con Gurobi:
+
+| Vincolo | Prezzo ombra |
+|---|---|
+| bilancio del giorno 1 ($d_1$) | $10$ €/kg |
+| bilancio del giorno 2 ($d_2$) | $20$ €/kg |
+| bilancio del giorno 3 ($d_3$) | $30$ €/kg |
+| bilancio del giorno 4 ($d_4$) | $40$ €/kg |
+| magazzino a fine giorno 1 ($k$) | $-9$ €/kg |
+| magazzino a fine giorno 2 ($k$) | $-8$ €/kg |
+| magazzino a fine giorno 3 ($k$) | $-7$ €/kg |
+
+Gli altri 4 vincoli hanno prezzo ombra nullo.
+
 ## Laboratorio interattivo { #laboratorio-interattivo }
 
-L'app risolve questo modello nel browser, con i dati dell'esempio: i cursori cambiano i dati e il simplesso ricalcola la soluzione ottima e i prezzi ombra. Si apre anche a tutta pagina nel laboratorio interattivo: [Produzione e stoccaggio di torte](laboratorio/torte-di-frutta.md).
+L'app risolve questo modello nel browser, con i dati dell'esempio: i cursori cambiano i dati e il simplesso ricalcola la soluzione ottima. Si apre anche a tutta pagina nel laboratorio interattivo: [Produzione e stoccaggio di torte](laboratorio/torte-di-frutta.md).
 
 <div class="gi gi-capitolo" data-grafico="pl-torte"></div>

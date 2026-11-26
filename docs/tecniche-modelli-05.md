@@ -219,8 +219,23 @@
 
 <!-- laboratorio-interattivo: sezione aggiunta per l'app dei nove modelli -->
 
+## Prezzi ombra dell'istanza { #prezzi-ombra }
+
+Il prezzo ombra di un vincolo è la variazione del valore ottimo per un'unità in più del suo termine noto, finché la base ottima non cambia. Per l'istanza di questa pagina (valore ottimo $2\,625$) valgono, calcolati con Gurobi:
+
+| Vincolo | Prezzo ombra |
+|---|---|
+| bilancio del giorno 1 ($d_1$) | $13$ €/L |
+| bilancio del giorno 2 ($d_2$) | $15$ €/L |
+| bilancio del giorno 3 ($d_3$) | $10$ €/L |
+| bilancio del giorno 4 ($d_4$) | $12$ €/L |
+| capacità del giorno 1 ($m_1$) | $-3$ €/L |
+| capacità del giorno 2 ($m_2$) | $-5$ €/L |
+| capacità del giorno 3 ($m_3$) | $0$ €/L |
+| capacità del giorno 4 ($m_4$) | $-2$ €/L |
+
 ## Laboratorio interattivo { #laboratorio-interattivo }
 
-L'app risolve questo modello nel browser, con i dati dell'esempio: i cursori cambiano i dati e il simplesso ricalcola la soluzione ottima e i prezzi ombra. Si apre anche a tutta pagina nel laboratorio interattivo: [Produzione su più periodi con acquisti](laboratorio/produzione-piu-periodi.md).
+L'app risolve questo modello nel browser, con i dati dell'esempio: i cursori cambiano i dati e il simplesso ricalcola la soluzione ottima. Si apre anche a tutta pagina nel laboratorio interattivo: [Produzione su più periodi con acquisti](laboratorio/produzione-piu-periodi.md).
 
 <div class="gi gi-capitolo" data-grafico="pl-piu-periodi"></div>

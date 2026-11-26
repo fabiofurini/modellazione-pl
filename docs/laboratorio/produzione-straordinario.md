@@ -9,6 +9,6 @@ title: "Produzione in orario ordinario e in straordinario"
 
 # Produzione in orario ordinario e in straordinario
 
-L'app risolve all'ottimo nel browser un modello di programmazione lineare: i dati, il modello simbolico, il modello numerico dell'istanza, la soluzione ottima con il suo grafico e i prezzi ombra. Con i cursori si cambiano i dati e la soluzione si ricalcola.
+L'app risolve all'ottimo nel browser un modello di programmazione lineare: i dati, il modello simbolico, il modello numerico dell'istanza e la soluzione ottima con il suo grafico. Con i cursori si cambiano i dati e la soluzione si ricalcola.
 
 <div class="gi gi-app-intera" data-grafico="pl-straordinario"></div>

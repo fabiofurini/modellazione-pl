@@ -9,6 +9,6 @@ title: "Regressione con gli scarti assoluti e quantile"
 
 # Regressione con gli scarti assoluti e quantile
 
-I 60 giorni della panetteria: trascina i punti e guarda la retta degli scarti assoluti (LP) e la retta del quantile τ, con i punti di appoggio e quanti giorni restano sotto la retta. Trascina un punto; ▶ accanto a τ fa scorrere il quantile.
+L'app risolve all'ottimo nel browser un modello di programmazione lineare: i dati, il modello simbolico, il modello numerico dell'istanza e la soluzione ottima con il suo grafico. Trascina un punto; ▶ accanto a τ fa scorrere il quantile.
 
 <div class="gi gi-app-intera" data-grafico="pl-regressione"></div>

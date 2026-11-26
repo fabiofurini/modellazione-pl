@@ -18,18 +18,24 @@
   window.GI_RICETTE = window.GI_RICETTE || {};
   const tx = (s) => `\\(${s}\\)`;
   const SA = () => T("\\text{soggetto a}", "\\text{subject to}");
+  /** la radice del sito (come in gi-pl-app.js) */
+  const radice = () => {
+    try { if (window.__md_scope) return new URL(window.__md_scope); } catch (e) { /* sotto */ }
+    const cfg = document.getElementById("__config");
+    try { return new URL(JSON.parse(cfg.textContent).base + "/", location.href); } catch (e) { return new URL("./", location.href); }
+  };
 
   const DATI = { f: [[1, 1, 5], [5, 3, 8]], d: [60, 50], e: [30, 20, 40] };
   const S = 2, R = 3;
 
-  // home (data-vetrina): la soluzione va nella colonna dei cursori, sopra il «Prova tu», come nell'app di Modellazione PNL
-  function solDestra(st) {
-    const sol = st.el.querySelector(".plm-sol"), ctrl = st.el.querySelector(".gi-ctrl");
-    if (!sol || !ctrl) return;
-    const dx = ctrl.parentElement, prova = dx.querySelector(".gi-domanda");
+  // home (data-vetrina): il riquadro «Dati» va nella colonna dei cursori, sopra di essi, come nell'app di Modellazione PNL
+  // (la soluzione sta già a destra, sotto i cursori: GI_PL_SOL)
+  function datiDestra(st) {
+    const ctrl = st.el.querySelector(".gi-ctrl");
+    if (!ctrl) return;
+    const dx = ctrl.parentElement;
     const dati = st.el.querySelector(".plm .plm-dati");   // il riquadro «Dati» appena ridisegnato: sopra i cursori
     if (dati) { dx.querySelectorAll(":scope > .plm-dati").forEach((e) => e.remove()); dx.insertBefore(dati, ctrl); }
-    if (sol.parentElement !== dx || (prova && sol.nextElementSibling !== prova)) dx.insertBefore(sol, prova || null);
   }
 
   /** l'LP sui dati dei cursori: colonne x_11, x_12, x_13, x_21, x_22, x_23 */
@@ -76,16 +82,18 @@
         "<b>Il problema.</b> Alcuni magazzini riforniscono alcuni clienti. Decidiamo quante unità spedire da ogni magazzino a ogni cliente, " +
         "con costo totale minimo, senza superare la capacità dei magazzini e servendo per intero la domanda dei clienti." +
         "<br><b>Variabili:</b> \\(x_{ij} \\ge 0\\): unità spedite dal magazzino \\(i\\) al cliente \\(j\\)." +
-        `<br><b>Dati:</b> \\(s = ${S}\\) magazzini, \\(r = ${R}\\) clienti; \\(f_{ij}\\): costo di un'unità da \\(i\\) a \\(j\\); \\(d_i\\): capacità del magazzino \\(i\\); \\(e_j\\): domanda del cliente \\(j\\).` + TAB,
+        `<br><b>Dati:</b> \\(s\\): numero di magazzini; \\(r\\): numero di clienti; \\(f_{ij}\\): costo di un'unità da \\(i\\) a \\(j\\); \\(d_i\\): capacità del magazzino \\(i\\); \\(e_j\\): domanda del cliente \\(j\\).` + TAB,
         "<b>The problem.</b> Some warehouses supply some customers. We decide how many units to ship from each warehouse to each customer, " +
         "at minimum total cost, without exceeding the capacity of the warehouses and serving the demand of the customers in full." +
         "<br><b>Variables:</b> \\(x_{ij} \\ge 0\\): units shipped from warehouse \\(i\\) to customer \\(j\\)." +
-        `<br><b>Data:</b> \\(s = ${S}\\) warehouses, \\(r = ${R}\\) customers; \\(f_{ij}\\): cost of one unit from \\(i\\) to \\(j\\); \\(d_i\\): capacity of warehouse \\(i\\); \\(e_j\\): demand of customer \\(j\\).` + TAB);
+        `<br><b>Data:</b> \\(s\\): number of warehouses; \\(r\\): number of customers; \\(f_{ij}\\): cost of one unit from \\(i\\) to \\(j\\); \\(d_i\\): capacity of warehouse \\(i\\); \\(e_j\\): demand of customer \\(j\\).` + TAB);
       const V = !!st.el.dataset.vetrina;
-      if (V) setTimeout(() => solDestra(st), 0);
-      const html = `<div class="plm"><p class="plm-testo">${testo}</p>` +
+      if (V) setTimeout(() => datiDestra(st), 0);
+      const pag = new URL((GI.EN ? "techniques-models-02/" : "tecniche-modelli-02/"), radice()).href;
+      const cap = V ? "" : `<p class="plm-cap">${T("Il modello è spiegato nella pagina", "The model is explained on the page")} <a href="${pag}">${T("Esempio 4.5 — Trasporto dai magazzini ai clienti", "Example 4.5 — Transportation from warehouses to clients")}</a>.</p>`;
+      const html = `<div class="plm"><p class="plm-testo">${testo}</p>${cap}` +
         `<div class="plm-sim">\\(\\displaystyle \\begin{aligned} ${sim} \\end{aligned}\\)</div>` +
-        `<details class="plm-num"${V ? "" : " open"}><summary>${T("Modello numerico con i dati attuali", "Numerical model with the current data")}</summary>` +
+        `<details class="plm-num"><summary>${T("Modello numerico con i dati attuali", "Numerical model with the current data")}</summary>` +
         `<div class="plm-num-corpo">${num}</div></details></div>`;
       return FONDO.sposta(st, html);
     },
@@ -109,8 +117,10 @@
         const pieno = q > 1e-9;
         crea("arrow", [p0, p1], { strokeColor: pieno ? C.b : C.grigio, strokeOpacity: pieno ? 1 : 0.6, strokeWidth: pieno ? 2 + 7 * q / qMax : 1.2,
           dash: pieno ? 0 : 2, fixed: true, highlight: false, withLabel: false, lastArrow: { type: 2, size: pieno ? 3 : 6 } });
-        // il valore sopra l'arco, a un terzo dal magazzino (spostato di lato perché l'arco spesso non lo copra)
-        if (pieno) M.scritta(crea, p0[0] + (p1[0] - p0[0]) * 0.4 - uy * 14, p0[1] + (p1[1] - p0[1]) * 0.4 + ux * 14, FR.txt(q), { fontSize: 13, strokeColor: C.b,
+        // il valore sopra l'arco (spostato di lato perché l'arco spesso non lo copra): vicino al magazzino 1 per i suoi
+        // archi, oltre la metà per quelli del magazzino 2, così i valori non si sovrappongono dove gli archi si incrociano
+        const fr = i === 0 ? 0.28 : 0.64;
+        if (pieno) M.scritta(crea, p0[0] + (p1[0] - p0[0]) * fr - uy * 14, p0[1] + (p1[1] - p0[1]) * fr + ux * 14, FR.txt(q), { fontSize: 13, strokeColor: C.b,
           display: "html", cssStyle: "font-weight:700;background:var(--md-default-bg-color);padding:0 .25em;border-radius:3px" });
       }
       // nodi: magazzini a sinistra (capacità d_i), clienti a destra (domanda e_j)
@@ -132,7 +142,7 @@
       if (Rr.stato !== "ottimo") return T("Nessun piano ammissibile.", "No feasible plan.");
       const SOL = window.GI_PL_SOL, FR = window.GI_PL_FR;
       return SOL.blocco(`${T("Costo ottimo", "Optimal cost")}: <b>${FR.txt(Rr.z)} €</b>`, [
-        SOL.tab(T("Spedizioni \\(\\tilde x_{ij}\\) (unità): magazzino \\(i\\) per riga, cliente \\(j\\) per colonna", "Shipments \\(\\tilde x_{ij}\\) (units): warehouse \\(i\\) by row, customer \\(j\\) by column"),
+        SOL.tab(T("Spedizioni \\(\\tilde x_{ij}\\) (unità)", "Shipments \\(\\tilde x_{ij}\\) (units)"),
           [tx("i \\backslash j"), "1", "2", "3"], Rr.x.map((r, i) => [String(i + 1), ...r.map((q) => FR.z(q))])),
       ], T("«—»: nessuna spedizione.", "«—»: no shipment."));
     },

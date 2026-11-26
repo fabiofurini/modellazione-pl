@@ -1810,4 +1810,3 @@ Nove modelli svolti, come nella dispensa: l'enunciato, le domande e lo svolgimen
 
             cioè il costo minimo è di $10800$ euro al giorno. In questa istanza la soluzione ottima è intera, quindi è anche un piano ottimo con numeri interi di infermieri.
     <!-- soluzione:fine -->
-

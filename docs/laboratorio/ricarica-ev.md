@@ -9,6 +9,6 @@ title: "Ricarica notturna a costo minimo"
 
 # Ricarica notturna a costo minimo
 
-Tre furgoni da ricaricare nelle sei ore dalle 0 alle 6: la ricarica insegue le ore economiche finché il limite del contatore lo permette. Cambia il limite, il fabbisogno e i prezzi e guarda profilo, costo e prezzi ombra. ▶ accanto a un cursore lo fa muovere da solo.
+L'app risolve all'ottimo nel browser un modello di programmazione lineare: i dati, il modello simbolico, il modello numerico dell'istanza e la soluzione ottima con il suo grafico. ▶ accanto a un cursore lo fa muovere da solo.
 
 <div class="gi gi-app-intera" data-grafico="pl-ricarica-ev"></div>
