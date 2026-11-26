@@ -453,7 +453,7 @@
         [F.verde, T("payoff \\(\\sum_i s^1_{ij} x_i\\) della strategia in ogni stato \\(j\\)", "payoff \\(\\sum_i s^1_{ij} x_i\\) of the strategy in each state \\(j\\)"), "pieno"]];
     },
     soluzione(A) {
-      const SOL = W.GI_PL_SOL, x = A.lp.x, z = (q, c) => (Math.abs(q) < 0.5 * Math.pow(10, -c) ? "—" : fx(q, c));
+      const SOL = W.GI_PL_SOL, x = A.lp.x, z = (q, c) => (Math.abs(q) < 0.5 * Math.pow(10, -c) ? "—" : fx(q, Math.abs(q - Math.round(q)) < 1e-6 ? 0 : c));
       return SOL.blocco(`${T("Valore ottimo dell'LP normalizzato", "Optimal value of the normalized LP")}: <b>${fx(A.lp.z, 2)} €</b> ` +
         (A.tipoA ? T("(costo oggi della strategia: si incassa 1 €)", "(cost today of the strategy: one cashes 1 €)") : T("(nessuna strategia incassa denaro oggi senza rischio)", "(no strategy cashes money today without risk)")), [
         SOL.tab(T("Posizioni \\(\\tilde x_i\\) (quantità di titolo; negativa: vendita allo scoperto)", "Positions \\(\\tilde x_i\\) (amount of asset; negative: short sale)"),

@@ -142,8 +142,8 @@ extra_javascript:
   - javascripts/gi-ott.js?v=04048d2032
   - javascripts/gi-pl-dati.js?v=ed0ce3f444
   - javascripts/gi-pl-modelli.js?v=2fadd486f6
-  - javascripts/gi-pl-app.js?v=d0daaa3e01
-  - javascripts/gi-pl-finanza.js?v=419f1bbf94
+  - javascripts/gi-pl-app.js?v=64b4023815
+  - javascripts/gi-pl-finanza.js?v=115001fd8a
   - javascripts/gi-pl-tecniche.js?v=ac0744ae12
   - javascripts/gi-pl-trasporto.js?v=744a41c2d2
   - javascripts/quiz.js?v=be7fae2b85

@@ -497,14 +497,14 @@
     /** per il TeX: intero, \frac{p}{q} o, senza una frazione semplice, il numero con c cifre (DV.f) */
     tex(x, c = 2) {
       const r = razionale(x);
-      if (!r) return DV.f(x, c);
+      if (!r || (r[1] !== 1 && Math.abs(x) >= 100)) return DV.f(x, c);   // frazioni solo per numeri piccoli: 57342/5 si legge male
       if (r[1] === 1) return DV.f(r[0], 0);
       return `${r[0] < 0 ? "-" : ""}\\frac{${Math.abs(r[0])}}{${r[1]}}`;
     },
     /** per il testo semplice: «6/5», «−3/5», «340» */
     txt(x, c = 2) {
       const r = razionale(x);
-      if (!r) return GI.numTxt(x, c);
+      if (!r || (r[1] !== 1 && Math.abs(x) >= 100)) return GI.numTxt(x, c);
       if (r[1] === 1) return GI.numTxt(r[0], 0);
       return `${r[0] < 0 ? "−" : ""}${Math.abs(r[0])}/${r[1]}`;
     },
