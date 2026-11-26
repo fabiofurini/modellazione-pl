@@ -966,7 +966,7 @@
     vc.formula = function (R, v, st) {
       const h = f.call(vc, R, v, st);
       if (typeof h !== "string" || !vc.tabella || !R || !R.D) return h;
-      const tab = `<div class="plm-dati">${vc.tabella(R, DVF())}</div>`;
+      const tab = `<div class="plm-dati"><p class="plm-dati-tit">${T("Dati", "Data")}</p>${vc.tabella(R, DVF())}</div>`;
       const ombra = `</p><p class="plm-testo"><b>${T("Prezzi ombra.", "Shadow prices.")}</b>`;
       return h.includes(ombra) ? h.replace(ombra, `</p>${tab}<p class="plm-testo"><b>${T("Prezzi ombra.", "Shadow prices.")}</b>`)
         : h.replace('<p class="plm-cap">', `${tab}<p class="plm-cap">`);

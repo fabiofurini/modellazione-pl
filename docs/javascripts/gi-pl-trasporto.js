@@ -27,6 +27,8 @@
     const sol = st.el.querySelector(".plm-sol"), ctrl = st.el.querySelector(".gi-ctrl");
     if (!sol || !ctrl) return;
     const dx = ctrl.parentElement, prova = dx.querySelector(".gi-domanda");
+    const dati = st.el.querySelector(".plm .plm-dati");   // il riquadro «Dati» appena ridisegnato: sopra i cursori
+    if (dati) { dx.querySelectorAll(":scope > .plm-dati").forEach((e) => e.remove()); dx.insertBefore(dati, ctrl); }
     if (sol.parentElement !== dx || (prova && sol.nextElementSibling !== prova)) dx.insertBefore(sol, prova || null);
   }
 
@@ -81,7 +83,7 @@
         `<br><b>Data:</b> \\(s = ${S}\\) warehouses, \\(r = ${R}\\) customers; \\(f_{ij}\\): cost of one unit from \\(i\\) to \\(j\\); \\(d_i\\): capacity of warehouse \\(i\\); \\(e_j\\): demand of customer \\(j\\).` + TAB);
       const V = !!st.el.dataset.vetrina;
       if (V) setTimeout(() => solDestra(st), 0);
-      const html = `<div class="plm"><p class="plm-testo">${V ? testo.split(TAB).join("") : testo}</p>` +
+      const html = `<div class="plm"><p class="plm-testo">${testo}</p>` +
         `<div class="plm-sim">\\(\\displaystyle \\begin{aligned} ${sim} \\end{aligned}\\)</div>` +
         `<details class="plm-num"${V ? "" : " open"}><summary>${T("Modello numerico con i dati attuali", "Numerical model with the current data")}</summary>` +
         `<div class="plm-num-corpo">${num}</div></details></div>`;
@@ -95,7 +97,7 @@
         { fontSize: 13.5, strokeColor: C.testo, cssStyle: "font-weight:700" });
       if (Rr.stato !== "ottimo") return M.scritta(crea, W / 2, H / 2, T("Nessun piano ammissibile", "No feasible plan"), { fontSize: 15, strokeColor: C.rosso });
       const xs = W * 0.24, xc = W * 0.76, r = Math.max(15, Math.min(22, H / 22)), alto = H - 70, basso = 40;
-      const ys = [0, 1].map((i) => alto - (alto - basso) * (i + 0.5) / 2), yc = [0, 1, 2].map((j) => alto - (alto - basso) * (j + 0.5) / 3);
+      const ys = [0, 1].map((i) => alto - (alto - basso) * (i + 0.5) / 2), yc = [0, 1, 2].map((j) => alto + 8 - (alto - basso + 16) * j / 2);   // clienti più distanziati: i valori sugli archi non si sovrappongono
       const qMax = Math.max(...DATI.e);
       // archi: prima quelli vuoti, poi quelli pieni (sopra)
       const archi = [];
@@ -108,7 +110,7 @@
         crea("arrow", [p0, p1], { strokeColor: pieno ? C.b : C.grigio, strokeOpacity: pieno ? 1 : 0.6, strokeWidth: pieno ? 2 + 7 * q / qMax : 1.2,
           dash: pieno ? 0 : 2, fixed: true, highlight: false, withLabel: false, lastArrow: { type: 2, size: pieno ? 3 : 6 } });
         // il valore sopra l'arco, a un terzo dal magazzino (spostato di lato perché l'arco spesso non lo copra)
-        if (pieno) M.scritta(crea, p0[0] + (p1[0] - p0[0]) * 0.3 - uy * 14, p0[1] + (p1[1] - p0[1]) * 0.3 + ux * 14, FR.txt(q), { fontSize: 13, strokeColor: C.b,
+        if (pieno) M.scritta(crea, p0[0] + (p1[0] - p0[0]) * 0.4 - uy * 14, p0[1] + (p1[1] - p0[1]) * 0.4 + ux * 14, FR.txt(q), { fontSize: 13, strokeColor: C.b,
           display: "html", cssStyle: "font-weight:700;background:var(--md-default-bg-color);padding:0 .25em;border-radius:3px" });
       }
       // nodi: magazzini a sinistra (capacità d_i), clienti a destra (domanda e_j)

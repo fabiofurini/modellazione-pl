@@ -319,8 +319,9 @@
     /** una tabella con il suo titolo */
     tab: (titolo, intest, righe) => `<div class="plm-sol-t">${titolo ? `<p>${titolo}</p>` : ""}${M.tab(intest, righe)}</div>`,
     /** il blocco: riga del valore ottimo, tabelle affiancate (vanno a capo), nota */
-    blocco: (valore, tabelle = [], nota = "") => `<div class="plm-sol-val">${valore}</div>` +
-      (tabelle.length ? `<div class="plm-sol-tabs">${tabelle.join("")}</div>` : "") + (nota ? `<p class="plm-sol-nota">${nota}</p>` : ""),
+    blocco: (valore, tabelle = [], nota = "") =>   // prima i valori delle variabili, sotto il valore ottimo (Fabio, 26/11/2026)
+      (tabelle.length ? `<div class="plm-sol-tabs">${tabelle.join("")}</div>` : "") + (nota ? `<p class="plm-sol-nota">${nota}</p>` : "") +
+      `<div class="plm-sol-val">${valore}</div>`,
   };
   window.GI_PL_SOL = SOL;
 
@@ -328,10 +329,68 @@
   /* Fabio, 25/11/2026: il blocco richiudibile «Modello numerico» sta in fondo al riquadro dell'app, dopo i grafici e
    * la soluzione, largo quanto tutto il riquadro (le due colonne): la forma matriciale, una colonna per variabile e una
    * riga per vincolo, ci sta con il font quasi normale. Il modello simbolico resta in alto. */
+
+  // ================================================================ riquadri standard (Fabio, 26/11/2026)
+  /* Ogni app di modellazione ha gli stessi riquadri: «Il problema», «Variabili», «Dati» (significati e tabelle),
+   * «Modello» (simbolico); poi «Soluzione ottima» e «Prova tu». Le app scrivono ancora il testo con le voci
+   * <b>Il problema.</b> … <br><b>Variabili:</b> … <br><b>Dati:</b> …: qui lo si divide nei riquadri. */
+  const RIQ = {
+    voce(seg) {
+      const m = seg.match(/^\s*<b>\s*([^<]*?)\s*[.:]\s*<\/b>\s*/);
+      if (!m) return null;
+      const t = m[1].toLowerCase(), resto = seg.slice(m[0].length);
+      if (/^(il problema|the problem)$/.test(t)) return ["problema", resto];
+      if (/^(variabili|variables)$/.test(t)) return ["variabili", resto];
+      if (/^(dati|data)$/.test(t)) return ["dati", resto];
+      return null;
+    },
+    box(cls, tit, corpo) { return `<div class="plm-box ${cls}"><p class="plm-box-tit">${tit}</p>${corpo}</div>`; },
+    applica(html) {
+      if (typeof html !== "string" || html.indexOf('class="plm-testo"') < 0 || html.indexOf("plm-box") >= 0) return html;
+      const tpl = document.createElement("div");
+      tpl.innerHTML = html;
+      const plm = tpl.querySelector(".plm");
+      if (!plm) return html;
+      const sez = { problema: [], variabili: [], dati: [] };
+      let cur = "problema", tabelle = null;
+      for (const n of Array.from(plm.children)) {
+        if (n.matches("p.plm-testo")) {
+          for (const seg of n.innerHTML.split(/<br\s*\/?>/i)) {
+            if (!seg.trim()) continue;
+            const v = RIQ.voce(seg);
+            if (v) { cur = v[0]; if (v[1].trim()) sez[cur].push(v[1]); } else sez[cur].push(seg);
+          }
+          n.remove();
+        } else if (n.matches("div.plm-dati")) {   // più blocchi di tabelle: un solo riquadro «Dati»
+          if (!tabelle) tabelle = n;
+          else { n.querySelectorAll(":scope > .plm-dati-tit").forEach((t) => t.remove()); tabelle.append(...n.childNodes); }
+          n.remove();
+        }
+      }
+      let out = "";
+      if (sez.problema.length) out += RIQ.box("plm-box-problema", T("Il problema", "The problem"), `<p>${sez.problema.join("<br>")}</p>`);
+      if (sez.variabili.length) out += RIQ.box("plm-box-var", T("Variabili", "Variables"), `<p>${sez.variabili.join("<br>")}</p>`);
+      if (sez.dati.length || tabelle) {
+        const sig = sez.dati.length ? `<p class="plm-dati-sig">${sez.dati.join("<br>")}</p>` : "";
+        if (tabelle) {
+          const tit = tabelle.querySelector(":scope > .plm-dati-tit");
+          if (tit) tit.insertAdjacentHTML("afterend", sig); else tabelle.insertAdjacentHTML("afterbegin", `<p class="plm-dati-tit">${T("Dati", "Data")}</p>` + sig);
+          tabelle.classList.add("plm-box");
+          out += tabelle.outerHTML;
+        } else out += `<div class="plm-dati plm-box"><p class="plm-dati-tit">${T("Dati", "Data")}</p>${sig}</div>`;
+      }
+      plm.insertAdjacentHTML("afterbegin", out);
+      const sim = plm.querySelector(":scope > .plm-sim");
+      if (sim) sim.outerHTML = RIQ.box("plm-box-mod", T("Modello", "Model"), sim.outerHTML);
+      return tpl.innerHTML;
+    },
+  };
+
   const FONDO = {
     /** toglie dall'HTML della formula il blocco <details class="plm-num"> e lo mostra in fondo al riquadro */
     sposta(st, html) {
       if (typeof html !== "string" || !st || !st.el) return html;
+      html = RIQ.applica(html);
       const i = html.indexOf('<details class="plm-num"');
       if (i < 0) return html;
       const j = html.indexOf("</details>", i) + "</details>".length;
@@ -366,7 +425,7 @@
     rng: (a, c = 1) => [Math.min(...a), Math.max(...a), a.reduce((q, x) => q + x, 0) / a.length].map((x) => DV.f(x, c)),
     tab: (titolo, intest, righe) => `<div class="plm-sol-t"><p>${titolo}</p>${M.tab(intest, righe)}</div>`,
     /** le tabelline, fuori dal paragrafo del testo */
-    tabelle: (...t) => `</p><div class="plm-dati">${t.join("")}</div><p class="plm-testo">`,
+    tabelle: (...t) => `</p><div class="plm-dati"><p class="plm-dati-tit">${T("Dati", "Data")}</p>${t.join("")}</div><p class="plm-testo">`,
   };
   window.GI_PL_DV = DV;
 
