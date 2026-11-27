@@ -321,7 +321,7 @@
     til: (v, idx = "") => `\\tilde ${v}(\\text{LP})`,   // senza pedici: gli indici li dà la tabella (Fabio, 27/11/2026)
     tilT: (v, idx = "") => `\\(${SOL.til(v, idx)}\\)`,
     /** riga del valore ottimo: «Costo ottimo \(z(\text{LP})\) = <b>320 €</b>», con un eventuale seguito */
-    val: (parola, valore, dopo = "") => `${parola} \\(z(\\text{LP})\\) = <b>${valore}</b>${dopo ? " " + dopo : ""}`,
+    val: (parola, valore, dopo = "") => `${T("Valore ottimo", "Optimal value")} \\(z(\\text{LP})\\) = <b>${valore}</b>${dopo ? " " + dopo : ""}`,
     /** valore di una variabile: «—» se è nullo alle cifre mostrate */
     z: (x, c = 1) => (Math.abs(x) < 0.5 * Math.pow(10, -c) ? "—" : GI.numTxt(x, c)),
     /** una tabella con il suo titolo */
