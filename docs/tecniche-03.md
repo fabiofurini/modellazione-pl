@@ -78,7 +78,7 @@ La regola generale è nella tecnica [4.8 Rapporti e percentuali](tecniche-08.md)
     Una soluzione ottima è $\tilde x_1 = 20$, $\tilde x_2 = 64$ e $\tilde x_3 = 16$, con valore ottimo
 
     $$
-    z(\mathit{LP}) = 0{,}80 \cdot 20 + 0{,}50 \cdot 64 + 0{,}30 \cdot 16 = 52{,}80 \text{ euro} .
+    z(\text{LP}) = 0{,}80 \cdot 20 + 0{,}50 \cdot 64 + 0{,}30 \cdot 16 = 52{,}80 \text{ euro} .
     $$
 
 <!-- modelli:inizio -->

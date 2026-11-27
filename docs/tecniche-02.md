@@ -65,7 +65,7 @@ $$
     \end{array}
     $$
 
-    Una soluzione ottima è $\tilde x_1 = 2$ e $\tilde x_2 = 6$, con valore ottimo $z(\mathit{LP}) = 36$.
+    Una soluzione ottima è $\tilde x_1 = 2$ e $\tilde x_2 = 6$, con valore ottimo $z(\text{LP}) = 36$.
 
 <!-- modelli:inizio -->
 **Modelli svolti che usano questa tecnica:** [Esempio 4.4 — Produzione in orario ordinario e in straordinario](tecniche-modelli-01.md) · [Esempio 4.9 — Scelta dei dolci](tecniche-modelli-06.md) · [Esempio 4.12 — Produzione di tre farmaci](tecniche-modelli-09.md)
