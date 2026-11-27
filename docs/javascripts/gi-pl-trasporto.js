@@ -102,7 +102,7 @@
     // con il valore, archi vuoti sottili, chiari e tratteggiati
     disegna(crea, Rr, v, C, Sz) {
       const M = window.GI_MIP, FR = window.GI_PL_FR, W = Sz.W, H = Sz.H;
-      M.scritta(crea, W / 2, H - 16, T("Spedizioni ottime x̃ᵢⱼ(LP): lo spessore dell'arco cresce con la quantità", "Optimal shipments x̃ᵢⱼ(LP): the arc gets thicker with the quantity"),
+      M.scritta(crea, W / 2, H - 16, T("Spedizioni ottime x̃(LP): lo spessore dell'arco cresce con la quantità", "Optimal shipments x̃(LP): the arc gets thicker with the quantity"),
         { fontSize: 13.5, strokeColor: C.testo, cssStyle: "font-weight:700" });
       if (Rr.stato !== "ottimo") return M.scritta(crea, W / 2, H / 2, T("Nessun piano ammissibile", "No feasible plan"), { fontSize: 15, strokeColor: C.rosso });
       const xs = W * 0.24, xc = W * 0.76, r = Math.max(15, Math.min(22, H / 22)), alto = H - 70, basso = 40;

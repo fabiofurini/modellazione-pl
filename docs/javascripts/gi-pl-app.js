@@ -586,8 +586,8 @@
       const prod = (i) => T("prodotto ", "product ") + (i + 1);
       // 1. ore macchina a_i x_it impilate, capacità b_t, mesi saturi
       const A = figura(crea, { X0: MF.sx, X1: S.W - MF.dx, Y0: S.H - MF.alto - hTop, Y1: S.H - MF.alto, xa: 0.4, xb: nT + 0.6, ya: 0,
-        yb: Math.max(...R.cap, ...R.ore) * 1.42, titolo: T("Ore macchina aᵢ x̃ᵢₜ(LP) usate per prodotto e capacità bₜ",
-          "Machine hours aᵢ x̃ᵢₜ(LP) used by product and capacity bₜ"), nx: mese, ny: T("ore", "hours") }, C, { nTx: nT, nTy: 4, fx });
+        yb: Math.max(...R.cap, ...R.ore) * 1.42, titolo: T("Ore macchina aᵢ x̃(LP) usate per prodotto e capacità bₜ",
+          "Machine hours aᵢ x̃(LP) used by product and capacity bₜ"), nx: mese, ny: T("ore", "hours") }, C, { nTx: nT, nTy: 4, fx });
       mesiX.forEach((x, t) => {
         let y0 = 0;
         for (let i = 0; i < nI; i++) {
@@ -686,7 +686,7 @@
       const fx = (u) => (Number.isInteger(u) && u >= 1 && u <= nT ? String(u) : "");
       const yb = Math.max(R.C, ...R.tot) * 1.45;
       const B = figura(crea, { X0: MF.sx, X1: S.W - MF.dx, Y0: MF.basso, Y1: S.H - MF.alto, xa: 0.4, xb: nT + 0.6, ya: 0, yb,
-        titolo: T("Prelievo dalla rete bₜ + Σᵥ x̃ᵥₜ(LP)", "Power withdrawn from the grid bₜ + Σᵥ x̃ᵥₜ(LP)"), nx: T("ora t (dalle t − 1 alle t)", "hour t (from t − 1 to t)"),
+        titolo: T("Prelievo dalla rete bₜ + Σᵥ x̃(LP)", "Power withdrawn from the grid bₜ + Σᵥ x̃(LP)"), nx: T("ora t (dalle t − 1 alle t)", "hour t (from t − 1 to t)"),
         ny: T("prelievo totale (kW)", "total withdrawal (kW)") }, C, { nTx: nT, nTy: 4, fx });
       gradini(crea, B, E.base, F.grigio, { x0: 1, dash: 2, spessore: 1.8 });
       gradini(crea, B, R.tot, F.teal, { x0: 1 });
@@ -906,7 +906,7 @@
       legendaIn(crea, P, [...(vista === "1x1" ? [[F.rosso, T("frontiera CCR (scala costante)", "CCR frontier (constant scale)"), "tratteggio"],
         [F.teal, T("frontiera BCC (scala variabile)", "BCC frontier (variable scale)"), "linea"]] : []),
         [F.navy, T("filiali", "branches"), "punto"], [F.arancio, T("filiale valutata e target", "evaluated branch and target"), "punto"],
-        [F.verde, T("peer: λ̃ⱼ(LP) > 0", "peers: λ̃ⱼ(LP) > 0"), "punteggiata"]], C, "sx");
+        [F.verde, T("peer: λ̃(LP) > 0", "peers: λ̃(LP) > 0"), "punteggiata"]], C, "sx");
     },
     legenda: () => { const F = FIG(); return [[F.navy, T("filiali \\(j\\): personale \\(x_{1j}\\) e prestiti \\(y_{1j}\\)", "branches \\(j\\): staff \\(x_{1j}\\) and loans \\(y_{1j}\\)"), "punto"],
       [F.arancio, T("filiale valutata \\(o\\); la freccia porta al target \\(\\theta\\, x_{1o}\\)", "evaluated branch \\(o\\); the arrow leads to the target \\(\\theta\\, x_{1o}\\)"), ""],

@@ -287,8 +287,8 @@
         tetto(crea, A, i + 1, D.w[i], 0.7, F.rosso);
       }
       categorie(crea, A, [1, 2, 3].map((i) => [i, String(i)]), C);
-      legendaIn(crea, A, [[F.grigio, T("non trattato x̃ᵢ(LP)", "untreated x̃ᵢ(LP)"), "barra"], [F.teal, T("orario ordinario ỹᵢ(LP)", "regular time ỹᵢ(LP)"), "barra"],
-        [F.arancio, T("straordinario z̃ᵢ(LP)", "overtime z̃ᵢ(LP)"), "barra"], [F.rosso, T("produzione massima wᵢ", "maximum production wᵢ"), "tratteggio"]], C);
+      legendaIn(crea, A, [[F.grigio, T("non trattato x̃(LP)", "untreated x̃(LP)"), "barra"], [F.teal, T("orario ordinario ỹᵢ(LP)", "regular time ỹᵢ(LP)"), "barra"],
+        [F.arancio, T("straordinario z̃(LP)", "overtime z̃(LP)"), "barra"], [F.rosso, T("produzione massima wᵢ", "maximum production wᵢ"), "tratteggio"]], C);
     },
     legenda: () => { const F = FIG(); return [[F.grigio, T("litri venduti non trattati \\(x_i\\)", "liters sold untreated \\(x_i\\)"), "pieno"],
       [F.teal, T("litri trattati in orario ordinario \\(y_i\\)", "liters treated in regular time \\(y_i\\)"), "pieno"],
@@ -355,7 +355,7 @@
         nx: T("nutriente", "nutrient"), ny: T("grammi al mese", "grams per month") }), C, { nTx: 0, nTy: 5 });
       R.lhs.slice(0, 3).forEach((q, j) => { barra(crea, B, j + 1, 0, q, 0.5, F.verde); baffo(crea, B, j + 1, D.a[j], D.b[j], F.blu); });
       categorie(crea, B, [1, 2, 3].map((j) => [j, String(j)]), C);
-      legendaIn(crea, B, [[F.verde, T("grammi forniti Σᵢ gᵢⱼ x̃ᵢ(LP)", "grams supplied Σᵢ gᵢⱼ x̃ᵢ(LP)"), "barra"], [F.blu, T("intervallo [aⱼ, bⱼ]", "range [aⱼ, bⱼ]"), "baffo"]], C);
+      legendaIn(crea, B, [[F.verde, T("grammi forniti Σᵢ gᵢⱼ x̃(LP)", "grams supplied Σᵢ gᵢⱼ x̃(LP)"), "barra"], [F.blu, T("intervallo [aⱼ, bⱼ]", "range [aⱼ, bⱼ]"), "baffo"]], C);
     },
     legenda: () => { const F = FIG(); return [[F.teal, T("chilogrammi \\(x_i\\) di ogni alimento", "kilograms \\(x_i\\) of each food"), "pieno"],
       [F.verde, T("grammi di nutriente \\(\\sum_i g_{ij} x_i\\)", "grams of nutrient \\(\\sum_i g_{ij} x_i\\)"), "pieno"],
@@ -425,7 +425,7 @@
     disegna(crea, R, v, C, S) {
       if (R.stato !== "ottimo") return avviso(crea, S, C, T("Nessuna coppia di diete ammissibile", "No feasible pair of diets"));
       const F = FIG(), D = R.D, x = R.x, col = [F.teal, F.arancio], b1 = pieno(S);
-      const A = figura(crea, Object.assign(b1, { xa: 0.4, xb: 3.6, ya: 0, yb: Math.max(...D.d) * 1.5, titolo: T("Alimenti per dieta x̃ᵢₖ(LP)", "Foods by diet x̃ᵢₖ(LP)"),
+      const A = figura(crea, Object.assign(b1, { xa: 0.4, xb: 3.6, ya: 0, yb: Math.max(...D.d) * 1.5, titolo: T("Alimenti per dieta x̃(LP)", "Foods by diet x̃(LP)"),
         nx: T("alimento", "food"), ny: T("chilogrammi al mese", "kilograms per month") }), C, { nTx: 0, nTy: 5 });
       for (let i = 0; i < 3; i++) {
         barra(crea, A, i + 1, 0, x[2 * i], 0.5, col[0]); barra(crea, A, i + 1, x[2 * i], x[2 * i] + x[2 * i + 1], 0.5, col[1]);
@@ -509,7 +509,7 @@
         rombo(crea, A, t + 1, D.d[t], F.blu, C);
       }
       categorie(crea, A, [1, 2, 3, 4].map((t) => [t, String(t)]), C);
-      legendaIn(crea, A, [[F.teal, T("prodotti x̃ₜ(LP)", "produced x̃ₜ(LP)"), "barra"], [F.arancio, T("acquistati b̃ₜ(LP)", "bought b̃ₜ(LP)"), "barra"],
+      legendaIn(crea, A, [[F.teal, T("prodotti x̃(LP)", "produced x̃(LP)"), "barra"], [F.arancio, T("acquistati b̃(LP)", "bought b̃(LP)"), "barra"],
         [F.rosso, T("capacità mₜ", "capacity mₜ"), "tratteggio"], [F.blu, T("domanda dₜ", "demand dₜ"), "rombo"]], C);
     },
     legenda: () => { const F = FIG(); return [[F.teal, T("litri prodotti \\(x_t\\)", "liters produced \\(x_t\\)"), "pieno"], [F.arancio, T("litri acquistati \\(b_t\\)", "liters bought \\(b_t\\)"), "pieno"],
@@ -693,10 +693,10 @@
       if (R.stato !== "ottimo") return avviso(crea, S, C, T("Nessun piano ammissibile con questa capacità", "No feasible plan with this capacity"));
       const F = FIG(), D = R.D, x = R.x, b1 = pieno(S);
       const top = Math.max(D.m, ...D.d, ...x.slice(0, 4)) * 1.5;
-      const A = figura(crea, Object.assign(b1, { xa: 0.4, xb: 4.6, ya: 0, yb: top, titolo: T("Produzione ottima x̃ₜ(LP) per giorno", "Optimal production x̃ₜ(LP) by day"), nx: T("giorno", "day"), ny: T("chilogrammi", "kilograms") }), C, { nTx: 0, nTy: 4 });
+      const A = figura(crea, Object.assign(b1, { xa: 0.4, xb: 4.6, ya: 0, yb: top, titolo: T("Produzione ottima x̃(LP) per giorno", "Optimal production x̃(LP) by day"), nx: T("giorno", "day"), ny: T("chilogrammi", "kilograms") }), C, { nTx: 0, nTy: 4 });
       for (let t = 0; t < 4; t++) { barra(crea, A, t + 1, 0, x[t], 0.5, F.teal); tetto(crea, A, t + 1, D.m, 0.7, F.rosso); rombo(crea, A, t + 1, D.d[t], F.blu, C); }
       categorie(crea, A, [1, 2, 3, 4].map((t) => [t, String(t)]), C);
-      legendaIn(crea, A, [[F.teal, T("prodotti x̃ₜ(LP)", "produced x̃ₜ(LP)"), "barra"], [F.rosso, T("produzione massima m", "maximum production m"), "tratteggio"], [F.blu, T("domanda dₜ", "demand dₜ"), "rombo"]], C);
+      legendaIn(crea, A, [[F.teal, T("prodotti x̃(LP)", "produced x̃(LP)"), "barra"], [F.rosso, T("produzione massima m", "maximum production m"), "tratteggio"], [F.blu, T("domanda dₜ", "demand dₜ"), "rombo"]], C);
     },
     legenda: () => { const F = FIG(); return [[F.teal, T("chilogrammi prodotti \\(x_t\\)", "kilograms produced \\(x_t\\)"), "pieno"], [F.blu, T("domanda \\(d_t\\)", "demand \\(d_t\\)"), "punto"],
       [F.verde, T("scorta a fine giorno \\(s_t\\)", "stock at the end of the day \\(s_t\\)"), ""], [F.rosso, T("produzione massima \\(m\\) e capacità del magazzino \\(k\\)", "maximum production \\(m\\) and storage capacity \\(k\\)"), "dashed"]]; },
@@ -759,7 +759,7 @@
       if (R.stato !== "ottimo") return avviso(crea, S, C, T("Nessun piano ammissibile", "No feasible plan"));
       const F = FIG(), D = R.D, x = R.x, b1 = pieno(S);
       const tw = D.w[0] + D.w[1], top = tw * 1.35;   // scala fissata dai dati: le barre non arrivano oltre w₁ + w₂
-      const A = figura(crea, Object.assign(b1, { xa: 0.4, xb: 2.6, ya: 0, yb: top, titolo: T("Miscele ottime x̃ᵢ(LP) e ỹᵢ(LP)", "Optimal blends x̃ᵢ(LP) and ỹᵢ(LP)"),
+      const A = figura(crea, Object.assign(b1, { xa: 0.4, xb: 2.6, ya: 0, yb: top, titolo: T("Miscele ottime x̃(LP) e ỹᵢ(LP)", "Optimal blends x̃(LP) and ỹᵢ(LP)"),
         ny: T("barili", "barrels") }), C, { nTx: 0, nTy: 5 });
       // la qualità della miscela sempre alla stessa altezza, sopra w₁ + w₂
       [[x[0], x[1]], [x[2], x[3]]].forEach(([u1, u2], k) => {
@@ -832,7 +832,7 @@
       const F = FIG(), x = R.x, y = [x[0] - 2 * x[1], x[1] - x[2], x[2]].map((q) => (Math.abs(q) < 1e-7 ? 0 : q));
       const top = Math.max(...x, 100) * 1.45;
       const A = figura(crea, { X0: MF.sx, X1: S.W - MF.dx, Y0: MF.basso, Y1: S.H - MF.alto, xa: 0.4, xb: 3.6, ya: 0, yb: top,
-        titolo: T("Unità prodotte x̃ᵢ(LP) e vendute per farmaco", "Units produced x̃ᵢ(LP) and sold by drug"), nx: T("farmaco", "drug"), ny: T("unità", "units") }, C, { nTx: 0, nTy: 5 });
+        titolo: T("Unità prodotte x̃(LP) e vendute per farmaco", "Units produced x̃(LP) and sold by drug"), nx: T("farmaco", "drug"), ny: T("unità", "units") }, C, { nTx: 0, nTy: 5 });
       // i valori in una riga fissa sotto il titolo: non saltano quando cambia la soluzione
       for (let i = 0; i < 3; i++) {
         barra(crea, A, i + 1 - 0.17, 0, x[i], 0.32, F.teal); barra(crea, A, i + 1 + 0.17, 0, y[i], 0.32, F.arancio);
@@ -840,7 +840,7 @@
         if (y[i] > 1e-6) M.scritta(crea, A.X(i + 1 + 0.17), A.Y1 - 52, mig(y[i]), { anchorY: "bottom", fontSize: 11.5, strokeColor: F.arancio });
       }
       categorie(crea, A, [1, 2, 3].map((i) => [i, String(i)]), C);
-      legendaIn(crea, A, [[F.teal, T("prodotte x̃ᵢ(LP)", "produced x̃ᵢ(LP)"), "barra"], [F.arancio, T("vendute (prodotte meno consumate)", "sold (produced minus used)"), "barra"]], C, "dx");
+      legendaIn(crea, A, [[F.teal, T("prodotte x̃(LP)", "produced x̃(LP)"), "barra"], [F.arancio, T("vendute (prodotte meno consumate)", "sold (produced minus used)"), "barra"]], C, "dx");
     },
     legenda: () => { const F = FIG(); return [[F.teal, T("unità prodotte \\(x_i\\)", "units produced \\(x_i\\)"), "pieno"],
       [F.arancio, T("unità vendute \\(x_1 - 2x_2\\), \\(x_2 - x_3\\), \\(x_3\\)", "units sold \\(x_1 - 2x_2\\), \\(x_2 - x_3\\), \\(x_3\\)"), "pieno"]]; },
