@@ -145,7 +145,7 @@ extra_javascript:
   - javascripts/gi-pl-app.js?v=f45fd5e7a1
   - javascripts/gi-pl-finanza.js?v=4c08497cfc
   - javascripts/gi-pl-tecniche.js?v=310025b8e0
-  - javascripts/gi-pl-trasporto.js?v=52e29a0be5
+  - javascripts/gi-pl-trasporto.js?v=d23c12aec8
   - javascripts/quiz.js?v=be7fae2b85
 
 # le pagine delle singole app non stanno nel menu: il laboratorio è una voce sola

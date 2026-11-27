@@ -5,7 +5,7 @@
  *                  f = [[1, 1, f13], [5, 3, 8]] € per unità, d = (d1, 50), e = (30, 20, 40) unità.
  *                  Cursori: il costo f13 (1, 3, ..., 11: i cambi di piano cadono sui valori pari 4, 6, 8,
  *                  dove due piani hanno lo stesso costo) e la capacità d1 (40..100).
- *                  Valori iniziali f13 = 5, d1 = 60: piano (30, 0, 30 | 0, 20, 10), costo 320 €.
+ *                  Valori iniziali f13 = 5, d1 = 62,5: piano frazionario (30, 0, 65/2 | 0, 20, 15/2), costo 312,5 €.
  *
  * Stesso formato di «pl-produzione» (gi-pl-app.js): il problema a parole con variabili e dati, il modello
  * simbolico, il blocco «Soluzione ottima», il modello numerico in fondo al riquadro (GI_PL_NUM, GI_PL_SOL,
@@ -25,7 +25,7 @@
     try { return new URL(JSON.parse(cfg.textContent).base + "/", location.href); } catch (e) { return new URL("./", location.href); }
   };
 
-  const DATI = { f: [[1, 1, 5], [5, 3, 8]], d: [60, 50], e: [30, 20, 40] };
+  const DATI = { f: [[1, 1, 5], [5, 3, 8]], d: [62.5, 50], e: [30, 20, 40] };
   const S = 2, R = 3;
   const dec = (x) => (Number.isInteger(x) ? String(x) : String(x).replace(".", T(",", ".")));   // dati: 62,5 e non 125/2
 
@@ -60,7 +60,7 @@
       { nome: T("\\text{costo}\\ f_{13}", "\\text{cost}\\ f_{13}"), min: 1, max: 11, step: 2, val: 5,
         fmt: (x) => T(`${x} € per unità`, `${x} € per unit`),
         descr: T("costo di un'unità dal magazzino 1 al cliente 3", "cost of one unit from warehouse 1 to customer 3") },
-      { nome: T("\\text{capacità}\\ d_1", "\\text{capacity}\\ d_1"), min: 40, max: 100, step: 2.5, val: 60,   // passi di 2,5: anche soluzioni frazionarie (65/2, 15/2)
+      { nome: T("\\text{capacità}\\ d_1", "\\text{capacity}\\ d_1"), min: 40, max: 100, step: 2.5, val: 62.5,   // passi di 2,5: anche soluzioni frazionarie (65/2, 15/2)
         fmt: (x) => T(`${String(x).replace(".", ",")} unità`, `${x} units`),
         descr: T("capacità del magazzino 1", "capacity of warehouse 1") },
     ],
@@ -147,8 +147,8 @@
           [tx("i \\backslash j"), "1", "2", "3"], Rr.x.map((r, i) => [String(i + 1), ...r.map((q) => FR.z(q))])),
       ], T("«—»: nessuna spedizione.", "«—»: no shipment."));
     },
-    domanda: T("Porta \\(f_{13}\\) a 7: il magazzino 1 serve anche il cliente 2. Porta \\(d_1\\) a 62,5: la soluzione diventa frazionaria, \\(\\tilde x_{13}(\\text{LP}) = 65/2\\).",
-      "Set \\(f_{13}\\) to 7: warehouse 1 also serves customer 2. Set \\(d_1\\) to 62.5: the solution becomes fractional, \\(\\tilde x_{13}(\\text{LP}) = 65/2\\)."),
+    domanda: T("Porta \\(f_{13}\\) a 7: il magazzino 1 serve anche il cliente 2. Porta \\(d_1\\) a 60: la soluzione diventa intera.",
+      "Set \\(f_{13}\\) to 7: warehouse 1 also serves customer 2. Set \\(d_1\\) to 60: the solution becomes integer."),
   };
 
   window.GI_RICETTE["pl-trasporto"] = () => {
