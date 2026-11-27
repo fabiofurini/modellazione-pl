@@ -27,6 +27,7 @@
 
   const DATI = { f: [[1, 1, 5], [5, 3, 8]], d: [60, 50], e: [30, 20, 40] };
   const S = 2, R = 3;
+  const dec = (x) => (Number.isInteger(x) ? String(x) : String(x).replace(".", T(",", ".")));   // dati: 62,5 e non 125/2
 
   // home (data-vetrina): il riquadro «Dati» va nella colonna dei cursori, sopra di essi, come nell'app di Modellazione PNL
   // (la soluzione sta già a destra, sotto i cursori: GI_PL_SOL)
@@ -59,8 +60,8 @@
       { nome: T("\\text{costo}\\ f_{13}", "\\text{cost}\\ f_{13}"), min: 1, max: 11, step: 2, val: 5,
         fmt: (x) => T(`${x} € per unità`, `${x} € per unit`),
         descr: T("costo di un'unità dal magazzino 1 al cliente 3", "cost of one unit from warehouse 1 to customer 3") },
-      { nome: T("\\text{capacità}\\ d_1", "\\text{capacity}\\ d_1"), min: 40, max: 100, step: 5, val: 60,
-        fmt: (x) => T(`${x} unità`, `${x} units`),
+      { nome: T("\\text{capacità}\\ d_1", "\\text{capacity}\\ d_1"), min: 40, max: 100, step: 2.5, val: 60,   // passi di 2,5: anche soluzioni frazionarie (65/2, 15/2)
+        fmt: (x) => T(`${String(x).replace(".", ",")} unità`, `${x} units`),
         descr: T("capacità del magazzino 1", "capacity of warehouse 1") },
     ],
     calcola,
@@ -77,16 +78,16 @@
         T(`Il modello LP dell'istanza: ${vars.length} variabili, ${Rr.lp.b.length} vincoli.`, `The LP model of the instance: ${vars.length} variables, ${Rr.lp.b.length} constraints.`));
       const TAB = DV.tabelle(DV.tab(T("Dimensioni", "Sizes"), [tx("s"), tx("r")], [[String(S), String(R)]]), DV.tab(T("\\(f_{ij}\\) (€), \\(d_i\\) e \\(e_j\\) (unità)", "\\(f_{ij}\\) (€), \\(d_i\\) and \\(e_j\\) (units)"),
         [tx("i \\backslash j"), "1", "2", "3", tx("d_i")],
-        [...Rr.f.map((r, i) => [String(i + 1), ...r.map(String), String(Rr.d[i])]), [tx("e_j"), ...DATI.e.map(String), ""]]));
+        [...Rr.f.map((r, i) => [String(i + 1), ...r.map(String), dec(Rr.d[i])]), [tx("e_j"), ...DATI.e.map(String), ""]]));
       const testo = T(
         "<b>Il problema.</b> Alcuni magazzini riforniscono alcuni clienti. Decidiamo quante unità spedire da ogni magazzino a ogni cliente, " +
         "con costo totale minimo, senza superare la capacità dei magazzini e servendo per intero la domanda dei clienti." +
         "<br><b>Variabili:</b> \\(x_{ij} \\ge 0\\): unità spedite dal magazzino \\(i\\) al cliente \\(j\\), con \\(i \\in \\{1, \\dots, s\\}\\) e \\(j \\in \\{1, \\dots, r\\}\\)." +
-        `<br><b>Dati:</b> \\(s\\): numero di magazzini; \\(r\\): numero di clienti; \\(f_{ij}\\): costo di un'unità da \\(i\\) a \\(j\\); \\(d_i\\): capacità del magazzino \\(i\\); \\(e_j\\): domanda del cliente \\(j\\).` + TAB,
+        `<br><b>Dati:</b> \\(s\\): numero di magazzini; \\(r\\): numero di clienti; \\(f_{ij}\\): costo di un'unità da \\(i\\) a \\(j\\); \\(d_i\\): capacità del magazzino \\(i\\); \\(e_j\\): domanda del cliente \\(j\\); con \\(i \\in \\{1, \\dots, s\\}\\) e \\(j \\in \\{1, \\dots, r\\}\\).` + TAB,
         "<b>The problem.</b> Some warehouses supply some customers. We decide how many units to ship from each warehouse to each customer, " +
         "at minimum total cost, without exceeding the capacity of the warehouses and serving the demand of the customers in full." +
         "<br><b>Variables:</b> \\(x_{ij} \\ge 0\\): units shipped from warehouse \\(i\\) to customer \\(j\\), with \\(i \\in \\{1, \\dots, s\\}\\) and \\(j \\in \\{1, \\dots, r\\}\\)." +
-        `<br><b>Data:</b> \\(s\\): number of warehouses; \\(r\\): number of customers; \\(f_{ij}\\): cost of one unit from \\(i\\) to \\(j\\); \\(d_i\\): capacity of warehouse \\(i\\); \\(e_j\\): demand of customer \\(j\\).` + TAB);
+        `<br><b>Data:</b> \\(s\\): number of warehouses; \\(r\\): number of customers; \\(f_{ij}\\): cost of one unit from \\(i\\) to \\(j\\); \\(d_i\\): capacity of warehouse \\(i\\); \\(e_j\\): demand of customer \\(j\\); with \\(i \\in \\{1, \\dots, s\\}\\) and \\(j \\in \\{1, \\dots, r\\}\\).` + TAB);
       const V = !!st.el.dataset.vetrina;
       if (V) setTimeout(() => datiDestra(st), 0);
       const pag = new URL((GI.EN ? "techniques-models-02/" : "tecniche-modelli-02/"), radice()).href;
@@ -128,7 +129,7 @@
         M.pallino(crea, xs, y, { size: r, fillColor: C.b, strokeColor: C.b });
         M.scritta(crea, xs, y, String(i + 1), { fontSize: 14, strokeColor: "#ffffff", cssStyle: "font-weight:700" });
         M.scritta(crea, xs - r - 10, y + 9, T(`magazzino ${i + 1}`, `warehouse ${i + 1}`), { anchorX: "right", fontSize: 12.5, strokeColor: C.testo });
-        M.scritta(crea, xs - r - 10, y - 9, `d${"₁₂"[i]} = ${FR.txt(Rr.d[i])}`, { anchorX: "right", fontSize: 12.5, strokeColor: C.testo });
+        M.scritta(crea, xs - r - 10, y - 9, `d${"₁₂"[i]} = ${dec(Rr.d[i])}`, { anchorX: "right", fontSize: 12.5, strokeColor: C.testo });
       });
       yc.forEach((y, j) => {
         M.pallino(crea, xc, y, { size: r, fillColor: C.c, strokeColor: C.c });
@@ -146,8 +147,8 @@
           [tx("i \\backslash j"), "1", "2", "3"], Rr.x.map((r, i) => [String(i + 1), ...r.map((q) => FR.z(q))])),
       ], T("«—»: nessuna spedizione.", "«—»: no shipment."));
     },
-    domanda: T("Porta \\(f_{13}\\) a 7: il magazzino 1 serve anche il cliente 2. Porta \\(d_1\\) a 90: il magazzino 2 non spedisce più nulla.",
-      "Set \\(f_{13}\\) to 7: warehouse 1 also serves customer 2. Set \\(d_1\\) to 90: warehouse 2 ships nothing any more."),
+    domanda: T("Porta \\(f_{13}\\) a 7: il magazzino 1 serve anche il cliente 2. Porta \\(d_1\\) a 62,5: la soluzione diventa frazionaria, \\(\\tilde x_{13}(\\text{LP}) = 65/2\\).",
+      "Set \\(f_{13}\\) to 7: warehouse 1 also serves customer 2. Set \\(d_1\\) to 62.5: the solution becomes fractional, \\(\\tilde x_{13}(\\text{LP}) = 65/2\\)."),
   };
 
   window.GI_RICETTE["pl-trasporto"] = () => {

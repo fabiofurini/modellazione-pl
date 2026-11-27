@@ -114,7 +114,7 @@ extra_css:
   - stylesheets/extra.css?v=69d492a4a3
   # laboratorio interattivo (genera_laboratorio.py)
   - https://cdn.jsdelivr.net/npm/jsxgraph@1.10.1/distrib/jsxgraph.css
-  - stylesheets/interattivi.css?v=c22e1a0e82
+  - stylesheets/interattivi.css?v=d4d7e13ccc
   - stylesheets/quiz.css?v=9e3792b41c
 
 markdown_extensions:
@@ -137,7 +137,7 @@ extra_javascript:
   - https://unpkg.com/mathjax@3/es5/tex-mml-chtml.js
   # laboratorio interattivo (genera_laboratorio.py): JSXGraph, il motore, gli helper comuni, i dati, poi le ricette
   - https://cdn.jsdelivr.net/npm/jsxgraph@1.10.1/distrib/jsxgraphcore.js
-  - javascripts/interattivi.js?v=a6cfeda578
+  - javascripts/interattivi.js?v=a67c342fc6
   - javascripts/gi-comune.js?v=74d7bb93a0
   - javascripts/gi-ott.js?v=04048d2032
   - javascripts/gi-pl-dati.js?v=ed0ce3f444
@@ -145,7 +145,7 @@ extra_javascript:
   - javascripts/gi-pl-app.js?v=64b4023815
   - javascripts/gi-pl-finanza.js?v=115001fd8a
   - javascripts/gi-pl-tecniche.js?v=ac0744ae12
-  - javascripts/gi-pl-trasporto.js?v=ce6899d851
+  - javascripts/gi-pl-trasporto.js?v=52e29a0be5
   - javascripts/quiz.js?v=be7fae2b85
 
 # le pagine delle singole app non stanno nel menu: il laboratorio è una voce sola
