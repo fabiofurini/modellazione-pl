@@ -114,7 +114,7 @@ extra_css:
   - stylesheets/extra.css?v=a8b3f83013
   # laboratorio interattivo (genera_laboratorio.py)
   - https://cdn.jsdelivr.net/npm/jsxgraph@1.10.1/distrib/jsxgraph.css
-  - stylesheets/interattivi.css?v=d4d7e13ccc
+  - stylesheets/interattivi.css?v=402690ac9a
   - stylesheets/quiz.css?v=9e3792b41c
 
 markdown_extensions:
@@ -138,13 +138,13 @@ extra_javascript:
   # laboratorio interattivo (genera_laboratorio.py): JSXGraph, il motore, gli helper comuni, i dati, poi le ricette
   - https://cdn.jsdelivr.net/npm/jsxgraph@1.10.1/distrib/jsxgraphcore.js
   - javascripts/interattivi.js?v=a67c342fc6
-  - javascripts/gi-comune.js?v=74d7bb93a0
+  - javascripts/gi-comune.js?v=43c6243ab6
   - javascripts/gi-ott.js?v=04048d2032
   - javascripts/gi-pl-dati.js?v=ed0ce3f444
   - javascripts/gi-pl-modelli.js?v=2fadd486f6
   - javascripts/gi-pl-app.js?v=44044d24aa
   - javascripts/gi-pl-finanza.js?v=4c08497cfc
-  - javascripts/gi-pl-tecniche.js?v=af6b4e223c
+  - javascripts/gi-pl-tecniche.js?v=4df35a80bd
   - javascripts/gi-pl-trasporto.js?v=d10e083ff6
   - javascripts/quiz.js?v=be7fae2b85
 

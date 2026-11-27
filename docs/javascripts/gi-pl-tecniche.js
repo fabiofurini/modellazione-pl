@@ -223,7 +223,7 @@
   const stato = (R, C) => M.tinta(C.rosso, R.stato === "illimitato" ? T("Illimitato.", "Unbounded.") : T("Inammissibile.", "Infeasible.")) + " " +
     (R.stato === "illimitato" ? T("Il valore della funzione obiettivo cresce senza limite.", "The objective function value grows without bound.")
       : T("Con questi dati nessuna soluzione rispetta tutti i vincoli: il simplesso si ferma alla fase 1.", "With these data no solution satisfies all the constraints: the simplex method stops in phase 1."));
-  const valore = (testo, R, unita, cifre = 2) => `${testo} \\(z(\\text{LP})\\) = <b>${fq(R.z, cifre)} ${unita}</b>`;
+  const valore = (testo, R, unita, cifre = 2) => `${T("Valore ottimo", "Optimal value")} \\(z(\\text{LP})\\) = <b>${fq(R.z, cifre)} ${unita}</b>`;
   /** \\(\tilde x_{i}(\text{LP})\\): la notazione della soluzione dei capitoli (GI_PL_SOL.tilT) */
   const tl = (v, i = "") => SOL().tilT(v, i);
   /** la tabellina «Dimensioni» (GI_PL_DV.dim) */
