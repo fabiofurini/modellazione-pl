@@ -316,6 +316,12 @@
       return vc;
     },
     voci(oggetto) { Object.values(oggetto).forEach(SOL.voce); return oggetto; },
+    /** notazione della soluzione come nei capitoli (Fabio, 27/11/2026): valori ottimi \tilde x_{it}(\text{LP}),
+     *  valore ottimo z(\text{LP}); til("x", "it") e til("\\eta") danno il TeX, tilT lo stesso fra \( \) */
+    til: (v, idx = "") => `\\tilde ${v}${idx !== "" ? `_{${idx}}` : ""}(\\text{LP})`,
+    tilT: (v, idx = "") => `\\(${SOL.til(v, idx)}\\)`,
+    /** riga del valore ottimo: «Costo ottimo \(z(\text{LP})\) = <b>320 €</b>», con un eventuale seguito */
+    val: (parola, valore, dopo = "") => `${parola} \\(z(\\text{LP})\\) = <b>${valore}</b>${dopo ? " " + dopo : ""}`,
     /** valore di una variabile: «—» se è nullo alle cifre mostrate */
     z: (x, c = 1) => (Math.abs(x) < 0.5 * Math.pow(10, -c) ? "—" : GI.numTxt(x, c)),
     /** una tabella con il suo titolo */
@@ -468,6 +474,9 @@
     /** minimo, massimo e media di un vettore, per il TeX */
     rng: (a, c = 1) => [Math.min(...a), Math.max(...a), a.reduce((q, x) => q + x, 0) / a.length].map((x) => DV.f(x, c)),
     tab: (titolo, intest, righe) => `<div class="plm-sol-t"><p>${titolo}</p>${M.tab(intest, righe)}</div>`,
+    /** la tabellina «Dimensioni» (Fabio, 27/11/2026: nei dati tutti i valori, anche le dimensioni):
+     *  dim(["s", 2], ["r", 3]); un nome di più lettere resta testo («giorni») */
+    dim: (...c) => DV.tab(T("Dimensioni", "Sizes"), c.map(([s]) => (/^[A-Za-z]$/.test(s) ? `\\(${s}\\)` : s)), [c.map(([, v]) => String(v))]),
     /** le tabelline, fuori dal paragrafo del testo */
     tabelle: (...t) => `</p><div class="plm-dati"><p class="plm-dati-tit">${T("Dati", "Data")}</p>${t.join("")}</div><p class="plm-testo">`,
   };
@@ -550,19 +559,20 @@
       const pezzi = [[...px, ...ps]];
       const num = numLP({ senso: "min", vars, c: lp.c, cifre: 2, pezzi, fmt: FR.tex,
         righe: lp.A.map((a, k) => ({ a, rel: lp.rel[k], rhs: lp.b[k], cifre: k < nI * nT ? 2 : 1 })) });
-      const TABS = DV.tabelle(DV.tab(T("Domanda \\(d_{it}\\) (unità): prodotto \\(i\\) per riga, mese \\(t\\) per colonna", "Demand \\(d_{it}\\) (units): product \\(i\\) by row, month \\(t\\) by column"),
+      const TABS = DV.tabelle(DV.dim(["n", nI], ["m", nT]),
+        DV.tab(T("\\(d_{it}\\) (unità)", "\\(d_{it}\\) (units)"),
         ["\\(i \\backslash t\\)", ...P.mesi.map(String)], P.domanda.map((r, i) => [String(i + 1), ...r.map((x) => FR.txt(x * fD, 1))])),
-        DV.tab(T("Prodotti (costi uguali in tutti i mesi)", "Products (costs the same in every month)"), [T("prodotto \\(i\\)", "product \\(i\\)"), "\\(c_{it}\\) (€)", "\\(h_{it}\\) (€)", "\\(a_i\\) (h)", "\\(r_{i0}\\)", "\\(r_{im}\\)"],
+        DV.tab(T("Prodotti (uguali in tutti i mesi)", "Products (same in every month)"), ["\\(i\\)", "\\(c_{it}\\) (€)", "\\(h_{it}\\) (€)", "\\(a_i\\) (h)", "\\(r_{i0}\\)", "\\(r_{im}\\)"],
           P.prodotti.map((q, i) => [String(i + 1), FR.txt(P.cp[i]), FR.txt(P.ch[i]), FR.txt(P.ore[i]), FR.txt(P.r0[i]), FR.txt(P.rm[i])])),
-        DV.tab(T("Ore macchina \\(b_t\\)", "Machine hours \\(b_t\\)"), ["\\(t\\)", ...P.mesi.map(String)], [["\\(b_t\\)", ...P.cap.map((x) => FR.txt(x * fC, 1))]]));
+        DV.tab(T("\\(b_t\\) (ore)", "\\(b_t\\) (hours)"), ["\\(t\\)", ...P.mesi.map(String)], [["\\(b_t\\)", ...P.cap.map((x) => FR.txt(x * fC, 1))]]));
       return modelloDi("produzione")(T(`<b>Il problema.</b> Decidiamo quante unità di ogni prodotto produrre in ogni mese e quante tenerne a scorta. ` +
         "L'obiettivo è minimizzare il costo di produzione e di giacenza. I vincoli: bilancio di magazzino mese per mese, con la domanda servita per intero, e ore macchina disponibili in ogni mese." + CONTINUE[0] +
-        "<br><b>Variabili:</b> \\(x_{it}\\): unità del prodotto \\(i\\) prodotte nel mese \\(t\\); \\(s_{it}\\): unità del prodotto \\(i\\) a scorta alla fine del mese \\(t\\), per \\(t \\le m-1\\)." +
-        `<br><b>Dati:</b> \\(n\\): numero di prodotti, indice \\(i\\); \\(m\\): numero di mesi, indice \\(t\\); \\(c_{it}\\): costo di produzione di un'unità di \\(i\\) (€); \\(h_{it}\\): costo di giacenza di un'unità di \\(i\\) per un mese (€); \\(d_{it}\\): domanda del prodotto \\(i\\) nel mese \\(t\\) (unità); \\(a_i\\): ore macchina per un'unità di \\(i\\); \\(b_t\\): ore macchina disponibili nel mese \\(t\\); \\(r_{i0}\\), \\(r_{im}\\): scorta iniziale e scorta finale richiesta del prodotto \\(i\\) (unità).` + TABS,
+        "<br><b>Variabili:</b> \\(x_{it} \\ge 0\\): unità del prodotto \\(i\\) prodotte nel mese \\(t\\), con \\(i \\in \\{1, \\dots, n\\}\\) e \\(t \\in \\{1, \\dots, m\\}\\); \\(s_{it} \\ge 0\\): unità del prodotto \\(i\\) a scorta alla fine del mese \\(t\\), con \\(i \\in \\{1, \\dots, n\\}\\) e \\(t \\in \\{1, \\dots, m-1\\}\\)." +
+        `<br><b>Dati:</b> \\(n\\): numero di prodotti; \\(m\\): numero di mesi; \\(c_{it}\\): costo di produzione di un'unità di \\(i\\) (€); \\(h_{it}\\): costo di giacenza di un'unità di \\(i\\) per un mese (€); \\(d_{it}\\): domanda del prodotto \\(i\\) nel mese \\(t\\) (unità); \\(a_i\\): ore macchina per un'unità di \\(i\\); \\(b_t\\): ore macchina disponibili nel mese \\(t\\); \\(r_{i0}\\), \\(r_{im}\\): scorta iniziale e scorta finale richiesta del prodotto \\(i\\) (unità); con \\(i \\in \\{1, \\dots, n\\}\\) e \\(t \\in \\{1, \\dots, m\\}\\).` + TABS,
       `<b>The problem.</b> We decide how many units of each product to produce in each month and how many to keep in inventory. ` +
         "The objective is to minimize production and holding cost. The constraints: inventory balance month by month, with demand served in full, and the machine hours available in each month." + CONTINUE[1] +
-        "<br><b>Variables:</b> \\(x_{it}\\): units of product \\(i\\) produced in month \\(t\\); \\(s_{it}\\): units of product \\(i\\) in inventory at the end of month \\(t\\), for \\(t \\le m-1\\)." +
-        `<br><b>Data:</b> \\(n\\): number of products, index \\(i\\); \\(m\\): number of months, index \\(t\\); \\(c_{it}\\): production cost of one unit of \\(i\\) (€); \\(h_{it}\\): holding cost of one unit of \\(i\\) for one month (€); \\(d_{it}\\): demand for product \\(i\\) in month \\(t\\) (units); \\(a_i\\): machine hours for one unit of \\(i\\); \\(b_t\\): machine hours available in month \\(t\\); \\(r_{i0}\\), \\(r_{im}\\): initial inventory and required final inventory of product \\(i\\) (units).` + TABS),
+        "<br><b>Variables:</b> \\(x_{it} \\ge 0\\): units of product \\(i\\) produced in month \\(t\\), with \\(i \\in \\{1, \\dots, n\\}\\) and \\(t \\in \\{1, \\dots, m\\}\\); \\(s_{it} \\ge 0\\): units of product \\(i\\) in inventory at the end of month \\(t\\), with \\(i \\in \\{1, \\dots, n\\}\\) and \\(t \\in \\{1, \\dots, m-1\\}\\)." +
+        `<br><b>Data:</b> \\(n\\): number of products; \\(m\\): number of months; \\(c_{it}\\): production cost of one unit of \\(i\\) (€); \\(h_{it}\\): holding cost of one unit of \\(i\\) for one month (€); \\(d_{it}\\): demand for product \\(i\\) in month \\(t\\) (units); \\(a_i\\): machine hours for one unit of \\(i\\); \\(b_t\\): machine hours available in month \\(t\\); \\(r_{i0}\\), \\(r_{im}\\): initial inventory and required final inventory of product \\(i\\) (units); with \\(i \\in \\{1, \\dots, n\\}\\) and \\(t \\in \\{1, \\dots, m\\}\\).` + TABS),
       sim, num);
     },
     disegna(crea, R, v, C, S) {
@@ -576,8 +586,8 @@
       const prod = (i) => T("prodotto ", "product ") + (i + 1);
       // 1. ore macchina a_i x_it impilate, capacità b_t, mesi saturi
       const A = figura(crea, { X0: MF.sx, X1: S.W - MF.dx, Y0: S.H - MF.alto - hTop, Y1: S.H - MF.alto, xa: 0.4, xb: nT + 0.6, ya: 0,
-        yb: Math.max(...R.cap, ...R.ore) * 1.42, titolo: T("Ore macchina usate per prodotto e capacità (altezza della barra = ore usate nel mese)",
-          "Machine hours used by product and capacity (bar height = hours used in the month)"), nx: mese, ny: T("ore", "hours") }, C, { nTx: nT, nTy: 4, fx });
+        yb: Math.max(...R.cap, ...R.ore) * 1.42, titolo: T("Ore macchina aᵢ x̃ᵢₜ(LP) usate per prodotto e capacità bₜ",
+          "Machine hours aᵢ x̃ᵢₜ(LP) used by product and capacity bₜ"), nx: mese, ny: T("ore", "hours") }, C, { nTx: nT, nTy: 4, fx });
       mesiX.forEach((x, t) => {
         let y0 = 0;
         for (let i = 0; i < nI; i++) {
@@ -608,9 +618,9 @@
       const Pd = DD().produzione, nT = Pd.mesi.length, giac = R.giacenza;
       const intest = (k = nT) => [tx(`i \\backslash t`), ...Pd.mesi.slice(0, k).map((m, t) => String(t + 1))];
       const righe = (A) => A.map((riga, i) => [String(i + 1), ...riga.map((x) => FR.z(x, 1))]);
-      return SOL.blocco(`${T("Costo ottimo", "Optimal cost")}: <b>${FR.txt(R.costo)} €</b>, ${T("di cui giacenza", "of which holding")} ${FR.txt(giac)} €`, [
-        SOL.tab(T("Produzione \\(\\tilde x_{it}\\) (unità): prodotto \\(i\\) per riga, mese \\(t\\) per colonna", "Production \\(\\tilde x_{it}\\) (units): product \\(i\\) by row, month \\(t\\) by column"), intest(), righe(R.x)),
-        SOL.tab(T("Scorte di fine mese \\(\\tilde s_{it}\\) (unità)", "End-of-month inventory \\(\\tilde s_{it}\\) (units)"), intest(nT - 1), righe(R.s)),
+      return SOL.blocco(SOL.val(T("Costo ottimo", "Optimal cost"), `${FR.txt(R.costo)} €`, `(${T("di cui giacenza", "of which holding")} ${FR.txt(giac)} €)`), [
+        SOL.tab(T(`Produzione ${SOL.tilT("x", "it")} (unità)`, `Production ${SOL.tilT("x", "it")} (units)`), intest(), righe(R.x)),
+        SOL.tab(T(`Scorte ${SOL.tilT("s", "it")} (unità)`, `Inventory ${SOL.tilT("s", "it")} (units)`), intest(nT - 1), righe(R.s)),
       ], T("«—»: valore nullo.", "«—»: zero value."));
     },
     domanda: T("Porta la capacità al 114%: il mese 2 non è più saturo. Portala al 94%: il piano non esiste più.",
@@ -626,7 +636,7 @@
   const vEv = {
     etichetta: T("Ricarica di veicoli elettrici", "Electric vehicle charging"),
     cursori: [
-      { nome: "k", min: 20, max: 40, step: 1, val: 30, fmt: (x) => nt(x, 0) + " kW",
+      { nome: "k", min: 20, max: 40, step: 0.5, val: 30, fmt: (x) => nt(x, 1) + " kW",   // passi di 0,5: anche potenze frazionarie
         descr: T("potenza massima prelevabile dal contatore in ogni ora", "maximum power drawn from the meter in every hour") },
       { nome: T("\\text{energia totale}", "\\text{total energy}"), min: 60, max: 150, step: 5, val: 100,
         fmt: (x) => `${mig(DD().ev.veicoli.reduce((t, q) => t + q.energia, 0) * x / 100)} kWh (${per(x)})`,
@@ -650,21 +660,21 @@
       for (let t = 0; t < nT; t++) pezzi[0].push(...lp.vars.map((u, w) => w).filter((w) => lp.vars[w][1] === t));
       const num = numLP({ senso: "min", vars, c: lp.c, cifre: 3, pezzi, limiti: true,
         righe: lp.A.map((a, k) => ({ a, rel: lp.rel[k], rhs: lp.b[k], cifre: k < nV ? 2 : 1 })) });
-      const TABS = DV.tabelle(
-        DV.tab(T("Ore: prezzo \\(c_t\\) (€/kWh) e carico di base \\(b_t\\) (kW)", "Hours: price \\(c_t\\) (€/kWh) and base load \\(b_t\\) (kW)"),
+      const TABS = DV.tabelle(DV.dim(["n", nV], ["m", nT]),
+        DV.tab(T("Ore: \\(c_t\\) (€/kWh), \\(b_t\\) (kW)", "Hours: \\(c_t\\) (€/kWh), \\(b_t\\) (kW)"),
           ["\\(t\\)", ...ore.map(String)], [[T("dalle–alle", "from–to"), ...ore.map((t) => `${t - 1}–${t}`)],
             ["\\(c_t\\)", ...ore.map((t) => DV.t(evPrezzo(t), 3))], ["\\(b_t\\)", ...ore.map((t) => DV.t(E.base[t - 1], 0))]]),
-        DV.tab(T("Furgoni: collegamento \\(a_{vt}\\), energia \\(e_v\\) (kWh), potenza \\(\\bar p_v\\) (kW)", "Vans: plug-in \\(a_{vt}\\), energy \\(e_v\\) (kWh), power \\(\\bar p_v\\) (kW)"),
+        DV.tab(T("Furgoni: \\(a_{vt}\\), \\(e_v\\) (kWh), \\(\\bar p_v\\) (kW)", "Vans: \\(a_{vt}\\), \\(e_v\\) (kWh), \\(\\bar p_v\\) (kW)"),
           ["\\(v \\backslash t\\)", ...ore.map(String), "\\(e_v\\)", "\\(\\bar p_v\\)"],
           V.map((x, j) => [String(j + 1), ...ore.map((t) => (evColl(x, t) ? "1" : "0")), DV.t(x.energia * v[1] / 100, 1), DV.t(x.pmax, 1)])),
         DV.tab(T("Altri dati", "Other data"), ["", ""], [[T("durata di un'ora \\(d\\) (h)", "length of an hour \\(d\\) (h)"), "1"], [T("rendimento \\(r\\)", "efficiency \\(r\\)"), DV.t(E.eta, 2)],
           [T("contatore \\(k\\) (kW)", "meter \\(k\\) (kW)"), DV.t(v[0], 0)]]));
       return modelloDi("ev")(T(`<b>Il problema.</b> Decidiamo con quale potenza ricaricare ogni furgone elettrico in ogni ora della notte. L'obiettivo è la minima spesa per l'energia. I vincoli: ogni furgone riceve l'energia richiesta prima della partenza, tenendo conto delle perdite di ricarica; si ricarica solo quando è collegato e sotto la potenza del suo caricatore; il prelievo totale, carico dell'edificio compreso, resta sotto la potenza del contatore.` +
-        `<br><b>Variabili:</b> \\(x_{vt}\\): potenza assegnata al furgone \\(v\\) nell'ora \\(t\\) (kW).` +
-        `<br><b>Dati:</b> \\(n\\): numero di furgoni, indice \\(v\\); \\(m\\): numero di ore, indice \\(t\\) (l'ora \\(t\\) va dalle \\(t-1\\) alle \\(t\\)); \\(d\\): durata di un'ora; \\(c_t\\): prezzo dell'energia nell'ora \\(t\\) (€/kWh); \\(e_v\\): energia richiesta dal furgone \\(v\\) entro la partenza (kWh); \\(r\\): rendimento della ricarica, la quota dell'energia prelevata che arriva in batteria; \\(a_{vt}\\): 1 se il furgone \\(v\\) è collegato nell'ora \\(t\\), 0 altrimenti; \\(\\bar p_v\\): potenza del caricatore del furgone \\(v\\) (kW); \\(b_t\\): carico di base dell'edificio nell'ora \\(t\\) (kW); \\(k\\): potenza massima prelevabile dal contatore (kW).` + TABS,
+        `<br><b>Variabili:</b> \\(x_{vt} \\ge 0\\): potenza assegnata al furgone \\(v\\) nell'ora \\(t\\) (kW), con \\(v \\in \\{1, \\dots, n\\}\\) e \\(t \\in \\{1, \\dots, m\\}\\).` +
+        `<br><b>Dati:</b> \\(n\\): numero di furgoni; \\(m\\): numero di ore (l'ora \\(t\\) va dalle \\(t-1\\) alle \\(t\\)); \\(d\\): durata di un'ora; \\(c_t\\): prezzo dell'energia nell'ora \\(t\\) (€/kWh); \\(e_v\\): energia richiesta dal furgone \\(v\\) entro la partenza (kWh); \\(r\\): rendimento della ricarica, la quota dell'energia prelevata che arriva in batteria; \\(a_{vt}\\): 1 se il furgone \\(v\\) è collegato nell'ora \\(t\\), 0 altrimenti; \\(\\bar p_v\\): potenza del caricatore del furgone \\(v\\) (kW); \\(b_t\\): carico di base dell'edificio nell'ora \\(t\\) (kW); \\(k\\): potenza massima prelevabile dal contatore (kW); con \\(v \\in \\{1, \\dots, n\\}\\) e \\(t \\in \\{1, \\dots, m\\}\\).` + TABS,
       `<b>The problem.</b> We decide the power at which each electric van is charged in each hour of the night. The objective is the minimum energy expenditure. The constraints: each van receives the required energy before departure, taking charging losses into account; it charges only while plugged in and below the power of its charger; the total draw, including the building load, stays below the power of the meter.` +
-        `<br><b>Variables:</b> \\(x_{vt}\\): power assigned to van \\(v\\) in hour \\(t\\) (kW).` +
-        `<br><b>Data:</b> \\(n\\): number of vans, index \\(v\\); \\(m\\): number of hours, index \\(t\\) (hour \\(t\\) runs from \\(t-1\\) to \\(t\\)); \\(d\\): length of an hour; \\(c_t\\): energy price in hour \\(t\\) (€/kWh); \\(e_v\\): energy required by van \\(v\\) before departure (kWh); \\(r\\): charging efficiency, the share of the energy drawn that reaches the battery; \\(a_{vt}\\): 1 if van \\(v\\) is plugged in during hour \\(t\\), 0 otherwise; \\(\\bar p_v\\): power of the charger of van \\(v\\) (kW); \\(b_t\\): base load of the building in hour \\(t\\) (kW); \\(k\\): maximum power drawn from the meter (kW).` + TABS),
+        `<br><b>Variables:</b> \\(x_{vt} \\ge 0\\): power assigned to van \\(v\\) in hour \\(t\\) (kW), with \\(v \\in \\{1, \\dots, n\\}\\) and \\(t \\in \\{1, \\dots, m\\}\\).` +
+        `<br><b>Data:</b> \\(n\\): number of vans; \\(m\\): number of hours (hour \\(t\\) runs from \\(t-1\\) to \\(t\\)); \\(d\\): length of an hour; \\(c_t\\): energy price in hour \\(t\\) (€/kWh); \\(e_v\\): energy required by van \\(v\\) before departure (kWh); \\(r\\): charging efficiency, the share of the energy drawn that reaches the battery; \\(a_{vt}\\): 1 if van \\(v\\) is plugged in during hour \\(t\\), 0 otherwise; \\(\\bar p_v\\): power of the charger of van \\(v\\) (kW); \\(b_t\\): base load of the building in hour \\(t\\) (kW); \\(k\\): maximum power drawn from the meter (kW); with \\(v \\in \\{1, \\dots, n\\}\\) and \\(t \\in \\{1, \\dots, m\\}\\).` + TABS),
       sim, num,
       T("\\(x_{14}\\): furgone 1 nell'ora 4, dalle 3 alle 4. Nelle ore in cui un furgone non è collegato (\\(a_{vt} = 0\\)) la sua variabile vale 0 e non compare. Righe: energia dei furgoni, rete in ogni ora (a destra \\(k - b_t\\)), potenza dei caricatori.",
         "\\(x_{14}\\): van 1 in hour 4, from 3 to 4 am. In the hours when a van is not plugged in (\\(a_{vt} = 0\\)) its variable is 0 and does not appear. Rows: energy of the vans, grid in every hour (on the right \\(k - b_t\\)), charger power."));
@@ -676,7 +686,7 @@
       const fx = (u) => (Number.isInteger(u) && u >= 1 && u <= nT ? String(u) : "");
       const yb = Math.max(R.C, ...R.tot) * 1.45;
       const B = figura(crea, { X0: MF.sx, X1: S.W - MF.dx, Y0: MF.basso, Y1: S.H - MF.alto, xa: 0.4, xb: nT + 0.6, ya: 0, yb,
-        titolo: T("Profilo di prelievo dalla rete", "Power withdrawn from the grid"), nx: T("ora t (dalle t − 1 alle t)", "hour t (from t − 1 to t)"),
+        titolo: T("Prelievo dalla rete bₜ + Σᵥ x̃ᵥₜ(LP)", "Power withdrawn from the grid bₜ + Σᵥ x̃ᵥₜ(LP)"), nx: T("ora t (dalle t − 1 alle t)", "hour t (from t − 1 to t)"),
         ny: T("prelievo totale (kW)", "total withdrawal (kW)") }, C, { nTx: nT, nTy: 4, fx });
       gradini(crea, B, E.base, F.grigio, { x0: 1, dash: 2, spessore: 1.8 });
       gradini(crea, B, R.tot, F.teal, { x0: 1 });
@@ -700,8 +710,8 @@
       if (R.stato !== "ottimo") return "";
       const V = DD().ev.veicoli, ore = evOre();
       const righe = ore.map((t) => [String(t), ...V.map((x, j) => (evColl(x, t) ? SOL.z(R.x[j][t - 1], 1) : "")), nt(R.tot[t - 1], 1)]);
-      return SOL.blocco(`${T("Costo ottimo", "Optimal cost")}: <b>${euro(R.costo)}</b>`, [
-        SOL.tab(T("Potenza \\(\\tilde x_{vt}\\) (kW): ora \\(t\\) per riga, furgone \\(v\\) per colonna", "Power \\(\\tilde x_{vt}\\) (kW): hour \\(t\\) by row, van \\(v\\) by column"),
+      return SOL.blocco(SOL.val(T("Costo ottimo", "Optimal cost"), euro(R.costo)), [
+        SOL.tab(T(`Potenza ${SOL.tilT("x", "vt")} (kW)`, `Power ${SOL.tilT("x", "vt")} (kW)`),
           [tx("t \\backslash v"), ...V.map((x, j) => String(j + 1)), T("prelievo", "draw")], righe),
       ], T("«—»: valore nullo; casella vuota: furgone non collegato.", "«—»: zero value; empty cell: van not plugged in."));
     },
@@ -757,16 +767,16 @@
       if (rischio) d.forEach((ds, s) => { const a = z(); a[1] = 1; a[io(s)] = -Co; a[iu(s)] = -Cu; a[ix(s)] = 1; righe.push({ a, rel: ">=", rhs: 0, cifre: 2 }); });
       const num = numLP({ senso: "min", vars, c: ob, cifreObj: 3, righe,
         dominio: rischio ? [{ cols: [1], rel: "><", rhs: "0" }, { cols: vars.map((x, j) => j).filter((j) => j !== 1), rel: ">=", rhs: "0" }] : undefined });
-      const TABS = DV.tabelle(DV.tab(T("Scenari: domanda \\(d_s\\) (unità) e probabilità \\(w_s\\)", "Scenarios: demand \\(d_s\\) (units) and probability \\(w_s\\)"),
+      const TABS = DV.tabelle(DV.dim(["k", k]), DV.tab(T("Scenari: \\(d_s\\) (unità), \\(w_s\\)", "Scenarios: \\(d_s\\) (units), \\(w_s\\)"),
         ["\\(s\\)", ...d.map((x, s) => String(s + 1))], [["\\(d_s\\)", ...d.map((x) => DV.t(x, 0))], ["\\(w_s\\)", ...d.map(() => `1/${k}`)]]),
-        DV.tab(T("Prezzi e costi (€ per unità) e livello", "Prices and costs (€ per unit) and level"), ["\\(p\\)", "\\(c\\)", "\\(v\\)", "\\(c_u = p - c\\)", "\\(c_o = c - v\\)", "\\(\\alpha\\)", "\\(r\\)"],
+        DV.tab(T("Prezzi e costi (€/unità)", "Prices and costs (€/unit)"), ["\\(p\\)", "\\(c\\)", "\\(v\\)", "\\(c_u = p - c\\)", "\\(c_o = c - v\\)", "\\(\\alpha\\)", "\\(r\\)"],
           [[DV.t(v[0], 1), DV.t(N.c, 0), DV.t(N.v, 0), DV.t(Cu, 2), DV.t(Co, 2), DV.t(A, 2), DV.t(L, 2)]]));
       return modelloDi("newsvendor")(T(`<b>Il problema.</b> Decidiamo quante unità ordinare prima di osservare la domanda, descritta da scenari equiprobabili. Le unità invendute e le vendite perse hanno un costo. L'obiettivo combina il costo atteso e il CVaR\\(_\\alpha\\) del costo, il costo medio negli scenari peggiori. I vincoli: in ogni scenario le unità invendute e la domanda non servita misurano la differenza fra ordine e domanda, e l'eccesso misura la parte del costo oltre la soglia.` +
-        `<br><b>Variabili:</b> \\(q\\): quantità ordinata (unità); \\(o_s\\): unità invendute nello scenario \\(s\\); \\(u_s\\): domanda non servita nello scenario \\(s\\) (unità); \\(\\eta\\): soglia di costo nella formula del CVaR, libera di segno (€); \\(\\xi_s\\): parte del costo dello scenario \\(s\\) che supera la soglia \\(\\eta\\) (€).` +
-        `<br><b>Dati:</b> \\(k\\): numero di scenari, indice \\(s\\); \\(d_s\\): domanda nello scenario \\(s\\) (unità); \\(w_s\\): probabilità dello scenario \\(s\\); \\(p\\): prezzo di vendita di un'unità; \\(c\\): costo d'acquisto di un'unità; \\(v\\): valore di recupero di un'unità invenduta; \\(c_u\\): costo di una vendita persa; \\(c_o\\): costo di un'unità invenduta; \\(r\\): peso del rischio, da 0 a 1; \\(\\alpha\\): livello del CVaR\\(_\\alpha\\), il costo medio nella frazione \\(1 - \\alpha\\) degli scenari peggiori.` + TABS,
+        `<br><b>Variabili:</b> \\(q \\ge 0\\): quantità ordinata (unità); \\(\\eta\\): soglia di costo nella formula del CVaR, libera di segno (€); \\(o_s \\ge 0\\): unità invendute nello scenario \\(s\\); \\(u_s \\ge 0\\): domanda non servita nello scenario \\(s\\) (unità); \\(\\xi_s \\ge 0\\): parte del costo dello scenario \\(s\\) che supera la soglia \\(\\eta\\) (€); con \\(s \\in \\{1, \\dots, k\\}\\).` +
+        `<br><b>Dati:</b> \\(k\\): numero di scenari; \\(d_s\\): domanda nello scenario \\(s\\) (unità); \\(w_s\\): probabilità dello scenario \\(s\\); \\(p\\): prezzo di vendita di un'unità; \\(c\\): costo d'acquisto di un'unità; \\(v\\): valore di recupero di un'unità invenduta; \\(c_u\\): costo di una vendita persa; \\(c_o\\): costo di un'unità invenduta; \\(r\\): peso del rischio, da 0 a 1; \\(\\alpha\\): livello del CVaR\\(_\\alpha\\), il costo medio nella frazione \\(1 - \\alpha\\) degli scenari peggiori; con \\(s \\in \\{1, \\dots, k\\}\\).` + TABS,
       `<b>The problem.</b> We decide how many units to order before observing demand, described by equally likely scenarios. Unsold units and lost sales have a cost. The objective combines the expected cost and the CVaR\\(_\\alpha\\) of the cost, the average cost in the worst scenarios. The constraints: in each scenario the unsold units and the unmet demand measure the difference between order and demand, and the excess measures the part of the cost above the threshold.` +
-        `<br><b>Variables:</b> \\(q\\): quantity ordered (units); \\(o_s\\): unsold units in scenario \\(s\\); \\(u_s\\): unmet demand in scenario \\(s\\) (units); \\(\\eta\\): cost threshold in the CVaR formula, free in sign (€); \\(\\xi_s\\): part of the cost of scenario \\(s\\) above the threshold \\(\\eta\\) (€).` +
-        `<br><b>Data:</b> \\(k\\): number of scenarios, index \\(s\\); \\(d_s\\): demand in scenario \\(s\\) (units); \\(w_s\\): probability of scenario \\(s\\); \\(p\\): selling price of one unit; \\(c\\): purchase cost of one unit; \\(v\\): salvage value of an unsold unit; \\(c_u\\): cost of a lost sale; \\(c_o\\): cost of an unsold unit; \\(r\\): risk weight, from 0 to 1; \\(\\alpha\\): level of the CVaR\\(_\\alpha\\), the average cost in the worst fraction \\(1 - \\alpha\\) of the scenarios.` + TABS),
+        `<br><b>Variables:</b> \\(q \\ge 0\\): quantity ordered (units); \\(\\eta\\): cost threshold in the CVaR formula, free in sign (€); \\(o_s \\ge 0\\): unsold units in scenario \\(s\\); \\(u_s \\ge 0\\): unmet demand in scenario \\(s\\) (units); \\(\\xi_s \\ge 0\\): part of the cost of scenario \\(s\\) above the threshold \\(\\eta\\) (€); with \\(s \\in \\{1, \\dots, k\\}\\).` +
+        `<br><b>Data:</b> \\(k\\): number of scenarios; \\(d_s\\): demand in scenario \\(s\\) (units); \\(w_s\\): probability of scenario \\(s\\); \\(p\\): selling price of one unit; \\(c\\): purchase cost of one unit; \\(v\\): salvage value of an unsold unit; \\(c_u\\): cost of a lost sale; \\(c_o\\): cost of an unsold unit; \\(r\\): risk weight, from 0 to 1; \\(\\alpha\\): level of the CVaR\\(_\\alpha\\), the average cost in the worst fraction \\(1 - \\alpha\\) of the scenarios; with \\(s \\in \\{1, \\dots, k\\}\\).` + TABS),
       sim, num,
       rischio
         ? T(`Coefficienti della funzione obiettivo: \\(\\eta\\) ha \\(r\\), ogni \\(o_s\\) ha \\((1-r)\\,c_o/${k}\\), ogni \\(u_s\\) ha \\((1-r)\\,c_u/${k}\\), ogni \\(\\xi_s\\) ha \\(r/((1-\\alpha) \\cdot ${k}) = r/${n((1 - A) * k, 0)}\\). Nella riga del CVaR, \\(\\xi_s \\ge c_o\\, o_s + c_u\\, u_s - \\eta\\) è scritta con le variabili a sinistra.`,
@@ -790,7 +800,7 @@
       M.pallino(crea, P1.X(R.q), P1.Y(R.obiettivo), { size: 6, fillColor: F.arancio, strokeColor: F.arancio });
       const voci1 = [[F.teal, T("costo atteso", "expected cost"), "linea"], [F.rosso, T(`CVaR del costo, α = ${nt(A, 1)}`, `CVaR of the cost, α = ${nt(A, 1)}`), "tratteggio"]];
       if (v[1] > 0 && v[1] < 1) voci1.push([F.arancio, T(`(1 − r) · costo atteso + r · CVaR, r = ${nt(v[1], 2)}`, `(1 − r) · expected cost + r · CVaR, r = ${nt(v[1], 2)}`), "linea"]);
-      voci1.push([F.arancio, T(`ordine ottimo q* = ${nt(R.q, 1)}`, `optimal order q* = ${nt(R.q, 1)}`), "punto"]);
+      voci1.push([F.arancio, T(`ordine ottimo q̃(LP) = ${nt(R.q, 1)}`, `optimal order q̃(LP) = ${nt(R.q, 1)}`), "punto"]);
       legendaIn(crea, P1, voci1, C, "dx");
     },
     legenda: () => { const F = FIG(); return [[F.teal, T("costo atteso in funzione di \\(q\\); in basso, ogni punto è l'ordine ottimo \\(q^*\\) per un peso \\(r\\)", "expected cost as a function of \\(q\\); below, each point is the optimal order \\(q^*\\) for a weight \\(r\\)"), ""],
@@ -804,11 +814,11 @@
       const coda = Math.round((1 - A) * k), soglia = costi.slice().sort((a, b) => b - a)[coda - 1];
       const rosso = (s, testo) => (costi[s] >= soglia - 1e-9 ? M.tinta(C.rosso, testo) : testo);
       const righe = R.d.map((d, s) => [String(s + 1), nt(d, 0), SOL.z(o[s], 1), SOL.z(u[s], 1), rosso(s, nt(costi[s], 1)), ...(r > 0 ? [SOL.z(xi[s], 1)] : [])]);
-      return SOL.blocco(`${T("Valore ottimo", "Optimal value")}: <b>${euro(R.obiettivo)}</b> ` +
-        (r > 0 ? T(`(\\(1 - r\\) volte il costo atteso più \\(r\\) volte il CVaR\\(_\\alpha\\))`, `(\\(1 - r\\) times the expected cost plus \\(r\\) times the CVaR\\(_\\alpha\\))`) : T("(costo atteso)", "(expected cost)")), [
-        SOL.tab(T("Ordine", "Order"), r > 0 ? ["\\(\\tilde q\\)", "\\(\\tilde\\eta\\) (€)"] : ["\\(\\tilde q\\)"], [r > 0 ? [nt(q, 2), nt(eta, 2)] : [nt(q, 2)]]),
-        SOL.tab(T(`Scenari: in rosso il costo dei ${coda} più costosi (la coda del CVaR\\(_\\alpha\\))`, `Scenarios: in red the cost of the ${coda} most expensive (the tail of the CVaR\\(_\\alpha\\))`),
-          ["\\(s\\)", "\\(d_s\\)", "\\(\\tilde o_s\\)", "\\(\\tilde u_s\\)", T("costo (€)", "cost (€)"), ...(r > 0 ? ["\\(\\tilde\\xi_s\\)"] : [])], righe),
+      return SOL.blocco(SOL.val(T("Valore ottimo", "Optimal value"), euro(R.obiettivo),
+        r > 0 ? T(`(\\(1 - r\\) volte il costo atteso più \\(r\\) volte il CVaR\\(_\\alpha\\))`, `(\\(1 - r\\) times the expected cost plus \\(r\\) times the CVaR\\(_\\alpha\\))`) : T("(costo atteso)", "(expected cost)")), [
+        SOL.tab(T("Ordine", "Order"), r > 0 ? [SOL.tilT("q"), `${SOL.tilT("\\eta")} (€)`] : [SOL.tilT("q")], [r > 0 ? [nt(q, 2), nt(eta, 2)] : [nt(q, 2)]]),
+        SOL.tab(T(`Scenari: in rosso i ${coda} più costosi`, `Scenarios: in red the ${coda} most expensive`),
+          ["\\(s\\)", "\\(d_s\\)", SOL.tilT("o", "s"), SOL.tilT("u", "s"), T("costo (€)", "cost (€)"), ...(r > 0 ? [SOL.tilT("\\xi", "s")] : [])], righe),
       ], T("«—»: valore nullo.", "«—»: zero value."));
     },
     domanda: T("Porta \\(p\\) a 15,5: l'ordine ottimo sale da 110 a 120 unità. Porta \\(r\\) a 0,4: l'ordine sale a 130.",
@@ -855,15 +865,15 @@
           `The LP model of branch \\(o = ${oo + 1}\\): ${nn + 1} variables, ${righe.length} constraints. Rows: inputs (${nomiI.join(", ")}), then outputs (${nomiR.join(", ")})${vrs ? ", then \\(\\sum_j \\lambda_j = 1\\)" : ""}.`));
       const nomiX = [T("\\(x_{1j}\\): personale (FTE)", "\\(x_{1j}\\): staff (FTE)"), T("\\(x_{2j}\\): costi (k€)", "\\(x_{2j}\\): costs (k€)")];
       const nomiY = [T("\\(y_{1j}\\): prestiti (M€)", "\\(y_{1j}\\): loans (M€)"), T("\\(y_{2j}\\): depositi (M€)", "\\(y_{2j}\\): deposits (M€)")];
-      const TABS = DV.tabelle(DV.tab(T("Input e output: una colonna per filiale \\(j\\)", "Inputs and outputs: one column per branch \\(j\\)"), ["\\(j\\)", ...X[0].map((q, j) => String(j + 1))],
-        [...X.map((r, i) => [nomiX[i], ...r.map((x) => DV.t(x, 0))]), ...Y.map((r, i) => [nomiY[i], ...r.map((x) => DV.t(x, 1))])]),
-        DV.tab(T("Filiale valutata", "Branch under evaluation"), ["\\(o\\)"], [[String(oo + 1)]]));
+      const TABS = DV.tabelle(DV.dim(["n", nn], ["m", X.length], ["p", Y.length]), DV.tab(T("Filiale valutata", "Evaluated branch"), ["\\(o\\)"], [[String(oo + 1)]]),
+        DV.tab(T("Input e output delle filiali \\(j\\)", "Inputs and outputs of the branches \\(j\\)"), ["\\(j\\)", ...X[0].map((q, j) => String(j + 1))],
+        [...X.map((r, i) => [nomiX[i], ...r.map((x) => DV.t(x, 0))]), ...Y.map((r, i) => [nomiY[i], ...r.map((x) => DV.t(x, 1))])]));
       return modelloDi("dea")(T(`<b>Il problema.</b> Per la filiale valutata cerchiamo una filiale virtuale, combinazione pesata di tutte le filiali, che produca almeno i suoi output (${nomiR.join(", ")}) usando al più una frazione dei suoi input (${nomiI.join(", ")}). L'obiettivo è minimizzare questa frazione, l'efficienza della filiale. I vincoli: uno per ogni input e uno per ogni output${vrs ? "; nel modello BCC i pesi sommano a 1" : ""}.` +
-        `<br><b>Variabili:</b> \\(\\theta\\): fattore per cui si possono moltiplicare gli input di \\(o\\), cioè la sua efficienza (\\(\\theta = 1\\): efficiente); \\(\\lambda_j\\): peso della filiale \\(j\\) nella filiale virtuale di confronto.` +
-        `<br><b>Dati:</b> \\(n\\): numero di filiali, indice \\(j\\); \\(m\\): numero di input, indice \\(i\\); \\(p\\): numero di output, indice \\(r\\); \\(x_{ij}\\): quantità dell'input \\(i\\) usata dalla filiale \\(j\\); \\(y_{rj}\\): quantità dell'output \\(r\\) prodotta dalla filiale \\(j\\); \\(o\\): la filiale valutata. CCR: rendimenti di scala costanti; BCC: aggiunge \\(\\sum_j \\lambda_j = 1\\), rendimenti di scala variabili.` + TABS,
+        `<br><b>Variabili:</b> \\(\\theta\\): fattore per cui si possono moltiplicare gli input di \\(o\\), cioè la sua efficienza (\\(\\theta = 1\\): efficiente); \\(\\lambda_j \\ge 0\\): peso della filiale \\(j\\) nella filiale virtuale di confronto, con \\(j \\in \\{1, \\dots, n\\}\\).` +
+        `<br><b>Dati:</b> \\(n\\): numero di filiali; \\(m\\): numero di input; \\(p\\): numero di output; \\(x_{ij}\\): quantità dell'input \\(i\\) usata dalla filiale \\(j\\); \\(y_{rj}\\): quantità dell'output \\(r\\) prodotta dalla filiale \\(j\\); \\(o\\): la filiale valutata; con \\(j \\in \\{1, \\dots, n\\}\\), \\(i \\in \\{1, \\dots, m\\}\\) e \\(r \\in \\{1, \\dots, p\\}\\). CCR: rendimenti di scala costanti; BCC: aggiunge \\(\\sum_j \\lambda_j = 1\\), rendimenti di scala variabili.` + TABS,
       `<b>The problem.</b> For the branch under evaluation we look for a virtual branch, a weighted combination of all branches, that produces at least its outputs (${nomiR.join(", ")}) using at most a fraction of its inputs (${nomiI.join(", ")}). The objective is to minimize this fraction, the efficiency of the branch. The constraints: one for each input and one for each output${vrs ? "; in the BCC model the weights sum to 1" : ""}.` +
-        `<br><b>Variables:</b> \\(\\theta\\): factor by which the inputs of \\(o\\) can be multiplied, that is its efficiency (\\(\\theta = 1\\): efficient); \\(\\lambda_j\\): weight of branch \\(j\\) in the virtual comparison branch.` +
-        `<br><b>Data:</b> \\(n\\): number of branches, index \\(j\\); \\(m\\): number of inputs, index \\(i\\); \\(p\\): number of outputs, index \\(r\\); \\(x_{ij}\\): amount of input \\(i\\) used by branch \\(j\\); \\(y_{rj}\\): amount of output \\(r\\) produced by branch \\(j\\); \\(o\\): the branch under evaluation. CCR: constant returns to scale; BCC: adds \\(\\sum_j \\lambda_j = 1\\), variable returns to scale.` + TABS),
+        `<br><b>Variables:</b> \\(\\theta\\): factor by which the inputs of \\(o\\) can be multiplied, that is its efficiency (\\(\\theta = 1\\): efficient); \\(\\lambda_j \\ge 0\\): weight of branch \\(j\\) in the virtual comparison branch, with \\(j \\in \\{1, \\dots, n\\}\\).` +
+        `<br><b>Data:</b> \\(n\\): number of branches; \\(m\\): number of inputs; \\(p\\): number of outputs; \\(x_{ij}\\): amount of input \\(i\\) used by branch \\(j\\); \\(y_{rj}\\): amount of output \\(r\\) produced by branch \\(j\\); \\(o\\): the branch under evaluation; with \\(j \\in \\{1, \\dots, n\\}\\), \\(i \\in \\{1, \\dots, m\\}\\) and \\(r \\in \\{1, \\dots, p\\}\\). CCR: constant returns to scale; BCC: adds \\(\\sum_j \\lambda_j = 1\\), variable returns to scale.` + TABS),
       sim, num);
     },
     disegna(crea, R, v, C, S) {
@@ -883,7 +893,7 @@
         if (j === o) continue;
         M.linea(crea, P.X(tx0), P.Y(ty0), P.X(d.personale[j]), P.Y(d.prestiti[j]), { strokeColor: F.verde, strokeWidth: 1.2, dash: 1 });
         M.pallino(crea, P.X(d.personale[j]), P.Y(d.prestiti[j]), { size: 9, fillColor: "none", fillOpacity: 0, strokeColor: F.verde, strokeWidth: 2 });
-        M.scritta(crea, P.X(d.personale[j]) + 12, P.Y(d.prestiti[j]) - 12, "λ = " + nt(l, 3), { anchorX: "left", fontSize: 11, strokeColor: F.verde });
+        M.scritta(crea, P.X(d.personale[j]) + 12, P.Y(d.prestiti[j]) - 12, "λ̃ = " + nt(l, 3), { anchorX: "left", fontSize: 11, strokeColor: F.verde });
       }
       d.personale.forEach((x, j) => {
         M.pallino(crea, P.X(x), P.Y(d.prestiti[j]), { size: j === o ? 6 : 4, fillColor: j === o ? F.arancio : F.navy, strokeColor: "#ffffff", strokeWidth: 1 });
@@ -896,7 +906,7 @@
       legendaIn(crea, P, [...(vista === "1x1" ? [[F.rosso, T("frontiera CCR (scala costante)", "CCR frontier (constant scale)"), "tratteggio"],
         [F.teal, T("frontiera BCC (scala variabile)", "BCC frontier (variable scale)"), "linea"]] : []),
         [F.navy, T("filiali", "branches"), "punto"], [F.arancio, T("filiale valutata e target", "evaluated branch and target"), "punto"],
-        [F.verde, T("peer", "peers"), "punteggiata"]], C, "sx");
+        [F.verde, T("peer: λ̃ⱼ(LP) > 0", "peers: λ̃ⱼ(LP) > 0"), "punteggiata"]], C, "sx");
     },
     legenda: () => { const F = FIG(); return [[F.navy, T("filiali \\(j\\): personale \\(x_{1j}\\) e prestiti \\(y_{1j}\\)", "branches \\(j\\): staff \\(x_{1j}\\) and loans \\(y_{1j}\\)"), "punto"],
       [F.arancio, T("filiale valutata \\(o\\); la freccia porta al target \\(\\theta\\, x_{1o}\\)", "evaluated branch \\(o\\); the arrow leads to the target \\(\\theta\\, x_{1o}\\)"), ""],
@@ -905,14 +915,14 @@
     soluzione(R, v, st, C) {
       if (R.stato !== "ottimo") return "";
       const eff = Math.abs(R.theta - 1) < 1e-6, nn = R.lam.length;
-      return SOL.blocco(`${T("Valore ottimo", "Optimal value")}: <b>\\(\\tilde\\theta = ${n(R.theta, 4)}\\)</b>, ${T("efficienza della filiale", "efficiency of branch")} ${R.o + 1} · ` +
-        (eff ? M.tinta(C.c, T("sulla frontiera", "on the frontier")) : M.tinta(C.a, T("inefficiente", "inefficient"))), [
-        SOL.tab(T(`Pesi \\(\\tilde\\lambda_j > 0\\): i peer (le altre ${nn - R.peer.length} filiali hanno \\(\\tilde\\lambda_j = 0\\))`, `Weights \\(\\tilde\\lambda_j > 0\\): the peers (the other ${nn - R.peer.length} branches have \\(\\tilde\\lambda_j = 0\\))`),
-          [T("filiale \\(j\\)", "branch \\(j\\)"), ...R.peer.map(([j]) => String(j + 1))], [[tx("\\tilde\\lambda_j"), ...R.peer.map(([, l]) => nt(l, 4))]]),
+      return SOL.blocco(SOL.val(T("Efficienza", "Efficiency"), `\\(${SOL.til("\\theta")} = ${n(R.theta, 4)}\\)`, `${T("(filiale", "(branch")} ${R.o + 1}) · ` +
+        (eff ? M.tinta(C.c, T("sulla frontiera", "on the frontier")) : M.tinta(C.a, T("inefficiente", "inefficient")))), [
+        SOL.tab(T(`Pesi ${SOL.tilT("\\lambda", "j")} > 0: i peer (altre ${nn - R.peer.length} filiali a 0)`, `Weights ${SOL.tilT("\\lambda", "j")} > 0: the peers (other ${nn - R.peer.length} branches at 0)`),
+          [T("filiale \\(j\\)", "branch \\(j\\)"), ...R.peer.map(([j]) => String(j + 1))], [[SOL.tilT("\\lambda", "j"), ...R.peer.map(([, l]) => nt(l, 4))]]),
       ]);
     },
-    domanda: T("Porta la filiale a 6: nel modello CCR con 4 indicatori \\(\\tilde\\theta = 0{,}76\\). Scegli BCC con 4 indicatori: la filiale 6 diventa efficiente.",
-      "Set the branch to 6: in the CCR model with 4 indicators \\(\\tilde\\theta = 0.76\\). Choose BCC with 4 indicators: branch 6 becomes efficient."),
+    domanda: T("Porta la filiale a 6: nel modello CCR con 4 indicatori \\(\\tilde\\theta(\\text{LP}) = 0{,}76\\). Scegli BCC con 4 indicatori: la filiale 6 diventa efficiente.",
+      "Set the branch to 6: in the CCR model with 4 indicators \\(\\tilde\\theta(\\text{LP}) = 0.76\\). Choose BCC with 4 indicators: branch 6 becomes efficient."),
   });
 
   // ================================================================ registrazione
@@ -934,12 +944,12 @@
     const rr = DATI_REG.rette, m = (DATI_REG.t || []).length;
     if (!rr || !m) return "";
     const [a, q] = rr;
-    return SOL.blocco(`${T("Valore ottimo", "Optimal value")}: <b>${nt(q.f, 2)} ${T("pezzi", "pieces")}</b> ${T("(retta \\(\\tau\\))", "(\\(\\tau\\) line)")}`, [
-      SOL.tab(T("Le due rette: lo stesso LP con due valori di \\(\\tau\\)", "The two lines: the same LP with two values of \\(\\tau\\)"),
+    return SOL.blocco(SOL.val(T("Valore ottimo", "Optimal value"), `${nt(q.f, 2)} ${T("pezzi", "pieces")}`, T("(retta \\(\\tau\\))", "(\\(\\tau\\) line)")), [
+      SOL.tab(T("Lo stesso LP con due valori di \\(\\tau\\)", "The same LP with two values of \\(\\tau\\)"),
         ["", M.tinta(FIG().navy, "\\(\\tau = 1/2\\)"), M.tinta(FIG().verde, `\\(\\tau = ${n(p.tau, 2)}\\)`)],
-        [[T("\\(\\tilde w\\) (pezzi/°C)", "\\(\\tilde w\\) (pieces/°C)"), nt(a.w, 3), nt(q.w, 3)], [T("\\(\\tilde b\\) (pezzi)", "\\(\\tilde b\\) (pieces)"), nt(a.b, 2), nt(q.b, 2)],
-          [T("giorni sopra (\\(\\tilde u_i > 0\\))", "days above (\\(\\tilde u_i > 0\\))"), `${a.sopra} / ${m}`, `${q.sopra} / ${m}`],
-          [T("giorni sotto (\\(\\tilde v_i > 0\\))", "days below (\\(\\tilde v_i > 0\\))"), `${a.sotto} / ${m}`, `${q.sotto} / ${m}`]]),
+        [[T(`${SOL.tilT("w")} (pezzi/°C)`, `${SOL.tilT("w")} (pieces/°C)`), nt(a.w, 3), nt(q.w, 3)], [T(`${SOL.tilT("b")} (pezzi)`, `${SOL.tilT("b")} (pieces)`), nt(a.b, 2), nt(q.b, 2)],
+          [T(`giorni con ${SOL.tilT("u", "i")} > 0`, `days with ${SOL.tilT("u", "i")} > 0`), `${a.sopra} / ${m}`, `${q.sopra} / ${m}`],
+          [T(`giorni con ${SOL.tilT("v", "i")} > 0`, `days with ${SOL.tilT("v", "i")} > 0`), `${a.sotto} / ${m}`, `${q.sotto} / ${m}`]]),
     ]);
   };
   window.GI_RICETTE["pl-regressione"] = () => { const ric = O.ricettaRetta({
@@ -987,13 +997,13 @@
         [0, 1, 2].map((q) => { const ii = [...Array(m).keys()].filter((i) => i % 3 === q);
           return M.tab(["\\(i\\)", "\\(x_i\\)", "\\(y_i\\)"], ii.map((i) => [String(i + 1) + (sc[i] ? "*" : ""), nt(t[i], 1), nt(y[i], 0)])); }).join("") +
         `<p class="plm-nota">${T("*: giorno di sciopero.", "*: strike day.")}</p></div></details>`;
-      const TABS = DV.tabelle(DV.tab(T("Livello del quantile", "Quantile level"), ["\\(\\tau\\)"], [[nt(p.tau, 2)]]) + giorni);
+      const TABS = DV.tabelle(DV.dim(["n", m]), DV.tab(T("Quantile", "Quantile"), ["\\(\\tau\\)"], [[nt(p.tau, 2)]]) + giorni);
       return modelloDi("regressione")(T(`<b>Il problema.</b> Decidiamo la retta che stima la domanda di pane di un giorno dalla sua temperatura massima. L'obiettivo è minimizzare la somma degli scostamenti fra la domanda osservata e la retta, con pesi diversi sopra e sotto la retta. I vincoli: in ogni giorno la domanda è uguale al valore della retta più lo scostamento in eccesso meno quello in difetto.` +
-        `<br><b>Variabili:</b> \\(w\\): pendenza della retta (pezzi per °C), libera di segno; \\(b\\): intercetta (pezzi), libera di segno; \\(u_i\\): quanto la domanda \\(y_i\\) supera la retta nel giorno \\(i\\) (pezzi); \\(v_i\\): quanto la domanda \\(y_i\\) resta sotto la retta (pezzi).` +
-        `<br><b>Dati:</b> \\(n\\): numero di giorni osservati (i punti del grafico), indice \\(i\\); \\(x_i\\): temperatura massima del giorno \\(i\\) (°C); \\(y_i\\): domanda di pane del giorno \\(i\\) (pezzi); i giorni di sciopero hanno domanda anomala, molto bassa; \\(\\tau\\): livello del quantile, fra 0 e 1, la quota di giorni che la retta lascia sotto di sé (con \\(\\tau = 1/2\\) si ottengono gli scarti assoluti).` + TABS,
+        `<br><b>Variabili:</b> \\(w\\): pendenza della retta (pezzi per °C), libera di segno; \\(b\\): intercetta (pezzi), libera di segno; \\(u_i \\ge 0\\): quanto la domanda \\(y_i\\) supera la retta nel giorno \\(i\\) (pezzi); \\(v_i \\ge 0\\): quanto la domanda \\(y_i\\) resta sotto la retta (pezzi); con \\(i \\in \\{1, \\dots, n\\}\\).` +
+        `<br><b>Dati:</b> \\(n\\): numero di giorni osservati (i punti del grafico); \\(x_i\\): temperatura massima del giorno \\(i\\) (°C); \\(y_i\\): domanda di pane del giorno \\(i\\) (pezzi); i giorni di sciopero hanno domanda anomala, molto bassa; \\(\\tau\\): livello del quantile, fra 0 e 1, la quota di giorni che la retta lascia sotto di sé (con \\(\\tau = 1/2\\) si ottengono gli scarti assoluti); con \\(i \\in \\{1, \\dots, n\\}\\).` + TABS,
       `<b>The problem.</b> We decide the line that estimates the bread demand of a day from its maximum temperature. The objective is to minimize the sum of the deviations between observed demand and the line, with different weights above and below the line. The constraints: on each day demand equals the value of the line plus the deviation in excess minus the deviation in defect.` +
-        `<br><b>Variables:</b> \\(w\\): slope of the line (pieces per °C), free in sign; \\(b\\): intercept (pieces), free in sign; \\(u_i\\): how much demand \\(y_i\\) exceeds the line on day \\(i\\) (pieces); \\(v_i\\): how much demand \\(y_i\\) falls below the line (pieces).` +
-        `<br><b>Data:</b> \\(n\\): number of observed days (the points of the chart), index \\(i\\); \\(x_i\\): maximum temperature of day \\(i\\) (°C); \\(y_i\\): bread demand of day \\(i\\) (pieces); the strike days have anomalous, very low demand; \\(\\tau\\): quantile level, between 0 and 1, the share of days the line leaves below it (with \\(\\tau = 1/2\\) one gets least absolute deviations).` + TABS),
+        `<br><b>Variables:</b> \\(w\\): slope of the line (pieces per °C), free in sign; \\(b\\): intercept (pieces), free in sign; \\(u_i \\ge 0\\): how much demand \\(y_i\\) exceeds the line on day \\(i\\) (pieces); \\(v_i \\ge 0\\): how much demand \\(y_i\\) falls below the line (pieces); with \\(i \\in \\{1, \\dots, n\\}\\).` +
+        `<br><b>Data:</b> \\(n\\): number of observed days (the points of the chart); \\(x_i\\): maximum temperature of day \\(i\\) (°C); \\(y_i\\): bread demand of day \\(i\\) (pieces); the strike days have anomalous, very low demand; \\(\\tau\\): quantile level, between 0 and 1, the share of days the line leaves below it (with \\(\\tau = 1/2\\) one gets least absolute deviations); with \\(i \\in \\{1, \\dots, n\\}\\).` + TABS),
       sim, num,
       T("Il modello numerico è quello della retta \\(\\tau\\) con i punti attuali, anche quelli trascinati.",
         "The numerical model is the one of the \\(\\tau\\) line with the current points, dragged ones included."));

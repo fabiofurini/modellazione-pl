@@ -305,19 +305,20 @@
       const num = W.GI_PL_NUM.numLP({ senso: "min", vars, c: ob, cifreObj: 4, cifre: 2, righe,
         dominio: [{ cols: [ie], rel: "><", rhs: "0" }, { cols: vars.map((x, j) => j).filter((j) => j !== ie), rel: ">=", rhs: "0" }] });
       const DV = W.GI_PL_DV;
-      const TABS = DV.tabelle(DV.tab(T(`Rendimento annuo \\(r_{is}\\) (%) del titolo \\(i\\) nello scenario \\(s\\), e rendimento atteso \\(m_i\\) (%)`, `Annual return \\(r_{is}\\) (%) of asset \\(i\\) in scenario \\(s\\), and expected return \\(m_i\\) (%)`),
+      const TABS = DV.tabelle(DV.dim(["n", NT], ["k", K]),
+        DV.tab(T("Altri dati", "Other data"), ["\\(w_s\\)", "\\(b\\) (%)", "\\(\\alpha\\)"], [[`1/${K}`, fx(v[1], 2), fx(a, 2)]]),
+        DV.tab(T(`Rendimenti \\(r_{is}\\) e \\(m_i\\) (%)`, `Returns \\(r_{is}\\) and \\(m_i\\) (%)`),
         [T("titolo", "asset"), ...RENDIMENTI.map((r, s) => `\\(s = ${s + 1}\\)`), "\\(m_i\\)"],
-        NM.map((t, i) => [`${t} (\\(i = ${i + 1}\\))`, ...RENDIMENTI.map((r) => fx(r[i], 0)), fx(MEDIE[i], 0)])),
-        DV.tab(T("Probabilità, rendimento richiesto e livello", "Probability, required return and level"), ["\\(w_s\\)", "\\(b\\) (%)", "\\(\\alpha\\)"], [[`1/${K}`, fx(v[1], 2), fx(a, 2)]]));
+        NM.map((t, i) => [`${t} (\\(i = ${i + 1}\\))`, ...RENDIMENTI.map((r) => fx(r[i], 0)), fx(MEDIE[i], 0)])));
       const dati = (en) => en
-        ? `<br><b>Data:</b> \\(n\\): number of assets (${NM.join(", ")}: technology, utilities, gold), index \\(i\\); \\(k\\): number of annual scenarios, index \\(s\\); \\(r_{is}\\): annual return (%) of asset \\(i\\) in scenario \\(s\\); \\(w_s\\): probability of scenario \\(s\\); \\(m_i\\): expected return (%) of asset \\(i\\), the mean of its \\(r_{is}\\); \\(b\\): minimum expected return (%) required of the portfolio; \\(\\alpha\\): confidence level; VaR\\(_\\alpha\\): loss threshold exceeded only in the fraction \\(1-\\alpha\\) of the scenarios; CVaR\\(_\\alpha\\): mean loss in that fraction of worst scenarios.`
-        : `<br><b>Dati:</b> \\(n\\): numero di titoli (${NM.join(", ")}: tecnologia, servizi di pubblica utilità, oro), indice \\(i\\); \\(k\\): numero di scenari annui, indice \\(s\\); \\(r_{is}\\): rendimento annuo (%) del titolo \\(i\\) nello scenario \\(s\\); \\(w_s\\): probabilità dello scenario \\(s\\); \\(m_i\\): rendimento atteso (%) del titolo \\(i\\), la media dei suoi \\(r_{is}\\); \\(b\\): rendimento atteso minimo (%) richiesto al portafoglio; \\(\\alpha\\): livello di confidenza; VaR\\(_\\alpha\\): soglia di perdita superata solo nella frazione \\(1-\\alpha\\) degli scenari; CVaR\\(_\\alpha\\): perdita media in quella frazione di scenari peggiori.`;
+        ? `<br><b>Data:</b> \\(n\\): number of assets (${NM.join(", ")}: technology, utilities, gold); \\(k\\): number of annual scenarios; \\(r_{is}\\): annual return (%) of asset \\(i\\) in scenario \\(s\\); \\(w_s\\): probability of scenario \\(s\\); \\(m_i\\): expected return (%) of asset \\(i\\), the mean of its \\(r_{is}\\); \\(b\\): minimum expected return (%) required of the portfolio; \\(\\alpha\\): confidence level; VaR\\(_\\alpha\\): loss threshold exceeded only in the fraction \\(1-\\alpha\\) of the scenarios; CVaR\\(_\\alpha\\): mean loss in that fraction of worst scenarios; with \\(i \\in \\{1, \\dots, n\\}\\) and \\(s \\in \\{1, \\dots, k\\}\\).`
+        : `<br><b>Dati:</b> \\(n\\): numero di titoli (${NM.join(", ")}: tecnologia, servizi di pubblica utilità, oro); \\(k\\): numero di scenari annui; \\(r_{is}\\): rendimento annuo (%) del titolo \\(i\\) nello scenario \\(s\\); \\(w_s\\): probabilità dello scenario \\(s\\); \\(m_i\\): rendimento atteso (%) del titolo \\(i\\), la media dei suoi \\(r_{is}\\); \\(b\\): rendimento atteso minimo (%) richiesto al portafoglio; \\(\\alpha\\): livello di confidenza; VaR\\(_\\alpha\\): soglia di perdita superata solo nella frazione \\(1-\\alpha\\) degli scenari; CVaR\\(_\\alpha\\): perdita media in quella frazione di scenari peggiori; con \\(i \\in \\{1, \\dots, n\\}\\) e \\(s \\in \\{1, \\dots, k\\}\\).`;
       return modello("varcvar",
         T(`<b>Il problema.</b> Decidiamo quale quota del capitale investire in ogni titolo. L'obiettivo è minimizzare il CVaR\\(_\\alpha\\) della perdita annua del portafoglio, la perdita media negli scenari peggiori. I vincoli: rendimento atteso almeno pari a quello richiesto, quote che sommano a 1, nessuna vendita allo scoperto; le righe di coda misurano di quanto la perdita di ogni scenario supera la soglia.` +
-        `<br><b>Variabili:</b> \\(x_i\\): quota del capitale nel titolo \\(i\\) (frazione: 0,25 = 25%); \\(\\eta\\): soglia di perdita (%), libera di segno, all'ottimo è un VaR\\(_\\alpha\\); \\(\\xi_s\\): di quanto la perdita \\(\\ell_s\\) supera \\(\\eta\\) (0 se non la supera); \\(\\ell_s = -\\sum_i r_{is} x_i\\): perdita annua (%) del portafoglio nello scenario \\(s\\) (negativa = guadagno), che dipende dalle \\(x_i\\).` +
+        `<br><b>Variabili:</b> \\(x_i \\ge 0\\): quota del capitale nel titolo \\(i\\) (frazione: 0,25 = 25%), con \\(i \\in \\{1, \\dots, n\\}\\); \\(\\eta\\): soglia di perdita (%), libera di segno, all'ottimo è un VaR\\(_\\alpha\\); \\(\\xi_s \\ge 0\\): di quanto la perdita \\(\\ell_s\\) supera \\(\\eta\\) (0 se non la supera), con \\(s \\in \\{1, \\dots, k\\}\\); \\(\\ell_s = -\\sum_i r_{is} x_i\\): perdita annua (%) del portafoglio nello scenario \\(s\\) (negativa = guadagno), che dipende dalle \\(x_i\\).` +
         dati(false) + TABS,
       `<b>The problem.</b> We decide which share of the capital to invest in each asset. The objective is to minimize the CVaR\\(_\\alpha\\) of the annual portfolio loss, the average loss in the worst scenarios. The constraints: expected return at least the required one, shares summing to 1, no short selling; the tail rows measure how much the loss of each scenario exceeds the threshold.` +
-        `<br><b>Variables:</b> \\(x_i\\): share of the capital in asset \\(i\\) (fraction: 0.25 = 25%); \\(\\eta\\): loss threshold (%), free in sign, at the optimum a VaR\\(_\\alpha\\); \\(\\xi_s\\): how much the loss \\(\\ell_s\\) exceeds \\(\\eta\\) (0 if it does not); \\(\\ell_s = -\\sum_i r_{is} x_i\\): annual portfolio loss (%) in scenario \\(s\\) (negative = gain), which depends on the \\(x_i\\).` +
+        `<br><b>Variables:</b> \\(x_i \\ge 0\\): share of the capital in asset \\(i\\) (fraction: 0.25 = 25%), with \\(i \\in \\{1, \\dots, n\\}\\); \\(\\eta\\): loss threshold (%), free in sign, at the optimum a VaR\\(_\\alpha\\); \\(\\xi_s \\ge 0\\): how much the loss \\(\\ell_s\\) exceeds \\(\\eta\\) (0 if it does not), with \\(s \\in \\{1, \\dots, k\\}\\); \\(\\ell_s = -\\sum_i r_{is} x_i\\): annual portfolio loss (%) in scenario \\(s\\) (negative = gain), which depends on the \\(x_i\\).` +
         dati(true) + TABS),
         sim, num,
         T(`Coefficienti: nella funzione obiettivo ogni \\(\\xi_s\\) ha \\(w_s/(1-\\alpha) = 1/(${K} \\cdot ${fxT(1 - a, 2)}) = ${W.GI_PL_DV.f(U, 4)}\\); nella riga del rendimento i coefficienti sono le medie \\(m_i\\). La riga di coda \\(\\xi_s \\ge -\\sum_i r_{is} x_i - \\eta\\) è scritta con le variabili a sinistra: \\(\\sum_i r_{is} x_i + \\eta + \\xi_s \\ge 0\\).`,
@@ -332,7 +333,7 @@
       const L = R.perdite, ord = ordinePerdite(L), coda = R.coda, pieni = Math.floor(coda + 1e-9), parte = coda - pieni > 1e-9;
       const lo = Math.min(0, ...L), hi = Math.max(0, ...L, R.cvar), dy = hi - lo || 1;
       const A = figura(crea, Object.assign(box(0), { xa: 0.3, xb: K + 0.7, ya: lo - dy * 0.06, yb: hi + dy * 0.55,
-        titolo: T(`Perdite del portafoglio ottimo (b = ${fx(v[1], 2)}%)`, `Losses of the optimal portfolio (b = ${fx(v[1], 2)}%)`),
+        titolo: T(`Perdite del portafoglio ottimo x̃(LP) (b = ${fx(v[1], 2)}%)`, `Losses of the optimal portfolio x̃(LP) (b = ${fx(v[1], 2)}%)`),
         nx: T("scenario, in ordine di perdita crescente", "scenario, in increasing order of loss"), ny: T("perdita annua (%)", "annual loss (%)") }), C, { nTx: 0, nTy: 5 });
       ord.forEach((s, j) => {
         const dalFondo = K - 1 - j, inCoda = dalFondo < pieni, inParte = parte && dalFondo === pieni;
@@ -368,12 +369,12 @@
       const ord = ordinePerdite(R.perdite), pieni = Math.floor(R.coda + 1e-9);
       const rosso = (s, testo) => (ord.indexOf(s) >= K - Math.ceil(R.coda - 1e-9) ? M.tinta(C.rosso, testo) : testo);
       const quota = (x) => (x > 5e-5 ? pc(x, 1) : "—");
-      return SOL.blocco(`${T("Valore ottimo", "Optimal value")}: ${M.tinta(F.rosso, `CVaR<sub>${ped}</sub>`)} = <b>${fx(R.cvar)}%</b> ${T("del capitale (perdita annua)", "of the capital (annual loss)")}`, [
-        SOL.tab(T("Quote del portafoglio \\(\\tilde x_i\\) e soglia \\(\\tilde\\eta\\)", "Portfolio shares \\(\\tilde x_i\\) and threshold \\(\\tilde\\eta\\)"), [...NM, "\\(\\tilde\\eta\\)"],
+      return SOL.blocco(SOL.val(`${M.tinta(F.rosso, `CVaR<sub>${ped}</sub>`)} ${T("minimo", "minimum")}`, `${fx(R.cvar)}%`, T("del capitale (perdita annua)", "of the capital (annual loss)")), [
+        SOL.tab(T(`Quote ${SOL.tilT("x", "i")} e soglia ${SOL.tilT("\\eta")}`, `Shares ${SOL.tilT("x", "i")} and threshold ${SOL.tilT("\\eta")}`), [...NM, SOL.tilT("\\eta")],
           [[...R.x.map(quota), fx(R.var, 2) + "%"]]),
-        SOL.tab(T(`Perdite \\(\\ell_s\\) ed eccessi \\(\\tilde\\xi_s\\) (%); in rosso la coda (${scen(v[0])}${pieni < R.coda - 1e-9 ? ", l'ultimo in parte" : ""})`,
-          `Losses \\(\\ell_s\\) and excesses \\(\\tilde\\xi_s\\) (%); in red the tail (${scen(v[0])}${pieni < R.coda - 1e-9 ? ", the last one in part" : ""})`),
-          ["\\(s\\)", "\\(\\ell_s\\)", "\\(\\tilde\\xi_s\\)"], R.perdite.map((l, s) => [String(s + 1), rosso(s, fx(l)), SOL.z(R.xi[s], 2)])),
+        SOL.tab(T(`Perdite \\(\\ell_s\\) ed eccessi ${SOL.tilT("\\xi", "s")} (%); in rosso la coda (${scen(v[0])}${pieni < R.coda - 1e-9 ? ", l'ultimo in parte" : ""})`,
+          `Losses \\(\\ell_s\\) and excesses ${SOL.tilT("\\xi", "s")} (%); in red the tail (${scen(v[0])}${pieni < R.coda - 1e-9 ? ", the last one in part" : ""})`),
+          ["\\(s\\)", "\\(\\ell_s\\)", SOL.tilT("\\xi", "s")], R.perdite.map((l, s) => [String(s + 1), rosso(s, fx(l)), SOL.z(R.xi[s], 2)])),
       ], T("«—»: valore nullo.", "«—»: zero value."));
     },
     domanda: T("Porta \\(b\\) a 6%: UTL esce dal portafoglio e il CVaR sale a 10,58%. Porta \\(\\alpha\\) a 0,90: le quote diventano 20%, 40%, 40%.",
@@ -409,16 +410,17 @@
         T("Il modello LP dell'istanza: 3 variabili, 4 vincoli. Colonne: le posizioni nei titoli 0, 1, 2. Righe: payoff negli stati 1, 2, 3, normalizzazione del costo.",
           "The LP model of the instance: 3 variables, 4 constraints. Columns: the positions in assets 0, 1, 2. Rows: payoff in states 1, 2, 3, normalization of the cost."));
       const DV = W.GI_PL_DV;
-      const TABS = DV.tabelle(DV.tab(T("Prezzi oggi \\(s^0_i\\) e payoff domani \\(s^1_{ij}\\) (€): un titolo per riga, uno stato per colonna", "Prices today \\(s^0_i\\) and payoffs tomorrow \\(s^1_{ij}\\) (€): one asset per row, one state per column"),
-        [T("titolo \\(i\\)", "asset \\(i\\)"), "\\(s^0_i\\)", "\\(j = 1\\)", "\\(j = 2\\)", "\\(j = 3\\)"], S.map((r, i) => [String(i), fx(A.s0[i], 2), ...r.map((x) => fx(x, i ? 0 : 3))])),
-        DV.tab(T("Tasso privo di rischio", "Risk-free rate"), ["\\(r\\)", "\\(R = 1 + r\\)"], [[fx(R_FISSO, 2), fx(A.R, 2)]]));
+      const TABS = DV.tabelle(DV.dim(["n", S.length - 1], ["m", S[0].length]),
+        DV.tab(T("Tasso", "Rate"), ["\\(r\\)", "\\(R = 1 + r\\)"], [[fx(R_FISSO, 2), fx(A.R, 2)]]),
+        DV.tab(T("Prezzi \\(s^0_i\\) e payoff \\(s^1_{ij}\\) (€)", "Prices \\(s^0_i\\) and payoffs \\(s^1_{ij}\\) (€)"),
+        [T("titolo \\(i\\)", "asset \\(i\\)"), "\\(s^0_i\\)", "\\(j = 1\\)", "\\(j = 2\\)", "\\(j = 3\\)"], S.map((r, i) => [String(i), fx(A.s0[i], 2), ...r.map((x) => fx(x, i ? 0 : 3))])));
       return modello("arbitraggio",
         T(`<b>Il problema.</b> Decidiamo quanto comprare o vendere allo scoperto oggi di ogni titolo, uno privo di rischio e gli altri rischiosi. L'obiettivo è minimizzare il costo oggi del portafoglio. I vincoli: payoff domani non negativo in ogni stato del mondo e incasso oggi al più 1 € (normalizzazione). Un arbitraggio di tipo A fa incassare oggi senza rischio di perdere domani (valore ottimo \\(-1\\)); uno di tipo B costa 0 oggi e ha payoff mai negativo e positivo in qualche stato. I prezzi sono coerenti se non creano arbitraggi.` +
-        `<br><b>Variabili:</b> \\(x_i\\): posizione nel titolo \\(i\\), in unità (positiva: acquisto; negativa: vendita allo scoperto), per \\(i = 0, 1, \\dots, n\\).` +
-        `<br><b>Dati:</b> \\(n\\): numero di titoli rischiosi, oltre al titolo 0 privo di rischio; \\(m\\): numero di stati del mondo possibili domani, indice \\(j\\); \\(s^0_i\\): prezzo oggi del titolo \\(i\\) (€); \\(s^1_{ij}\\): payoff domani del titolo \\(i\\) nello stato \\(j\\) (€); \\(r\\): tasso privo di rischio; \\(R = 1 + r\\): payoff del titolo 0 in ogni stato.` + TABS,
+        `<br><b>Variabili:</b> \\(x_i\\): posizione nel titolo \\(i\\), in unità (positiva: acquisto; negativa: vendita allo scoperto), libera di segno, con \\(i \\in \\{0, 1, \\dots, n\\}\\).` +
+        `<br><b>Dati:</b> \\(n\\): numero di titoli rischiosi, oltre al titolo 0 privo di rischio; \\(m\\): numero di stati del mondo possibili domani; \\(s^0_i\\): prezzo oggi del titolo \\(i\\) (€); \\(s^1_{ij}\\): payoff domani del titolo \\(i\\) nello stato \\(j\\) (€); \\(r\\): tasso privo di rischio; \\(R = 1 + r\\): payoff del titolo 0 in ogni stato; con \\(i \\in \\{0, 1, \\dots, n\\}\\) e \\(j \\in \\{1, \\dots, m\\}\\).` + TABS,
       `<b>The problem.</b> We decide how much of each asset to buy or sell short today, one risk-free asset and the others risky. The objective is to minimize the cost today of the portfolio. The constraints: non-negative payoff tomorrow in every state of the world and income today at most 1 € (normalization). A type A arbitrage cashes money today with no risk of losing tomorrow (optimal value \\(-1\\)); a type B one costs 0 today and has a payoff never negative and positive in some state. Prices are coherent if they create no arbitrage.` +
-        `<br><b>Variables:</b> \\(x_i\\): position in asset \\(i\\), in units (positive: purchase; negative: short sale), for \\(i = 0, 1, \\dots, n\\).` +
-        `<br><b>Data:</b> \\(n\\): number of risky assets, besides the risk-free asset 0; \\(m\\): number of possible states of the world tomorrow, index \\(j\\); \\(s^0_i\\): price today of asset \\(i\\) (€); \\(s^1_{ij}\\): payoff tomorrow of asset \\(i\\) in state \\(j\\) (€); \\(r\\): risk-free rate; \\(R = 1 + r\\): payoff of asset 0 in every state.` + TABS),
+        `<br><b>Variables:</b> \\(x_i\\): position in asset \\(i\\), in units (positive: purchase; negative: short sale), free in sign, with \\(i \\in \\{0, 1, \\dots, n\\}\\).` +
+        `<br><b>Data:</b> \\(n\\): number of risky assets, besides the risk-free asset 0; \\(m\\): number of possible states of the world tomorrow; \\(s^0_i\\): price today of asset \\(i\\) (€); \\(s^1_{ij}\\): payoff tomorrow of asset \\(i\\) in state \\(j\\) (€); \\(r\\): risk-free rate; \\(R = 1 + r\\): payoff of asset 0 in every state; with \\(i \\in \\{0, 1, \\dots, n\\}\\) and \\(j \\in \\{1, \\dots, m\\}\\).` + TABS),
         sim, num,
         T(`Nel modello numerico: \\(s^0 = (1;\\ ${n(A.s0[1], 2)};\\ ${n(A.s0[2], 2)})\\); il titolo 0 paga \\(R = ${n(A.R, 3)}\\) in ogni stato, il titolo 1 paga \\((10;\\ 15;\\ 13)\\), il titolo 2 \\((30;\\ 15;\\ 25)\\).`,
           `In the numerical model: \\(s^0 = (1,\\ ${n(A.s0[1], 2)},\\ ${n(A.s0[2], 2)})\\); asset 0 pays \\(R = ${n(A.R, 3)}\\) in every state, asset 1 pays \\((10,\\ 15,\\ 13)\\), asset 2 \\((30,\\ 15,\\ 25)\\).`));
@@ -428,7 +430,7 @@
       const F = FIG();
       const P = figura(crea, { X0: MF.sx, X1: S.W - MF.dx, Y0: MF.basso, Y1: S.H - MF.alto, xa: X_A - 0.4, xb: X_B + 0.4, ya: -1.1, yb: 0.12,
         titolo: T("Fuori dall'intervallo di prezzo coerente compare l'arbitraggio", "Outside the coherent price interval an arbitrage appears"),
-        nx: T("prezzo del titolo 2, s⁰₂ (€)", "price of asset 2, s⁰₂ (€)"), ny: T("valore ottimo dell'LP", "optimal LP value") }, C, { nTx: 6, nTy: 5 });
+        nx: T("prezzo del titolo 2, s⁰₂ (€)", "price of asset 2, s⁰₂ (€)"), ny: T("valore ottimo z(LP)", "optimal value z(LP)") }, C, { nTx: 6, nTy: 5 });
       const I = A.int2;
       if (I) {
         const a = Math.max(I[0], P.xa), b = Math.min(I[1], P.xb);
@@ -441,7 +443,7 @@
       M.linea(crea, P.X(P.xa), P.Y(0), P.X(P.xb), P.Y(0), { strokeColor: F.grigio, strokeWidth: 1 });
       crea("curve", [A.curva.xs.map(P.X), A.curva.zs.map(P.Y)], { strokeColor: F.teal, strokeWidth: 2.6, fixed: true, highlight: false });
       M.pallino(crea, P.X(v[1]), P.Y(A.lp.z), { size: 6, fillColor: F.arancio, strokeColor: "#ffffff", strokeWidth: 1.5 });
-      legendaIn(crea, P, [[F.teal, T("valore ottimo dell'LP normalizzato", "optimal value of the normalized LP"), "linea"],
+      legendaIn(crea, P, [[F.teal, T("valore ottimo z(LP) dell'LP normalizzato", "optimal value z(LP) of the normalized LP"), "linea"],
         [F.teal, I ? T("prezzi coerenti di s⁰₂", "coherent prices of s⁰₂") : T("nessun prezzo coerente: i titoli 0 e 1 danno già un arbitraggio", "no coherent price: assets 0 and 1 already give an arbitrage"), "area"],
         [F.arancio, T(`prezzo del cursore: s⁰₂ = ${fx(v[1], 2)} €`, `slider price: s⁰₂ = ${fx(v[1], 2)} €`), "punto"]], C, I && I[0] < 17.5 ? "basso" : "sx");
     },
@@ -454,12 +456,12 @@
     },
     soluzione(A) {
       const SOL = W.GI_PL_SOL, x = A.lp.x, z = (q, c) => (Math.abs(q) < 0.5 * Math.pow(10, -c) ? "—" : fx(q, Math.abs(q - Math.round(q)) < 1e-6 ? 0 : c));
-      return SOL.blocco(`${T("Valore ottimo dell'LP normalizzato", "Optimal value of the normalized LP")}: <b>${fx(A.lp.z, 2)} €</b> ` +
-        (A.tipoA ? T("(costo oggi della strategia: si incassa 1 €)", "(cost today of the strategy: one cashes 1 €)") : T("(nessuna strategia incassa denaro oggi senza rischio)", "(no strategy cashes money today without risk)")), [
-        SOL.tab(T("Posizioni \\(\\tilde x_i\\) (quantità di titolo; negativa: vendita allo scoperto)", "Positions \\(\\tilde x_i\\) (amount of asset; negative: short sale)"),
+      return SOL.blocco(SOL.val(T("Valore ottimo", "Optimal value"), `${fx(A.lp.z, 2)} €`,
+        A.tipoA ? T("(costo oggi della strategia: si incassa 1 €)", "(cost today of the strategy: one cashes 1 €)") : T("(nessuna strategia incassa denaro oggi senza rischio)", "(no strategy cashes money today without risk)")), [
+        SOL.tab(T(`Posizioni ${SOL.tilT("x", "i")} (negativa: vendita allo scoperto)`, `Positions ${SOL.tilT("x", "i")} (negative: short sale)`),
           [T("titolo \\(i\\)", "asset \\(i\\)"), "0", "1", "2"],
-          [[tx("\\tilde x_i"), ...x.map((q) => z(q, 3))], [T("costo oggi \\(s^0_i\\, \\tilde x_i\\) (€)", "cost today \\(s^0_i\\, \\tilde x_i\\) (€)"), ...x.map((q, i) => z(q * A.s0[i], 3))]]),
-        SOL.tab(T("Payoff domani \\(\\sum_i s^1_{ij}\\, \\tilde x_i\\) (€)", "Payoff tomorrow \\(\\sum_i s^1_{ij}\\, \\tilde x_i\\) (€)"),
+          [[SOL.tilT("x", "i"), ...x.map((q) => z(q, 3))], [T(`costo oggi \\(s^0_i\\, ${SOL.til("x", "i")}\\) (€)`, `cost today \\(s^0_i\\, ${SOL.til("x", "i")}\\) (€)`), ...x.map((q, i) => z(q * A.s0[i], 3))]]),
+        SOL.tab(T(`Payoff domani \\(\\sum_i s^1_{ij}\\, ${SOL.til("x", "i")}\\) (€)`, `Payoff tomorrow \\(\\sum_i s^1_{ij}\\, ${SOL.til("x", "i")}\\) (€)`),
           [T("stato \\(j\\)", "state \\(j\\)"), ...A.lp.payoff.map((q, j) => String(j + 1))], [["", ...A.lp.payoff.map((q) => z(q, 2))]]),
       ], T("«—»: valore nullo.", "«—»: zero value."));
     },
