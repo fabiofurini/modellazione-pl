@@ -75,17 +75,17 @@
       const num = NUM.numLP({ senso: "min", vars, c: Rr.lp.c, cifre: 0,
         righe: Rr.lp.A.map((a, k) => ({ a, rel: Rr.lp.rel[k], rhs: Rr.lp.b[k] })) },
         T(`Il modello LP dell'istanza: ${vars.length} variabili, ${Rr.lp.b.length} vincoli.`, `The LP model of the instance: ${vars.length} variables, ${Rr.lp.b.length} constraints.`));
-      const TAB = DV.tabelle(DV.tab(T("Costi \\(f_{ij}\\) (€ per unità), capacità \\(d_i\\) e domande \\(e_j\\) (unità)", "Costs \\(f_{ij}\\) (€ per unit), capacities \\(d_i\\) and demands \\(e_j\\) (units)"),
+      const TAB = DV.tabelle(DV.tab(T("Dimensioni", "Sizes"), [tx("s"), tx("r")], [[String(S), String(R)]]), DV.tab(T("\\(f_{ij}\\) (€), \\(d_i\\) e \\(e_j\\) (unità)", "\\(f_{ij}\\) (€), \\(d_i\\) and \\(e_j\\) (units)"),
         [tx("i \\backslash j"), "1", "2", "3", tx("d_i")],
         [...Rr.f.map((r, i) => [String(i + 1), ...r.map(String), String(Rr.d[i])]), [tx("e_j"), ...DATI.e.map(String), ""]]));
       const testo = T(
         "<b>Il problema.</b> Alcuni magazzini riforniscono alcuni clienti. Decidiamo quante unità spedire da ogni magazzino a ogni cliente, " +
         "con costo totale minimo, senza superare la capacità dei magazzini e servendo per intero la domanda dei clienti." +
-        "<br><b>Variabili:</b> \\(x_{ij} \\ge 0\\): unità spedite dal magazzino \\(i\\) al cliente \\(j\\)." +
+        "<br><b>Variabili:</b> \\(x_{ij} \\ge 0\\): unità spedite dal magazzino \\(i\\) al cliente \\(j\\), con \\(i \\in \\{1, \\dots, s\\}\\) e \\(j \\in \\{1, \\dots, r\\}\\)." +
         `<br><b>Dati:</b> \\(s\\): numero di magazzini; \\(r\\): numero di clienti; \\(f_{ij}\\): costo di un'unità da \\(i\\) a \\(j\\); \\(d_i\\): capacità del magazzino \\(i\\); \\(e_j\\): domanda del cliente \\(j\\).` + TAB,
         "<b>The problem.</b> Some warehouses supply some customers. We decide how many units to ship from each warehouse to each customer, " +
         "at minimum total cost, without exceeding the capacity of the warehouses and serving the demand of the customers in full." +
-        "<br><b>Variables:</b> \\(x_{ij} \\ge 0\\): units shipped from warehouse \\(i\\) to customer \\(j\\)." +
+        "<br><b>Variables:</b> \\(x_{ij} \\ge 0\\): units shipped from warehouse \\(i\\) to customer \\(j\\), with \\(i \\in \\{1, \\dots, s\\}\\) and \\(j \\in \\{1, \\dots, r\\}\\)." +
         `<br><b>Data:</b> \\(s\\): number of warehouses; \\(r\\): number of customers; \\(f_{ij}\\): cost of one unit from \\(i\\) to \\(j\\); \\(d_i\\): capacity of warehouse \\(i\\); \\(e_j\\): demand of customer \\(j\\).` + TAB);
       const V = !!st.el.dataset.vetrina;
       if (V) setTimeout(() => datiDestra(st), 0);
@@ -101,11 +101,11 @@
     // con il valore, archi vuoti sottili, chiari e tratteggiati
     disegna(crea, Rr, v, C, Sz) {
       const M = window.GI_MIP, FR = window.GI_PL_FR, W = Sz.W, H = Sz.H;
-      M.scritta(crea, W / 2, H - 16, T("Spedizioni ottime x̃ᵢⱼ: lo spessore dell'arco cresce con la quantità", "Optimal shipments x̃ᵢⱼ: the arc gets thicker with the quantity"),
+      M.scritta(crea, W / 2, H - 16, T("Spedizioni ottime x̃ᵢⱼ(LP): lo spessore dell'arco cresce con la quantità", "Optimal shipments x̃ᵢⱼ(LP): the arc gets thicker with the quantity"),
         { fontSize: 13.5, strokeColor: C.testo, cssStyle: "font-weight:700" });
       if (Rr.stato !== "ottimo") return M.scritta(crea, W / 2, H / 2, T("Nessun piano ammissibile", "No feasible plan"), { fontSize: 15, strokeColor: C.rosso });
       const xs = W * 0.24, xc = W * 0.76, r = Math.max(15, Math.min(22, H / 22)), alto = H - 70, basso = 40;
-      const ys = [0, 1].map((i) => alto - (alto - basso) * (i + 0.5) / 2), yc = [0, 1, 2].map((j) => alto + 8 - (alto - basso + 16) * j / 2);   // clienti più distanziati: i valori sugli archi non si sovrappongono
+      const ys = [0, 1].map((i) => alto - (alto - basso) * (0.2 + 0.6 * i)), yc = [0, 1, 2].map((j) => alto - (alto - basso) * j / 2);   // nodi distanziati su tutta l'altezza
       const qMax = Math.max(...DATI.e);
       // archi: prima quelli vuoti, poi quelli pieni (sopra)
       const archi = [];
@@ -119,8 +119,8 @@
           dash: pieno ? 0 : 2, fixed: true, highlight: false, withLabel: false, lastArrow: { type: 2, size: pieno ? 3 : 6 } });
         // il valore sopra l'arco (spostato di lato perché l'arco spesso non lo copra): vicino al magazzino 1 per i suoi
         // archi, oltre la metà per quelli del magazzino 2, così i valori non si sovrappongono dove gli archi si incrociano
-        const fr = i === 0 ? 0.28 : 0.64;
-        if (pieno) M.scritta(crea, p0[0] + (p1[0] - p0[0]) * fr - uy * 14, p0[1] + (p1[1] - p0[1]) * fr + ux * 14, FR.txt(q), { fontSize: 13, strokeColor: C.b,
+        const fr = 0.26;   // posizione fissa per ogni arco: il valore non si sposta quando cambia la soluzione
+        if (pieno) M.scritta(crea, p0[0] + (p1[0] - p0[0]) * fr, p0[1] + (p1[1] - p0[1]) * fr, FR.txt(q), { fontSize: 13, strokeColor: C.b,
           display: "html", cssStyle: "font-weight:700;background:var(--md-default-bg-color);padding:0 .25em;border-radius:3px" });
       }
       // nodi: magazzini a sinistra (capacità d_i), clienti a destra (domanda e_j)
@@ -141,8 +141,8 @@
     soluzione(Rr) {
       if (Rr.stato !== "ottimo") return T("Nessun piano ammissibile.", "No feasible plan.");
       const SOL = window.GI_PL_SOL, FR = window.GI_PL_FR;
-      return SOL.blocco(`${T("Costo ottimo", "Optimal cost")}: <b>${FR.txt(Rr.z)} €</b>`, [
-        SOL.tab(T("Spedizioni \\(\\tilde x_{ij}\\) (unità)", "Shipments \\(\\tilde x_{ij}\\) (units)"),
+      return SOL.blocco(`${T("Costo ottimo", "Optimal cost")} \\(z(\\text{LP})\\) = <b>${FR.txt(Rr.z)} €</b>`, [
+        SOL.tab(T("Spedizioni \\(\\tilde x_{ij}(\\text{LP})\\) (unità)", "Shipments \\(\\tilde x_{ij}(\\text{LP})\\) (units)"),
           [tx("i \\backslash j"), "1", "2", "3"], Rr.x.map((r, i) => [String(i + 1), ...r.map((q) => FR.z(q))])),
       ], T("«—»: nessuna spedizione.", "«—»: no shipment."));
     },

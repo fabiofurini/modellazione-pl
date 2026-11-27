@@ -182,7 +182,7 @@
 }
 /* home compatta: tutta l'app in una schermata 1440×900 (descrizioni dei cursori e nota della soluzione solo nel laboratorio) */
 .gi[data-vetrina] .gi-ctrl small, .gi[data-vetrina] .plm-sol-nota { display: none; }
-.gi[data-vetrina] .gi-board { aspect-ratio: 3 / 1; }
+.gi[data-vetrina] .gi-board { aspect-ratio: 2.3 / 1; }
 .gi[data-vetrina] .plm-box { margin-bottom: .45em; }
 /* app in fondo al capitolo: soluzione e «Prova tu» su tutta la larghezza, sotto i cursori */
 @media (min-width: 860px) {
