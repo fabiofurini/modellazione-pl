@@ -102,7 +102,7 @@
     // con il valore, archi vuoti sottili, chiari e tratteggiati
     disegna(crea, Rr, v, C, Sz) {
       const M = window.GI_MIP, FR = window.GI_PL_FR, W = Sz.W, H = Sz.H;
-      M.scritta(crea, W / 2, H - 16, T("Spedizioni ottime x̃(LP): lo spessore dell'arco cresce con la quantità", "Optimal shipments x̃(LP): the arc gets thicker with the quantity"),
+      M.scritta(crea, W / 2, H - 16, T("Soluzione ottima x̃(LP): lo spessore dell'arco cresce con la quantità", "Optimal solution x̃(LP): the arc gets thicker with the quantity"),
         { fontSize: 13.5, strokeColor: C.testo, cssStyle: "font-weight:700" });
       if (Rr.stato !== "ottimo") return M.scritta(crea, W / 2, H / 2, T("Nessun piano ammissibile", "No feasible plan"), { fontSize: 15, strokeColor: C.rosso });
       const xs = W * 0.24, xc = W * 0.76, r = Math.max(15, Math.min(22, H / 22)), alto = H - 70, basso = 40;
@@ -142,8 +142,8 @@
     soluzione(Rr) {
       if (Rr.stato !== "ottimo") return T("Nessun piano ammissibile.", "No feasible plan.");
       const SOL = window.GI_PL_SOL, FR = window.GI_PL_FR;
-      return SOL.blocco(`${T("Valore ottimo", "Optimal value")} \\(z(\\text{LP})\\) = <b>${FR.txt(Rr.z)} €</b>`, [
-        SOL.tab(T("Spedizioni \\(\\tilde x(\\text{LP})\\) (unità)", "Shipments \\(\\tilde x(\\text{LP})\\) (units)"),
+      return "<!--sol-tit-->" + SOL.blocco(`${T("Valore ottimo", "Optimal value")} \\(z(\\text{LP})\\) = <b>${FR.txt(Rr.z)} €</b>`, [
+        SOL.tab(T("Soluzione ottima \\(\\tilde x(\\text{LP})\\) (unità)", "Optimal solution \\(\\tilde x(\\text{LP})\\) (units)"),
           [tx("i \\backslash j"), "1", "2", "3"], Rr.x.map((r, i) => [String(i + 1), ...r.map((q) => FR.z(q))])),
       ], T("«—»: nessuna spedizione.", "«—»: no shipment."));
     },

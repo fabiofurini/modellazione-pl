@@ -195,3 +195,9 @@
 .md-typeset .gi .plm-dati table.gi-tabella th, .md-typeset .gi .plm-sol table.gi-tabella th { padding-bottom: .65em; }
 /* home: le due colonne cominciano alla stessa altezza (Fabio, 27/11/2026) */
 .gi[data-vetrina] .gi-formula .plm > .plm-box:first-child, .gi[data-vetrina] .gi-formula > .plm-box:first-child { margin-top: 0; }   /* allineate in alto */
+/* «Valore ottimo z(LP)» con lo stesso peso dei titoli delle tabelle della soluzione (Fabio, 27/11/2026) */
+.md-typeset .plm-sol-val, .md-typeset .plm-sol-z { font-weight: 600; }
+/* home: la colonna di destra si allunga fino in fondo (la scatola della soluzione cresce), così le due colonne finiscono pari a ogni larghezza e lingua (Fabio, 27/11/2026) */
+.gi[data-vetrina] .gi-corpo > div:last-child { display: flex; flex-direction: column; }
+.gi[data-vetrina] .gi-corpo > div:last-child > .plm-sol { flex: 1 0 auto; }
+.gi[data-vetrina] .gi-corpo > div:last-child > .plm-box-prova { margin-bottom: 0; }

@@ -288,7 +288,8 @@
       let b = st.el.querySelector(".plm-sol");
       // a destra, sotto i cursori e sopra il «Prova tu» (Fabio, 26/11/2026)
       if (!b) { b = GI.h("div", { class: "plm-sol plm-box" }); dx.insertBefore(b, dx.querySelector(":scope > .gi-letture") || null); }
-      const testo = html ? `<p class="plm-sol-tit">${T("Soluzione ottima", "Optimal solution")}</p>${html}` : "";
+      // con il marcatore <!--sol-tit--> la ricetta scrive da sé «Soluzione ottima x̃(LP)» (una sola tabella, es. trasporto)
+      const testo = html ? (html.startsWith("<!--sol-tit-->") ? html : `<p class="plm-sol-tit">${T("Soluzione ottima", "Optimal solution")}</p>${html}`) : "";
       if (b.dataset.html === testo) return;
       b.dataset.html = testo;
       b.hidden = !html;
