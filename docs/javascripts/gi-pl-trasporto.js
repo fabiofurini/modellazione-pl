@@ -143,7 +143,7 @@
       if (Rr.stato !== "ottimo") return T("Nessun piano ammissibile.", "No feasible plan.");
       const SOL = window.GI_PL_SOL, FR = window.GI_PL_FR;
       return SOL.blocco(`${T("Costo ottimo", "Optimal cost")} \\(z(\\text{LP})\\) = <b>${FR.txt(Rr.z)} €</b>`, [
-        SOL.tab(T("Spedizioni \\(\\tilde x_{ij}(\\text{LP})\\) (unità)", "Shipments \\(\\tilde x_{ij}(\\text{LP})\\) (units)"),
+        SOL.tab(T("Spedizioni \\(\\tilde x(\\text{LP})\\) (unità)", "Shipments \\(\\tilde x(\\text{LP})\\) (units)"),
           [tx("i \\backslash j"), "1", "2", "3"], Rr.x.map((r, i) => [String(i + 1), ...r.map((q) => FR.z(q))])),
       ], T("«—»: nessuna spedizione.", "«—»: no shipment."));
     },

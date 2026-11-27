@@ -318,7 +318,7 @@
     voci(oggetto) { Object.values(oggetto).forEach(SOL.voce); return oggetto; },
     /** notazione della soluzione come nei capitoli (Fabio, 27/11/2026): valori ottimi \tilde x_{it}(\text{LP}),
      *  valore ottimo z(\text{LP}); til("x", "it") e til("\\eta") danno il TeX, tilT lo stesso fra \( \) */
-    til: (v, idx = "") => `\\tilde ${v}${idx !== "" ? `_{${idx}}` : ""}(\\text{LP})`,
+    til: (v, idx = "") => `\\tilde ${v}(\\text{LP})`,   // senza pedici: gli indici li dà la tabella (Fabio, 27/11/2026)
     tilT: (v, idx = "") => `\\(${SOL.til(v, idx)}\\)`,
     /** riga del valore ottimo: «Costo ottimo \(z(\text{LP})\) = <b>320 €</b>», con un eventuale seguito */
     val: (parola, valore, dopo = "") => `${parola} \\(z(\\text{LP})\\) = <b>${valore}</b>${dopo ? " " + dopo : ""}`,

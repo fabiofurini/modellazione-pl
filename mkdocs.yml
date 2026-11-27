@@ -142,10 +142,10 @@ extra_javascript:
   - javascripts/gi-ott.js?v=04048d2032
   - javascripts/gi-pl-dati.js?v=ed0ce3f444
   - javascripts/gi-pl-modelli.js?v=2fadd486f6
-  - javascripts/gi-pl-app.js?v=be854d8f6d
+  - javascripts/gi-pl-app.js?v=2e7a5d06b3
   - javascripts/gi-pl-finanza.js?v=4c08497cfc
-  - javascripts/gi-pl-tecniche.js?v=09dda33acc
-  - javascripts/gi-pl-trasporto.js?v=2b06e40cb3
+  - javascripts/gi-pl-tecniche.js?v=af6b4e223c
+  - javascripts/gi-pl-trasporto.js?v=6db229e339
   - javascripts/quiz.js?v=be7fae2b85
 
 # le pagine delle singole app non stanno nel menu: il laboratorio è una voce sola

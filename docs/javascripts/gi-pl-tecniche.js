@@ -287,7 +287,7 @@
         tetto(crea, A, i + 1, D.w[i], 0.7, F.rosso);
       }
       categorie(crea, A, [1, 2, 3].map((i) => [i, String(i)]), C);
-      legendaIn(crea, A, [[F.grigio, T("non trattato x̃(LP)", "untreated x̃(LP)"), "barra"], [F.teal, T("orario ordinario ỹᵢ(LP)", "regular time ỹᵢ(LP)"), "barra"],
+      legendaIn(crea, A, [[F.grigio, T("non trattato x̃(LP)", "untreated x̃(LP)"), "barra"], [F.teal, T("orario ordinario ỹ(LP)", "regular time ỹ(LP)"), "barra"],
         [F.arancio, T("straordinario z̃(LP)", "overtime z̃(LP)"), "barra"], [F.rosso, T("produzione massima wᵢ", "maximum production wᵢ"), "tratteggio"]], C);
     },
     legenda: () => { const F = FIG(); return [[F.grigio, T("litri venduti non trattati \\(x_i\\)", "liters sold untreated \\(x_i\\)"), "pieno"],
@@ -759,7 +759,7 @@
       if (R.stato !== "ottimo") return avviso(crea, S, C, T("Nessun piano ammissibile", "No feasible plan"));
       const F = FIG(), D = R.D, x = R.x, b1 = pieno(S);
       const tw = D.w[0] + D.w[1], top = tw * 1.35;   // scala fissata dai dati: le barre non arrivano oltre w₁ + w₂
-      const A = figura(crea, Object.assign(b1, { xa: 0.4, xb: 2.6, ya: 0, yb: top, titolo: T("Miscele ottime x̃(LP) e ỹᵢ(LP)", "Optimal blends x̃(LP) and ỹᵢ(LP)"),
+      const A = figura(crea, Object.assign(b1, { xa: 0.4, xb: 2.6, ya: 0, yb: top, titolo: T("Miscele ottime x̃(LP) e ỹ(LP)", "Optimal blends x̃(LP) and ỹ(LP)"),
         ny: T("barili", "barrels") }), C, { nTx: 0, nTy: 5 });
       // la qualità della miscela sempre alla stessa altezza, sopra w₁ + w₂
       [[x[0], x[1]], [x[2], x[3]]].forEach(([u1, u2], k) => {
