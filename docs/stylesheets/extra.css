@@ -127,7 +127,7 @@
 .md-typeset .plm-box > p { margin: 0 0 .2em; }
 .md-typeset .plm-box > .plm-box-tit, .md-typeset .plm-dati > .plm-dati-tit { margin: 0 0 .15em; font-size: .76rem; font-weight: 700; }
 .md-typeset .plm-box-mod .plm-sim { padding: 0; }
-.md-typeset .plm-dati > .plm-dati-sig { flex-basis: 100%; margin: 0; font-size: .8rem; }
+.md-typeset .plm-dati > .plm-dati-sig { flex-basis: 100%; margin: 0 0 .55em; font-size: .8rem; }   /* spazio prima delle tabelle (Fabio, 27/11/2026) */
 /* riquadro «Dati» con il suo titolo (Fabio, 26/11/2026) */
 .md-typeset .plm-dati > .plm-dati-tit { flex-basis: 100%; margin: 0; font-size: .76rem; font-weight: 700; }
 .md-typeset .plm-sol-val { margin-top: .3em; }
@@ -188,3 +188,6 @@
 @media (min-width: 860px) {
   .gi.gi-capitolo .gi-corpo > div:last-child > .plm-sol, .gi.gi-capitolo .gi-corpo > div:last-child > details.plm-box-prova { grid-column: 1 / -1; }
 }
+
+/* titolo delle tabelle dei dati staccato dalla tabella (Fabio, 27/11/2026) */
+.md-typeset .plm-dati .plm-sol-t > p { margin-bottom: .4em; }
